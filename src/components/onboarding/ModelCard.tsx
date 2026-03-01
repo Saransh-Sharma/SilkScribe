@@ -1,5 +1,4 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
 import {
   Check,
   Download,
@@ -8,17 +7,17 @@ import {
   Loader2,
   Trash2,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { ModelInfo } from "@/bindings";
+import { LANGUAGES } from "../../lib/constants/languages";
 import { formatModelSize } from "../../lib/utils/format";
 import {
   getTranslatedModelDescription,
   getTranslatedModelName,
 } from "../../lib/utils/modelTranslation";
-import { LANGUAGES } from "../../lib/constants/languages";
 import Badge from "../ui/Badge";
 import { Button } from "../ui/Button";
 
-// Get display text for model's language support
 const getLanguageDisplayText = (
   supportedLanguages: string[],
   t: (key: string, options?: Record<string, unknown>) => string,
@@ -26,9 +25,11 @@ const getLanguageDisplayText = (
   if (supportedLanguages.length === 1) {
     const langCode = supportedLanguages[0];
     const langName =
-      LANGUAGES.find((l) => l.value === langCode)?.label || langCode;
+      LANGUAGES.find((language) => language.value === langCode)?.label ||
+      langCode;
     return t("modelSelector.capabilities.languageOnly", { language: langName });
   }
+
   return t("modelSelector.capabilities.multiLanguage");
 };
 
@@ -40,9 +41,12 @@ export type ModelCardStatus =
   | "active"
   | "available";
 
+type ModelCardLayout = "onboarding" | "settings";
+
 interface ModelCardProps {
   model: ModelInfo;
   variant?: "default" | "featured";
+  layout?: ModelCardLayout;
   status?: ModelCardStatus;
   disabled?: boolean;
   className?: string;
@@ -51,13 +55,66 @@ interface ModelCardProps {
   onDelete?: (modelId: string) => void;
   onCancel?: (modelId: string) => void;
   downloadProgress?: number;
-  downloadSpeed?: number; // MB/s
+  downloadSpeed?: number;
   showRecommended?: boolean;
 }
+
+interface MetricItemProps {
+  label: string;
+  value: number;
+  fillClassName: string;
+  dense?: boolean;
+}
+
+const MetricItem: React.FC<MetricItemProps> = ({
+  label,
+  value,
+  fillClassName,
+  dense = false,
+}) => {
+  const clampedValue = Math.max(0, Math.min(100, value * 100));
+
+  return (
+    <div
+      className={`rounded-[14px] border border-ss-border-subtle bg-ss-bg-surface-alt ${dense ? "px-2.5 py-2" : "px-3 py-2.5"}`}
+    >
+      <div
+        className={`mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ss-text-tertiary ${dense ? "" : "leading-none"}`}
+      >
+        {label}
+      </div>
+      <div
+        className={`overflow-hidden rounded-full bg-ss-bg-elevated ${dense ? "h-1.5" : "h-1.5"}`}
+      >
+        <div
+          className={`h-full rounded-full ${fillClassName}`}
+          style={{ width: `${clampedValue}%` }}
+        />
+      </div>
+    </div>
+  );
+};
+
+interface MetadataChipProps {
+  icon: React.ReactNode;
+  label: string;
+  title?: string;
+}
+
+const MetadataChip: React.FC<MetadataChipProps> = ({ icon, label, title }) => (
+  <div
+    className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-ss-border-subtle bg-ss-bg-surface-alt px-2.5 py-1 text-xs text-ss-text-tertiary"
+    title={title}
+  >
+    <span className="shrink-0">{icon}</span>
+    <span className="truncate">{label}</span>
+  </div>
+);
 
 const ModelCard: React.FC<ModelCardProps> = ({
   model,
   variant = "default",
+  layout = "settings",
   status = "downloadable",
   disabled = false,
   className = "",
@@ -70,204 +127,219 @@ const ModelCard: React.FC<ModelCardProps> = ({
   showRecommended = true,
 }) => {
   const { t } = useTranslation();
+  const isOnboardingLayout = layout === "onboarding";
   const isFeatured = variant === "featured";
   const isClickable =
     status === "available" || status === "active" || status === "downloadable";
-
-  // Get translated model name and description
+  const isCardInteractive = !isOnboardingLayout && isClickable;
+  const isProgressState = status === "downloading" || status === "extracting";
+  const isVisuallyDisabled = disabled && !isProgressState;
+  const hasMetrics = model.accuracy_score > 0 || model.speed_score > 0;
+  const languageLabel =
+    model.supported_languages.length > 0
+      ? getLanguageDisplayText(model.supported_languages, t)
+      : null;
   const displayName = getTranslatedModelName(model, t);
   const displayDescription = getTranslatedModelDescription(model, t);
 
-  const baseClasses =
-    "flex flex-col rounded-xl px-4 py-3 gap-2 text-left transition-all duration-200";
+  const handlePrimaryAction = () => {
+    if (disabled) return;
 
-  const getVariantClasses = () => {
-    if (status === "active") {
-      return "border-2 border-logo-primary/50 bg-logo-primary/10";
-    }
-    if (isFeatured) {
-      return "border-2 border-logo-primary/25 bg-logo-primary/5";
-    }
-    return "border-2 border-mid-gray/20";
-  };
-
-  const getInteractiveClasses = () => {
-    if (!isClickable) return "";
-    if (disabled) return "opacity-50 cursor-not-allowed";
-    return "cursor-pointer hover:border-logo-primary/50 hover:bg-logo-primary/5 hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] group";
-  };
-
-  const handleClick = () => {
-    if (!isClickable || disabled) return;
     if (status === "downloadable" && onDownload) {
       onDownload(model.id);
-    } else {
-      onSelect(model.id);
+      return;
     }
+
+    onSelect(model.id);
   };
 
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
     onDelete?.(model.id);
   };
 
-  return (
-    <div
-      onClick={handleClick}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" && isClickable) handleClick();
-      }}
-      role={isClickable ? "button" : undefined}
-      tabIndex={isClickable ? 0 : undefined}
-      className={[
-        baseClasses,
-        getVariantClasses(),
-        getInteractiveClasses(),
-        className,
-      ]
-        .filter(Boolean)
-        .join(" ")}
-    >
-      {/* Top section: name/description + score bars */}
-      <div className="flex justify-between items-center w-full">
-        <div className="flex flex-col items-start flex-1 min-w-0">
-          <div className="flex items-center gap-3 flex-wrap">
-            <h3
-              className={`text-base font-semibold text-text ${isClickable ? "group-hover:text-logo-primary" : ""} transition-colors`}
-            >
-              {displayName}
-            </h3>
-            {showRecommended && model.is_recommended && (
-              <Badge variant="primary">{t("onboarding.recommended")}</Badge>
-            )}
-            {status === "active" && (
-              <Badge variant="primary">
-                <Check className="w-3 h-3 mr-1" />
-                {t("modelSelector.active")}
-              </Badge>
-            )}
-            {model.is_custom && (
-              <Badge variant="secondary">{t("modelSelector.custom")}</Badge>
-            )}
-            {status === "switching" && (
-              <Badge variant="secondary">
-                <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                {t("modelSelector.switching")}
-              </Badge>
-            )}
-          </div>
-          <p className="text-text/60 text-sm leading-relaxed">
-            {displayDescription}
-          </p>
-        </div>
-        {(model.accuracy_score > 0 || model.speed_score > 0) && (
-          <div className="hidden sm:flex items-center ml-4">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <p className="text-xs text-text/60 w-14 text-right">
-                  {t("onboarding.modelCard.accuracy")}
-                </p>
-                <div className="w-16 h-1.5 bg-mid-gray/20 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-logo-primary rounded-full"
-                    style={{ width: `${model.accuracy_score * 100}%` }}
-                  />
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <p className="text-xs text-text/60 w-14 text-right">
-                  {t("onboarding.modelCard.speed")}
-                </p>
-                <div className="w-16 h-1.5 bg-mid-gray/20 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-logo-primary rounded-full"
-                    style={{ width: `${model.speed_score * 100}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+  const handleCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onCancel?.(model.id);
+  };
+
+  const handleOnboardingButtonClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+    handlePrimaryAction();
+  };
+
+  const handleCardKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!isCardInteractive || disabled) return;
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handlePrimaryAction();
+    }
+  };
+
+  const getRootClasses = () => {
+    const baseClasses =
+      "group relative flex flex-col rounded-[18px] border text-left transition-[transform,background-color,border-color,box-shadow,opacity] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/40";
+    const sizeClasses = isOnboardingLayout
+      ? `${isFeatured ? "min-h-[168px]" : "min-h-[152px]"} gap-4 px-[18px] py-[18px] shadow-[var(--ss-shadow-card)]`
+      : "min-h-[112px] gap-3 px-4 py-4";
+    const surfaceClasses =
+      status === "active"
+        ? "border-ss-brand-secondary/55 bg-ss-brand-secondary/10 shadow-[var(--ss-shadow-lift)]"
+        : isFeatured
+          ? "border-ss-brand-secondary/28 bg-gradient-to-br from-ss-brand-secondary/7 via-ss-bg-surface to-ss-brand-highlight/10"
+          : "border-ss-border-default bg-ss-bg-surface";
+    const stateClasses = isVisuallyDisabled
+      ? "opacity-60"
+      : isCardInteractive
+        ? "cursor-pointer hover:-translate-y-0.5 hover:border-ss-brand-secondary/35 hover:bg-ss-bg-elevated hover:shadow-[var(--ss-shadow-lift)] active:translate-y-0 active:scale-[0.995]"
+        : "cursor-default hover:-translate-y-0.5 hover:shadow-[var(--ss-shadow-lift)]";
+
+    return [baseClasses, sizeClasses, surfaceClasses, stateClasses, className]
+      .filter(Boolean)
+      .join(" ");
+  };
+
+  const renderBadges = () => {
+    const badges: React.ReactNode[] = [];
+
+    if (showRecommended && model.is_recommended) {
+      badges.push(
+        <Badge key="recommended" variant="primary" tone="accent">
+          {t("onboarding.recommended")}
+        </Badge>,
+      );
+    }
+
+    if (status === "active") {
+      badges.push(
+        <Badge key="active" variant="primary" tone="accent">
+          <Check className="mr-1 h-3 w-3" />
+          {t("modelSelector.active")}
+        </Badge>,
+      );
+    }
+
+    if (model.is_custom) {
+      badges.push(
+        <Badge key="custom" variant="secondary">
+          {t("modelSelector.custom")}
+        </Badge>,
+      );
+    }
+
+    if (status === "switching") {
+      badges.push(
+        <Badge key="switching" variant="secondary">
+          <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+          {t("modelSelector.switching")}
+        </Badge>,
+      );
+    }
+
+    if (badges.length === 0) {
+      return null;
+    }
+
+    return <div className="flex flex-wrap items-center gap-2">{badges}</div>;
+  };
+
+  const renderMetrics = () => {
+    if (!hasMetrics) {
+      return null;
+    }
+
+    return (
+      <div
+        className={`grid gap-2 ${isOnboardingLayout ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 md:grid-cols-2"}`}
+      >
+        <MetricItem
+          label={t("onboarding.modelCard.accuracy")}
+          value={model.accuracy_score}
+          fillClassName="bg-ss-brand-highlight"
+          dense={!isOnboardingLayout}
+        />
+        <MetricItem
+          label={t("onboarding.modelCard.speed")}
+          value={model.speed_score}
+          fillClassName="bg-ss-brand-secondary"
+          dense={!isOnboardingLayout}
+        />
       </div>
+    );
+  };
 
-      <hr className="w-full border-mid-gray/20" />
+  const renderMetadata = () => {
+    if (!languageLabel && !model.supports_translation) {
+      return null;
+    }
 
-      {/* Bottom row: tags + action buttons (full width) */}
-      <div className="flex items-center gap-3 w-full -mb-0.5 mt-0.5 h-5">
-        {model.supported_languages.length > 0 && (
-          <div
-            className="flex items-center gap-1 text-xs text-text/50"
+    return (
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+        {languageLabel && (
+          <MetadataChip
+            icon={<Globe className="h-3.5 w-3.5" />}
+            label={languageLabel}
             title={
               model.supported_languages.length === 1
                 ? t("modelSelector.capabilities.singleLanguage")
                 : t("modelSelector.capabilities.languageSelection")
             }
-          >
-            <Globe className="w-3.5 h-3.5" />
-            <span>{getLanguageDisplayText(model.supported_languages, t)}</span>
-          </div>
+          />
         )}
         {model.supports_translation && (
-          <div
-            className="flex items-center gap-1 text-xs text-text/50"
+          <MetadataChip
+            icon={<Languages className="h-3.5 w-3.5" />}
+            label={t("modelSelector.capabilities.translate")}
             title={t("modelSelector.capabilities.translation")}
-          >
-            <Languages className="w-3.5 h-3.5" />
-            <span>{t("modelSelector.capabilities.translate")}</span>
-          </div>
-        )}
-        {status === "downloadable" && (
-          <span className="flex items-center gap-1.5 ml-auto text-xs text-text/50">
-            <Download className="w-3.5 h-3.5" />
-            <span>{formatModelSize(Number(model.size_mb))}</span>
-          </span>
-        )}
-        {onDelete && (status === "available" || status === "active") && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleDelete}
-            title={t("modelSelector.deleteModel", { modelName: displayName })}
-            className="flex items-center gap-1.5 ml-auto text-logo-primary/85 hover:text-logo-primary hover:bg-logo-primary/10"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            <span>{t("common.delete")}</span>
-          </Button>
+          />
         )}
       </div>
+    );
+  };
 
-      {/* Download/extract progress */}
-      {status === "downloading" && downloadProgress !== undefined && (
-        <div className="w-full mt-3">
-          <div className="w-full h-1.5 bg-mid-gray/20 rounded-full overflow-hidden">
+  const renderProgress = () => {
+    if (!isProgressState) {
+      return null;
+    }
+
+    if (status === "downloading") {
+      const safeProgress = Math.max(0, Math.min(100, downloadProgress ?? 0));
+
+      return (
+        <div
+          className={`w-full rounded-[14px] border border-ss-border-subtle bg-ss-bg-surface-alt ${isOnboardingLayout ? "px-3 py-3" : "px-3 py-2.5"}`}
+        >
+          <div className="h-2 w-full overflow-hidden rounded-full bg-ss-bg-elevated">
             <div
-              className="h-full bg-logo-primary rounded-full transition-all duration-300"
-              style={{ width: `${downloadProgress}%` }}
+              className="h-full rounded-full bg-gradient-to-r from-ss-brand-highlight to-ss-brand-secondary transition-all duration-300"
+              style={{ width: `${safeProgress}%` }}
             />
           </div>
-          <div className="flex items-center justify-between text-xs mt-1">
-            <span className="text-text/50">
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-ss-text-tertiary">
+            <span>
               {t("modelSelector.downloading", {
-                percentage: Math.round(downloadProgress),
+                percentage: Math.round(safeProgress),
               })}
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {downloadSpeed !== undefined && downloadSpeed > 0 && (
-                <span className="tabular-nums text-text/50">
+                <span className="tabular-nums">
                   {t("modelSelector.downloadSpeed", {
                     speed: downloadSpeed.toFixed(1),
                   })}
                 </span>
               )}
-              {onCancel && (
+              {onCancel && !isOnboardingLayout && (
                 <Button
                   variant="danger-ghost"
                   size="sm"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onCancel(model.id);
-                  }}
+                  onClick={handleCancel}
                   aria-label={t("modelSelector.cancelDownload")}
                 >
                   {t("modelSelector.cancel")}
@@ -276,17 +348,128 @@ const ModelCard: React.FC<ModelCardProps> = ({
             </div>
           </div>
         </div>
+      );
+    }
+
+    return (
+      <div
+        className={`w-full rounded-[14px] border border-ss-border-subtle bg-ss-bg-surface-alt ${isOnboardingLayout ? "px-3 py-3" : "px-3 py-2.5"}`}
+      >
+        <div className="h-2 w-full overflow-hidden rounded-full bg-ss-bg-elevated">
+          <div className="h-full w-full animate-pulse rounded-full bg-gradient-to-r from-ss-brand-highlight to-ss-brand-secondary" />
+        </div>
+        <p className="mt-2 text-xs text-ss-text-tertiary">
+          {t("modelSelector.extractingGeneric")}
+        </p>
+      </div>
+    );
+  };
+
+  const renderOnboardingAction = () => {
+    let label = t("onboarding.download");
+    let icon: React.ReactNode = <Download className="h-4 w-4" />;
+    let buttonVariant: "primary" | "secondary" = "primary";
+    let buttonDisabled = disabled;
+
+    if (status === "downloading") {
+      label = t("onboarding.downloading");
+      icon = <Loader2 className="h-4 w-4 animate-spin" />;
+      buttonVariant = "secondary";
+      buttonDisabled = true;
+    } else if (status === "extracting") {
+      label = t("modelSelector.extractingGeneric");
+      icon = <Loader2 className="h-4 w-4 animate-spin" />;
+      buttonVariant = "secondary";
+      buttonDisabled = true;
+    } else if (status === "active") {
+      label = t("modelSelector.active");
+      icon = <Check className="h-4 w-4" />;
+      buttonVariant = "secondary";
+      buttonDisabled = true;
+    }
+
+    return (
+      <Button
+        variant={buttonVariant}
+        size="md"
+        onClick={handleOnboardingButtonClick}
+        disabled={buttonDisabled}
+        className="min-h-11 min-w-[104px] justify-center disabled:opacity-100"
+      >
+        {icon}
+        <span>{label}</span>
+      </Button>
+    );
+  };
+
+  return (
+    <div
+      onClick={isCardInteractive ? handlePrimaryAction : undefined}
+      onKeyDown={handleCardKeyDown}
+      role={isCardInteractive ? "button" : undefined}
+      tabIndex={isCardInteractive ? 0 : undefined}
+      className={getRootClasses()}
+    >
+      {status === "active" && (
+        <div className="absolute inset-y-4 left-0 w-1 rounded-r-full bg-gradient-to-b from-ss-brand-highlight to-ss-brand-secondary" />
       )}
-      {status === "extracting" && (
-        <div className="w-full mt-3">
-          <div className="w-full h-1.5 bg-mid-gray/20 rounded-full overflow-hidden">
-            <div className="h-full bg-logo-primary rounded-full animate-pulse w-full" />
+
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <h3
+            className={`line-clamp-2 text-left font-semibold leading-snug text-ss-text-primary transition-colors ${isOnboardingLayout ? "text-[17px]" : `text-base ${isCardInteractive ? "group-hover:text-ss-brand-secondary" : ""}`}`}
+          >
+            {displayName}
+          </h3>
+          <div className="mt-2">{renderBadges()}</div>
+        </div>
+        <span className="inline-flex shrink-0 items-center rounded-full border border-ss-border-subtle bg-ss-bg-surface-alt px-2.5 py-1 text-xs font-semibold text-ss-text-secondary">
+          {formatModelSize(Number(model.size_mb))}
+        </span>
+      </div>
+
+      <p
+        className={`line-clamp-2 text-sm leading-relaxed text-ss-text-secondary ${isOnboardingLayout ? "min-h-[2.75rem]" : ""}`}
+      >
+        {displayDescription}
+      </p>
+
+      {renderMetrics()}
+
+      {isOnboardingLayout ? (
+        <div className="flex flex-wrap items-start justify-between gap-3 pt-1">
+          {renderMetadata()}
+          <div className="shrink-0">{renderOnboardingAction()}</div>
+        </div>
+      ) : (
+        <div className="flex flex-wrap items-start justify-between gap-3 pt-1">
+          {renderMetadata()}
+          <div className="flex shrink-0 items-center gap-2">
+            {status === "downloadable" && (
+              <span className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-ss-border-subtle bg-ss-bg-surface-alt px-2.5 py-1 text-xs text-ss-text-tertiary">
+                <Download className="h-3.5 w-3.5" />
+                <span>{t("onboarding.download")}</span>
+              </span>
+            )}
+            {onDelete && (status === "available" || status === "active") && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleDelete}
+                title={t("modelSelector.deleteModel", {
+                  modelName: displayName,
+                })}
+                className="text-ss-text-tertiary hover:text-ss-brand-secondary"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>{t("common.delete")}</span>
+              </Button>
+            )}
           </div>
-          <p className="text-xs text-text/50 mt-1">
-            {t("modelSelector.extractingGeneric")}
-          </p>
         </div>
       )}
+
+      {renderProgress()}
     </div>
   );
 };

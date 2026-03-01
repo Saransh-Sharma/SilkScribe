@@ -12,6 +12,7 @@ import { commands } from "@/bindings";
 import { useSettingsStore } from "@/stores/settingsStore";
 import SilkScribeWordmark from "../icons/SilkScribeWordmark";
 import { Keyboard, Mic, Check, Loader2 } from "lucide-react";
+import { Button } from "../ui/Button";
 
 interface AccessibilityOnboardingProps {
   onComplete: () => void;
@@ -207,8 +208,8 @@ const AccessibilityOnboarding: React.FC<AccessibilityOnboardingProps> = ({
       permissions.microphone === "checking")
   ) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-text/50" />
+      <div className="flex h-screen w-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-ss-text-tertiary" />
       </div>
     );
   }
@@ -216,11 +217,11 @@ const AccessibilityOnboarding: React.FC<AccessibilityOnboardingProps> = ({
   // All permissions granted - show success briefly
   if (allGranted) {
     return (
-      <div className="h-screen w-screen flex flex-col items-center justify-center gap-4">
-        <div className="p-4 rounded-full bg-emerald-500/20">
-          <Check className="w-12 h-12 text-emerald-400" />
+      <div className="flex h-screen w-screen flex-col items-center justify-center gap-4">
+        <div className="rounded-full bg-ss-brand-highlight/18 p-4">
+          <Check className="h-12 w-12 text-ss-brand-highlight" />
         </div>
-        <p className="text-lg font-medium text-text">
+        <p className="text-lg font-semibold text-ss-text-primary">
           {t("onboarding.permissions.allGranted")}
         </p>
       </div>
@@ -229,87 +230,97 @@ const AccessibilityOnboarding: React.FC<AccessibilityOnboardingProps> = ({
 
   // Show permissions request screen
   return (
-    <div className="h-screen w-screen flex flex-col p-6 gap-6 items-center justify-center">
-      <div className="flex flex-col items-center gap-2">
-        <SilkScribeWordmark width={200} />
-      </div>
-
-      <div className="max-w-md w-full flex flex-col items-center gap-4">
-        <div className="text-center mb-2">
-          <h2 className="text-xl font-semibold text-text mb-2">
-            {t("onboarding.permissions.title")}
-          </h2>
-          <p className="text-text/70">
-            {t("onboarding.permissions.description")}
-          </p>
-        </div>
-
-        {/* Microphone Permission Card */}
-        <div className="w-full p-4 rounded-lg bg-white/5 border border-mid-gray/20">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-full bg-logo-primary/20 shrink-0">
-              <Mic className="w-6 h-6 text-logo-primary" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-medium text-text">
-                {t("onboarding.permissions.microphone.title")}
-              </h3>
-              <p className="text-sm text-text/60 mb-3">
-                {t("onboarding.permissions.microphone.description")}
-              </p>
-              {permissions.microphone === "granted" ? (
-                <div className="flex items-center gap-2 text-emerald-400 text-sm">
-                  <Check className="w-4 h-4" />
-                  {t("onboarding.permissions.granted")}
-                </div>
-              ) : permissions.microphone === "waiting" ? (
-                <div className="flex items-center gap-2 text-text/50 text-sm">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  {t("onboarding.permissions.waiting")}
-                </div>
-              ) : (
-                <button
-                  onClick={handleGrantMicrophone}
-                  className="px-4 py-2 rounded-lg bg-logo-primary hover:bg-logo-primary/90 text-white text-sm font-medium transition-colors"
-                >
-                  {t("onboarding.permissions.grant")}
-                </button>
-              )}
-            </div>
+    <div className="flex h-screen w-screen items-center justify-center px-6 py-10">
+      <div className="w-full max-w-[560px] rounded-[28px] border border-ss-border-subtle bg-ss-bg-surface/95 px-6 py-7 shadow-[var(--ss-shadow-lift)] backdrop-blur-sm">
+        <div className="flex flex-col items-center gap-3">
+          <div className="rounded-[22px] border border-ss-border-subtle bg-ss-bg-surface-alt px-5 py-4 shadow-[var(--ss-shadow-card)]">
+            <SilkScribeWordmark width={190} />
           </div>
         </div>
 
-        {/* Accessibility Permission Card */}
-        <div className="w-full p-4 rounded-lg bg-white/5 border border-mid-gray/20">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-full bg-logo-primary/20 shrink-0">
-              <Keyboard className="w-6 h-6 text-logo-primary" />
+        <div className="mt-5 flex items-center justify-center gap-2">
+          <span className="h-2.5 w-8 rounded-full bg-ss-brand-highlight" />
+          <span className="h-2.5 w-2.5 rounded-full bg-ss-brand-highlight/55" />
+          <span className="h-2.5 w-2.5 rounded-full bg-ss-border-default" />
+        </div>
+
+        <div className="mt-6 flex flex-col items-center gap-4">
+          <div className="mb-2 text-center">
+            <h2 className="mb-2 text-xl font-semibold text-ss-text-primary">
+              {t("onboarding.permissions.title")}
+            </h2>
+            <p className="text-sm leading-relaxed text-ss-text-tertiary">
+              {t("onboarding.permissions.description")}
+            </p>
+          </div>
+
+          <div className="w-full rounded-[18px] border border-ss-border-subtle bg-ss-bg-surface-alt p-4">
+            <div className="flex items-center gap-4">
+              <div className="shrink-0 rounded-full bg-ss-brand-highlight/14 p-3">
+                <Mic className="h-6 w-6 text-ss-brand-highlight" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="font-semibold text-ss-text-primary">
+                  {t("onboarding.permissions.microphone.title")}
+                </h3>
+                <p className="mb-3 text-sm text-ss-text-tertiary">
+                  {t("onboarding.permissions.microphone.description")}
+                </p>
+                {permissions.microphone === "granted" ? (
+                  <div className="flex items-center gap-2 text-sm text-ss-brand-highlight">
+                    <Check className="h-4 w-4" />
+                    {t("onboarding.permissions.granted")}
+                  </div>
+                ) : permissions.microphone === "waiting" ? (
+                  <div className="flex items-center gap-2 text-sm text-ss-text-tertiary">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {t("onboarding.permissions.waiting")}
+                  </div>
+                ) : (
+                  <Button
+                    onClick={handleGrantMicrophone}
+                    variant="primary"
+                    size="md"
+                  >
+                    {t("onboarding.permissions.grant")}
+                  </Button>
+                )}
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-medium text-text">
-                {t("onboarding.permissions.accessibility.title")}
-              </h3>
-              <p className="text-sm text-text/60 mb-3">
-                {t("onboarding.permissions.accessibility.description")}
-              </p>
-              {permissions.accessibility === "granted" ? (
-                <div className="flex items-center gap-2 text-emerald-400 text-sm">
-                  <Check className="w-4 h-4" />
-                  {t("onboarding.permissions.granted")}
-                </div>
-              ) : permissions.accessibility === "waiting" ? (
-                <div className="flex items-center gap-2 text-text/50 text-sm">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  {t("onboarding.permissions.waiting")}
-                </div>
-              ) : (
-                <button
-                  onClick={handleGrantAccessibility}
-                  className="px-4 py-2 rounded-lg bg-logo-primary hover:bg-logo-primary/90 text-white text-sm font-medium transition-colors"
-                >
-                  {t("onboarding.permissions.grant")}
-                </button>
-              )}
+          </div>
+
+          <div className="w-full rounded-[18px] border border-ss-border-subtle bg-ss-bg-surface-alt p-4">
+            <div className="flex items-center gap-4">
+              <div className="shrink-0 rounded-full bg-ss-brand-secondary/12 p-3">
+                <Keyboard className="h-6 w-6 text-ss-brand-secondary" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="font-semibold text-ss-text-primary">
+                  {t("onboarding.permissions.accessibility.title")}
+                </h3>
+                <p className="mb-3 text-sm text-ss-text-tertiary">
+                  {t("onboarding.permissions.accessibility.description")}
+                </p>
+                {permissions.accessibility === "granted" ? (
+                  <div className="flex items-center gap-2 text-sm text-ss-brand-highlight">
+                    <Check className="h-4 w-4" />
+                    {t("onboarding.permissions.granted")}
+                  </div>
+                ) : permissions.accessibility === "waiting" ? (
+                  <div className="flex items-center gap-2 text-sm text-ss-text-tertiary">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {t("onboarding.permissions.waiting")}
+                  </div>
+                ) : (
+                  <Button
+                    onClick={handleGrantAccessibility}
+                    variant="secondary"
+                    size="md"
+                  >
+                    {t("onboarding.permissions.grant")}
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>
