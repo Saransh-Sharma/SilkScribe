@@ -8,7 +8,8 @@ use crate::settings::{get_settings, AppSettings, APPLE_INTELLIGENCE_PROVIDER_ID}
 use crate::shortcut;
 use crate::tray::{change_tray_icon, TrayIconState};
 use crate::utils::{
-    self, show_processing_overlay, show_recording_overlay, show_transcribing_overlay,
+    self, show_error_overlay, show_processing_overlay, show_recording_overlay,
+    show_success_overlay, show_transcribing_overlay,
 };
 use crate::TranscriptionCoordinator;
 use ferrous_opencc::{config::BuiltinConfig, OpenCC};
@@ -491,19 +492,26 @@ impl ShortcutAction for TranscribeAction {
                             let paste_time = Instant::now();
                             ah.run_on_main_thread(move || {
                                 match utils::paste(final_text, ah_clone.clone()) {
-                                    Ok(()) => debug!(
-                                        "Text pasted successfully in {:?}",
-                                        paste_time.elapsed()
-                                    ),
-                                    Err(e) => error!("Failed to paste transcription: {}", e),
+                                    Ok(()) => {
+                                        debug!(
+                                            "Text pasted successfully in {:?}",
+                                            paste_time.elapsed()
+                                        );
+                                        show_success_overlay(&ah_clone);
+                                        utils::hide_recording_overlay_after(&ah_clone, 1100);
+                                    }
+                                    Err(e) => {
+                                        error!("Failed to paste transcription: {}", e);
+                                        show_error_overlay(&ah_clone);
+                                        utils::hide_recording_overlay_after(&ah_clone, 1500);
+                                    }
                                 }
-                                // Hide the overlay after transcription is complete
-                                utils::hide_recording_overlay(&ah_clone);
                                 change_tray_icon(&ah_clone, TrayIconState::Idle);
                             })
                             .unwrap_or_else(|e| {
                                 error!("Failed to run paste on main thread: {:?}", e);
-                                utils::hide_recording_overlay(&ah);
+                                show_error_overlay(&ah);
+                                utils::hide_recording_overlay_after(&ah, 1500);
                                 change_tray_icon(&ah, TrayIconState::Idle);
                             });
                         } else {
@@ -513,7 +521,8 @@ impl ShortcutAction for TranscribeAction {
                     }
                     Err(err) => {
                         debug!("Global Shortcut Transcription error: {}", err);
-                        utils::hide_recording_overlay(&ah);
+                        show_error_overlay(&ah);
+                        utils::hide_recording_overlay_after(&ah, 1500);
                         change_tray_icon(&ah, TrayIconState::Idle);
                     }
                 }
