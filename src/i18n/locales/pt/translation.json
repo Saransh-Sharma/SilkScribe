@@ -472,24 +472,6 @@
       "appDataDirectory": {
         "title": "Diretório de Dados do App",
         "description": "Local onde o SilkScribe armazena seus dados"
-      },
-      "sourceCode": {
-        "title": "Código Fonte",
-        "description": "Visualizar código fonte e contribuir",
-        "button": "Ver no GitHub"
-      },
-      "supportDevelopment": {
-        "title": "Apoiar o Desenvolvimento",
-        "description": "Ajude-nos a continuar construindo o SilkScribe",
-        "button": "Doar"
-      },
-      "acknowledgments": {
-        "title": "Agradecimentos",
-        "whisper": {
-          "title": "Whisper.cpp",
-          "description": "Inferência de alto desempenho do modelo de reconhecimento automático de fala Whisper da OpenAI",
-          "details": "O SilkScribe usa Whisper.cpp para processamento rápido e local de fala para texto. Agradecemos ao incrível trabalho de Georgi Gerganov e colaboradores."
-        }
       }
     }
   },

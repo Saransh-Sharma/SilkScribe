@@ -7,6 +7,7 @@ import { convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { readFile } from "@tauri-apps/plugin-fs";
 import { commands, type HistoryEntry } from "@/bindings";
+import { SettingsGroup } from "@/components/ui/SettingsGroup";
 import { formatDateTime } from "@/utils/dateFormat";
 import { useOsType } from "@/hooks/useOsType";
 
@@ -132,85 +133,51 @@ export const HistorySettings: React.FC = () => {
     }
   };
 
+  const headerActions = (
+    <OpenRecordingsButton
+      onClick={openRecordingsFolder}
+      label={t("settings.history.openFolder")}
+    />
+  );
+
   if (loading) {
     return (
-      <div className="max-w-3xl w-full mx-auto space-y-6">
-        <div className="space-y-2">
-          <div className="px-4 flex items-center justify-between">
-            <div>
-              <h2 className="text-xs font-medium text-mid-gray uppercase tracking-wide">
-                {t("settings.history.title")}
-              </h2>
-            </div>
-            <OpenRecordingsButton
-              onClick={openRecordingsFolder}
-              label={t("settings.history.openFolder")}
-            />
+      <div className="w-full">
+        <SettingsGroup title={t("settings.history.title")} actions={headerActions}>
+          <div className="px-4 py-5 text-center text-ss-text-tertiary">
+            {t("settings.history.loading")}
           </div>
-          <div className="bg-background border border-mid-gray/20 rounded-lg overflow-visible">
-            <div className="px-4 py-3 text-center text-text/60">
-              {t("settings.history.loading")}
-            </div>
-          </div>
-        </div>
+        </SettingsGroup>
       </div>
     );
   }
 
   if (historyEntries.length === 0) {
     return (
-      <div className="max-w-3xl w-full mx-auto space-y-6">
-        <div className="space-y-2">
-          <div className="px-4 flex items-center justify-between">
-            <div>
-              <h2 className="text-xs font-medium text-mid-gray uppercase tracking-wide">
-                {t("settings.history.title")}
-              </h2>
-            </div>
-            <OpenRecordingsButton
-              onClick={openRecordingsFolder}
-              label={t("settings.history.openFolder")}
-            />
+      <div className="w-full">
+        <SettingsGroup title={t("settings.history.title")} actions={headerActions}>
+          <div className="rounded-[var(--ss-radius-md)] bg-ss-bg-surface-alt px-4 py-8 text-center text-sm text-ss-text-tertiary">
+            {t("settings.history.empty")}
           </div>
-          <div className="bg-background border border-mid-gray/20 rounded-lg overflow-visible">
-            <div className="px-4 py-3 text-center text-text/60">
-              {t("settings.history.empty")}
-            </div>
-          </div>
-        </div>
+        </SettingsGroup>
       </div>
     );
   }
 
   return (
-    <div className="max-w-3xl w-full mx-auto space-y-6">
-      <div className="space-y-2">
-        <div className="px-4 flex items-center justify-between">
-          <div>
-            <h2 className="text-xs font-medium text-mid-gray uppercase tracking-wide">
-              {t("settings.history.title")}
-            </h2>
-          </div>
-          <OpenRecordingsButton
-            onClick={openRecordingsFolder}
-            label={t("settings.history.openFolder")}
+    <div className="w-full">
+      <SettingsGroup title={t("settings.history.title")} actions={headerActions}>
+        {historyEntries.map((entry) => (
+          <HistoryEntryComponent
+            key={entry.id}
+            entry={entry}
+            onToggleSaved={() => toggleSaved(entry.id)}
+            onCopyText={() => copyToClipboard(entry.transcription_text)}
+            getAudioUrl={getAudioUrl}
+            deleteAudio={deleteAudioEntry}
           />
-        </div>
-        <div className="bg-background border border-mid-gray/20 rounded-lg overflow-visible">
-          <div className="divide-y divide-mid-gray/20">
-            {historyEntries.map((entry) => (
-              <HistoryEntryComponent
-                key={entry.id}
-                entry={entry}
-                onToggleSaved={() => toggleSaved(entry.id)}
-                onCopyText={() => copyToClipboard(entry.transcription_text)}
-                getAudioUrl={getAudioUrl}
-                deleteAudio={deleteAudioEntry}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
+        ))}
+      </SettingsGroup>
     </div>
   );
 };
@@ -256,13 +223,15 @@ const HistoryEntryComponent: React.FC<HistoryEntryProps> = ({
   const formattedDate = formatDateTime(String(entry.timestamp), i18n.language);
 
   return (
-    <div className="px-4 py-2 pb-5 flex flex-col gap-3">
+    <div className="flex flex-col gap-3 px-4 py-4">
       <div className="flex justify-between items-center">
-        <p className="text-sm font-medium">{formattedDate}</p>
+        <p className="text-sm font-semibold text-ss-text-primary">
+          {formattedDate}
+        </p>
         <div className="flex items-center gap-1">
           <button
             onClick={handleCopyText}
-            className="text-text/50 hover:text-logo-primary  hover:border-logo-primary transition-colors cursor-pointer"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-ss-text-tertiary transition-colors cursor-pointer hover:bg-ss-brand-secondary/10 hover:text-ss-brand-secondary"
             title={t("settings.history.copyToClipboard")}
           >
             {showCopied ? (
@@ -273,10 +242,10 @@ const HistoryEntryComponent: React.FC<HistoryEntryProps> = ({
           </button>
           <button
             onClick={onToggleSaved}
-            className={`p-2 rounded-md transition-colors cursor-pointer ${
+            className={`inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors cursor-pointer ${
               entry.saved
-                ? "text-logo-primary hover:text-logo-primary/80"
-                : "text-text/50 hover:text-logo-primary"
+                ? "bg-ss-brand-secondary/10 text-ss-brand-secondary hover:text-ss-brand-secondary"
+                : "text-ss-text-tertiary hover:bg-ss-brand-secondary/10 hover:text-ss-brand-secondary"
             }`}
             title={
               entry.saved
@@ -292,14 +261,14 @@ const HistoryEntryComponent: React.FC<HistoryEntryProps> = ({
           </button>
           <button
             onClick={handleDeleteEntry}
-            className="text-text/50 hover:text-logo-primary transition-colors cursor-pointer"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-ss-text-tertiary transition-colors cursor-pointer hover:bg-ss-state-danger/10 hover:text-ss-state-danger"
             title={t("settings.history.delete")}
           >
             <Trash2 width={16} height={16} />
           </button>
         </div>
       </div>
-      <p className="italic text-text/90 text-sm pb-2 select-text cursor-text">
+      <p className="pb-2 text-sm leading-relaxed text-ss-text-secondary select-text cursor-text">
         {entry.transcription_text}
       </p>
       <AudioPlayer onLoadRequest={handleLoadAudio} className="w-full" />

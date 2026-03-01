@@ -216,7 +216,7 @@ export const NativeKeysShortcutInput: React.FC<NativeKeysShortcutInputProps> = (
         descriptionMode={descriptionMode}
         grouped={grouped}
       >
-        <div className="text-sm text-mid-gray">
+        <div className="text-sm text-ss-text-tertiary">
           {t("settings.general.shortcut.loading")}
         </div>
       </SettingContainer>
@@ -232,7 +232,7 @@ export const NativeKeysShortcutInput: React.FC<NativeKeysShortcutInputProps> = (
         descriptionMode={descriptionMode}
         grouped={grouped}
       >
-        <div className="text-sm text-mid-gray">
+        <div className="text-sm text-ss-text-tertiary">
           {t("settings.general.shortcut.none")}
         </div>
       </SettingContainer>
@@ -248,7 +248,7 @@ export const NativeKeysShortcutInput: React.FC<NativeKeysShortcutInputProps> = (
         descriptionMode={descriptionMode}
         grouped={grouped}
       >
-        <div className="text-sm text-mid-gray">
+        <div className="text-sm text-ss-text-tertiary">
           {t("settings.general.shortcut.none")}
         </div>
       </SettingContainer>
@@ -274,17 +274,17 @@ export const NativeKeysShortcutInput: React.FC<NativeKeysShortcutInputProps> = (
       disabled={disabled}
       layout="horizontal"
     >
-      <div className="flex items-center space-x-1">
+      <div className="flex items-center gap-2">
         {isRecording ? (
           <div
             ref={shortcutRef}
-            className="px-2 py-1 text-sm font-semibold border border-logo-primary bg-logo-primary/30 rounded-md"
+            className="rounded-[var(--ss-radius-md)] border border-ss-brand-secondary/30 bg-ss-brand-secondary/12 px-3 py-2 text-sm font-semibold text-ss-brand-secondary"
           >
             {formatCurrentKeys()}
           </div>
         ) : (
           <div
-            className="px-2 py-1 text-sm font-semibold bg-mid-gray/10 border border-mid-gray/80 hover:bg-logo-primary/10 rounded-md cursor-pointer hover:border-logo-primary"
+            className="cursor-pointer rounded-[var(--ss-radius-md)] border border-ss-border-default bg-ss-bg-elevated px-3 py-2 text-sm font-semibold text-ss-text-primary shadow-[var(--ss-shadow-card)] transition-[transform,background-color,border-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:border-ss-brand-secondary/25 hover:bg-ss-bg-surface hover:shadow-[var(--ss-shadow-lift)]"
             onClick={startRecording}
           >
             {formatKeyCombination(binding.current_binding, osType)}

@@ -472,24 +472,6 @@
       "appDataDirectory": {
         "title": "Cartella Dati App",
         "description": "Cartella in cui SilkScribe salva i dati"
-      },
-      "sourceCode": {
-        "title": "Codice Sorgente",
-        "description": "Vedi e contribuisci al codice sorgente",
-        "button": "Vedi su GitHub"
-      },
-      "supportDevelopment": {
-        "title": "Supporta lo Sviluppo",
-        "description": "Aiutaci a sviluppare SilkScribe",
-        "button": "Dona"
-      },
-      "acknowledgments": {
-        "title": "Ringraziamenti",
-        "whisper": {
-          "title": "Whisper.cpp",
-          "description": "Inferenza ad alte prestazioni del modello di riconoscimento vocale automatico Whisper di OpenAI",
-          "details": "SilkScribe usa Whisper.cpp per il riconoscimento vocale veloce in locale. Grazie a Georgi Gerganov e collaboratori per il fantastico lavoro."
-        }
       }
     }
   },

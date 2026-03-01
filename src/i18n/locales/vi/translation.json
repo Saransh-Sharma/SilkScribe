@@ -472,24 +472,6 @@
       "appDataDirectory": {
         "title": "Thư mục dữ liệu ứng dụng",
         "description": "Vị trí SilkScribe lưu trữ dữ liệu"
-      },
-      "sourceCode": {
-        "title": "Mã nguồn",
-        "description": "Xem mã nguồn và đóng góp",
-        "button": "Xem trên GitHub"
-      },
-      "supportDevelopment": {
-        "title": "Hỗ trợ phát triển",
-        "description": "Giúp chúng tôi tiếp tục xây dựng SilkScribe",
-        "button": "Quyên góp"
-      },
-      "acknowledgments": {
-        "title": "Lời cảm ơn",
-        "whisper": {
-          "title": "Whisper.cpp",
-          "description": "Suy luận hiệu suất cao của mô hình nhận dạng giọng nói tự động Whisper của OpenAI",
-          "details": "SilkScribe sử dụng Whisper.cpp để xử lý chuyển đổi giọng nói thành văn bản nhanh, cục bộ. Cảm ơn công việc tuyệt vời của Georgi Gerganov và các cộng tác viên."
-        }
       }
     }
   },

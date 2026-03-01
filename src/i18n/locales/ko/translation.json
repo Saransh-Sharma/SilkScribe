@@ -472,24 +472,6 @@
       "appDataDirectory": {
         "title": "앱 데이터 디렉토리",
         "description": "SilkScribe가 데이터를 저장하는 위치"
-      },
-      "sourceCode": {
-        "title": "소스 코드",
-        "description": "소스 코드 보기 및 기여",
-        "button": "GitHub에서 보기"
-      },
-      "supportDevelopment": {
-        "title": "개발 지원",
-        "description": "SilkScribe 개발을 계속할 수 있도록 도와주세요",
-        "button": "후원하기"
-      },
-      "acknowledgments": {
-        "title": "감사의 말",
-        "whisper": {
-          "title": "Whisper.cpp",
-          "description": "OpenAI의 Whisper 자동 음성 인식 모델의 고성능 추론",
-          "details": "SilkScribe는 빠르고 로컬 음성-텍스트 처리를 위해 Whisper.cpp를 사용합니다. Georgi Gerganov와 기여자들의 놀라운 작업에 감사드립니다."
-        }
       }
     }
   },

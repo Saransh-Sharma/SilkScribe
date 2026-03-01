@@ -89,7 +89,7 @@ export const CustomWords: React.FC<CustomWordsProps> = React.memo(
         </SettingContainer>
         {customWords.length > 0 && (
           <div
-            className={`px-4 p-2 ${grouped ? "" : "rounded-lg border border-mid-gray/20"} flex flex-wrap gap-1`}
+            className={`flex flex-wrap gap-1.5 px-4 pb-2 ${grouped ? "" : "rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface px-3 py-3 shadow-[var(--ss-shadow-card)]"}`}
           >
             {customWords.map((word) => (
               <Button

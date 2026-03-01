@@ -315,7 +315,7 @@ const PostProcessingSettingsPromptsComponent: React.FC = () => {
                 )}
               />
               <p
-                className="text-xs text-mid-gray/70"
+                className="text-xs text-ss-text-tertiary"
                 dangerouslySetInnerHTML={{
                   __html: t("settings.postProcessing.prompts.promptTip"),
                 }}
@@ -344,8 +344,8 @@ const PostProcessingSettingsPromptsComponent: React.FC = () => {
         )}
 
         {!isCreating && !selectedPrompt && (
-          <div className="p-3 bg-mid-gray/5 rounded-md border border-mid-gray/20">
-            <p className="text-sm text-mid-gray">
+          <div className="rounded-[var(--ss-radius-md)] border border-ss-border-subtle bg-ss-bg-surface-alt p-3">
+            <p className="text-sm text-ss-text-tertiary">
               {hasPrompts
                 ? t("settings.postProcessing.prompts.selectToEdit")
                 : t("settings.postProcessing.prompts.createFirst")}
@@ -356,7 +356,7 @@ const PostProcessingSettingsPromptsComponent: React.FC = () => {
         {isCreating && (
           <div className="space-y-3">
             <div className="space-y-2 block flex flex-col">
-              <label className="text-sm font-semibold text-text">
+              <label className="text-sm font-semibold text-ss-text-primary">
                 {t("settings.postProcessing.prompts.promptLabel")}
               </label>
               <Input
@@ -382,7 +382,7 @@ const PostProcessingSettingsPromptsComponent: React.FC = () => {
                 )}
               />
               <p
-                className="text-xs text-mid-gray/70"
+                className="text-xs text-ss-text-tertiary"
                 dangerouslySetInnerHTML={{
                   __html: t("settings.postProcessing.prompts.promptTip"),
                 }}
@@ -427,7 +427,7 @@ export const PostProcessingSettings: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="max-w-3xl w-full mx-auto space-y-6">
+    <div className="w-full space-y-6">
       <SettingsGroup title={t("settings.postProcessing.hotkey.title")}>
         <ShortcutInput
           shortcutId="transcribe_with_post_process"
