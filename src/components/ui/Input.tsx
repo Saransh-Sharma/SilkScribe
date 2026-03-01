@@ -11,15 +11,15 @@ export const Input: React.FC<InputProps> = ({
   ...props
 }) => {
   const baseClasses =
-    "px-2 py-1 text-sm font-semibold bg-mid-gray/10 border border-mid-gray/80 rounded-md text-start transition-all duration-150";
+    "w-full border text-sm font-medium text-ss-text-primary bg-ss-bg-elevated border-ss-border-default rounded-[var(--ss-radius-md)] text-start transition-[background-color,border-color,box-shadow] duration-150 placeholder:text-ss-text-tertiary";
 
   const interactiveClasses = disabled
-    ? "opacity-60 cursor-not-allowed bg-mid-gray/10 border-mid-gray/40"
-    : "hover:bg-logo-primary/10 hover:border-logo-primary focus:outline-none focus:bg-logo-primary/20 focus:border-logo-primary";
+    ? "opacity-60 cursor-not-allowed bg-ss-bg-surface-alt border-ss-border-subtle"
+    : "hover:border-ss-brand-secondary/35 focus:outline-none focus:border-ss-brand-secondary focus:ring-2 focus:ring-ss-action-focus/30";
 
   const variantClasses = {
-    default: "px-3 py-2",
-    compact: "px-2 py-1",
+    default: "min-h-11 px-3.5 py-2.5",
+    compact: "min-h-9 px-3 py-2",
   } as const;
 
   return (

@@ -19,27 +19,27 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseClasses =
-    "font-medium rounded-lg border focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer";
+    "inline-flex items-center justify-center gap-2 border font-semibold tracking-[0.01em] cursor-pointer select-none transition-[transform,background-color,border-color,color,box-shadow,opacity] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/45 focus-visible:ring-offset-2 focus-visible:ring-offset-ss-bg-canvas disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none active:scale-[0.985]";
 
   const variantClasses = {
     primary:
-      "text-white bg-background-ui border-background-ui hover:bg-background-ui/80 hover:border-background-ui/80 focus:ring-1 focus:ring-background-ui",
+      "text-ss-brand-primary-ink bg-ss-action-primary border-ss-action-primary shadow-[var(--ss-shadow-card)] hover:bg-ss-action-primary-hover hover:border-ss-action-primary-hover hover:-translate-y-0.5 hover:shadow-[var(--ss-shadow-lift)] active:bg-ss-action-primary-pressed active:border-ss-action-primary-pressed",
     "primary-soft":
-      "text-text bg-logo-primary/20 border-transparent hover:bg-logo-primary/30 focus:ring-1 focus:ring-logo-primary",
+      "text-ss-brand-secondary bg-ss-brand-secondary/12 border-ss-brand-secondary/20 hover:bg-ss-brand-secondary/18 hover:border-ss-brand-secondary/30",
     secondary:
-      "bg-mid-gray/10 border-mid-gray/20 hover:bg-background-ui/30 hover:border-logo-primary focus:outline-none",
+      "text-ss-text-primary bg-ss-bg-surface-alt border-ss-border-default hover:bg-ss-bg-elevated hover:border-ss-brand-secondary/40 hover:-translate-y-0.5",
     danger:
-      "text-white bg-red-600 border-mid-gray/20 hover:bg-red-700 hover:border-red-700 focus:ring-1 focus:ring-red-500",
+      "text-white bg-ss-action-danger border-ss-action-danger shadow-[var(--ss-shadow-card)] hover:bg-ss-action-danger-hover hover:border-ss-action-danger-hover hover:-translate-y-0.5 hover:shadow-[var(--ss-shadow-lift)]",
     "danger-ghost":
-      "text-red-400 border-transparent hover:text-red-300 hover:bg-red-500/10 focus:bg-red-500/20",
+      "text-ss-state-danger border-transparent hover:text-ss-state-danger hover:bg-ss-state-danger/10",
     ghost:
-      "text-current border-transparent hover:bg-mid-gray/10 hover:border-logo-primary focus:bg-mid-gray/20",
+      "text-current border-transparent hover:bg-ss-bg-surface-alt hover:border-ss-brand-secondary/25",
   };
 
   const sizeClasses = {
-    sm: "px-2 py-1 text-xs",
-    md: "px-4 py-[5px] text-sm",
-    lg: "px-4 py-2 text-base",
+    sm: "min-h-9 px-3 text-xs rounded-[var(--ss-radius-sm)]",
+    md: "min-h-10 px-4 text-sm rounded-[var(--ss-radius-md)]",
+    lg: "min-h-11 px-5 text-base rounded-[var(--ss-radius-md)]",
   };
 
   return (

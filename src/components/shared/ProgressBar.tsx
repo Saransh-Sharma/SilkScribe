@@ -41,13 +41,16 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
 
     return (
       <div className={`flex items-center gap-3 ${className}`}>
-        <progress
-          value={percentage}
-          max={100}
-          className={`${progressClasses} [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-mid-gray/20 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-logo-primary`}
-        />
+        <div
+          className={`${progressClasses} overflow-hidden rounded-full bg-ss-bg-elevated`}
+        >
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-ss-brand-highlight to-ss-brand-secondary transition-[width] duration-200 ease-out"
+            style={{ width: `${percentage}%` }}
+          />
+        </div>
         {(showSpeed || showLabel) && (
-          <div className="text-xs text-text/60 tabular-nums min-w-fit">
+          <div className="min-w-fit text-xs tabular-nums text-ss-text-tertiary">
             {showLabel && item.label && (
               <span className="me-2">{item.label}</span>
             )}
@@ -70,17 +73,20 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
         {progress.map((item) => {
           const percentage = Math.max(0, Math.min(100, item.percentage));
           return (
-            <progress
+            <div
               key={item.id}
-              value={percentage}
-              max={100}
               title={item.label || `${percentage}%`}
-              className="w-3 h-1.5 [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-mid-gray/20 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-logo-primary"
-            />
+              className="h-1.5 w-8 overflow-hidden rounded-full bg-ss-bg-elevated"
+            >
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-ss-brand-highlight to-ss-brand-secondary transition-[width] duration-200 ease-out"
+                style={{ width: `${percentage}%` }}
+              />
+            </div>
           );
         })}
       </div>
-      <div className="text-xs text-text/60 min-w-fit">
+      <div className="min-w-fit text-xs text-ss-text-tertiary">
         {progress.length} downloading...
       </div>
     </div>

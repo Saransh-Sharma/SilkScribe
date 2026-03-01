@@ -34,7 +34,7 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       tooltipPosition={tooltipPosition}
     >
       <label
-        className={`inline-flex items-center ${disabled || isUpdating ? "cursor-not-allowed" : "cursor-pointer"}`}
+        className={`inline-flex min-h-11 items-center ${disabled || isUpdating ? "cursor-not-allowed" : "cursor-pointer"}`}
       >
         <input
           type="checkbox"
@@ -44,11 +44,11 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
           disabled={disabled || isUpdating}
           onChange={(e) => onChange(e.target.checked)}
         />
-        <div className="relative w-11 h-6 bg-mid-gray/20 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-logo-primary rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-background-ui peer-disabled:opacity-50"></div>
+        <div className="peer relative h-7 w-[52px] rounded-full border border-ss-border-default bg-ss-bg-elevated transition-colors duration-150 after:absolute after:start-[3px] after:top-[3px] after:h-5 after:w-5 after:rounded-full after:bg-ss-bg-surface after:shadow-[0_3px_10px_rgba(0,0,0,0.18)] after:transition-transform after:duration-200 peer-checked:border-ss-action-primary peer-checked:bg-ss-action-primary peer-checked:after:translate-x-6 peer-checked:after:bg-ss-brand-primary-ink rtl:peer-checked:after:-translate-x-6 peer-focus-visible:ring-4 peer-focus-visible:ring-ss-action-focus/30 peer-disabled:opacity-50" />
       </label>
       {isUpdating && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-4 h-4 border-2 border-logo-primary border-t-transparent rounded-full animate-spin"></div>
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-ss-brand-secondary border-t-transparent" />
         </div>
       )}
     </SettingContainer>

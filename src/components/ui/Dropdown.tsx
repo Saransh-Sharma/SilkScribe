@@ -62,10 +62,10 @@ export const Dropdown: React.FC<DropdownProps> = ({
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         type="button"
-        className={`px-2 py-1 text-sm font-semibold bg-mid-gray/10 border border-mid-gray/80 rounded-md min-w-[200px] text-start flex items-center justify-between transition-all duration-150 ${
+        className={`flex min-h-11 min-w-[220px] items-center justify-between gap-2 rounded-[var(--ss-radius-md)] border px-3.5 py-2 text-start text-sm font-medium transition-[background-color,border-color,box-shadow,transform] duration-150 ${
           disabled
-            ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-logo-primary/10 cursor-pointer hover:border-logo-primary"
+            ? "cursor-not-allowed border-ss-border-subtle bg-ss-bg-surface-alt text-ss-text-disabled opacity-70"
+            : "cursor-pointer border-ss-border-default bg-ss-bg-elevated text-ss-text-primary hover:-translate-y-0.5 hover:border-ss-brand-secondary/35 hover:bg-ss-bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35"
         }`}
         onClick={handleToggle}
         disabled={disabled}
@@ -86,9 +86,9 @@ export const Dropdown: React.FC<DropdownProps> = ({
         </svg>
       </button>
       {isOpen && !disabled && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-background border border-mid-gray/80 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 z-50 mt-2 max-h-72 overflow-y-auto rounded-[var(--ss-radius-md)] border border-ss-border-default bg-ss-bg-surface p-1 shadow-[var(--ss-shadow-lift)]">
           {options.length === 0 ? (
-            <div className="px-2 py-1 text-sm text-mid-gray">
+            <div className="px-3 py-2 text-sm text-ss-text-tertiary">
               {t("common.noOptionsFound")}
             </div>
           ) : (
@@ -96,11 +96,11 @@ export const Dropdown: React.FC<DropdownProps> = ({
               <button
                 key={option.value}
                 type="button"
-                className={`w-full px-2 py-1 text-sm text-start hover:bg-logo-primary/10 transition-colors duration-150 ${
+                className={`w-full rounded-[10px] px-3 py-2 text-start text-sm transition-colors duration-150 ${
                   selectedValue === option.value
-                    ? "bg-logo-primary/20 font-semibold"
-                    : ""
-                } ${option.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                    ? "bg-ss-brand-secondary/14 font-semibold text-ss-brand-secondary"
+                    : "text-ss-text-secondary hover:bg-ss-bg-surface-alt hover:text-ss-text-primary"
+                } ${option.disabled ? "cursor-not-allowed opacity-50" : ""}`}
                 onClick={() => handleSelect(option.value)}
                 disabled={option.disabled}
               >
