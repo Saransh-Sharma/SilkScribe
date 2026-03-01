@@ -30,6 +30,8 @@ export const Slider: React.FC<SliderProps> = ({
   showValue = true,
   formatValue = (v) => v.toFixed(2),
 }) => {
+  const progressPercent = max > min ? ((value - min) / (max - min)) * 100 : 0;
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(parseFloat(e.target.value));
   };
@@ -44,7 +46,7 @@ export const Slider: React.FC<SliderProps> = ({
       disabled={disabled}
     >
       <div className="w-full">
-        <div className="flex items-center space-x-1 h-6">
+        <div className="flex h-6 items-center gap-2">
           <input
             type="range"
             min={min}
@@ -53,17 +55,13 @@ export const Slider: React.FC<SliderProps> = ({
             value={value}
             onChange={handleChange}
             disabled={disabled}
-            className="flex-grow h-2 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-logo-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-2 flex-grow cursor-pointer appearance-none rounded-lg focus:outline-none focus:ring-2 focus:ring-ss-action-focus/35 disabled:cursor-not-allowed disabled:opacity-50"
             style={{
-              background: `linear-gradient(to right, var(--color-background-ui) ${
-                ((value - min) / (max - min)) * 100
-              }%, rgba(128, 128, 128, 0.2) ${
-                ((value - min) / (max - min)) * 100
-              }%)`,
+              background: `linear-gradient(to right, var(--ss-action-primary) ${progressPercent}%, color-mix(in srgb, var(--ss-bg-elevated) 94%, transparent) ${progressPercent}%)`,
             }}
           />
           {showValue && (
-            <span className="text-sm font-medium text-text/90 min-w-10 text-end">
+            <span className="min-w-10 text-end text-sm font-medium text-ss-text-secondary">
               {formatValue(value)}
             </span>
           )}

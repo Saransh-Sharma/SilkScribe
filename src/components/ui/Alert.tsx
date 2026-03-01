@@ -16,24 +16,24 @@ const variantStyles: Record<
   { container: string; icon: string; text: string }
 > = {
   error: {
-    container: "bg-red-500/10",
-    icon: "text-red-500",
-    text: "text-red-400",
+    container: "border-ss-state-danger/25 bg-ss-state-danger/10",
+    icon: "text-ss-state-danger",
+    text: "text-ss-text-secondary",
   },
   warning: {
-    container: "bg-yellow-500/10",
-    icon: "text-yellow-500",
-    text: "text-yellow-400",
+    container: "border-ss-brand-highlight/25 bg-ss-brand-highlight/10",
+    icon: "text-ss-brand-highlight",
+    text: "text-ss-text-secondary",
   },
   info: {
-    container: "bg-blue-500/10",
-    icon: "text-blue-500",
-    text: "text-blue-400",
+    container: "border-ss-state-info/25 bg-ss-state-info/10",
+    icon: "text-ss-state-info",
+    text: "text-ss-text-secondary",
   },
   success: {
-    container: "bg-green-500/10",
-    icon: "text-green-500",
-    text: "text-green-400",
+    container: "border-ss-state-success/25 bg-ss-state-success/10",
+    icon: "text-ss-state-success",
+    text: "text-ss-text-secondary",
   },
 };
 
@@ -55,10 +55,10 @@ export const Alert: React.FC<AlertProps> = ({
 
   return (
     <div
-      className={`flex items-start gap-3 p-4 ${styles.container} ${contained ? "" : "rounded-lg"} ${className}`}
+      className={`flex items-start gap-3 border p-4 ${styles.container} ${contained ? "rounded-[var(--ss-radius-md)]" : "rounded-[var(--ss-radius-lg)]"} ${className}`}
     >
       <Icon className={`w-5 h-5 shrink-0 mt-0.5 ${styles.icon}`} />
-      <p className={`text-sm ${styles.text}`}>{children}</p>
+      <p className={`text-sm leading-relaxed ${styles.text}`}>{children}</p>
     </div>
   );
 };

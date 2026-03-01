@@ -226,6 +226,8 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   };
 
   const progressPercent = getProgressPercent();
+  const progressTrack = "color-mix(in srgb, var(--ss-bg-elevated) 94%, transparent)";
+  const progressFill = "var(--ss-brand-secondary)";
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
@@ -234,7 +236,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       <button
         onClick={togglePlay}
         disabled={isLoading}
-        className="transition-colors cursor-pointer text-text hover:text-logo-primary disabled:opacity-50"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-transparent text-ss-text-secondary transition-[background-color,border-color,color,transform] duration-150 hover:-translate-y-0.5 hover:border-ss-brand-secondary/25 hover:bg-ss-brand-secondary/10 hover:text-ss-brand-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/40 disabled:cursor-not-allowed disabled:opacity-50"
         aria-label={isPlaying ? "Pause" : "Play"}
       >
         {isPlaying ? (
@@ -245,7 +247,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       </button>
 
       <div className="flex-1 flex items-center gap-2">
-        <span className="text-xs text-text/60 min-w-[30px] tabular-nums">
+        <span className="min-w-[34px] text-xs tabular-nums text-ss-text-tertiary">
           {formatTime(currentTime)}
         </span>
 
@@ -258,13 +260,13 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
           onChange={handleSeek}
           onMouseDown={handleSliderMouseDown}
           onTouchStart={handleSliderTouchStart}
-          className={`flex-1 h-1 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-logo-primary ${progressPercent >= 99.5 ? "[&::-webkit-slider-thumb]:translate-x-0.5 [&::-moz-range-thumb]:translate-x-0.5" : ""}`}
+          className={`h-1 flex-1 cursor-pointer appearance-none rounded-lg focus:outline-none focus:ring-2 focus:ring-ss-action-focus/35 ${progressPercent >= 99.5 ? "[&::-webkit-slider-thumb]:translate-x-0.5 [&::-moz-range-thumb]:translate-x-0.5" : ""}`}
           style={{
-            background: `linear-gradient(to right, #FAA2CA 0%, #FAA2CA ${progressPercent}%, rgba(128, 128, 128, 0.2) ${progressPercent}%, rgba(128, 128, 128, 0.2) 100%)`,
+            background: `linear-gradient(to right, ${progressFill} 0%, ${progressFill} ${progressPercent}%, ${progressTrack} ${progressPercent}%, ${progressTrack} 100%)`,
           }}
         />
 
-        <span className="text-xs text-text/60 min-w-[30px] tabular-nums">
+        <span className="min-w-[34px] text-xs tabular-nums text-ss-text-tertiary">
           {formatTime(duration)}
         </span>
       </div>

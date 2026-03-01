@@ -472,24 +472,6 @@
       "appDataDirectory": {
         "title": "App Data Directory",
         "description": "Location where SilkScribe stores its data"
-      },
-      "sourceCode": {
-        "title": "Source Code",
-        "description": "View source code and contribute",
-        "button": "View on GitHub"
-      },
-      "supportDevelopment": {
-        "title": "Support Development",
-        "description": "Help us continue building SilkScribe",
-        "button": "Donate"
-      },
-      "acknowledgments": {
-        "title": "Acknowledgments",
-        "whisper": {
-          "title": "Whisper.cpp",
-          "description": "High-performance inference of OpenAI's Whisper automatic speech recognition model",
-          "details": "SilkScribe uses Whisper.cpp for fast, local speech-to-text processing. Thanks to the amazing work by Georgi Gerganov and contributors."
-        }
       }
     }
   },
@@ -509,6 +491,7 @@
   },
   "common": {
     "loading": "Loading...",
+    "versionLabel": "v{{version}}",
     "save": "Save",
     "cancel": "Cancel",
     "reset": "Reset",
@@ -543,7 +526,17 @@
     "description": "Change the language of the SilkScribe interface"
   },
   "overlay": {
+    "listening": "Listening",
+    "listeningDetail": "Speak naturally and SilkScribe will capture the audio.",
     "transcribing": "Transcribing...",
-    "processing": "Processing..."
+    "transcribingDetail": "Converting your audio into text.",
+    "processing": "Processing...",
+    "processingDetail": "Applying the final output workflow.",
+    "success": "Typed",
+    "successDetail": "Your text was sent successfully.",
+    "successPill": "Typed",
+    "error": "Something went wrong",
+    "errorDetail": "Try again or cancel the current pass.",
+    "errorPill": "Retry"
   }
 }

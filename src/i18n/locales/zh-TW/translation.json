@@ -472,24 +472,6 @@
       "appDataDirectory": {
         "title": "應用程式資料目錄",
         "description": "SilkScribe 儲存資料的位置"
-      },
-      "sourceCode": {
-        "title": "原始碼",
-        "description": "檢視原始碼並參與貢獻",
-        "button": "在 GitHub 上檢視"
-      },
-      "supportDevelopment": {
-        "title": "支持開發",
-        "description": "幫助我們繼續開發 SilkScribe",
-        "button": "捐贈"
-      },
-      "acknowledgments": {
-        "title": "致謝",
-        "whisper": {
-          "title": "Whisper.cpp",
-          "description": "針對 OpenAI Whisper 自動語音識別模型的高效能推理引擎",
-          "details": "SilkScribe 使用 Whisper.cpp 進行快速的本機語音轉文字處理。感謝 Georgi Gerganov 和貢獻者們的傑出工作"
-        }
       }
     }
   },

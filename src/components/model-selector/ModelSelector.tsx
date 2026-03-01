@@ -231,8 +231,7 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({ onError }) => {
   };
 
   return (
-    <>
-      {/* Model Status and Switcher */}
+    <div className="flex min-w-0 items-center gap-3">
       <div className="relative" ref={dropdownRef}>
         <ModelStatusButton
           status={getDisplayStatus()}
@@ -250,13 +249,11 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({ onError }) => {
           />
         )}
       </div>
-
-      {/* Download Progress Bar for Models */}
       <DownloadProgressDisplay
         downloadProgress={downloadProgress}
         downloadStats={downloadStats}
       />
-    </>
+    </div>
   );
 };
 

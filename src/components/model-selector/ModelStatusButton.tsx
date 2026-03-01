@@ -27,34 +27,34 @@ const ModelStatusButton: React.FC<ModelStatusButtonProps> = ({
   const getStatusColor = (status: ModelStatus): string => {
     switch (status) {
       case "ready":
-        return "bg-green-400";
+        return "bg-ss-state-success";
       case "loading":
-        return "bg-yellow-400 animate-pulse";
+        return "bg-ss-brand-highlight animate-pulse";
       case "downloading":
-        return "bg-logo-primary animate-pulse";
+        return "bg-ss-brand-secondary animate-pulse";
       case "extracting":
-        return "bg-orange-400 animate-pulse";
+        return "bg-ss-state-info animate-pulse";
       case "error":
-        return "bg-red-400";
+        return "bg-ss-state-danger";
       case "unloaded":
-        return "bg-mid-gray/60";
+        return "bg-ss-text-tertiary/60";
       case "none":
-        return "bg-red-400";
+        return "bg-ss-state-danger";
       default:
-        return "bg-mid-gray/60";
+        return "bg-ss-text-tertiary/60";
     }
   };
 
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 hover:text-text/80 transition-colors ${className}`}
+      className={`flex min-h-10 items-center gap-2 rounded-[var(--ss-radius-pill)] border border-ss-border-subtle bg-ss-bg-surface-alt px-3 py-2 text-ss-text-secondary transition-[border-color,background-color,color] duration-150 hover:border-ss-brand-secondary/35 hover:text-ss-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35 ${className}`}
       title={`Model status: ${displayText}`}
     >
-      <div className={`w-2 h-2 rounded-full ${getStatusColor(status)}`} />
-      <span className="max-w-28 truncate">{displayText}</span>
+      <div className={`h-2.5 w-2.5 rounded-full ${getStatusColor(status)}`} />
+      <span className="max-w-32 truncate text-sm font-medium">{displayText}</span>
       <svg
-        className={`w-3 h-3 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
+        className={`h-3 w-3 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"

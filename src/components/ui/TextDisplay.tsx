@@ -55,7 +55,7 @@ export const TextDisplay: React.FC<TextDisplayProps> = ({
       <div className="flex items-center space-x-2">
         <div className="flex-1 min-w-0">
           <div
-            className={`px-2 min-h-8 flex items-center bg-mid-gray/10 border border-mid-gray/80 rounded-md text-xs ${textClasses} ${!value ? "opacity-60" : ""}`}
+            className={`flex min-h-9 items-center rounded-[var(--ss-radius-md)] border border-ss-border-default bg-ss-bg-elevated px-3 text-xs text-ss-text-secondary shadow-[var(--ss-shadow-card)] ${textClasses} ${!value ? "opacity-60" : ""}`}
           >
             {displayValue}
           </div>
@@ -63,7 +63,7 @@ export const TextDisplay: React.FC<TextDisplayProps> = ({
         {copyable && value && (
           <button
             onClick={handleCopy}
-            className="flex items-center justify-center px-2 py-1 w-12 min-h-8 text-xs font-semibold bg-mid-gray/10 hover:bg-logo-primary/10 border border-mid-gray/80 hover:border-logo-primary hover:text-logo-primary rounded-md transition-all duration-150 flex-shrink-0 cursor-pointer"
+            className="flex min-h-9 w-14 shrink-0 items-center justify-center rounded-[var(--ss-radius-md)] border border-ss-border-default bg-ss-bg-elevated px-2 py-1 text-xs font-semibold text-ss-text-secondary transition-[transform,background-color,border-color,color] duration-150 hover:-translate-y-0.5 hover:border-ss-brand-secondary/25 hover:bg-ss-brand-secondary/10 hover:text-ss-brand-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35"
             title="Copy to clipboard"
           >
             {showCopied ? (

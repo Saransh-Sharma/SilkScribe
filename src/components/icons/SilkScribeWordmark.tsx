@@ -28,7 +28,7 @@ const SilkScribeWordmark = ({
         className="shrink-0 object-contain"
       />
       <span
-        className="font-semibold tracking-wide text-text whitespace-nowrap"
+        className="whitespace-nowrap font-semibold tracking-wide text-ss-text-primary"
         style={{ fontSize: textSize, lineHeight: 1 }}
       >
         {APP_NAME}

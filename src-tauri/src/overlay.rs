@@ -30,8 +30,18 @@ tauri_panel! {
     })
 }
 
-const OVERLAY_WIDTH: f64 = 172.0;
-const OVERLAY_HEIGHT: f64 = 36.0;
+const OVERLAY_WIDTH: f64 = 300.0;
+const OVERLAY_HEIGHT: f64 = 84.0;
+
+#[derive(Clone, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct OverlayPayload {
+    state: String,
+    title: Option<String>,
+    detail: Option<String>,
+    preview_text: Option<String>,
+    can_cancel: bool,
+}
 
 #[cfg(target_os = "macos")]
 const OVERLAY_TOP_OFFSET: f64 = 46.0;
@@ -288,6 +298,16 @@ pub fn create_recording_overlay(app_handle: &AppHandle) {
     }
 }
 
+fn create_overlay_payload(state: &str) -> OverlayPayload {
+    OverlayPayload {
+        state: state.to_string(),
+        title: None,
+        detail: None,
+        preview_text: None,
+        can_cancel: state == "recording",
+    }
+}
+
 fn show_overlay_state(app_handle: &AppHandle, state: &str) {
     // Check if overlay should be shown based on position setting
     let settings = settings::get_settings(app_handle);
@@ -304,7 +324,8 @@ fn show_overlay_state(app_handle: &AppHandle, state: &str) {
         #[cfg(target_os = "windows")]
         force_overlay_topmost(&overlay_window);
 
-        let _ = overlay_window.emit("show-overlay", state);
+        let payload = create_overlay_payload(state);
+        let _ = overlay_window.emit("show-overlay", payload);
     }
 }
 
@@ -323,6 +344,16 @@ pub fn show_processing_overlay(app_handle: &AppHandle) {
     show_overlay_state(app_handle, "processing");
 }
 
+/// Shows the success overlay window
+pub fn show_success_overlay(app_handle: &AppHandle) {
+    show_overlay_state(app_handle, "success");
+}
+
+/// Shows the error overlay window
+pub fn show_error_overlay(app_handle: &AppHandle) {
+    show_overlay_state(app_handle, "error");
+}
+
 /// Updates the overlay window position based on current settings
 pub fn update_overlay_position(app_handle: &AppHandle) {
     if let Some(overlay_window) = app_handle.get_webview_window("recording_overlay") {
@@ -338,20 +369,31 @@ pub fn update_overlay_position(app_handle: &AppHandle) {
     }
 }
 
+fn hide_overlay_window_after(
+    overlay_window: tauri::webview::WebviewWindow,
+    delay_ms: u64,
+) {
+    std::thread::spawn(move || {
+        std::thread::sleep(std::time::Duration::from_millis(delay_ms));
+        let _ = overlay_window.hide();
+    });
+}
+
 /// Hides the recording overlay window with fade-out animation
-pub fn hide_recording_overlay(app_handle: &AppHandle) {
+pub fn hide_recording_overlay_after(app_handle: &AppHandle, delay_ms: u64) {
     // Always hide the overlay regardless of settings - if setting was changed while recording,
     // we still want to hide it properly
     if let Some(overlay_window) = app_handle.get_webview_window("recording_overlay") {
         // Emit event to trigger fade-out animation
         let _ = overlay_window.emit("hide-overlay", ());
         // Hide the window after a short delay to allow animation to complete
-        let window_clone = overlay_window.clone();
-        std::thread::spawn(move || {
-            std::thread::sleep(std::time::Duration::from_millis(300));
-            let _ = window_clone.hide();
-        });
+        hide_overlay_window_after(overlay_window, delay_ms);
     }
+}
+
+/// Hides the recording overlay window with the default fade-out timing
+pub fn hide_recording_overlay(app_handle: &AppHandle) {
+    hide_recording_overlay_after(app_handle, 220);
 }
 
 pub fn emit_levels(app_handle: &AppHandle, levels: &Vec<f32>) {
