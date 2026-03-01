@@ -93,34 +93,45 @@ export const Sidebar: React.FC<SidebarProps> = ({
     .map(([id, config]) => ({ id: id as SidebarSection, ...config }));
 
   return (
-    <div className="flex flex-col w-40 h-full border-e border-mid-gray/20 items-center px-2">
-      <SilkScribeWordmark width={120} className="m-4" />
-      <div className="flex flex-col w-full items-center gap-1 pt-2 border-t border-mid-gray/20">
+    <aside className="flex h-full w-[240px] shrink-0 flex-col border-e border-ss-border-subtle bg-ss-bg-surface-alt/70 px-4 py-5">
+      <div className="flex items-center justify-center rounded-[20px] border border-ss-border-subtle bg-ss-bg-surface px-4 py-4 shadow-[var(--ss-shadow-card)]">
+        <SilkScribeWordmark width={138} className="shrink-0" />
+      </div>
+      <div className="mt-5 flex flex-1 flex-col gap-1.5">
         {availableSections.map((section) => {
           const Icon = section.icon;
           const isActive = activeSection === section.id;
 
           return (
-            <div
+            <button
+              type="button"
               key={section.id}
-              className={`flex gap-2 items-center p-2 w-full rounded-lg cursor-pointer transition-colors ${
+              className={`group flex min-h-11 w-full items-center gap-3 rounded-[var(--ss-radius-md)] border px-3 py-2 text-left transition-[background-color,border-color,color,transform] duration-200 ${
                 isActive
-                  ? "bg-logo-primary/80"
-                  : "hover:bg-mid-gray/20 hover:opacity-100 opacity-85"
+                  ? "border-ss-brand-secondary/50 bg-ss-brand-secondary/12 text-ss-text-primary shadow-[inset_0_0_0_1px_rgba(0,0,0,0.02)]"
+                  : "border-transparent text-ss-text-secondary hover:-translate-y-0.5 hover:border-ss-border-subtle hover:bg-ss-bg-surface"
               }`}
               onClick={() => onSectionChange(section.id)}
             >
-              <Icon width={24} height={24} className="shrink-0" />
-              <p
-                className="text-sm font-medium truncate"
+              <span
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                  isActive
+                    ? "bg-ss-brand-secondary/16 text-ss-brand-secondary"
+                    : "bg-ss-bg-elevated text-ss-text-tertiary group-hover:text-ss-brand-secondary"
+                }`}
+              >
+                <Icon width={18} height={18} className="shrink-0" />
+              </span>
+              <span
+                className="truncate text-sm font-semibold tracking-[0.01em]"
                 title={t(section.labelKey)}
               >
                 {t(section.labelKey)}
-              </p>
-            </div>
+              </span>
+            </button>
           );
         })}
       </div>
-    </div>
+    </aside>
   );
 };

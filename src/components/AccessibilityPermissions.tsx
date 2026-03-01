@@ -5,15 +5,10 @@ import {
   checkAccessibilityPermission,
   requestAccessibilityPermission,
 } from "tauri-plugin-macos-permissions-api";
+import { Button } from "./ui/Button";
 
 // Define permission state type
 type PermissionState = "request" | "verify" | "granted";
-
-// Define button configuration type
-interface ButtonConfig {
-  text: string;
-  className: string;
-}
 
 const AccessibilityPermissions: React.FC = () => {
   const { t } = useTranslation();
@@ -68,36 +63,43 @@ const AccessibilityPermissions: React.FC = () => {
   }
 
   // Configure button text and style based on state
-  const buttonConfig: Record<PermissionState, ButtonConfig | null> = {
+  const buttonConfig: Record<
+    PermissionState,
+    | {
+        text: string;
+        variant: "primary-soft" | "secondary";
+      }
+    | null
+  > = {
     request: {
       text: t("accessibility.openSettings"),
-      className:
-        "px-2 py-1 text-sm font-semibold bg-mid-gray/10 border  border-mid-gray/80 hover:bg-logo-primary/10 rounded cursor-pointer hover:border-logo-primary",
+      variant: "primary-soft",
     },
     verify: {
       text: t("accessibility.openSettings"),
-      className:
-        "bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-1 px-3 rounded-md text-sm flex items-center justify-center cursor-pointer",
+      variant: "secondary",
     },
     granted: null,
   };
 
-  const config = buttonConfig[permissionState] as ButtonConfig;
+  const config = buttonConfig[permissionState];
 
   return (
-    <div className="p-4 w-full rounded-lg border border-mid-gray">
-      <div className="flex justify-between items-center gap-2">
-        <div className="">
-          <p className="text-sm font-medium">
+    <div className="w-full rounded-[18px] border border-ss-border-subtle bg-ss-bg-surface px-4 py-4 shadow-[var(--ss-shadow-card)]">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="min-w-0">
+          <p className="text-sm font-medium leading-relaxed text-ss-text-primary">
             {t("accessibility.permissionsDescription")}
           </p>
         </div>
-        <button
+        <Button
           onClick={handleButtonClick}
-          className={`min-h-10 ${config.className}`}
+          variant={config?.variant}
+          size="sm"
+          className="min-w-[11rem] md:shrink-0"
         >
-          {config.text}
-        </button>
+          {config?.text}
+        </Button>
       </div>
     </div>
   );

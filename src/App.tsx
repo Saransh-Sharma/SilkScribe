@@ -51,9 +51,9 @@ function App() {
         unstyled: true,
         classNames: {
           toast:
-            "bg-background border border-mid-gray/20 rounded-lg shadow-lg px-4 py-3 flex items-center gap-3 text-sm",
-          title: "font-medium",
-          description: "text-mid-gray",
+            "flex items-center gap-3 rounded-[var(--ss-radius-lg)] border border-ss-border-default bg-ss-bg-surface px-4 py-3 text-sm text-ss-text-primary shadow-[var(--ss-shadow-lift)]",
+          title: "font-semibold text-ss-text-primary",
+          description: "text-ss-text-tertiary",
         },
       }}
     />
@@ -184,26 +184,29 @@ function App() {
       {toaster}
       <div
         dir={direction}
-        className="h-screen flex flex-col select-none cursor-default"
+        className="relative h-screen overflow-hidden select-none cursor-default bg-transparent text-ss-text-primary"
       >
-        {/* Main content area that takes remaining space */}
-        <div className="flex-1 flex overflow-hidden">
-          <Sidebar
-            activeSection={currentSection}
-            onSectionChange={setCurrentSection}
-          />
-          {/* Scrollable content area */}
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto">
-              <div className="flex flex-col items-center p-4 gap-4">
-                <AccessibilityPermissions />
-                {renderSettingsContent(currentSection)}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-ss-brand-highlight/8 via-ss-brand-secondary/4 to-transparent" />
+        <div className="pointer-events-none absolute -left-20 top-12 h-48 w-48 rounded-full bg-ss-brand-secondary/10 blur-3xl" />
+        <div className="pointer-events-none absolute right-0 top-0 h-56 w-56 rounded-full bg-ss-brand-highlight/12 blur-3xl" />
+
+        <div className="relative flex h-full flex-col px-4 py-4">
+          <div className="flex min-h-0 flex-1 overflow-hidden rounded-[24px] border border-ss-border-subtle bg-ss-bg-surface/90 shadow-[var(--ss-shadow-lift)] backdrop-blur-sm">
+            <Sidebar
+              activeSection={currentSection}
+              onSectionChange={setCurrentSection}
+            />
+            <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+              <div className="app-content-scroll flex-1 overflow-y-auto">
+                <div className="mx-auto flex w-full max-w-[860px] flex-col gap-5 px-5 py-5">
+                  <AccessibilityPermissions />
+                  {renderSettingsContent(currentSection)}
+                </div>
               </div>
             </div>
           </div>
+          <Footer />
         </div>
-        {/* Fixed footer at bottom */}
-        <Footer />
       </div>
     </>
   );
