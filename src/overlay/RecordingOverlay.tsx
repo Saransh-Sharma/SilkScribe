@@ -8,6 +8,7 @@ import {
   CancelIcon,
 } from "../components/icons";
 import "./RecordingOverlay.css";
+import GpuWaveformStage from "./GpuWaveformStage";
 import { commands } from "@/bindings";
 import i18n, { syncLanguageFromSettings } from "@/i18n";
 import { getLanguageDirection } from "@/lib/utils/rtl";
@@ -40,8 +41,10 @@ const RecordingOverlay: React.FC = () => {
     state: "recording",
     canCancel: true,
   });
-  const [levels, setLevels] = useState<number[]>(Array(12).fill(0));
-  const smoothedLevelsRef = useRef<number[]>(Array(12).fill(0));
+  const levelsRef = useRef<number[]>(Array(12).fill(0));
+  const waveformSinkRef = useRef<((levels: number[]) => void) | null>(null);
+  const isVisibleRef = useRef(false);
+  const overlayStateRef = useRef<OverlayState>("recording");
   const direction = getLanguageDirection(i18n.language);
 
   const getDefaultCopy = (state: OverlayState) => {
@@ -105,21 +108,30 @@ const RecordingOverlay: React.FC = () => {
       const listeners = await Promise.all([
         listen("show-overlay", async (event) => {
           await syncLanguageFromSettings();
-          setOverlay(resolvePayload(event.payload));
+          const nextOverlay = resolvePayload(event.payload);
+          overlayStateRef.current = nextOverlay.state;
+          isVisibleRef.current = true;
+          setOverlay(nextOverlay);
           setIsVisible(true);
         }),
         listen("hide-overlay", () => {
+          isVisibleRef.current = false;
           setIsVisible(false);
         }),
         listen<number[]>("mic-level", (event) => {
           const newLevels = event.payload as number[];
-          const smoothed = smoothedLevelsRef.current.map((prev, i) => {
-            const target = newLevels[i] || 0;
-            return prev * 0.55 + target * 0.45;
-          });
+          const nextLevels = levelsRef.current;
+          for (let index = 0; index < 12; index += 1) {
+            nextLevels[index] = newLevels[index] ?? 0;
+          }
 
-          smoothedLevelsRef.current = smoothed;
-          setLevels(smoothed);
+          if (
+            isVisibleRef.current &&
+            overlayStateRef.current === "recording" &&
+            waveformSinkRef.current
+          ) {
+            waveformSinkRef.current(nextLevels);
+          }
         }),
       ]);
 
@@ -143,14 +155,9 @@ const RecordingOverlay: React.FC = () => {
   const title = overlay.title || overlayCopy.title;
   const detail = overlay.previewText || overlay.detail || overlayCopy.detail;
   const isRecording = overlay.state === "recording";
+  const shouldRenderGpuWaveform = isVisible && isRecording;
   const isProgressState =
     overlay.state === "transcribing" || overlay.state === "processing";
-  const rawAverageLevel = levels.reduce((sum, value) => sum + value, 0) / levels.length;
-  const waveformBars = levels.map((value) => ({
-    scale: Math.max(0.18, Math.min(1, value)),
-    opacity: Math.max(0.4, Math.min(1, 0.45 + value * 0.75)),
-  }));
-  const isIdleWaveform = isRecording && rawAverageLevel < 0.06;
 
   const getIcon = () => {
     switch (overlay.state) {
@@ -199,22 +206,21 @@ const RecordingOverlay: React.FC = () => {
 
       <div className="overlay-footer">
         {isRecording ? (
-          <div
-            className={`bars-container ${isIdleWaveform ? "is-idle" : ""}`}
-            aria-hidden="true"
-          >
-            {waveformBars.map((bar, i) => (
-              <div
-                key={i}
-                className="bar"
-                style={{
-                  ["--bar-index" as string]: i,
-                  transform: `scaleY(${bar.scale})`,
-                  opacity: bar.opacity,
-                }}
-              />
-            ))}
-          </div>
+          shouldRenderGpuWaveform ? (
+            <GpuWaveformStage
+              initialLevels={levelsRef.current}
+              isActive={shouldRenderGpuWaveform}
+              onReady={(pushLevels) => {
+                waveformSinkRef.current = pushLevels;
+                pushLevels(levelsRef.current);
+              }}
+              onTeardown={() => {
+                waveformSinkRef.current = null;
+              }}
+            />
+          ) : (
+            <div className="gpu-waveform-host is-dormant" aria-hidden="true" />
+          )
         ) : (
           <div className="overlay-statusblock">
             {detail && <div className="overlay-inline-detail">{detail}</div>}
