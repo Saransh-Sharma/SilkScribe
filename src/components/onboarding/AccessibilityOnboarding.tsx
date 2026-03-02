@@ -233,8 +233,13 @@ const AccessibilityOnboarding: React.FC<AccessibilityOnboardingProps> = ({
     <div className="flex h-screen w-screen items-center justify-center px-6 py-10">
       <div className="w-full max-w-[560px] rounded-[28px] border border-ss-border-subtle bg-ss-bg-surface/95 px-6 py-7 shadow-[var(--ss-shadow-lift)] backdrop-blur-sm">
         <div className="flex flex-col items-center gap-3">
-          <div className="rounded-[22px] border border-ss-border-subtle bg-ss-bg-surface-alt px-5 py-4 shadow-[var(--ss-shadow-card)]">
-            <SilkScribeWordmark width={190} />
+          <div className="overflow-hidden rounded-[22px] border border-ss-border-subtle bg-ss-bg-surface-alt px-2.5 py-2 shadow-[var(--ss-shadow-card)]">
+            <SilkScribeWordmark
+              height={68}
+              fit="cover"
+              className="w-full"
+              imageClassName="scale-[1.14]"
+            />
           </div>
         </div>
 

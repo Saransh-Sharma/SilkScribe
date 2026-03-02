@@ -94,8 +94,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside className="flex h-full w-[240px] shrink-0 flex-col border-e border-ss-border-subtle bg-ss-bg-surface-alt/70 px-4 py-5">
-      <div className="flex items-center justify-center rounded-[20px] border border-ss-border-subtle bg-ss-bg-surface px-4 py-4 shadow-[var(--ss-shadow-card)]">
-        <SilkScribeWordmark width={138} className="shrink-0" />
+      <div className="flex items-center justify-center overflow-hidden rounded-[20px] border border-ss-border-subtle bg-ss-bg-surface px-2 py-2 shadow-[var(--ss-shadow-card)]">
+        <SilkScribeWordmark
+          height={46}
+          fit="cover"
+          className="w-full shrink-0"
+          imageClassName="scale-[1.12]"
+        />
       </div>
       <div className="mt-5 flex flex-1 flex-col gap-1.5">
         {availableSections.map((section) => {
