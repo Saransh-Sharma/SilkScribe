@@ -12,7 +12,33 @@ use tauri_plugin_clipboard_manager::ClipboardExt;
 #[cfg(target_os = "linux")]
 use crate::utils::{is_kde_wayland, is_wayland};
 
-/// Pastes text using the clipboard: saves current content, writes text, sends paste keystroke, restores clipboard.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum EffectivePasteStrategy {
+    None,
+    Direct,
+    ClipboardHotkey,
+    ExternalScript,
+}
+
+fn resolve_paste_strategy(
+    paste_method: PasteMethod,
+    clipboard_handling: ClipboardHandling,
+) -> EffectivePasteStrategy {
+    match paste_method {
+        PasteMethod::None => EffectivePasteStrategy::None,
+        PasteMethod::Direct => EffectivePasteStrategy::Direct,
+        PasteMethod::ExternalScript => EffectivePasteStrategy::ExternalScript,
+        PasteMethod::CtrlV | PasteMethod::CtrlShiftV | PasteMethod::ShiftInsert => {
+            if clipboard_handling == ClipboardHandling::DontModify {
+                EffectivePasteStrategy::Direct
+            } else {
+                EffectivePasteStrategy::ClipboardHotkey
+            }
+        }
+    }
+}
+
+/// Pastes text using the clipboard: writes text, waits for clipboard sync, then sends the paste keystroke.
 fn paste_via_clipboard(
     enigo: &mut Enigo,
     text: &str,
@@ -21,7 +47,6 @@ fn paste_via_clipboard(
     paste_delay_ms: u64,
 ) -> Result<(), String> {
     let clipboard = app_handle.clipboard();
-    let clipboard_content = clipboard.read_text().unwrap_or_default();
 
     // Write text to clipboard first
     // On Wayland, prefer wl-copy for better compatibility (especially with umlauts)
@@ -60,20 +85,6 @@ fn paste_via_clipboard(
             _ => return Err("Invalid paste method for clipboard paste".into()),
         }
     }
-
-    std::thread::sleep(std::time::Duration::from_millis(50));
-
-    // Restore original clipboard content
-    // On Wayland, prefer wl-copy for better compatibility
-    #[cfg(target_os = "linux")]
-    if is_wayland() && is_wl_copy_available() {
-        let _ = write_clipboard_via_wl_copy(&clipboard_content);
-    } else {
-        let _ = clipboard.write_text(&clipboard_content);
-    }
-
-    #[cfg(not(target_os = "linux"))]
-    let _ = clipboard.write_text(&clipboard_content);
 
     Ok(())
 }
@@ -592,6 +603,7 @@ pub fn paste(text: String, app_handle: AppHandle) -> Result<(), String> {
     let settings = get_settings(&app_handle);
     let paste_method = settings.paste_method;
     let paste_delay_ms = settings.paste_delay_ms;
+    let effective_strategy = resolve_paste_strategy(paste_method, settings.clipboard_handling);
 
     // Append trailing space if setting is enabled
     let text = if settings.append_trailing_space {
@@ -605,6 +617,19 @@ pub fn paste(text: String, app_handle: AppHandle) -> Result<(), String> {
         paste_method, paste_delay_ms
     );
 
+    if effective_strategy == EffectivePasteStrategy::Direct
+        && settings.clipboard_handling == ClipboardHandling::DontModify
+        && matches!(
+            paste_method,
+            PasteMethod::CtrlV | PasteMethod::CtrlShiftV | PasteMethod::ShiftInsert
+        )
+    {
+        info!(
+            "Clipboard-preserving mode selected for {:?}; using direct text insertion to avoid clipboard restore races",
+            paste_method
+        );
+    }
+
     // Get the managed Enigo instance
     let enigo_state = app_handle
         .try_state::<EnigoState>()
@@ -615,11 +640,11 @@ pub fn paste(text: String, app_handle: AppHandle) -> Result<(), String> {
         .map_err(|e| format!("Failed to lock Enigo: {}", e))?;
 
     // Perform the paste operation
-    match paste_method {
-        PasteMethod::None => {
+    match effective_strategy {
+        EffectivePasteStrategy::None => {
             info!("PasteMethod::None selected - skipping paste action");
         }
-        PasteMethod::Direct => {
+        EffectivePasteStrategy::Direct => {
             paste_direct(
                 &mut enigo,
                 &text,
@@ -627,16 +652,14 @@ pub fn paste(text: String, app_handle: AppHandle) -> Result<(), String> {
                 settings.typing_tool,
             )?;
         }
-        PasteMethod::CtrlV | PasteMethod::CtrlShiftV | PasteMethod::ShiftInsert => {
-            paste_via_clipboard(
-                &mut enigo,
-                &text,
-                &app_handle,
-                &paste_method,
-                paste_delay_ms,
-            )?
-        }
-        PasteMethod::ExternalScript => {
+        EffectivePasteStrategy::ClipboardHotkey => paste_via_clipboard(
+            &mut enigo,
+            &text,
+            &app_handle,
+            &paste_method,
+            paste_delay_ms,
+        )?,
+        EffectivePasteStrategy::ExternalScript => {
             let script_path = settings
                 .external_script_path
                 .as_ref()
@@ -665,6 +688,54 @@ pub fn paste(text: String, app_handle: AppHandle) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn clipboard_hotkeys_use_direct_when_preserving_clipboard() {
+        assert_eq!(
+            resolve_paste_strategy(PasteMethod::CtrlV, ClipboardHandling::DontModify),
+            EffectivePasteStrategy::Direct
+        );
+        assert_eq!(
+            resolve_paste_strategy(PasteMethod::CtrlShiftV, ClipboardHandling::DontModify),
+            EffectivePasteStrategy::Direct
+        );
+        assert_eq!(
+            resolve_paste_strategy(PasteMethod::ShiftInsert, ClipboardHandling::DontModify),
+            EffectivePasteStrategy::Direct
+        );
+    }
+
+    #[test]
+    fn clipboard_hotkeys_use_clipboard_when_copying_to_clipboard() {
+        assert_eq!(
+            resolve_paste_strategy(PasteMethod::CtrlV, ClipboardHandling::CopyToClipboard),
+            EffectivePasteStrategy::ClipboardHotkey
+        );
+    }
+
+    #[test]
+    fn direct_paste_always_uses_direct_strategy() {
+        assert_eq!(
+            resolve_paste_strategy(PasteMethod::Direct, ClipboardHandling::DontModify),
+            EffectivePasteStrategy::Direct
+        );
+        assert_eq!(
+            resolve_paste_strategy(PasteMethod::Direct, ClipboardHandling::CopyToClipboard),
+            EffectivePasteStrategy::Direct
+        );
+    }
+
+    #[test]
+    fn none_and_external_script_preserve_their_strategies() {
+        assert_eq!(
+            resolve_paste_strategy(PasteMethod::None, ClipboardHandling::DontModify),
+            EffectivePasteStrategy::None
+        );
+        assert_eq!(
+            resolve_paste_strategy(PasteMethod::ExternalScript, ClipboardHandling::DontModify),
+            EffectivePasteStrategy::ExternalScript
+        );
+    }
 
     #[test]
     fn auto_submit_requires_setting_enabled() {
