@@ -255,7 +255,7 @@
       },
       "pasteMethod": {
         "title": "Paste Method",
-        "description": "Choose how text is inserted. Direct: simulates typing via system input. None: skips paste, only updates history/clipboard.",
+        "description": "Choose how text is inserted. Direct simulates typing via system input. Clipboard options use a paste hotkey unless clipboard preservation is enabled, in which case SilkScribe switches to direct insertion. None skips paste and only updates history/clipboard.",
         "options": {
           "clipboard": "Clipboard ({{modifier}}+V)",
           "clipboardCtrlShiftV": "Clipboard (Ctrl+Shift+V)",
@@ -275,11 +275,12 @@
       },
       "clipboardHandling": {
         "title": "Clipboard Handling",
-        "description": "Don't Modify Clipboard preserves your current clipboard contents after transcription. Copy to Clipboard leaves the transcription result in your clipboard after pasting.",
+        "description": "Don't Modify Clipboard preserves your current clipboard contents. When a clipboard paste method is selected, SilkScribe switches to direct insertion so your clipboard is never temporarily replaced. Copy to Clipboard leaves the transcription result in your clipboard after pasting.",
         "options": {
           "dontModify": "Don't Modify Clipboard",
           "copyToClipboard": "Copy to Clipboard"
-        }
+        },
+        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
       },
       "autoSubmit": {
         "title": "Auto Submit",
@@ -460,7 +461,7 @@
       },
       "pasteDelay": {
         "title": "Paste Delay",
-        "description": "Delay before sending paste keystroke (in milliseconds). Increase if wrong text is being pasted."
+        "description": "Delay before sending the paste keystroke (in milliseconds) when SilkScribe is using a clipboard hotkey."
       }
     },
     "about": {
