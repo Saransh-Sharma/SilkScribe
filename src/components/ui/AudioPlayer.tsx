@@ -8,6 +8,7 @@ interface AudioPlayerProps {
   onLoadRequest?: () => Promise<string | null>;
   className?: string;
   autoPlay?: boolean;
+  compact?: boolean;
 }
 
 export const AudioPlayer: React.FC<AudioPlayerProps> = ({
@@ -15,6 +16,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   onLoadRequest,
   className = "",
   autoPlay = false,
+  compact = false,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -226,28 +228,46 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   };
 
   const progressPercent = getProgressPercent();
-  const progressTrack = "color-mix(in srgb, var(--ss-bg-elevated) 94%, transparent)";
+  const progressTrack =
+    "color-mix(in srgb, var(--ss-bg-elevated) 94%, transparent)";
   const progressFill = "var(--ss-brand-secondary)";
+  const buttonSizeClass = compact ? "h-11 w-11" : "h-11 w-11";
+  const buttonIconSize = compact ? 18 : 20;
+  const containerGapClass = compact ? "gap-2" : "gap-3";
+  const timerWidthClass = compact ? "min-w-[38px]" : "min-w-[40px]";
+  const sliderHeightClass = compact ? "h-1.5" : "h-1";
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
+    <div className={`flex items-center ${containerGapClass} ${className}`}>
       <audio ref={audioRef} src={src ?? undefined} preload="metadata" />
 
       <button
         onClick={togglePlay}
         disabled={isLoading}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-transparent text-ss-text-secondary transition-[background-color,border-color,color,transform] duration-150 hover:-translate-y-0.5 hover:border-ss-brand-secondary/25 hover:bg-ss-brand-secondary/10 hover:text-ss-brand-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/40 disabled:cursor-not-allowed disabled:opacity-50"
+        className={`inline-flex ${buttonSizeClass} items-center justify-center rounded-full border border-transparent text-ss-text-secondary transition-[background-color,border-color,color,transform] duration-150 hover:-translate-y-0.5 hover:border-ss-brand-secondary/25 hover:bg-ss-brand-secondary/10 hover:text-ss-brand-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/40 disabled:cursor-not-allowed disabled:opacity-50`}
         aria-label={isPlaying ? "Pause" : "Play"}
       >
         {isPlaying ? (
-          <Pause width={20} height={20} fill="currentColor" />
+          <Pause
+            width={buttonIconSize}
+            height={buttonIconSize}
+            fill="currentColor"
+          />
         ) : (
-          <Play width={20} height={20} fill="currentColor" />
+          <Play
+            width={buttonIconSize}
+            height={buttonIconSize}
+            fill="currentColor"
+          />
         )}
       </button>
 
-      <div className="flex-1 flex items-center gap-2">
-        <span className="min-w-[34px] text-xs tabular-nums text-ss-text-tertiary">
+      <div
+        className={`flex flex-1 items-center ${compact ? "gap-1.5" : "gap-2"}`}
+      >
+        <span
+          className={`${timerWidthClass} text-xs tabular-nums text-ss-text-tertiary`}
+        >
           {formatTime(currentTime)}
         </span>
 
@@ -260,13 +280,15 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
           onChange={handleSeek}
           onMouseDown={handleSliderMouseDown}
           onTouchStart={handleSliderTouchStart}
-          className={`h-1 flex-1 cursor-pointer appearance-none rounded-lg focus:outline-none focus:ring-2 focus:ring-ss-action-focus/35 ${progressPercent >= 99.5 ? "[&::-webkit-slider-thumb]:translate-x-0.5 [&::-moz-range-thumb]:translate-x-0.5" : ""}`}
+          className={`${sliderHeightClass} flex-1 cursor-pointer appearance-none rounded-lg focus:outline-none focus:ring-2 focus:ring-ss-action-focus/35 ${progressPercent >= 99.5 ? "[&::-webkit-slider-thumb]:translate-x-0.5 [&::-moz-range-thumb]:translate-x-0.5" : ""}`}
           style={{
             background: `linear-gradient(to right, ${progressFill} 0%, ${progressFill} ${progressPercent}%, ${progressTrack} ${progressPercent}%, ${progressTrack} 100%)`,
           }}
         />
 
-        <span className="min-w-[34px] text-xs tabular-nums text-ss-text-tertiary">
+        <span
+          className={`${timerWidthClass} text-xs tabular-nums text-ss-text-tertiary`}
+        >
           {formatTime(duration)}
         </span>
       </div>

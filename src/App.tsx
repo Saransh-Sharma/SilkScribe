@@ -16,7 +16,7 @@ import { useSettingsStore } from "./stores/settingsStore";
 import { commands } from "@/bindings";
 import { getLanguageDirection, initializeRTL } from "@/lib/utils/rtl";
 
-type OnboardingStep = "accessibility" | "model" | "done";
+type OnboardingStep = "accessibility" | "guided_setup" | "done";
 
 const renderSettingsContent = (section: SidebarSection) => {
   const ActiveComponent =
@@ -29,11 +29,8 @@ function App() {
   const [onboardingStep, setOnboardingStep] = useState<OnboardingStep | null>(
     null,
   );
-  // Track if this is a returning user who just needs to grant permissions
-  // (vs a new user who needs full onboarding including model selection)
-  const [isReturningUser, setIsReturningUser] = useState(false);
-  const [currentSection, setCurrentSection] =
-    useState<SidebarSection>("general");
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
+  const [currentSection, setCurrentSection] = useState<SidebarSection>("home");
   const { settings, updateSetting } = useSettings();
   const direction = getLanguageDirection(i18n.language);
   const refreshAudioDevices = useSettingsStore(
@@ -68,9 +65,13 @@ function App() {
     initializeRTL(i18n.language);
   }, [i18n.language]);
 
-  // Initialize Enigo, shortcuts, and refresh audio devices when main app loads
+  // Initialize shortcuts and input handling once onboarding reaches an interactive step.
   useEffect(() => {
-    if (onboardingStep === "done" && !hasCompletedPostOnboardingInit.current) {
+    if (
+      onboardingStep !== null &&
+      onboardingStep !== "accessibility" &&
+      !hasCompletedPostOnboardingInit.current
+    ) {
       hasCompletedPostOnboardingInit.current = true;
       Promise.all([
         commands.initializeEnigo(),
@@ -110,49 +111,43 @@ function App() {
 
   const checkOnboardingStatus = async () => {
     try {
-      // Check if they have any models available
-      const result = await commands.hasAnyModelsAvailable();
-      const hasModels = result.status === "ok" && result.data;
+      const settingsResult = await commands.getAppSettings();
+      const onboardingComplete =
+        settingsResult.status === "ok"
+          ? Boolean(settingsResult.data.has_completed_onboarding)
+          : false;
+      setHasCompletedOnboarding(onboardingComplete);
 
-      if (hasModels) {
-        // Returning user - but check if they need to grant permissions on macOS
-        setIsReturningUser(true);
-        if (platform() === "macos") {
-          try {
-            const [hasAccessibility, hasMicrophone] = await Promise.all([
-              checkAccessibilityPermission(),
-              checkMicrophonePermission(),
-            ]);
-            if (!hasAccessibility || !hasMicrophone) {
-              // Missing permissions - show accessibility onboarding
-              setOnboardingStep("accessibility");
-              return;
-            }
-          } catch (e) {
-            console.warn("Failed to check permissions:", e);
-            // If we can't check, proceed to main app and let them fix it there
+      if (platform() === "macos") {
+        try {
+          const [hasAccessibility, hasMicrophone] = await Promise.all([
+            checkAccessibilityPermission(),
+            checkMicrophonePermission(),
+          ]);
+          if (!hasAccessibility || !hasMicrophone) {
+            setOnboardingStep("accessibility");
+            return;
           }
+        } catch (e) {
+          console.warn("Failed to check permissions:", e);
         }
-        setOnboardingStep("done");
-      } else {
-        // New user - start full onboarding
-        setIsReturningUser(false);
-        setOnboardingStep("accessibility");
       }
+
+      setOnboardingStep(onboardingComplete ? "done" : "guided_setup");
     } catch (error) {
       console.error("Failed to check onboarding status:", error);
-      setOnboardingStep("accessibility");
+      setOnboardingStep(
+        platform() === "macos" ? "accessibility" : "guided_setup",
+      );
     }
   };
 
   const handleAccessibilityComplete = () => {
-    // Returning users already have models, skip to main app
-    // New users need to select a model
-    setOnboardingStep(isReturningUser ? "done" : "model");
+    setOnboardingStep(hasCompletedOnboarding ? "done" : "guided_setup");
   };
 
-  const handleModelSelected = () => {
-    // Transition to main app - user has started a download
+  const handleOnboardingComplete = () => {
+    setHasCompletedOnboarding(true);
     setOnboardingStep("done");
   };
 
@@ -170,11 +165,11 @@ function App() {
     );
   }
 
-  if (onboardingStep === "model") {
+  if (onboardingStep === "guided_setup") {
     return (
       <>
         {toaster}
-        <Onboarding onModelSelected={handleModelSelected} />
+        <Onboarding onComplete={handleOnboardingComplete} />
       </>
     );
   }

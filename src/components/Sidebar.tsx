@@ -1,8 +1,17 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Cog, FlaskConical, History, Info, Sparkles, Cpu } from "lucide-react";
+import {
+  Cog,
+  Cpu,
+  FlaskConical,
+  History,
+  Home as HomeIcon,
+  Info,
+  Sparkles,
+} from "lucide-react";
 import SilkScribeWordmark from "./icons/SilkScribeWordmark";
 import SilkScribeMark from "./icons/SilkScribeMark";
+import HomeDashboard from "./home/HomeDashboard";
 import { useSettings } from "../hooks/useSettings";
 import {
   GeneralSettings,
@@ -32,6 +41,12 @@ interface SectionConfig {
 }
 
 export const SECTIONS_CONFIG = {
+  home: {
+    labelKey: "sidebar.home",
+    icon: HomeIcon,
+    component: HomeDashboard,
+    enabled: () => true,
+  },
   general: {
     labelKey: "sidebar.general",
     icon: SilkScribeMark,
