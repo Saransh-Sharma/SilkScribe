@@ -8,6 +8,7 @@
     "cancel": "Скасувати"
   },
   "sidebar": {
+    "home": "Home",
     "general": "Загальні",
     "models": "Моделі",
     "advanced": "Розширені",
@@ -279,7 +280,8 @@
         "options": {
           "dontModify": "Не змінювати буфер обміну",
           "copyToClipboard": "Копіювати в буфер обміну"
-        }
+        },
+        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
       },
       "autoSubmit": {
         "title": "Автоматичне надсилання",
@@ -389,7 +391,9 @@
       "save": "Зберегти транскрипцію",
       "unsave": "Видалити зі збережених",
       "delete": "Видалити запис",
-      "deleteError": "Не вдалося видалити запис. Спробуйте ще раз."
+      "deleteError": "Не вдалося видалити запис. Спробуйте ще раз.",
+      "loadError": "Unable to load history right now. Please try again.",
+      "retry": "Retry"
     },
     "debug": {
       "title": "Дебаг",
@@ -509,7 +513,8 @@
     "off": "Вимк.",
     "yes": "Так",
     "no": "Ні",
-    "noOptionsFound": "Опцій не знайдено"
+    "noOptionsFound": "Опцій не знайдено",
+    "versionLabel": "v{{version}}"
   },
   "accessibility": {
     "permissionsRequired": "Потрібні права доступу",
@@ -523,9 +528,5 @@
   "appLanguage": {
     "title": "Мова інтерфейсу",
     "description": "Змінити мову інтерфейсу SilkScribe"
-  },
-  "overlay": {
-    "transcribing": "Обробка...",
-    "processing": "Постобробка..."
   }
 }

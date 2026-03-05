@@ -8,6 +8,7 @@
     "cancel": "Hủy"
   },
   "sidebar": {
+    "home": "Home",
     "general": "Chung",
     "models": "Mô hình",
     "advanced": "Nâng cao",
@@ -279,7 +280,8 @@
         "options": {
           "dontModify": "Không sửa đổi Clipboard",
           "copyToClipboard": "Sao chép vào Clipboard"
-        }
+        },
+        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
       },
       "autoSubmit": {
         "title": "Gửi tự động",
@@ -389,7 +391,9 @@
       "save": "Lưu bản ghi",
       "unsave": "Xóa khỏi đã lưu",
       "delete": "Xóa mục",
-      "deleteError": "Không thể xóa mục. Vui lòng thử lại."
+      "deleteError": "Không thể xóa mục. Vui lòng thử lại.",
+      "loadError": "Unable to load history right now. Please try again.",
+      "retry": "Retry"
     },
     "debug": {
       "title": "Gỡ lỗi",
@@ -509,7 +513,8 @@
     "off": "Tắt",
     "yes": "Có",
     "no": "Không",
-    "noOptionsFound": "Không tìm thấy tùy chọn"
+    "noOptionsFound": "Không tìm thấy tùy chọn",
+    "versionLabel": "v{{version}}"
   },
   "accessibility": {
     "permissionsRequired": "Cần quyền truy cập",
@@ -523,9 +528,5 @@
   "appLanguage": {
     "title": "Ngôn ngữ ứng dụng",
     "description": "Thay đổi ngôn ngữ giao diện của SilkScribe"
-  },
-  "overlay": {
-    "transcribing": "Đang chuyển đổi...",
-    "processing": "Đang xử lý..."
   }
 }

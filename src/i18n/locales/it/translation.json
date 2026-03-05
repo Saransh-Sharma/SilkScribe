@@ -8,6 +8,7 @@
     "cancel": "Annulla"
   },
   "sidebar": {
+    "home": "Home",
     "general": "Generale",
     "models": "Modelli",
     "advanced": "Avanzate",
@@ -279,7 +280,8 @@
         "options": {
           "dontModify": "Non Modificare gli Appunti",
           "copyToClipboard": "Copia negli Appunti"
-        }
+        },
+        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
       },
       "autoSubmit": {
         "title": "Invio automatico",
@@ -389,7 +391,9 @@
       "save": "Salva la trascrizione",
       "unsave": "Rimuovi dai salvataggi",
       "delete": "Elimina elemento",
-      "deleteError": "Errore nell'eliminazione dell'elemento. Per favore, prova di nuovo."
+      "deleteError": "Errore nell'eliminazione dell'elemento. Per favore, prova di nuovo.",
+      "loadError": "Unable to load history right now. Please try again.",
+      "retry": "Retry"
     },
     "debug": {
       "title": "Debug",
@@ -509,7 +513,8 @@
     "off": "Off",
     "yes": "Sì",
     "no": "No",
-    "noOptionsFound": "Nessuna opzione trovata"
+    "noOptionsFound": "Nessuna opzione trovata",
+    "versionLabel": "v{{version}}"
   },
   "accessibility": {
     "permissionsRequired": "Richiesti Permessi di Accessibilità",
@@ -523,9 +528,5 @@
   "appLanguage": {
     "title": "Lingua Applicazione",
     "description": "Cambia la lingua dell'interfaccia di SilkScribe"
-  },
-  "overlay": {
-    "transcribing": "Trascrizione...",
-    "processing": "Elaborazione..."
   }
 }

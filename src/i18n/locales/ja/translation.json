@@ -8,6 +8,7 @@
     "cancel": "キャンセル"
   },
   "sidebar": {
+    "home": "Home",
     "general": "一般",
     "models": "モデル",
     "advanced": "詳細設定",
@@ -279,7 +280,8 @@
         "options": {
           "dontModify": "クリップボードを変更しない",
           "copyToClipboard": "クリップボードにコピー"
-        }
+        },
+        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
       },
       "autoSubmit": {
         "title": "自動送信",
@@ -389,7 +391,9 @@
       "save": "文字起こしを保存",
       "unsave": "保存から削除",
       "delete": "エントリーを削除",
-      "deleteError": "エントリーの削除に失敗しました。もう一度お試しください。"
+      "deleteError": "エントリーの削除に失敗しました。もう一度お試しください。",
+      "loadError": "Unable to load history right now. Please try again.",
+      "retry": "Retry"
     },
     "debug": {
       "title": "デバッグ",
@@ -509,7 +513,8 @@
     "off": "オフ",
     "yes": "はい",
     "no": "いいえ",
-    "noOptionsFound": "オプションが見つかりません"
+    "noOptionsFound": "オプションが見つかりません",
+    "versionLabel": "v{{version}}"
   },
   "accessibility": {
     "permissionsRequired": "アクセシビリティ権限が必要です",
@@ -523,9 +528,5 @@
   "appLanguage": {
     "title": "アプリケーション言語",
     "description": "SilkScribeインターフェースの言語を変更"
-  },
-  "overlay": {
-    "transcribing": "文字起こし中...",
-    "processing": "処理中..."
   }
 }

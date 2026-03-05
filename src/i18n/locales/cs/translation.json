@@ -8,6 +8,7 @@
     "cancel": "Zrušit"
   },
   "sidebar": {
+    "home": "Home",
     "general": "Obecné",
     "models": "Modely",
     "advanced": "Pokročilé",
@@ -279,7 +280,8 @@
         "options": {
           "dontModify": "Neměnit schránku",
           "copyToClipboard": "Kopírovat do schránky"
-        }
+        },
+        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
       },
       "autoSubmit": {
         "title": "Automatické odeslání",
@@ -389,7 +391,9 @@
       "save": "Uložit přepis",
       "unsave": "Odebrat z uložených",
       "delete": "Smazat záznam",
-      "deleteError": "Nepodařilo se smazat záznam. Zkuste to prosím znovu."
+      "deleteError": "Nepodařilo se smazat záznam. Zkuste to prosím znovu.",
+      "loadError": "Unable to load history right now. Please try again.",
+      "retry": "Retry"
     },
     "debug": {
       "title": "Ladění",
@@ -509,7 +513,8 @@
     "off": "Vypnuto",
     "yes": "Ano",
     "no": "Ne",
-    "noOptionsFound": "Nenalezeny žádné možnosti"
+    "noOptionsFound": "Nenalezeny žádné možnosti",
+    "versionLabel": "v{{version}}"
   },
   "accessibility": {
     "permissionsRequired": "Vyžadována oprávnění usnadnění přístupu",
@@ -523,9 +528,5 @@
   "appLanguage": {
     "title": "Jazyk aplikace",
     "description": "Změňte jazyk rozhraní SilkScribe"
-  },
-  "overlay": {
-    "transcribing": "Přepisuji...",
-    "processing": "Zpracovávám..."
   }
 }

@@ -8,6 +8,7 @@
     "cancel": "取消"
   },
   "sidebar": {
+    "home": "Home",
     "general": "一般",
     "models": "模型",
     "advanced": "進階",
@@ -279,7 +280,8 @@
         "options": {
           "dontModify": "不修改剪貼簿",
           "copyToClipboard": "複製到剪貼簿"
-        }
+        },
+        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
       },
       "autoSubmit": {
         "title": "自動送出",
@@ -389,7 +391,9 @@
       "save": "儲存轉錄",
       "unsave": "從已儲存中移除",
       "delete": "刪除條目",
-      "deleteError": "刪除條目失敗，請重試"
+      "deleteError": "刪除條目失敗，請重試",
+      "loadError": "Unable to load history right now. Please try again.",
+      "retry": "Retry"
     },
     "debug": {
       "title": "偵錯",
@@ -509,7 +513,8 @@
     "off": "關",
     "yes": "是",
     "no": "否",
-    "noOptionsFound": "未找到選項"
+    "noOptionsFound": "未找到選項",
+    "versionLabel": "v{{version}}"
   },
   "accessibility": {
     "permissionsRequired": "需要輔助使用權限",
@@ -523,9 +528,5 @@
   "appLanguage": {
     "title": "應用程式語言",
     "description": "變更 SilkScribe 介面的語言"
-  },
-  "overlay": {
-    "transcribing": "正在轉錄...",
-    "processing": "處理中..."
   }
 }

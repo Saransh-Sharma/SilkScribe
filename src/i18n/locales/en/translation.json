@@ -8,6 +8,7 @@
     "cancel": "Cancel"
   },
   "sidebar": {
+    "home": "Home",
     "general": "General",
     "models": "Models",
     "advanced": "Advanced",
@@ -17,7 +18,7 @@
     "about": "About"
   },
   "onboarding": {
-    "subtitle": "To get started, choose a transcription model",
+    "subtitle": "We will get SilkScribe ready for your first transcription.",
     "recommended": "Recommended",
     "download": "Download",
     "downloading": "Downloading...",
@@ -79,11 +80,12 @@
     },
     "errors": {
       "loadModels": "Failed to load available models",
-      "downloadModel": "Failed to download model: {{error}}"
+      "downloadModel": "Failed to download model: {{error}}",
+      "selectModel": "Failed to prepare your transcription model. Please try again."
     },
     "permissions": {
-      "title": "Permissions Required",
-      "description": "SilkScribe needs a couple of permissions to work properly.",
+      "title": "Quick Setup",
+      "description": "Give SilkScribe the permissions it needs, then we will finish setup and help you test your first transcription.",
       "microphone": {
         "title": "Microphone Access",
         "description": "Required to hear your voice for transcription."
@@ -100,6 +102,99 @@
         "checkFailed": "Failed to check permissions. Please try again.",
         "requestFailed": "Failed to request permission. Please try again."
       }
+    },
+    "setup": {
+      "title": "Setting up SilkScribe",
+      "description": "We are choosing the best starter model for your system language and getting it ready so you can try SilkScribe right away.",
+      "defaultLanguage": "your language",
+      "selectedModelLabel": "Starter Model",
+      "selectedForLanguage": "Picked for your system language: {{language}}",
+      "progressLabel": "Progress",
+      "sizeLabel": "Download",
+      "speedLabel": "Speed",
+      "etaLabel": "ETA",
+      "speedValue": "{{speed}} MB/s",
+      "notAvailable": "Not available yet",
+      "changeLater": "You can switch to a different model later in Settings.",
+      "retry": "Try Again",
+      "ready": "Your model is ready. Next up: a quick live test.",
+      "loadingModel": "Choosing your best starter model...",
+      "preparingDetail": "Preparing model...",
+      "tipsBadge": "Getting Ready",
+      "previousCard": "Previous tip",
+      "nextCard": "Next tip",
+      "goToCard": "Go to tip {{index}}",
+      "almostThereBadge": "Almost Ready",
+      "almostThereTitle": "We are nearly done",
+      "almostThereDescription": "This setup step is short because your model was already available. Your push-to-talk shortcut is ready for the next screen.",
+      "shortcutPreviewTitle": "Push to talk",
+      "shortcutPreviewBody": "Hold {{shortcut}} to record, then release to transcribe.",
+      "states": {
+        "resolving": "Picking best model",
+        "downloading": "Downloading",
+        "preparing": "Preparing model",
+        "ready": "Ready",
+        "error": "Needs attention"
+      },
+      "cards": {
+        "holdToTalk": {
+          "title": "Hold to Talk",
+          "description": "SilkScribe is built around one fast habit: hold, speak, release.",
+          "point1": "Hold {{shortcut}} to record. Release to transcribe.",
+          "point2": "You do not need to click anything before speaking.",
+          "point3": "We will use this same shortcut on the next screen."
+        },
+        "shortBursts": {
+          "title": "Speak in Short Bursts",
+          "description": "Short, clean bursts usually feel faster and more accurate on your first try.",
+          "point1": "Short phrases usually transcribe better than very long monologues.",
+          "point2": "Pause naturally between thoughts.",
+          "point3": "Aim for 1-2 sentences at a time."
+        },
+        "focusField": {
+          "title": "Choose the Right Text Field",
+          "description": "SilkScribe sends text into whichever field is focused when the transcription finishes.",
+          "point1": "SilkScribe types into whatever text field is focused.",
+          "point2": "Before recording, click where you want the words to appear.",
+          "point3": "During onboarding, we will give you a practice box."
+        },
+        "recordingConditions": {
+          "title": "Best Recording Conditions",
+          "description": "A clean recording environment makes the first experience feel dramatically better.",
+          "point1": "Use your preferred microphone if you have one.",
+          "point2": "Keep background noise low.",
+          "point3": "Speak clearly at a normal pace."
+        },
+        "autoModel": {
+          "title": "Your Model Is Chosen for You",
+          "description": "You do not need to compare models before you can start.",
+          "point1": "We picked a model that best fits your system language.",
+          "point2": "You can switch to a different model later in Settings.",
+          "point3": "No extra setup is required to start."
+        },
+        "improveLater": {
+          "title": "You Can Improve Results Later",
+          "description": "First-run stays simple, but SilkScribe has more depth when you want it.",
+          "point1": "You can fine-tune shortcuts, language, and model selection later.",
+          "point2": "History keeps your recent transcripts.",
+          "point3": "Optional post-processing can clean up text after transcription."
+        }
+      }
+    },
+    "trial": {
+      "title": "Try your first transcription",
+      "description": "Your model is ready. Now test SilkScribe with one quick push-to-talk transcription.",
+      "pushToTalkBadge": "Push To Talk",
+      "shortcutFallback": "Your shortcut",
+      "instructions": "Hold {{shortcut}} and read 1-2 sentences out loud, then release to transcribe.",
+      "helper": "Keep this text box focused. Your words should appear here when the transcription finishes.",
+      "placeholder": "Try saying a short sentence out loud while holding your shortcut...",
+      "success": "Nice. Your model is ready and push-to-talk is working.",
+      "prompt": "Give it a try now, or skip for the moment and start using the app.",
+      "finish": "Start using SilkScribe",
+      "skip": "Skip for now",
+      "finishing": "Finishing setup...",
+      "finishFailed": "Failed to finish onboarding. Please try again."
     }
   },
   "modelSelector": {
@@ -390,7 +485,9 @@
       "save": "Save transcription",
       "unsave": "Remove from saved",
       "delete": "Delete entry",
-      "deleteError": "Failed to delete entry. Please try again."
+      "deleteError": "Failed to delete entry. Please try again.",
+      "loadError": "Unable to load history right now. Please try again.",
+      "retry": "Retry"
     },
     "debug": {
       "title": "Debug",
@@ -539,5 +636,29 @@
     "error": "Something went wrong",
     "errorDetail": "Try again or cancel the current pass.",
     "errorPill": "Retry"
+  },
+  "home": {
+    "title": "Welcome back",
+    "subtitle": "Your recent dictation activity and listening history.",
+    "activityTitle": "Recent activity",
+    "loadMore": "Load more",
+    "stats": {
+      "streak": "Current streak",
+      "words": "Words transcribed",
+      "wpm": "Average WPM"
+    },
+    "empty": {
+      "title": "Your dashboard fills in after your first transcription.",
+      "description": "Recordings and transcripts will appear here automatically."
+    },
+    "error": {
+      "title": "Couldn't load your dashboard.",
+      "description": "Try again to refresh your recent activity.",
+      "retry": "Retry"
+    },
+    "days": {
+      "today": "Today",
+      "yesterday": "Yesterday"
+    }
   }
 }

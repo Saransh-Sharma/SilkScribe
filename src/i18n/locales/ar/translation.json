@@ -8,6 +8,7 @@
     "cancel": "إلغاء"
   },
   "sidebar": {
+    "home": "Home",
     "general": "عام",
     "advanced": "متقدم",
     "postProcessing": "معالجة لاحقة",
@@ -257,7 +258,8 @@
         "options": {
           "dontModify": "عدم تعديل الحافظة",
           "copyToClipboard": "نسخ إلى الحافظة"
-        }
+        },
+        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
       },
       "autoSubmit": {
         "title": "إرسال تلقائي",
@@ -367,7 +369,9 @@
       "save": "حفظ التفريغ",
       "unsave": "إزالة من المحفوظات",
       "delete": "حذف الإدخال",
-      "deleteError": ".فشل حذف الإدخال. يرجى المحاولة مرة أخرى"
+      "deleteError": ".فشل حذف الإدخال. يرجى المحاولة مرة أخرى",
+      "loadError": "Unable to load history right now. Please try again.",
+      "retry": "Retry"
     },
     "debug": {
       "title": "تصحيح الأخطاء",
@@ -509,7 +513,8 @@
     "off": "إيقاف",
     "yes": "نعم",
     "no": "لا",
-    "noOptionsFound": "لم يتم العثور على خيارات"
+    "noOptionsFound": "لم يتم العثور على خيارات",
+    "versionLabel": "v{{version}}"
   },
   "accessibility": {
     "permissionsRequired": "أذونات إمكانية الوصول مطلوبة",
@@ -523,9 +528,5 @@
   "appLanguage": {
     "title": "لغة التطبيق",
     "description": "تغيير لغة واجهة SilkScribe"
-  },
-  "overlay": {
-    "transcribing": "...جاري التفريغ",
-    "processing": "...جاري المعالجة"
   }
 }

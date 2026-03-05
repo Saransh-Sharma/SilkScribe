@@ -8,6 +8,7 @@
     "cancel": "Отмена"
   },
   "sidebar": {
+    "home": "Home",
     "general": "Общие",
     "models": "Модели",
     "advanced": "Продвинутые",
@@ -279,7 +280,8 @@
         "options": {
           "dontModify": "Не изменять буфер обмена",
           "copyToClipboard": "Копировать в буфер обмена"
-        }
+        },
+        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
       },
       "autoSubmit": {
         "title": "Автоматическая отправка",
@@ -389,7 +391,9 @@
       "save": "Сохранить транскрипцию",
       "unsave": "Удалить из сохраненных",
       "delete": "Удалить запись",
-      "deleteError": "Не удалось удалить запись. Пожалуйста, попробуйте еще раз."
+      "deleteError": "Не удалось удалить запись. Пожалуйста, попробуйте еще раз.",
+      "loadError": "Unable to load history right now. Please try again.",
+      "retry": "Retry"
     },
     "debug": {
       "title": "Отлаживать",
@@ -509,7 +513,8 @@
     "off": "Выключенный",
     "yes": "Да",
     "no": "Нет",
-    "noOptionsFound": "Вариантов не найдено"
+    "noOptionsFound": "Вариантов не найдено",
+    "versionLabel": "v{{version}}"
   },
   "accessibility": {
     "permissionsRequired": "Требуются разрешения на доступ",
@@ -523,9 +528,5 @@
   "appLanguage": {
     "title": "Язык приложения",
     "description": "Изменить языка интерфейса SilkScribe"
-  },
-  "overlay": {
-    "transcribing": "Расшифровка...",
-    "processing": "Обработка..."
   }
 }

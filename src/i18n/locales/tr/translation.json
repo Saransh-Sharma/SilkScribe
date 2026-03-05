@@ -8,6 +8,7 @@
     "cancel": "İptal"
   },
   "sidebar": {
+    "home": "Home",
     "general": "Genel",
     "models": "Modeller",
     "advanced": "Gelişmiş",
@@ -279,7 +280,8 @@
         "options": {
           "dontModify": "Panoyu Değiştirme",
           "copyToClipboard": "Panoya Kopyala"
-        }
+        },
+        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
       },
       "autoSubmit": {
         "title": "Otomatik Gönder",
@@ -389,7 +391,9 @@
       "save": "Transkripsiyonu kaydet",
       "unsave": "Kaydedilenlerden kaldır",
       "delete": "Kaydı sil",
-      "deleteError": "Kayıt silinemedi. Lütfen tekrar deneyin."
+      "deleteError": "Kayıt silinemedi. Lütfen tekrar deneyin.",
+      "loadError": "Unable to load history right now. Please try again.",
+      "retry": "Retry"
     },
     "debug": {
       "title": "Hata Ayıklama",
@@ -509,7 +513,8 @@
     "off": "Kapalı",
     "yes": "Evet",
     "no": "Hayır",
-    "noOptionsFound": "Seçenek bulunamadı"
+    "noOptionsFound": "Seçenek bulunamadı",
+    "versionLabel": "v{{version}}"
   },
   "accessibility": {
     "permissionsRequired": "Erişilebilirlik İzinleri Gerekli",
@@ -523,9 +528,5 @@
   "appLanguage": {
     "title": "Uygulama Dili",
     "description": "SilkScribe arayüzünün dilini değiştirin"
-  },
-  "overlay": {
-    "transcribing": "Transkribe ediliyor...",
-    "processing": "İşleniyor..."
   }
 }
