@@ -5575,7 +5575,7 @@ dependencies = [
 
 [[package]]
 name = "silkscribe"
-version = "0.7.8"
+version = "0.1.0"
 dependencies = [
  "anyhow",
  "chrono",
@@ -5628,6 +5628,7 @@ dependencies = [
  "tempfile",
  "tokio",
  "transcribe-rs",
+ "unicode-segmentation",
  "vad-rs",
  "windows 0.61.3",
 ]
