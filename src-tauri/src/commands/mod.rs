@@ -39,6 +39,15 @@ pub fn get_default_settings() -> Result<AppSettings, String> {
 
 #[tauri::command]
 #[specta::specta]
+pub fn complete_onboarding(app: AppHandle) -> Result<(), String> {
+    let mut settings = get_settings(&app);
+    settings.has_completed_onboarding = true;
+    write_settings(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
 pub fn get_log_dir_path(app: AppHandle) -> Result<String, String> {
     let log_dir = app
         .path()

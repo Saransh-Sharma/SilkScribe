@@ -293,6 +293,8 @@ pub struct AppSettings {
     pub update_checks_enabled: bool,
     #[serde(default = "default_model")]
     pub selected_model: String,
+    #[serde(default = "default_has_completed_onboarding")]
+    pub has_completed_onboarding: bool,
     #[serde(default = "default_always_on_microphone")]
     pub always_on_microphone: bool,
     #[serde(default)]
@@ -364,6 +366,10 @@ pub struct AppSettings {
 
 fn default_model() -> String {
     "".to_string()
+}
+
+fn default_has_completed_onboarding() -> bool {
+    false
 }
 
 fn default_always_on_microphone() -> bool {
@@ -628,11 +634,31 @@ fn ensure_post_process_defaults(settings: &mut AppSettings) -> bool {
 
 pub const SETTINGS_STORE_PATH: &str = "settings_store.json";
 
+fn apply_settings_migrations(
+    settings: &mut AppSettings,
+    settings_value: Option<&serde_json::Value>,
+) -> bool {
+    let mut updated = false;
+
+    if let Some(value) = settings_value {
+        if value.get("has_completed_onboarding").is_none() {
+            settings.has_completed_onboarding = true;
+            updated = true;
+        }
+    }
+
+    if ensure_post_process_defaults(settings) {
+        updated = true;
+    }
+
+    updated
+}
+
 pub fn get_default_settings() -> AppSettings {
     #[cfg(target_os = "windows")]
     let default_shortcut = "ctrl+space";
     #[cfg(target_os = "macos")]
-    let default_shortcut = "option+space";
+    let default_shortcut = "fn";
     #[cfg(target_os = "linux")]
     let default_shortcut = "ctrl+space";
     #[cfg(not(any(target_os = "windows", target_os = "macos", target_os = "linux")))]
@@ -690,6 +716,7 @@ pub fn get_default_settings() -> AppSettings {
         autostart_enabled: default_autostart_enabled(),
         update_checks_enabled: default_update_checks_enabled(),
         selected_model: "".to_string(),
+        has_completed_onboarding: default_has_completed_onboarding(),
         always_on_microphone: false,
         selected_microphone: None,
         clamshell_microphone: None,
@@ -757,8 +784,9 @@ pub fn load_or_create_app_settings(app: &AppHandle) -> AppSettings {
         .expect("Failed to initialize store");
 
     let mut settings = if let Some(settings_value) = store.get("settings") {
+        let needs_onboarding_migration = settings_value.get("has_completed_onboarding").is_none();
         // Parse the entire settings object
-        match serde_json::from_value::<AppSettings>(settings_value) {
+        match serde_json::from_value::<AppSettings>(settings_value.clone()) {
             Ok(mut settings) => {
                 debug!("Found existing settings: {:?}", settings);
                 let default_settings = get_default_settings();
@@ -771,6 +799,11 @@ pub fn load_or_create_app_settings(app: &AppHandle) -> AppSettings {
                         settings.bindings.insert(key, value);
                         updated = true;
                     }
+                }
+
+                if needs_onboarding_migration {
+                    settings.has_completed_onboarding = true;
+                    updated = true;
                 }
 
                 if updated {
@@ -794,7 +827,7 @@ pub fn load_or_create_app_settings(app: &AppHandle) -> AppSettings {
         default_settings
     };
 
-    if ensure_post_process_defaults(&mut settings) {
+    if apply_settings_migrations(&mut settings, None) {
         store.set("settings", serde_json::to_value(&settings).unwrap());
     }
 
@@ -807,7 +840,7 @@ pub fn get_settings(app: &AppHandle) -> AppSettings {
         .expect("Failed to initialize store");
 
     let mut settings = if let Some(settings_value) = store.get("settings") {
-        serde_json::from_value::<AppSettings>(settings_value).unwrap_or_else(|_| {
+        serde_json::from_value::<AppSettings>(settings_value.clone()).unwrap_or_else(|_| {
             let default_settings = get_default_settings();
             store.set("settings", serde_json::to_value(&default_settings).unwrap());
             default_settings
@@ -818,7 +851,7 @@ pub fn get_settings(app: &AppHandle) -> AppSettings {
         default_settings
     };
 
-    if ensure_post_process_defaults(&mut settings) {
+    if apply_settings_migrations(&mut settings, store.get("settings").as_ref()) {
         store.set("settings", serde_json::to_value(&settings).unwrap());
     }
 

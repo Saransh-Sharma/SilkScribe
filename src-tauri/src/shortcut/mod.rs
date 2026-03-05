@@ -202,8 +202,11 @@ pub fn change_binding(
 #[tauri::command]
 #[specta::specta]
 pub fn reset_binding(app: AppHandle, id: String) -> Result<BindingResponse, String> {
+    let keyboard_implementation = settings::get_settings(&app).keyboard_implementation;
     let binding = settings::get_stored_binding(&app, &id);
-    change_binding(app, id, binding.default_binding)
+    let reset_binding =
+        get_compatible_default_binding(&id, &binding.default_binding, keyboard_implementation);
+    change_binding(app, id, reset_binding)
 }
 
 /// Temporarily unregister a binding while the user is editing it in the UI.
@@ -338,6 +341,24 @@ fn validate_shortcut_for_implementation(
     }
 }
 
+fn get_compatible_default_binding(
+    binding_id: &str,
+    default_binding: &str,
+    implementation: KeyboardImplementation,
+) -> String {
+    #[cfg(target_os = "macos")]
+    {
+        if binding_id == "transcribe"
+            && implementation == KeyboardImplementation::Tauri
+            && default_binding == "fn"
+        {
+            return "option+space".to_string();
+        }
+    }
+
+    default_binding.to_string()
+}
+
 /// Parse a keyboard implementation string into the enum
 fn parse_keyboard_implementation(s: &str) -> KeyboardImplementation {
     match s {
@@ -413,7 +434,11 @@ fn register_all_shortcuts_for_implementation(
             );
 
             // Reset to default
-            binding.current_binding = default_binding.current_binding.clone();
+            binding.current_binding = get_compatible_default_binding(
+                id,
+                &default_binding.current_binding,
+                implementation,
+            );
             current_settings
                 .bindings
                 .insert(id.clone(), binding.clone());
