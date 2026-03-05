@@ -7,8 +7,8 @@ import {
   RenderTexture,
   Sprite,
 } from "pixi.js";
+import { shapeWaveformLevel, WAVEFORM_BUCKET_COUNT } from "./waveformConfig";
 
-const INPUT_BUCKET_COUNT = 12;
 const DISPLAY_SAMPLE_COUNT = 32;
 const PARTICLE_COUNT = 24;
 const STAGE_RADIUS = 14;
@@ -129,10 +129,12 @@ const updatePointBuffer = (
     const sample = samples[index];
     const amplitude = amplitudeCap * sample;
     const thickness = bodyThickness + sample * 2.2;
+    const top = centerY - amplitude - thickness;
+    const bottom = centerY + amplitude + thickness;
 
     points[index].x = 5 + span * progress;
-    points[index].top = centerY - amplitude - thickness;
-    points[index].bottom = centerY + amplitude + thickness;
+    points[index].top = clamp(top, 0, height);
+    points[index].bottom = clamp(bottom, 0, height);
     points[index].energy = sample;
   }
 };
@@ -295,7 +297,7 @@ export const createWaveformScene = async (
   let lastEmission = 0;
   let usePrimaryTrailTarget = true;
 
-  const inputLevels = new Float32Array(INPUT_BUCKET_COUNT);
+  const inputLevels = new Float32Array(WAVEFORM_BUCKET_COUNT);
   const targetSamples = new Float32Array(DISPLAY_SAMPLE_COUNT);
   const smoothedSamples = new Float32Array(DISPLAY_SAMPLE_COUNT);
   const trailSamples = new Float32Array(DISPLAY_SAMPLE_COUNT);
@@ -581,9 +583,12 @@ export const createWaveformScene = async (
       const centerDistance =
         Math.abs(index - (DISPLAY_SAMPLE_COUNT - 1) / 2) /
         ((DISPLAY_SAMPLE_COUNT - 1) / 2);
-      const centerBoost = 1 + (1 - centerDistance) * 0.25;
-      const boosted = Math.pow(Math.max(0, interpolated), 0.5);
-      const targetValue = clamp(boosted * centerBoost, IDLE_FLOOR, 1);
+      const centerBoost = 1 + (1 - centerDistance) * 0.35;
+      const targetValue = clamp(
+        shapeWaveformLevel(interpolated) * centerBoost,
+        IDLE_FLOOR,
+        1,
+      );
 
       targetSamples[index] = targetValue;
       smoothedSamples[index] = lerp(
@@ -611,7 +616,7 @@ export const createWaveformScene = async (
       width,
       height,
       1.4,
-      0.2 + averageEnergy * 0.28,
+      0.26 + averageEnergy * 0.34,
     );
     updatePointBuffer(
       smoothedSamples,
@@ -619,7 +624,7 @@ export const createWaveformScene = async (
       width,
       height,
       1.1,
-      0.22 + averageEnergy * 0.3,
+      0.3 + averageEnergy * 0.38,
     );
     updatePointBuffer(
       smoothedSamples,
@@ -627,7 +632,7 @@ export const createWaveformScene = async (
       width,
       height,
       1.6,
-      0.24 + averageEnergy * 0.34,
+      0.34 + averageEnergy * 0.42,
     );
 
     if (reducedMotion) {
@@ -711,7 +716,7 @@ export const createWaveformScene = async (
 
   return {
     updateLevels: (levels: number[]) => {
-      for (let index = 0; index < INPUT_BUCKET_COUNT; index += 1) {
+      for (let index = 0; index < WAVEFORM_BUCKET_COUNT; index += 1) {
         inputLevels[index] = levels[index] ?? 0;
       }
     },

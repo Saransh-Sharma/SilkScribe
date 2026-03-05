@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import type { WaveformSceneController } from "./waveformScene";
+import { shapeWaveformLevel, WAVEFORM_BUCKET_COUNT } from "./waveformConfig";
 
 type GpuWaveformStageProps = {
   initialLevels: number[];
@@ -13,8 +14,8 @@ const FALLBACK_BAR_COUNT = 18;
 const RETRY_DELAYS_MS = [750, 2000, 5000] as const;
 
 const normalizeLevels = (levels: number[]) => {
-  const normalized = Array(12).fill(0);
-  for (let index = 0; index < 12; index += 1) {
+  const normalized = Array(WAVEFORM_BUCKET_COUNT).fill(0);
+  for (let index = 0; index < WAVEFORM_BUCKET_COUNT; index += 1) {
     normalized[index] = levels[index] ?? 0;
   }
 
@@ -88,7 +89,7 @@ const GpuWaveformStage: React.FC<GpuWaveformStageProps> = ({
   const pushBridgeRef = useRef<(levels: number[]) => void>(() => undefined);
   pushBridgeRef.current = (levels: number[]) => {
     const normalized = latestLevelsRef.current;
-    for (let index = 0; index < 12; index += 1) {
+    for (let index = 0; index < WAVEFORM_BUCKET_COUNT; index += 1) {
       normalized[index] = levels[index] ?? 0;
     }
 
@@ -224,8 +225,7 @@ const GpuWaveformStage: React.FC<GpuWaveformStageProps> = ({
         const interpolated =
           (fallbackLevels[leftIndex] ?? 0) * (1 - mix) +
           (fallbackLevels[rightIndex] ?? 0) * mix;
-        const boosted = Math.pow(Math.max(0, interpolated), 0.58);
-        const height = Math.max(0.16, Math.min(1, boosted * 1.2));
+        const height = Math.max(0.16, shapeWaveformLevel(interpolated));
 
         return {
           height,

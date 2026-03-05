@@ -9,6 +9,7 @@ import {
 } from "../components/icons";
 import "./RecordingOverlay.css";
 import GpuWaveformStage from "./GpuWaveformStage";
+import { WAVEFORM_BUCKET_COUNT } from "./waveformConfig";
 import { commands } from "@/bindings";
 import i18n, { syncLanguageFromSettings } from "@/i18n";
 import { getLanguageDirection } from "@/lib/utils/rtl";
@@ -41,7 +42,7 @@ const RecordingOverlay: React.FC = () => {
     state: "recording",
     canCancel: true,
   });
-  const levelsRef = useRef<number[]>(Array(12).fill(0));
+  const levelsRef = useRef<number[]>(Array(WAVEFORM_BUCKET_COUNT).fill(0));
   const waveformSinkRef = useRef<((levels: number[]) => void) | null>(null);
   const isVisibleRef = useRef(false);
   const overlayStateRef = useRef<OverlayState>("recording");
@@ -121,7 +122,7 @@ const RecordingOverlay: React.FC = () => {
         listen<number[]>("mic-level", (event) => {
           const newLevels = event.payload as number[];
           const nextLevels = levelsRef.current;
-          for (let index = 0; index < 12; index += 1) {
+          for (let index = 0; index < WAVEFORM_BUCKET_COUNT; index += 1) {
             nextLevels[index] = newLevels[index] ?? 0;
           }
 
