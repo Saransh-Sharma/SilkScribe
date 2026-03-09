@@ -332,7 +332,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
               height={68}
               fit="cover"
               className="w-full"
-              imageClassName="scale-[1.14]"
+              imageScale={1.71}
             />
           </div>
           <div className="mt-2 flex items-center justify-center gap-2">
@@ -489,7 +489,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
               height={68}
               fit="cover"
               className="w-full"
-              imageClassName="scale-[1.14]"
+              imageScale={1.71}
             />
           </div>
           <div className="mt-2 flex items-center justify-center gap-2">

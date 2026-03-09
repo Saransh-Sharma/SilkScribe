@@ -8,12 +8,14 @@ const SilkScribeWordmark = ({
   height,
   className,
   imageClassName,
+  imageScale = 1,
   fit = "contain",
 }: {
   width?: number;
   height?: number;
   className?: string;
   imageClassName?: string;
+  imageScale?: number;
   fit?: "contain" | "cover";
 }) => {
   const resolvedHeight = height ?? 44;
@@ -31,6 +33,14 @@ const SilkScribeWordmark = ({
         className={`h-full w-full ${
           fit === "cover" ? "object-cover" : "object-contain"
         } ${imageClassName ?? ""}`}
+        style={
+          imageScale !== 1
+            ? {
+                transform: `scale(${imageScale})`,
+                transformOrigin: "center",
+              }
+            : undefined
+        }
       />
     </div>
   );

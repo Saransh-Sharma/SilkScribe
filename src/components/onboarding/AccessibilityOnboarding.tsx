@@ -238,7 +238,7 @@ const AccessibilityOnboarding: React.FC<AccessibilityOnboardingProps> = ({
               height={68}
               fit="cover"
               className="w-full"
-              imageClassName="scale-[1.14]"
+              imageScale={1.71}
             />
           </div>
         </div>
