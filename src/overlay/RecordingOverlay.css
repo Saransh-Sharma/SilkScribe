@@ -12,6 +12,17 @@ body {
 }
 
 .recording-overlay {
+  /* Scoped token overrides for dark container */
+  --ss-text-primary: #fff3e6;
+  --ss-text-tertiary: rgba(255, 243, 230, 0.5);
+  --ss-bg-elevated: rgba(25, 40, 14, 0.55);
+  --ss-bg-surface-alt: rgba(34, 49, 20, 0.45);
+  --ss-border-subtle: rgba(254, 191, 43, 0.06);
+  --ss-border-default: rgba(254, 191, 43, 0.12);
+  --ss-shadow-lift:
+    0 20px 50px rgba(10, 16, 4, 0.55),
+    0 6px 16px rgba(158, 95, 10, 0.08);
+
   width: 300px;
   min-height: 84px;
   display: flex;
@@ -19,14 +30,20 @@ body {
   gap: 8px;
   padding: 10px 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--ss-border-default) 92%, transparent);
+  color: #fff3e6;
   background:
+    radial-gradient(
+      ellipse 90% 120% at 50% 85%,
+      rgba(158, 95, 10, 0.06) 0%,
+      transparent 60%
+    ),
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--ss-bg-surface) 96%, white 4%) 0%,
-      var(--ss-bg-surface) 100%
+      #1e2d12 0%,
+      #131e08 55%,
+      #0d1604 100%
     );
-  color: var(--ss-text-primary);
+  border: 1px solid rgba(254, 191, 43, 0.13);
   box-shadow: var(--ss-shadow-lift);
   opacity: 0;
   transform: scale(0.96) translateY(6px);
@@ -42,14 +59,18 @@ body {
 }
 
 .recording-overlay.state-recording {
-  gap: 4px;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  gap: 0;
+  padding: 8px 10px;
+}
+
+.recording-overlay.state-transcribing {
+  gap: 0;
+  padding: 10px 12px;
 }
 
 .overlay-header {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr;
   gap: 8px;
   align-items: center;
 }
@@ -99,6 +120,58 @@ body {
   height: 14px;
 }
 
+.overlay-compact {
+  display: flex;
+  width: 100%;
+  min-height: 100%;
+}
+
+.overlay-compact-recording {
+  align-items: center;
+}
+
+.overlay-compact-recording .gpu-waveform-host {
+  height: 50px;
+}
+
+.overlay-compact-transcribing {
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  padding: 2px 4px;
+}
+
+.overlay-compact-title {
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--ss-text-primary);
+}
+
+.overlay-compact-progress {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--ss-bg-elevated) 92%, transparent);
+}
+
+.overlay-compact-progress-indicator {
+  position: absolute;
+  inset: 0;
+  width: 42%;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    var(--ss-brand-highlight) 0%,
+    var(--ss-brand-secondary) 100%
+  );
+  animation: overlay-progress 1.1s ease-in-out infinite;
+}
+
 .overlay-footer {
   min-height: 32px;
   display: flex;
@@ -115,15 +188,21 @@ body {
   height: 44px;
   overflow: hidden;
   border-radius: 14px;
-  border: 1px solid color-mix(in srgb, var(--ss-border-subtle) 75%, transparent);
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--ss-bg-surface-alt) 88%, transparent) 0%,
-      color-mix(in srgb, var(--ss-bg-elevated) 94%, transparent) 100%
-    );
   pointer-events: none;
   isolation: isolate;
+  background:
+    radial-gradient(
+      ellipse 55% 75% at 50% 50%,
+      rgba(254, 191, 43, 0.04) 0%,
+      transparent 65%
+    ),
+    linear-gradient(
+      180deg,
+      #192810 0%,
+      #0b1204 100%
+    );
+  border: 1px solid rgba(158, 95, 10, 0.1);
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .gpu-waveform-mount {
@@ -309,41 +388,6 @@ body {
   background: color-mix(in srgb, var(--ss-state-danger) 12%, transparent);
 }
 
-.cancel-button {
-  width: 24px;
-  height: 24px;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--ss-border-default) 85%, transparent);
-  background: var(--ss-bg-elevated);
-  color: var(--ss-text-secondary);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition:
-    background-color 140ms ease-out,
-    border-color 140ms ease-out,
-    transform 90ms ease-out,
-    color 140ms ease-out;
-  flex-shrink: 0;
-}
-
-.cancel-button:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--ss-action-focus) 55%, transparent);
-  outline-offset: 2px;
-}
-
-.cancel-button:hover {
-  background: color-mix(in srgb, var(--ss-brand-secondary) 8%, var(--ss-bg-elevated));
-  border-color: color-mix(in srgb, var(--ss-brand-secondary) 28%, transparent);
-  color: var(--ss-brand-secondary);
-  transform: translateY(-1px);
-}
-
-.cancel-button:active {
-  transform: scale(0.97);
-}
-
 .state-success .overlay-icon-shell {
   color: var(--ss-brand-highlight);
 }
@@ -379,7 +423,8 @@ body {
   }
 
   .spinning,
-  .overlay-progress-indicator {
+  .overlay-progress-indicator,
+  .overlay-compact-progress-indicator {
     animation: none;
   }
 }
