@@ -26,21 +26,8 @@ const getLocalePrefix = (locale: string | null): string | null => {
   return locale.split("-")[0]?.toLowerCase() || null;
 };
 
-const isAppleSiliconEnglishLocale = (
-  locale: string | null | undefined,
-  context?: OnboardingRuntimeContext,
-): boolean => {
-  const normalized = normalizeLocale(locale);
-  const prefix = getLocalePrefix(normalized);
-  const osType = context?.osType ?? null;
-  const arch = context?.arch?.toLowerCase() ?? null;
-
-  return (
-    prefix === "en" &&
-    osType === "macos" &&
-    (arch === "aarch64" || arch === "arm64")
-  );
-};
+const isMacOs = (context?: OnboardingRuntimeContext): boolean =>
+  context?.osType === "macos";
 
 const getLocaleLanguageCandidates = (
   locale: string | null | undefined,
@@ -146,7 +133,7 @@ export const selectOnboardingModel = (
 ): ModelInfo | null => {
   if (models.length === 0) return null;
 
-  if (isAppleSiliconEnglishLocale(locale, runtimeContext)) {
+  if (isMacOs(runtimeContext)) {
     const parakeetV3 = findModelById(models, "parakeet-tdt-0.6b-v3");
     if (parakeetV3) {
       return parakeetV3;
