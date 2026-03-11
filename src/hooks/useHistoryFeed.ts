@@ -74,13 +74,15 @@ export const useHistoryFeed = <TData>({
     pagination,
   ]);
 
-  useEffect(() => {
-    nextCursorRef.current = nextCursor;
-  }, [nextCursor]);
+  const updateNextCursor = (cursor: HomeHistoryCursor | null) => {
+    nextCursorRef.current = cursor;
+    setNextCursor(cursor);
+  };
 
-  useEffect(() => {
-    isLoadingMoreRef.current = isLoadingMore;
-  }, [isLoadingMore]);
+  const updateLoadingMore = (loadingMore: boolean) => {
+    isLoadingMoreRef.current = loadingMore;
+    setIsLoadingMore(loadingMore);
+  };
 
   const load = async (showLoadingState = false) => {
     if (showLoadingState) {
@@ -102,10 +104,10 @@ export const useHistoryFeed = <TData>({
 
       if (paginationOptions) {
         const cursor = paginationOptions.selectNextCursor(data);
-        setNextCursor(cursor);
+        updateNextCursor(cursor);
         setHasMore(Boolean(cursor));
       } else {
-        setNextCursor(null);
+        updateNextCursor(null);
         setHasMore(false);
       }
 
@@ -113,13 +115,15 @@ export const useHistoryFeed = <TData>({
       setError(null);
     } catch (loadError) {
       console.error("Failed to load history feed:", loadError);
-      setEntries([]);
-      setNextCursor(null);
-      setHasMore(false);
-      setError(
-        loadError instanceof Error ? loadError.message : String(loadError),
-      );
-      onDataErrorRef.current?.();
+      if (showLoadingState) {
+        setEntries([]);
+        updateNextCursor(null);
+        setHasMore(false);
+        setError(
+          loadError instanceof Error ? loadError.message : String(loadError),
+        );
+        onDataErrorRef.current?.();
+      }
     } finally {
       setLoading(false);
     }
@@ -135,7 +139,7 @@ export const useHistoryFeed = <TData>({
       return;
     }
 
-    setIsLoadingMore(true);
+    updateLoadingMore(true);
 
     try {
       const data = await fetchDataRef.current({
@@ -146,7 +150,7 @@ export const useHistoryFeed = <TData>({
       setEntries((currentEntries) => [...currentEntries, ...nextEntries]);
 
       const cursor = paginationOptions.selectNextCursor(data);
-      setNextCursor(cursor);
+      updateNextCursor(cursor);
       setHasMore(Boolean(cursor));
       onDataLoadedRef.current?.(data, "append");
       setError(null);
@@ -157,7 +161,7 @@ export const useHistoryFeed = <TData>({
       );
       onDataErrorRef.current?.();
     } finally {
-      setIsLoadingMore(false);
+      updateLoadingMore(false);
     }
   };
 
