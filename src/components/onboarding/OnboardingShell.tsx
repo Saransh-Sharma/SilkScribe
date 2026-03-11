@@ -101,7 +101,7 @@ const OnboardingShell: React.FC<OnboardingShellProps> = ({
             </div>
           </header>
 
-          <div className="min-h-0 flex-1 overflow-hidden px-5 pb-5 pt-4 md:px-6 md:pb-6 md:pt-5">
+          <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-5 pt-4 md:px-6 md:pb-6 md:pt-5">
             <div className="flex h-full flex-col gap-5">
               <div className="shrink-0">
                 <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-ss-brand-secondary">
@@ -115,7 +115,7 @@ const OnboardingShell: React.FC<OnboardingShellProps> = ({
                 </p>
               </div>
 
-              <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
+              <div className="min-h-0 flex-1">{children}</div>
             </div>
           </div>
 

@@ -14,6 +14,7 @@ export type PermissionKind = "microphone" | "accessibility";
 type PermissionStatus =
   | "checking"
   | "needed"
+  | "error"
   | "requesting"
   | "waiting_for_user"
   | "granted";
@@ -41,6 +42,9 @@ const REQUESTERS = {
   accessibility: requestAccessibilityPermission,
 } as const;
 
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : String(error);
+
 const PermissionStep = ({
   permission,
   mode,
@@ -52,6 +56,7 @@ const PermissionStep = ({
   const Icon = ICONS[permission];
   const pollRef = useRef<number | null>(null);
   const [status, setStatus] = useState<PermissionStatus>("checking");
+  const [permissionError, setPermissionError] = useState<string | null>(null);
 
   const clearPolling = () => {
     if (pollRef.current !== null) {
@@ -60,30 +65,70 @@ const PermissionStep = ({
     }
   };
 
+  const handlePermissionFailure = useCallback(
+    (phase: "check" | "request", error: unknown) => {
+      clearPolling();
+      const message = getErrorMessage(error);
+      console.error(`Failed to ${phase} ${permission} permission:`, error);
+      setPermissionError(message);
+      setStatus("error");
+    },
+    [permission],
+  );
+
+  const checkPermission = useCallback(async () => {
+    try {
+      setPermissionError(null);
+      return await CHECKERS[permission]();
+    } catch (error) {
+      handlePermissionFailure("check", error);
+      return null;
+    }
+  }, [handlePermissionFailure, permission]);
+
+  const requestPermission = useCallback(async () => {
+    try {
+      setPermissionError(null);
+      await REQUESTERS[permission]();
+      return true;
+    } catch (error) {
+      handlePermissionFailure("request", error);
+      return false;
+    }
+  }, [handlePermissionFailure, permission]);
+
   const verifyPermission = useCallback(async () => {
-    const granted = await CHECKERS[permission]().catch(() => false);
+    const granted = await checkPermission();
+    if (granted === null) {
+      return null;
+    }
+
     setStatus(granted ? "granted" : "waiting_for_user");
     return granted;
-  }, [permission]);
+  }, [checkPermission]);
 
   const startPolling = useCallback(() => {
     if (pollRef.current !== null) return;
 
     pollRef.current = window.setInterval(async () => {
-      const granted = await CHECKERS[permission]().catch(() => false);
+      const granted = await checkPermission();
+      if (granted === null) {
+        return;
+      }
+
       if (granted) {
         clearPolling();
         setStatus("granted");
       }
     }, 1200);
-  }, [permission]);
+  }, [checkPermission]);
 
   useEffect(() => {
     let isCancelled = false;
 
     const runInitialCheck = async () => {
-      const granted = await CHECKERS[permission]().catch(() => false);
-      if (isCancelled) return;
+      const granted = await checkPermission();
+      if (isCancelled || granted === null) return;
       setStatus(granted ? "granted" : "needed");
     };
 
@@ -93,18 +138,22 @@ const PermissionStep = ({
       isCancelled = true;
       clearPolling();
     };
-  }, [permission]);
+  }, [checkPermission, permission]);
 
   const handleOpenPrompt = async () => {
     setStatus("requesting");
+    setPermissionError(null);
 
-    try {
-      await REQUESTERS[permission]();
-    } catch (error) {
-      console.error(`Failed requesting ${permission} permission:`, error);
+    const requested = await requestPermission();
+    if (!requested) {
+      return;
     }
 
-    const granted = await CHECKERS[permission]().catch(() => false);
+    const granted = await checkPermission();
+    if (granted === null) {
+      return;
+    }
+
     setStatus(granted ? "granted" : "waiting_for_user");
     if (!granted) {
       startPolling();
@@ -145,6 +194,7 @@ const PermissionStep = ({
         </Button>
         <Button
           onClick={() => {
+            setPermissionError(null);
             setStatus("waiting_for_user");
             startPolling();
           }}
@@ -276,8 +326,15 @@ const PermissionStep = ({
                   {t("onboarding.permissions.shared.statusLabel")}
                 </p>
                 <p className="mt-1 text-sm leading-relaxed text-ss-text-secondary">
-                  {t(`onboarding.permissions.${permission}.statusHelp.${status}`)}
+                  {t(
+                    `onboarding.permissions.${permission}.statusHelp.${status}`,
+                  )}
                 </p>
+                {status === "error" && permissionError ? (
+                  <p className="mt-2 text-xs leading-relaxed text-ss-state-danger">
+                    {permissionError}
+                  </p>
+                ) : null}
               </div>
             </div>
           </div>

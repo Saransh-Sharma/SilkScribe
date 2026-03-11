@@ -92,6 +92,7 @@
         "statuses": {
           "checking": "Checking",
           "needed": "Still needed",
+          "error": "Needs attention",
           "requesting": "Opening macOS",
           "waiting_for_user": "Waiting for you",
           "granted": "Allowed"
@@ -117,6 +118,7 @@
         "statusHelp": {
           "checking": "Checking whether microphone access is already on.",
           "needed": "Microphone access is still off.",
+          "error": "SilkScribe could not verify microphone access.",
           "requesting": "The macOS permission prompt should appear now.",
           "waiting_for_user": "Allow the permission, then come back and check again.",
           "granted": "Microphone access is on."
@@ -142,6 +144,7 @@
         "statusHelp": {
           "checking": "Checking whether Accessibility access is already on.",
           "needed": "Accessibility access is still off.",
+          "error": "SilkScribe could not verify Accessibility access.",
           "requesting": "The macOS approval flow should open now.",
           "waiting_for_user": "Turn SilkScribe on in System Settings > Privacy & Security > Accessibility, then check again.",
           "granted": "Accessibility access is on."
