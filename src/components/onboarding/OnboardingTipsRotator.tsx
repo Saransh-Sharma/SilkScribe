@@ -2,18 +2,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-type LegacyMediaQueryList = MediaQueryList & {
-  addListener?: (listener: (event: MediaQueryListEvent) => void) => void;
-  removeListener?: (listener: (event: MediaQueryListEvent) => void) => void;
-};
-
 const CARD_KEYS = [
-  "holdToTalk",
-  "shortBursts",
+  "shortcutHabit",
   "focusField",
-  "recordingConditions",
-  "autoModel",
-  "improveLater",
+  "shortBursts",
+  "quietSpace",
+  "privacy",
+  "firstWin",
 ] as const;
 
 interface OnboardingTipsRotatorProps {
@@ -27,33 +22,6 @@ const OnboardingTipsRotator: React.FC<OnboardingTipsRotatorProps> = ({
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [windowFocused, setWindowFocused] = useState(true);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined" || !window.matchMedia) return;
-
-    const mediaQuery = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ) as LegacyMediaQueryList;
-    const syncPreference = () => {
-      setPrefersReducedMotion(mediaQuery.matches);
-    };
-
-    syncPreference();
-    if (typeof mediaQuery.addEventListener === "function") {
-      mediaQuery.addEventListener("change", syncPreference);
-    } else {
-      mediaQuery.addListener?.(syncPreference);
-    }
-
-    return () => {
-      if (typeof mediaQuery.removeEventListener === "function") {
-        mediaQuery.removeEventListener("change", syncPreference);
-      } else {
-        mediaQuery.removeListener?.(syncPreference);
-      }
-    };
-  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -71,28 +39,28 @@ const OnboardingTipsRotator: React.FC<OnboardingTipsRotatorProps> = ({
   }, []);
 
   useEffect(() => {
-    if (prefersReducedMotion || isHovered || !windowFocused) return;
+    if (isHovered || !windowFocused) return;
 
     const timer = window.setInterval(() => {
       setActiveIndex((current) => (current + 1) % CARD_KEYS.length);
-    }, 7000);
+    }, 5600);
 
     return () => {
       window.clearInterval(timer);
     };
-  }, [isHovered, prefersReducedMotion, windowFocused]);
+  }, [isHovered, windowFocused]);
 
   const activeCardKey = CARD_KEYS[activeIndex];
 
   const cardPoints = useMemo(
     () => [
-      t(`onboarding.setup.cards.${activeCardKey}.point1`, {
+      t(`onboarding.setup.tips.cards.${activeCardKey}.point1`, {
         shortcut: shortcutLabel,
       }),
-      t(`onboarding.setup.cards.${activeCardKey}.point2`, {
+      t(`onboarding.setup.tips.cards.${activeCardKey}.point2`, {
         shortcut: shortcutLabel,
       }),
-      t(`onboarding.setup.cards.${activeCardKey}.point3`, {
+      t(`onboarding.setup.tips.cards.${activeCardKey}.point3`, {
         shortcut: shortcutLabel,
       }),
     ],
@@ -105,7 +73,7 @@ const OnboardingTipsRotator: React.FC<OnboardingTipsRotatorProps> = ({
 
   return (
     <section
-      className="rounded-[24px] border border-ss-border-default bg-ss-bg-surface/90 p-5 shadow-[var(--ss-shadow-card)]"
+      className="rounded-[30px] border border-ss-border-default bg-ss-bg-surface/92 p-7 shadow-[var(--ss-shadow-card)]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -117,15 +85,15 @@ const OnboardingTipsRotator: React.FC<OnboardingTipsRotatorProps> = ({
           </div>
           <div
             key={activeCardKey}
-            className="transition-[opacity,transform] duration-300 ease-out"
+            className="ss-onboarding-card-enter"
           >
-            <h3 className="text-lg font-semibold text-ss-text-primary">
-              {t(`onboarding.setup.cards.${activeCardKey}.title`, {
+            <h3 className="text-xl font-semibold text-ss-text-primary">
+              {t(`onboarding.setup.tips.cards.${activeCardKey}.title`, {
                 shortcut: shortcutLabel,
               })}
             </h3>
-            <p className="mt-1 text-sm leading-relaxed text-ss-text-tertiary">
-              {t(`onboarding.setup.cards.${activeCardKey}.description`, {
+            <p className="mt-2 text-sm leading-relaxed text-ss-text-tertiary">
+              {t(`onboarding.setup.tips.cards.${activeCardKey}.description`, {
                 shortcut: shortcutLabel,
               })}
             </p>
@@ -159,7 +127,7 @@ const OnboardingTipsRotator: React.FC<OnboardingTipsRotatorProps> = ({
         </div>
       </div>
 
-      {activeCardKey === "holdToTalk" && (
+      {activeCardKey === "shortcutHabit" && (
         <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-ss-brand-highlight/20 bg-ss-brand-highlight/10 px-3 py-1.5 text-xs font-semibold text-ss-brand-highlight">
           <span className="h-2 w-2 rounded-full bg-current" />
           {shortcutLabel}
@@ -170,7 +138,7 @@ const OnboardingTipsRotator: React.FC<OnboardingTipsRotatorProps> = ({
         {cardPoints.map((point, index) => (
           <div
             key={`${activeCardKey}-${index}`}
-            className="flex items-start gap-3 rounded-[18px] border border-ss-border-subtle bg-ss-bg-surface-alt px-3.5 py-3"
+            className="flex items-start gap-3 rounded-[20px] border border-ss-border-subtle bg-ss-bg-surface-alt px-4 py-3.5"
           >
             <div className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-ss-brand-highlight" />
             <p className="text-sm leading-relaxed text-ss-text-secondary">

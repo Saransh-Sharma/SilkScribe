@@ -15,10 +15,10 @@
       {
         "label": "main",
         "title": "SilkScribe",
-        "width": 680,
-        "height": 570,
-        "minWidth": 680,
-        "minHeight": 570,
+        "width": 1360,
+        "height": 920,
+        "minWidth": 1180,
+        "minHeight": 820,
         "resizable": true,
         "maximizable": false,
         "visible": false

@@ -9,14 +9,33 @@ import {
 import "./App.css";
 import AccessibilityPermissions from "./components/AccessibilityPermissions";
 import Footer from "./components/footer";
-import Onboarding, { AccessibilityOnboarding } from "./components/onboarding";
+import Onboarding, {
+  OnboardingPractice,
+  OnboardingSetup,
+  PermissionStep,
+} from "./components/onboarding";
 import { Sidebar, SidebarSection, SECTIONS_CONFIG } from "./components/Sidebar";
 import { useSettings } from "./hooks/useSettings";
 import { useSettingsStore } from "./stores/settingsStore";
 import { commands } from "@/bindings";
+import {
+  enterOnboardingWindowMode,
+  exitOnboardingWindowMode,
+} from "@/lib/utils/onboardingWindow";
 import { getLanguageDirection, initializeRTL } from "@/lib/utils/rtl";
 
-type OnboardingStep = "accessibility" | "guided_setup" | "done";
+type OnboardingStep =
+  | "welcome"
+  | "microphone_permission"
+  | "accessibility_permission"
+  | "setup"
+  | "practice"
+  | "done";
+
+interface PermissionSnapshot {
+  accessibility: boolean;
+  microphone: boolean;
+}
 
 const renderSettingsContent = (section: SidebarSection) => {
   const ActiveComponent =
@@ -30,6 +49,10 @@ function App() {
     null,
   );
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
+  const [permissions, setPermissions] = useState<PermissionSnapshot>({
+    accessibility: false,
+    microphone: false,
+  });
   const [currentSection, setCurrentSection] = useState<SidebarSection>("home");
   const { settings, updateSetting } = useSettings();
   const direction = getLanguageDirection(i18n.language);
@@ -40,6 +63,60 @@ function App() {
     (state) => state.refreshOutputDevices,
   );
   const hasCompletedPostOnboardingInit = useRef(false);
+
+  const loadPermissionSnapshot = async (): Promise<PermissionSnapshot> => {
+    if (platform() !== "macos") {
+      return {
+        accessibility: true,
+        microphone: true,
+      };
+    }
+
+    try {
+      const [accessibility, microphone] = await Promise.all([
+        checkAccessibilityPermission(),
+        checkMicrophonePermission(),
+      ]);
+      return { accessibility, microphone };
+    } catch (e) {
+      console.warn("Failed to check permissions:", e);
+      return {
+        accessibility: false,
+        microphone: false,
+      };
+    }
+  };
+
+  const getFirstMissingPermissionStep = (
+    snapshot: PermissionSnapshot,
+  ): OnboardingStep | null => {
+    if (!snapshot.microphone) {
+      return "microphone_permission";
+    }
+    if (!snapshot.accessibility) {
+      return "accessibility_permission";
+    }
+    return null;
+  };
+
+  const onboardingStepLabels = [
+    i18n.t("onboarding.progress.welcome"),
+    i18n.t("onboarding.progress.microphone"),
+    i18n.t("onboarding.progress.accessibility"),
+    i18n.t("onboarding.progress.setup"),
+    i18n.t("onboarding.progress.practice"),
+  ];
+
+  const getRepairStepLabels = (snapshot: PermissionSnapshot): string[] => {
+    const labels: string[] = [];
+    if (!snapshot.microphone) {
+      labels.push(i18n.t("onboarding.progress.microphone"));
+    }
+    if (!snapshot.accessibility) {
+      labels.push(i18n.t("onboarding.progress.accessibility"));
+    }
+    return labels.length > 0 ? labels : [i18n.t("onboarding.progress.setup")];
+  };
 
   const toaster = (
     <Toaster
@@ -65,11 +142,29 @@ function App() {
     initializeRTL(i18n.language);
   }, [i18n.language]);
 
+  useEffect(() => {
+    const syncWindowMode = async () => {
+      if (
+        onboardingStep !== null &&
+        onboardingStep !== "done"
+      ) {
+        await enterOnboardingWindowMode();
+        return;
+      }
+
+      await exitOnboardingWindowMode();
+    };
+
+    void syncWindowMode();
+  }, [onboardingStep]);
+
   // Initialize shortcuts and input handling once onboarding reaches an interactive step.
   useEffect(() => {
     if (
       onboardingStep !== null &&
-      onboardingStep !== "accessibility" &&
+      onboardingStep !== "welcome" &&
+      onboardingStep !== "microphone_permission" &&
+      onboardingStep !== "accessibility_permission" &&
       !hasCompletedPostOnboardingInit.current
     ) {
       hasCompletedPostOnboardingInit.current = true;
@@ -118,35 +213,46 @@ function App() {
           : false;
       setHasCompletedOnboarding(onboardingComplete);
 
-      if (platform() === "macos") {
-        try {
-          const [hasAccessibility, hasMicrophone] = await Promise.all([
-            checkAccessibilityPermission(),
-            checkMicrophonePermission(),
-          ]);
-          if (!hasAccessibility || !hasMicrophone) {
-            setOnboardingStep("accessibility");
-            return;
-          }
-        } catch (e) {
-          console.warn("Failed to check permissions:", e);
-        }
+      const currentPermissions = await loadPermissionSnapshot();
+      setPermissions(currentPermissions);
+
+      if (!onboardingComplete) {
+        setOnboardingStep("welcome");
+        return;
       }
 
-      setOnboardingStep(onboardingComplete ? "done" : "guided_setup");
+      setOnboardingStep(getFirstMissingPermissionStep(currentPermissions) ?? "done");
     } catch (error) {
       console.error("Failed to check onboarding status:", error);
-      setOnboardingStep(
-        platform() === "macos" ? "accessibility" : "guided_setup",
-      );
+      const fallbackPermissions =
+        platform() === "macos"
+          ? { accessibility: false, microphone: false }
+          : { accessibility: true, microphone: true };
+      setPermissions(fallbackPermissions);
+      setOnboardingStep("welcome");
     }
   };
 
-  const handleAccessibilityComplete = () => {
-    setOnboardingStep(hasCompletedOnboarding ? "done" : "guided_setup");
+  const handleWelcomeContinue = async () => {
+    const currentPermissions = await loadPermissionSnapshot();
+    setPermissions(currentPermissions);
+    setOnboardingStep(getFirstMissingPermissionStep(currentPermissions) ?? "setup");
   };
 
-  const handleOnboardingComplete = () => {
+  const handlePermissionContinue = async () => {
+    const currentPermissions = await loadPermissionSnapshot();
+    setPermissions(currentPermissions);
+
+    const nextMissingStep = getFirstMissingPermissionStep(currentPermissions);
+    if (nextMissingStep) {
+      setOnboardingStep(nextMissingStep);
+      return;
+    }
+
+    setOnboardingStep(hasCompletedOnboarding ? "done" : "setup");
+  };
+
+  const handlePracticeComplete = () => {
     setHasCompletedOnboarding(true);
     setOnboardingStep("done");
   };
@@ -156,20 +262,85 @@ function App() {
     return toaster;
   }
 
-  if (onboardingStep === "accessibility") {
+  if (onboardingStep === "welcome") {
     return (
       <>
         {toaster}
-        <AccessibilityOnboarding onComplete={handleAccessibilityComplete} />
+        <Onboarding
+          onContinue={handleWelcomeContinue}
+          stepLabels={onboardingStepLabels}
+          activeStep={0}
+        />
       </>
     );
   }
 
-  if (onboardingStep === "guided_setup") {
+  if (onboardingStep === "microphone_permission") {
+    const stepLabels = hasCompletedOnboarding
+      ? getRepairStepLabels(permissions)
+      : onboardingStepLabels;
+    const activeStep = hasCompletedOnboarding ? 0 : 1;
+
     return (
       <>
         {toaster}
-        <Onboarding onComplete={handleOnboardingComplete} />
+        <PermissionStep
+          permission="microphone"
+          mode={hasCompletedOnboarding ? "repair" : "onboarding"}
+          stepLabels={stepLabels}
+          activeStep={activeStep}
+          onContinue={handlePermissionContinue}
+        />
+      </>
+    );
+  }
+
+  if (onboardingStep === "accessibility_permission") {
+    const stepLabels = hasCompletedOnboarding
+      ? getRepairStepLabels(permissions)
+      : onboardingStepLabels;
+    const activeStep = hasCompletedOnboarding
+      ? stepLabels.length > 1
+        ? 1
+        : 0
+      : 2;
+
+    return (
+      <>
+        {toaster}
+        <PermissionStep
+          permission="accessibility"
+          mode={hasCompletedOnboarding ? "repair" : "onboarding"}
+          stepLabels={stepLabels}
+          activeStep={activeStep}
+          onContinue={handlePermissionContinue}
+        />
+      </>
+    );
+  }
+
+  if (onboardingStep === "setup") {
+    return (
+      <>
+        {toaster}
+        <OnboardingSetup
+          onReady={() => setOnboardingStep("practice")}
+          stepLabels={onboardingStepLabels}
+          activeStep={3}
+        />
+      </>
+    );
+  }
+
+  if (onboardingStep === "practice") {
+    return (
+      <>
+        {toaster}
+        <OnboardingPractice
+          onComplete={handlePracticeComplete}
+          stepLabels={onboardingStepLabels}
+          activeStep={4}
+        />
       </>
     );
   }
@@ -193,7 +364,7 @@ function App() {
             />
             <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
               <div className="app-content-scroll flex-1 overflow-y-auto">
-                <div className="mx-auto flex w-full max-w-[860px] flex-col gap-5 px-5 py-5">
+                <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-5 px-5 py-5">
                   <AccessibilityPermissions />
                   {renderSettingsContent(currentSection)}
                 </div>
