@@ -2,13 +2,10 @@ import { listen } from "@tauri-apps/api/event";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AlertCircle, CheckCircle2, LoaderCircle } from "lucide-react";
-import {
-  MicrophoneIcon,
-  TranscriptionIcon,
-  CancelIcon,
-} from "../components/icons";
+import { TranscriptionIcon } from "../components/icons";
 import "./RecordingOverlay.css";
-import { commands } from "@/bindings";
+import GpuWaveformStage from "./GpuWaveformStage";
+import { WAVEFORM_BUCKET_COUNT } from "./waveformConfig";
 import i18n, { syncLanguageFromSettings } from "@/i18n";
 import { getLanguageDirection } from "@/lib/utils/rtl";
 
@@ -40,8 +37,10 @@ const RecordingOverlay: React.FC = () => {
     state: "recording",
     canCancel: true,
   });
-  const [levels, setLevels] = useState<number[]>(Array(12).fill(0));
-  const smoothedLevelsRef = useRef<number[]>(Array(12).fill(0));
+  const levelsRef = useRef<number[]>(Array(WAVEFORM_BUCKET_COUNT).fill(0));
+  const waveformSinkRef = useRef<((levels: number[]) => void) | null>(null);
+  const isVisibleRef = useRef(false);
+  const overlayStateRef = useRef<OverlayState>("recording");
   const direction = getLanguageDirection(i18n.language);
 
   const getDefaultCopy = (state: OverlayState) => {
@@ -105,21 +104,30 @@ const RecordingOverlay: React.FC = () => {
       const listeners = await Promise.all([
         listen("show-overlay", async (event) => {
           await syncLanguageFromSettings();
-          setOverlay(resolvePayload(event.payload));
+          const nextOverlay = resolvePayload(event.payload);
+          overlayStateRef.current = nextOverlay.state;
+          isVisibleRef.current = true;
+          setOverlay(nextOverlay);
           setIsVisible(true);
         }),
         listen("hide-overlay", () => {
+          isVisibleRef.current = false;
           setIsVisible(false);
         }),
         listen<number[]>("mic-level", (event) => {
           const newLevels = event.payload as number[];
-          const smoothed = smoothedLevelsRef.current.map((prev, i) => {
-            const target = newLevels[i] || 0;
-            return prev * 0.55 + target * 0.45;
-          });
+          const nextLevels = levelsRef.current;
+          for (let index = 0; index < WAVEFORM_BUCKET_COUNT; index += 1) {
+            nextLevels[index] = newLevels[index] ?? 0;
+          }
 
-          smoothedLevelsRef.current = smoothed;
-          setLevels(smoothed);
+          if (
+            isVisibleRef.current &&
+            overlayStateRef.current === "recording" &&
+            waveformSinkRef.current
+          ) {
+            waveformSinkRef.current(nextLevels);
+          }
         }),
       ]);
 
@@ -143,24 +151,21 @@ const RecordingOverlay: React.FC = () => {
   const title = overlay.title || overlayCopy.title;
   const detail = overlay.previewText || overlay.detail || overlayCopy.detail;
   const isRecording = overlay.state === "recording";
-  const isProgressState =
-    overlay.state === "transcribing" || overlay.state === "processing";
-  const rawAverageLevel = levels.reduce((sum, value) => sum + value, 0) / levels.length;
-  const waveformBars = levels.map((value) => ({
-    scale: Math.max(0.18, Math.min(1, value)),
-    opacity: Math.max(0.4, Math.min(1, 0.45 + value * 0.75)),
-  }));
-  const isIdleWaveform = isRecording && rawAverageLevel < 0.06;
+  const isTranscribing = overlay.state === "transcribing";
+  const isCompactOverlay = isRecording || isTranscribing;
+  const isLegacyStatusOverlay =
+    overlay.state === "processing" ||
+    overlay.state === "success" ||
+    overlay.state === "error";
+  const shouldRenderGpuWaveform = isVisible && isRecording;
+  const isProgressState = overlay.state === "processing";
 
   const getIcon = () => {
     switch (overlay.state) {
-      case "recording":
-        return <MicrophoneIcon />;
       case "success":
         return <CheckCircle2 className="overlay-lucide" />;
       case "error":
         return <AlertCircle className="overlay-lucide" />;
-      case "transcribing":
       case "processing":
       default:
         return <TranscriptionIcon />;
@@ -172,77 +177,82 @@ const RecordingOverlay: React.FC = () => {
       dir={direction}
       className={`recording-overlay ${isVisible ? "is-visible" : ""} state-${overlay.state}`}
     >
-      <div className="overlay-header">
-        <div className="overlay-left">
-          <div className="overlay-icon-shell">{getIcon()}</div>
-        </div>
-
-        <div className="overlay-copy">
-          <div className="overlay-title">{title}</div>
-        </div>
-
-        <div className="overlay-right">
-          {overlay.canCancel && (
-            <button
-              type="button"
-              className="cancel-button"
-              onClick={() => {
-                commands.cancelOperation();
-              }}
-              aria-label={t("modelSelector.cancel")}
-            >
-              <CancelIcon />
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="overlay-footer">
-        {isRecording ? (
-          <div
-            className={`bars-container ${isIdleWaveform ? "is-idle" : ""}`}
-            aria-hidden="true"
-          >
-            {waveformBars.map((bar, i) => (
-              <div
-                key={i}
-                className="bar"
-                style={{
-                  ["--bar-index" as string]: i,
-                  transform: `scaleY(${bar.scale})`,
-                  opacity: bar.opacity,
+      {isCompactOverlay ? (
+        <div
+          className={`overlay-compact ${
+            isRecording
+              ? "overlay-compact-recording"
+              : "overlay-compact-transcribing"
+          }`}
+        >
+          {isRecording ? (
+            shouldRenderGpuWaveform ? (
+              <GpuWaveformStage
+                initialLevels={levelsRef.current}
+                isActive={shouldRenderGpuWaveform}
+                onReady={(pushLevels) => {
+                  waveformSinkRef.current = pushLevels;
+                  pushLevels(levelsRef.current);
+                }}
+                onTeardown={() => {
+                  waveformSinkRef.current = null;
                 }}
               />
-            ))}
-          </div>
-        ) : (
-          <div className="overlay-statusblock">
-            {detail && <div className="overlay-inline-detail">{detail}</div>}
-            <div className="overlay-statusline">
-              {isProgressState && (
-                <span className="overlay-spinner" aria-hidden="true">
-                  <LoaderCircle className="overlay-lucide spinning" />
-                </span>
-              )}
-              {overlay.state === "success" && (
-                <span className="overlay-pill success">
-                  {t("overlay.successPill")}
-                </span>
-              )}
-              {overlay.state === "error" && (
-                <span className="overlay-pill error">
-                  {t("overlay.errorPill")}
-                </span>
-              )}
-              {isProgressState && (
-                <div className="overlay-progress-track" aria-hidden="true">
-                  <div className="overlay-progress-indicator" />
-                </div>
-              )}
+            ) : (
+              <div className="gpu-waveform-host is-dormant" aria-hidden="true" />
+            )
+          ) : (
+            <>
+              <div className="overlay-compact-title">{title}</div>
+              <div className="overlay-compact-progress" aria-hidden="true">
+                <div className="overlay-compact-progress-indicator" />
+              </div>
+            </>
+          )}
+        </div>
+      ) : null}
+
+      {isLegacyStatusOverlay ? (
+        <>
+          <div className="overlay-header">
+            <div className="overlay-left">
+              <div className="overlay-icon-shell">{getIcon()}</div>
+            </div>
+
+            <div className="overlay-copy">
+              <div className="overlay-title">{title}</div>
             </div>
           </div>
-        )}
-      </div>
+
+          <div className="overlay-footer">
+            <div className="overlay-statusblock">
+              {detail && <div className="overlay-inline-detail">{detail}</div>}
+              <div className="overlay-statusline">
+                {isProgressState && (
+                  <span className="overlay-spinner" aria-hidden="true">
+                    <LoaderCircle className="overlay-lucide spinning" />
+                  </span>
+                )}
+                {overlay.state === "success" && (
+                  <span className="overlay-pill success">
+                    {t("overlay.successPill")}
+                  </span>
+                )}
+                {overlay.state === "error" && (
+                  <span className="overlay-pill error">
+                    {t("overlay.errorPill")}
+                  </span>
+                )}
+                {isProgressState && (
+                  <div className="overlay-progress-track" aria-hidden="true">
+                    <div className="overlay-progress-indicator" />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </>
+      ) : null}
     </div>
   );
 };

@@ -2,6 +2,7 @@ use crate::audio_toolkit::{list_input_devices, vad::SmoothedVad, AudioRecorder, 
 use crate::helpers::clamshell;
 use crate::settings::{get_settings, AppSettings};
 use crate::utils;
+use cpal::traits::DeviceTrait;
 use log::{debug, error, info};
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
@@ -217,7 +218,10 @@ impl AudioRecordingManager {
         let settings = get_settings(&self.app_handle);
         let mut did_mute_guard = self.did_mute.lock().unwrap();
 
-        if settings.mute_while_recording && *self.is_open.lock().unwrap() {
+        if settings.mute_while_recording
+            && *self.is_open.lock().unwrap()
+            && *self.is_recording.lock().unwrap()
+        {
             set_mute(true);
             *did_mute_guard = true;
             debug!("Mute applied");
@@ -267,10 +271,19 @@ impl AudioRecordingManager {
         // Get the selected device from settings, considering clamshell mode
         let settings = get_settings(&self.app_handle);
         let selected_device = self.get_effective_microphone_device(&settings);
+        let selected_device_name = selected_device
+            .as_ref()
+            .and_then(|device| device.name().ok())
+            .unwrap_or_else(|| "default device".to_string());
 
         if let Some(rec) = recorder_opt.as_mut() {
-            rec.open(selected_device)
-                .map_err(|e| anyhow::anyhow!("Failed to open recorder: {}", e))?;
+            rec.open(selected_device).map_err(|e| {
+                anyhow::anyhow!(
+                    "Failed to open recorder for {}: {}",
+                    selected_device_name,
+                    e
+                )
+            })?;
         }
 
         *open_flag = true;

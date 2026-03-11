@@ -8,6 +8,7 @@
     "cancel": "取消"
   },
   "sidebar": {
+    "home": "首頁",
     "general": "一般",
     "models": "模型",
     "advanced": "進階",
@@ -77,29 +78,259 @@
         "description": "速度極快。支援中文、英語、日語、韓語、粵語。"
       }
     },
-    "errors": {
-      "loadModels": "無法載入可用模型",
-      "downloadModel": "模型下載失敗: {{error}}"
-    },
     "permissions": {
-      "title": "需要權限",
-      "description": "SilkScribe 需要一些權限才能正常運作",
+      "shared": {
+        "eyebrow": "權限",
+        "repairEyebrow": "需要權限",
+        "stepByStep": "該怎麼做",
+        "statusLabel": "狀態",
+        "openPrompt": "開啟 macOS 提示視窗",
+        "openingPrompt": "正在開啟 macOS 提示視窗…",
+        "iEnabledIt": "我已經開啟了",
+        "checkAgain": "再檢查一次",
+        "continue": "繼續",
+        "statuses": {
+          "checking": "檢查中",
+          "needed": "仍然需要",
+          "error": "需要注意",
+          "requesting": "正在開啟 macOS",
+          "waiting_for_user": "等待你操作",
+          "granted": "已允許"
+        }
+      },
       "microphone": {
-        "title": "麥克風存取",
-        "description": "需要聽取您的語音進行轉錄"
+        "title": "允許麥克風存取",
+        "description": "SilkScribe 需要使用你的麥克風，才能把語音轉成文字。",
+        "needLabel": "需要用來聆聽",
+        "whyItMattersTitle": "為什麼重要",
+        "whyItMattersBody": "SilkScribe 只會在你錄音時聆聽。若沒有麥克風權限，就沒有可轉寫的內容。",
+        "breaksWithoutTitle": "沒有這個權限",
+        "breaksWithoutBody": "錄音可以開始，但 SilkScribe 無法聽見你的聲音。",
+        "afterGrantTitle": "允許之後",
+        "afterGrantBody": "SilkScribe 就能錄下你的聲音並繼續完成設定。",
+        "steps": {
+          "step1": "點一下「開啟 macOS 提示視窗」。",
+          "step2": "當 macOS 詢問時，選擇「允許」。",
+          "step3": "如果沒有出現提示視窗，請開啟「系統設定 > 隱私權與安全性 > 麥克風」。",
+          "step4": "打開 SilkScribe，然後回到這裡再檢查一次。"
+        },
+        "manualHint": "如果你選了「不允許」，請到「系統設定 > 隱私權與安全性 > 麥克風」開啟 SilkScribe。",
+        "statusHelp": {
+          "checking": "正在檢查麥克風存取是否已經開啟。",
+          "needed": "麥克風存取仍然是關閉的。",
+          "error": "SilkScribe 無法檢查麥克風存取。",
+          "requesting": "現在應該會出現 macOS 權限提示視窗。",
+          "waiting_for_user": "允許權限後，回來再檢查一次。",
+          "granted": "麥克風存取已開啟。"
+        }
       },
       "accessibility": {
-        "title": "輔助使用存取",
-        "description": "需要將轉錄文字輸入到您的應用程式中"
-      },
-      "grant": "授予權限",
-      "granted": "已授予",
-      "waiting": "等待中...",
-      "allGranted": "全部完成！",
-      "errors": {
-        "checkFailed": "檢查權限失敗，請重試",
-        "requestFailed": "請求權限失敗，請重試"
+        "title": "允許 SilkScribe 替你輸入文字",
+        "description": "SilkScribe 需要「輔助使用」權限，才能把文字放進你的應用程式。",
+        "needLabel": "需要用來插入文字",
+        "whyItMattersTitle": "為什麼重要",
+        "whyItMattersBody": "SilkScribe 會把完成的文字放進你正在使用的欄位。macOS 會用「輔助使用」權限保護這項操作。",
+        "breaksWithoutTitle": "沒有這個權限",
+        "breaksWithoutBody": "SilkScribe 可能可以轉寫，但無法可靠地把結果輸入到你的應用程式。",
+        "afterGrantTitle": "允許之後",
+        "afterGrantBody": "SilkScribe 就能在應用程式中輸入文字，並正常完成設定。",
+        "steps": {
+          "step1": "點一下「開啟 macOS 提示視窗」。",
+          "step2": "如果 macOS 帶你前往「系統設定」，就在那裡繼續。",
+          "step3": "開啟「隱私權與安全性 > 輔助使用」，然後找到 SilkScribe。",
+          "step4": "打開 SilkScribe，然後回到這裡再檢查一次。"
+        },
+        "manualHint": "如果 SilkScribe 看起來仍然是停用狀態，請在開啟後重新打開應用程式，再檢查一次。",
+        "statusHelp": {
+          "checking": "正在檢查輔助使用權限是否已經開啟。",
+          "needed": "輔助使用權限仍然是關閉的。",
+          "error": "SilkScribe 無法檢查輔助使用權限。",
+          "requesting": "現在應該會開啟 macOS 的核准流程。",
+          "waiting_for_user": "請到「系統設定 > 隱私權與安全性 > 輔助使用」開啟 SilkScribe，然後再檢查一次。",
+          "granted": "輔助使用權限已開啟。"
+        }
       }
+    },
+    "progress": {
+      "welcome": "歡迎",
+      "microphone": "麥克風",
+      "accessibility": "文字存取",
+      "setup": "設定",
+      "practice": "試用"
+    },
+    "welcome": {
+      "eyebrow": "開始設定",
+      "title": "用一分鐘完成 SilkScribe 設定。",
+      "description": "我們會開啟它需要的權限、在背景完成設定，並讓你實際試用一次語音輸入。",
+      "badge": "快速設定",
+      "features": {
+        "permissions": {
+          "title": "清楚的權限說明",
+          "description": "清楚知道該允許什麼以及原因。"
+        },
+        "engine": {
+          "title": "自動設定",
+          "description": "SilkScribe 會為這台裝置挑選合適的離線引擎。"
+        },
+        "practice": {
+          "title": "一次真實測試",
+          "description": "開始使用前先確認一切都正常。"
+        }
+      },
+      "outcomeLabel": "設定完成後",
+      "outcome": "按住你的快捷鍵開始說話，SilkScribe 會把文字放到你需要的位置。",
+      "planLabel": "接下來會發生什麼",
+      "plan": {
+        "step1": {
+          "title": "允許麥克風",
+          "description": "讓 SilkScribe 能聽見你。"
+        },
+        "step2": {
+          "title": "允許文字存取",
+          "description": "讓 SilkScribe 能在你的應用程式中輸入文字。"
+        },
+        "step3": {
+          "title": "實際試一次",
+          "description": "設定完成後，你會做一次快速測試。"
+        }
+      },
+      "permissionPromise": "這些步驟是 SilkScribe 正常運作所必需的。",
+      "continue": "繼續"
+    },
+    "setup": {
+      "eyebrow": "正在準備",
+      "title": "SilkScribe 正在準備中。",
+      "description": "我們正在為 {{language}} 準備最合適的離線語音引擎，之後你會做一個快速測試。",
+      "defaultLanguage": "你的語言",
+      "autoLabel": "自動",
+      "engineTitle": "不需要額外做設定選擇",
+      "engineBody": "SilkScribe 正在為 {{language}} 挑選最合適的方案，並在本機完成設定。",
+      "progressLabel": "進度",
+      "sizeLabel": "下載",
+      "speedLabel": "速度",
+      "etaLabel": "剩餘時間",
+      "speedValue": "{{speed}} MB/s",
+      "notAvailable": "尚未提供",
+      "preparingDetail": "準備中…",
+      "shortcutTitle": "你的快捷鍵",
+      "shortcutBody": "按住 {{shortcut}} 說話，放開即可轉寫。",
+      "prepBadge": "即將就緒",
+      "prepTitle": "這個過程應該很短，而且感覺是自動完成的",
+      "prepBody": "設定進行時，SilkScribe 會下載或載入它為這台裝置挑選的語音引擎。你只要在這裡等下一步即可。",
+      "retry": "再試一次",
+      "ready": "一切都準備好了。現在會開啟試用步驟。",
+      "states": {
+        "resolving": "挑選中",
+        "downloading": "下載中",
+        "preparing": "準備中",
+        "ready": "已就緒",
+        "error": "需要注意"
+      },
+      "panelStates": {
+        "resolving": "正在挑選最佳引擎",
+        "downloading": "正在下載檔案",
+        "preparing": "正在準備引擎",
+        "ready": "可以開始測試",
+        "error": "設定需要處理"
+      },
+      "panelHelp": {
+        "resolving": "SilkScribe 正在檢查可用項目，並為這台裝置挑選最適合的引擎。",
+        "downloading": "現在正在下載所需檔案。",
+        "preparing": "下載完成。SilkScribe 正在本機載入所有內容。",
+        "ready": "設定完成。下一步：做一次真實的快速測試。",
+        "error": "設定沒有完成。請再試一次。"
+      },
+      "errors": {
+        "loadModels": "SilkScribe 無法載入可用的語音引擎。",
+        "downloadModel": "SilkScribe 無法完成下載。",
+        "selectModel": "SilkScribe 無法準備你的語音引擎。"
+      },
+      "tipsBadge": "等待時可參考",
+      "previousCard": "上一則提示",
+      "nextCard": "下一則提示",
+      "goToCard": "前往提示 {{index}}",
+      "tips": {
+        "cards": {
+          "shortcutHabit": {
+            "title": "一個快捷鍵、一個簡單習慣",
+            "description": "SilkScribe 的操作節奏很簡單：按住、說話、放開。",
+            "point1": "說話時按住 {{shortcut}}。",
+            "point2": "說完就放開。",
+            "point3": "SilkScribe 會立刻把這段短語音變成文字。"
+          },
+          "focusField": {
+            "title": "把焦點放在你想輸入文字的位置",
+            "description": "SilkScribe 會把結果送到轉寫完成時仍然處於作用中的欄位。",
+            "point1": "在開始說話前，先點一下你想輸入的文字欄位。",
+            "point2": "保持那個欄位有焦點，直到轉寫完成。",
+            "point3": "在 onboarding 過程中，我們特別提供了一個練習欄位。"
+          },
+          "shortBursts": {
+            "title": "短句通常感覺最快",
+            "description": "新使用者在每次錄音都保持簡短時，通常能得到最乾淨的初次結果。",
+            "point1": "一次說一到兩句話即可。",
+            "point2": "在不同想法之間自然停頓。",
+            "point3": "之後你也可以立刻再錄下一段。"
+          },
+          "quietSpace": {
+            "title": "安靜一點的環境更容易獲得第一次成功",
+            "description": "當你的聲音能清楚從環境中脫穎而出時，SilkScribe 會表現得最好。",
+            "point1": "如果可以，使用你平常偏好的麥克風。",
+            "point2": "盡量降低風扇、喇叭或背景談話的聲音。",
+            "point3": "用穩定自然的速度說話。"
+          },
+          "privacy": {
+            "title": "設定流程只保留必要內容",
+            "description": "這個 onboarding 避免額外設定，好讓你更快完成第一次可用的轉寫。",
+            "point1": "權限放在第一步，因為它們對應用程式能否正常運作很關鍵。",
+            "point2": "語音引擎會在背景自動挑選。",
+            "point3": "等基本流程跑通後，你之後再細調設定也不遲。"
+          },
+          "firstWin": {
+            "title": "下一個畫面不是假的展示",
+            "description": "你即將在真正的應用程式中試用一次真實的按住說話轉寫。",
+            "point1": "保持練習欄位有焦點。",
+            "point2": "像你之後實際使用時一樣使用平常的快捷鍵。",
+            "point3": "如果欄位中出現文字，就代表 SilkScribe 已經可以投入實際使用。"
+          }
+        }
+      }
+    },
+    "practice": {
+      "eyebrow": "試用",
+      "title": "試用一次 SilkScribe",
+      "description": "點一下練習框，按住快捷鍵，說一句短話，然後放開。",
+      "badge": "快速測試",
+      "shortcutFallback": "快捷鍵",
+      "steps": {
+        "step1": {
+          "title": "聚焦在練習框",
+          "description": "保持這個方框被選取，SilkScribe 才知道要把文字放在哪裡。"
+        },
+        "step2": {
+          "title": "按住 {{shortcut}} 並說話",
+          "description": "用自然的語氣說一句短話。"
+        },
+        "step3": {
+          "title": "放開以開始轉寫",
+          "description": "如果文字出現在這裡，就代表 SilkScribe 已準備就緒。"
+        }
+      },
+      "tipTitle": "可以這樣試",
+      "tipBody": "試著說：「SilkScribe 已經準備好幫我記下今天的筆記。」",
+      "helperTitle": "在這裡試",
+      "helper": "讓這個方框保持焦點，然後使用你的快捷鍵。你說的話應該會出現在這裡。",
+      "placeholder": "按住快捷鍵、說話、再放開。你的文字會出現在這裡…",
+      "success": "成功了",
+      "readyToFinish": "測試成功。你可以開始使用 SilkScribe 了。",
+      "prompt": "你現在也可以先跳過，之後再測試。",
+      "finish": "開始使用 SilkScribe",
+      "skip": "先跳過",
+      "finishing": "正在完成設定…",
+      "finishFailed": "SilkScribe 無法完成 onboarding。請再試一次。"
+    },
+    "shared": {
+      "stepCounter": "步驟 {{current}} / {{total}}"
     }
   },
   "modelSelector": {
@@ -279,7 +510,8 @@
         "options": {
           "dontModify": "不修改剪貼簿",
           "copyToClipboard": "複製到剪貼簿"
-        }
+        },
+        "directInsertHint": "SilkScribe 會直接在這裡插入文字，因此剪貼簿內容不會被改變。"
       },
       "autoSubmit": {
         "title": "自動送出",
@@ -389,7 +621,9 @@
       "save": "儲存轉錄",
       "unsave": "從已儲存中移除",
       "delete": "刪除條目",
-      "deleteError": "刪除條目失敗，請重試"
+      "deleteError": "刪除條目失敗，請重試",
+      "loadError": "目前無法載入歷史記錄。請再試一次。",
+      "retry": "重試"
     },
     "debug": {
       "title": "偵錯",
@@ -509,7 +743,8 @@
     "off": "關",
     "yes": "是",
     "no": "否",
-    "noOptionsFound": "未找到選項"
+    "noOptionsFound": "未找到選項",
+    "versionLabel": "v{{version}}"
   },
   "accessibility": {
     "permissionsRequired": "需要輔助使用權限",
@@ -523,9 +758,5 @@
   "appLanguage": {
     "title": "應用程式語言",
     "description": "變更 SilkScribe 介面的語言"
-  },
-  "overlay": {
-    "transcribing": "正在轉錄...",
-    "processing": "處理中..."
   }
 }

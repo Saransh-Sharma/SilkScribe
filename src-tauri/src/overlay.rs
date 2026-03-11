@@ -369,10 +369,7 @@ pub fn update_overlay_position(app_handle: &AppHandle) {
     }
 }
 
-fn hide_overlay_window_after(
-    overlay_window: tauri::webview::WebviewWindow,
-    delay_ms: u64,
-) {
+fn hide_overlay_window_after(overlay_window: tauri::webview::WebviewWindow, delay_ms: u64) {
     std::thread::spawn(move || {
         std::thread::sleep(std::time::Duration::from_millis(delay_ms));
         let _ = overlay_window.hide();

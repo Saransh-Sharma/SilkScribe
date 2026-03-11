@@ -1,38 +1,47 @@
 import React from "react";
-import iconSrc from "../../assets/silkscribe-icon.png";
+import bannerSrc from "../../assets/banner-ui.webp";
 
-const APP_NAME = "SilkScribe";
+const BANNER_ASPECT_RATIO = 2992 / 1273;
 
 const SilkScribeWordmark = ({
   width,
   height,
   className,
+  imageClassName,
+  imageScale = 1,
+  fit = "contain",
 }: {
   width?: number;
   height?: number;
   className?: string;
+  imageClassName?: string;
+  imageScale?: number;
+  fit?: "contain" | "cover";
 }) => {
   const resolvedHeight = height ?? 44;
-  const textSize = Math.max(14, Math.round(resolvedHeight * 0.5));
+  const resolvedWidth =
+    width ?? Math.round(resolvedHeight * BANNER_ASPECT_RATIO);
 
   return (
     <div
-      className={`flex items-center gap-2 ${className ?? ""}`}
-      style={{ width, height: resolvedHeight }}
+      className={`block ${className ?? ""}`}
+      style={{ width: resolvedWidth, height: resolvedHeight }}
     >
       <img
-        src={iconSrc}
-        alt="SilkScribe logo"
-        width={resolvedHeight}
-        height={resolvedHeight}
-        className="shrink-0 object-contain"
+        src={bannerSrc}
+        alt="SilkScribe"
+        className={`h-full w-full ${
+          fit === "cover" ? "object-cover" : "object-contain"
+        } ${imageClassName ?? ""}`}
+        style={
+          imageScale !== 1
+            ? {
+                transform: `scale(${imageScale})`,
+                transformOrigin: "center",
+              }
+            : undefined
+        }
       />
-      <span
-        className="whitespace-nowrap font-semibold tracking-wide text-ss-text-primary"
-        style={{ fontSize: textSize, lineHeight: 1 }}
-      >
-        {APP_NAME}
-      </span>
     </div>
   );
 };

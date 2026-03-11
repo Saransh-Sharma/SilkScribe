@@ -1,8 +1,17 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Cog, FlaskConical, History, Info, Sparkles, Cpu } from "lucide-react";
+import {
+  Cog,
+  Cpu,
+  FlaskConical,
+  History,
+  Home as HomeIcon,
+  Info,
+  Sparkles,
+} from "lucide-react";
 import SilkScribeWordmark from "./icons/SilkScribeWordmark";
 import SilkScribeMark from "./icons/SilkScribeMark";
+import HomeDashboard from "./home/HomeDashboard";
 import { useSettings } from "../hooks/useSettings";
 import {
   GeneralSettings,
@@ -32,6 +41,12 @@ interface SectionConfig {
 }
 
 export const SECTIONS_CONFIG = {
+  home: {
+    labelKey: "sidebar.home",
+    icon: HomeIcon,
+    component: HomeDashboard,
+    enabled: () => true,
+  },
   general: {
     labelKey: "sidebar.general",
     icon: SilkScribeMark,
@@ -94,8 +109,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside className="flex h-full w-[240px] shrink-0 flex-col border-e border-ss-border-subtle bg-ss-bg-surface-alt/70 px-4 py-5">
-      <div className="flex items-center justify-center rounded-[20px] border border-ss-border-subtle bg-ss-bg-surface px-4 py-4 shadow-[var(--ss-shadow-card)]">
-        <SilkScribeWordmark width={138} className="shrink-0" />
+      <div className="flex items-center justify-center overflow-hidden px-2 py-2">
+        <SilkScribeWordmark
+          height={46}
+          fit="cover"
+          className="w-full shrink-0"
+          imageScale={1.68}
+        />
       </div>
       <div className="mt-5 flex flex-1 flex-col gap-1.5">
         {availableSections.map((section) => {

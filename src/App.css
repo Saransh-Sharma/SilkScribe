@@ -16,3 +16,198 @@
 .app-content-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
+
+@keyframes ss-home-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ss-onboarding-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(18px, -24px, 0) scale(1.08);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes ss-onboarding-grid-pan {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(22px, 18px, 0);
+  }
+}
+
+@keyframes ss-onboarding-card-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes ss-onboarding-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes ss-onboarding-progress-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(177, 32, 95, 0.18);
+  }
+
+  70% {
+    box-shadow: 0 0 0 14px rgba(177, 32, 95, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(177, 32, 95, 0);
+  }
+}
+
+@keyframes ss-onboarding-success-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(41, 58, 24, 0.18);
+    transform: scale(1);
+  }
+
+  50% {
+    box-shadow: 0 0 0 18px rgba(41, 58, 24, 0);
+    transform: scale(1.04);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(41, 58, 24, 0);
+    transform: scale(1);
+  }
+}
+
+.ss-onboarding-scene {
+  background:
+    radial-gradient(circle at 14% 18%, rgba(254, 191, 43, 0.18), transparent 22%),
+    radial-gradient(circle at 82% 12%, rgba(177, 32, 95, 0.16), transparent 26%),
+    radial-gradient(circle at 76% 78%, rgba(41, 58, 24, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(255, 248, 239, 0.86), rgba(247, 239, 228, 0.94));
+}
+
+.ss-onboarding-grid {
+  position: absolute;
+  inset: -20%;
+  background-image:
+    linear-gradient(rgba(58, 46, 36, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(58, 46, 36, 0.03) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, black 42%, transparent 78%);
+  animation: ss-onboarding-grid-pan 18s linear infinite alternate;
+}
+
+.ss-onboarding-orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(18px);
+  animation: ss-onboarding-drift 12s ease-in-out infinite;
+}
+
+.ss-onboarding-orb-a {
+  top: 48px;
+  left: 56px;
+  height: 180px;
+  width: 180px;
+  background: rgba(254, 191, 43, 0.18);
+}
+
+.ss-onboarding-orb-b {
+  right: 84px;
+  top: 72px;
+  height: 220px;
+  width: 220px;
+  animation-duration: 14s;
+  background: rgba(177, 32, 95, 0.14);
+}
+
+.ss-onboarding-orb-c {
+  bottom: 64px;
+  right: 20%;
+  height: 160px;
+  width: 160px;
+  animation-duration: 16s;
+  background: rgba(41, 58, 24, 0.12);
+}
+
+.ss-onboarding-card {
+  animation: ss-onboarding-card-enter 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ss-onboarding-card-enter {
+  animation: ss-onboarding-card-enter 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ss-onboarding-float {
+  animation: ss-onboarding-float 5.6s ease-in-out infinite;
+}
+
+.ss-onboarding-progress-active {
+  animation: ss-onboarding-progress-pulse 2.4s ease-out infinite;
+}
+
+.ss-onboarding-progress-bar {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, var(--ss-brand-secondary), var(--ss-brand-highlight));
+  transition: width 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ss-onboarding-progress-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  animation: ss-onboarding-grid-pan 2.2s linear infinite;
+}
+
+.ss-onboarding-success-ring {
+  animation: ss-onboarding-success-pulse 1.8s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-fade-in {
+    animation: ss-home-fade-in 220ms ease-out both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-fade-in {
+    animation: none;
+  }
+}

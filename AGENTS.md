@@ -39,6 +39,14 @@ mkdir -p src-tauri/resources/models
 curl -o src-tauri/resources/models/silero_vad_v4.onnx https://blob.silkscribe.app/silero_vad_v4.onnx
 ```
 
+**Branding Assets:**
+
+```bash
+# After replacing Banner.png and/or Menu Bar Icon.png in the repo root
+bun run brand:sync
+bun run build
+```
+
 ## Architecture Overview
 
 SilkScribe is a cross-platform desktop speech-to-text application built with Tauri (Rust backend + React/TypeScript frontend).

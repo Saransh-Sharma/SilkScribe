@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Dropdown } from "../ui/Dropdown";
 import { SettingContainer } from "../ui/SettingContainer";
 import { useSettings } from "../../hooks/useSettings";
-import type { ClipboardHandling } from "@/bindings";
+import type { ClipboardHandling, PasteMethod } from "@/bindings";
 
 interface ClipboardHandlingProps {
   descriptionMode?: "inline" | "tooltip";
@@ -28,6 +28,15 @@ export const ClipboardHandlingSetting: React.FC<ClipboardHandlingProps> =
 
     const selectedHandling = (getSetting("clipboard_handling") ||
       "dont_modify") as ClipboardHandling;
+    const selectedPasteMethod = getSetting("paste_method") as
+      | PasteMethod
+      | undefined;
+    const usesClipboardHotkey =
+      selectedPasteMethod === "ctrl_v" ||
+      selectedPasteMethod === "ctrl_shift_v" ||
+      selectedPasteMethod === "shift_insert";
+    const showDirectInsertHint =
+      selectedHandling === "dont_modify" && usesClipboardHotkey;
 
     return (
       <SettingContainer
@@ -36,14 +45,21 @@ export const ClipboardHandlingSetting: React.FC<ClipboardHandlingProps> =
         descriptionMode={descriptionMode}
         grouped={grouped}
       >
-        <Dropdown
-          options={clipboardHandlingOptions}
-          selectedValue={selectedHandling}
-          onSelect={(value) =>
-            updateSetting("clipboard_handling", value as ClipboardHandling)
-          }
-          disabled={isUpdating("clipboard_handling")}
-        />
+        <div className="flex flex-col items-end gap-2">
+          <Dropdown
+            options={clipboardHandlingOptions}
+            selectedValue={selectedHandling}
+            onSelect={(value) =>
+              updateSetting("clipboard_handling", value as ClipboardHandling)
+            }
+            disabled={isUpdating("clipboard_handling")}
+          />
+          {showDirectInsertHint && (
+            <p className="max-w-64 text-right text-[11px] leading-relaxed text-ss-text-tertiary">
+              {t("settings.advanced.clipboardHandling.directInsertHint")}
+            </p>
+          )}
+        </div>
       </SettingContainer>
     );
   });

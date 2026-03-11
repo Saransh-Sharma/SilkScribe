@@ -32,6 +32,12 @@ impl Drop for FinishGuard {
     }
 }
 
+fn handle_recording_start_failure(app: &AppHandle) {
+    change_tray_icon(app, TrayIconState::Idle);
+    show_error_overlay(app);
+    utils::hide_recording_overlay_after(app, 1500);
+}
+
 // Shortcut Action Trait
 pub trait ShortcutAction: Send + Sync {
     fn start(&self, app: &AppHandle, binding_id: &str, shortcut_str: &str);
@@ -344,6 +350,9 @@ impl ShortcutAction for TranscribeAction {
 
             recording_started = rm.try_start_recording(&binding_id);
             debug!("Recording started: {}", recording_started);
+            if !recording_started {
+                handle_recording_start_failure(app);
+            }
         } else {
             // On-demand mode: Start recording first, then play audio feedback, then apply mute
             // This allows the microphone to be activated before playing the sound
@@ -365,6 +374,7 @@ impl ShortcutAction for TranscribeAction {
                 });
             } else {
                 debug!("Failed to start recording");
+                handle_recording_start_failure(app);
             }
         }
 

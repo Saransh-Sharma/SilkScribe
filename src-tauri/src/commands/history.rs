@@ -1,4 +1,6 @@
-use crate::managers::history::{HistoryEntry, HistoryManager};
+use crate::managers::history::{
+    HistoryEntry, HistoryManager, HomeDashboardPageData, HomeHistoryCursor,
+};
 use std::sync::Arc;
 use tauri::{AppHandle, State};
 
@@ -10,6 +12,20 @@ pub async fn get_history_entries(
 ) -> Result<Vec<HistoryEntry>, String> {
     history_manager
         .get_history_entries()
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn get_home_dashboard_data(
+    _app: AppHandle,
+    history_manager: State<'_, Arc<HistoryManager>>,
+    limit: Option<u32>,
+    cursor: Option<HomeHistoryCursor>,
+) -> Result<HomeDashboardPageData, String> {
+    history_manager
+        .get_home_dashboard_data(limit, cursor)
         .await
         .map_err(|e| e.to_string())
 }

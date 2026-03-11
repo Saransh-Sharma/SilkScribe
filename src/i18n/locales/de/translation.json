@@ -8,6 +8,7 @@
     "cancel": "Abbrechen"
   },
   "sidebar": {
+    "home": "Startseite",
     "general": "Allgemein",
     "models": "Modelle",
     "advanced": "Erweitert",
@@ -77,29 +78,259 @@
         "description": "Sehr schnell. Chinesisch, Englisch, Japanisch, Koreanisch, Kantonesisch."
       }
     },
-    "errors": {
-      "loadModels": "Verfügbare Modelle konnten nicht geladen werden",
-      "downloadModel": "Modell konnte nicht heruntergeladen werden: {{error}}"
-    },
     "permissions": {
-      "title": "Berechtigungen erforderlich",
-      "description": "SilkScribe benötigt einige Berechtigungen, um richtig zu funktionieren.",
+      "shared": {
+        "eyebrow": "Berechtigungen",
+        "repairEyebrow": "Berechtigung erforderlich",
+        "stepByStep": "Was zu tun ist",
+        "statusLabel": "Status",
+        "openPrompt": "macOS-Dialog öffnen",
+        "openingPrompt": "macOS-Dialog wird geöffnet…",
+        "iEnabledIt": "Ich habe es aktiviert",
+        "checkAgain": "Erneut prüfen",
+        "continue": "Weiter",
+        "statuses": {
+          "checking": "Wird geprüft",
+          "needed": "Noch erforderlich",
+          "error": "Aufmerksamkeit nötig",
+          "requesting": "macOS wird geöffnet",
+          "waiting_for_user": "Warte auf dich",
+          "granted": "Erlaubt"
+        }
+      },
       "microphone": {
-        "title": "Mikrofonzugriff",
-        "description": "Erforderlich, um Ihre Stimme für die Transkription zu hören."
+        "title": "Mikrofonzugriff erlauben",
+        "description": "SilkScribe braucht dein Mikrofon, um Sprache in Text umzuwandeln.",
+        "needLabel": "Zum Zuhören erforderlich",
+        "whyItMattersTitle": "Warum das wichtig ist",
+        "whyItMattersBody": "SilkScribe hört nur zu, während du aufnimmst. Ohne Mikrofonzugriff gibt es nichts zu transkribieren.",
+        "breaksWithoutTitle": "Ohne diese Berechtigung",
+        "breaksWithoutBody": "Die Aufnahme kann starten, aber SilkScribe kann deine Stimme nicht hören.",
+        "afterGrantTitle": "Nachdem du sie erlaubst",
+        "afterGrantBody": "SilkScribe kann deine Stimme aufnehmen und mit der Einrichtung fortfahren.",
+        "steps": {
+          "step1": "Klicke auf „macOS-Dialog öffnen“.",
+          "step2": "Wenn macOS fragt, wähle „Erlauben“.",
+          "step3": "Wenn kein Dialog erscheint, öffne Systemeinstellungen > Datenschutz & Sicherheit > Mikrofon.",
+          "step4": "Aktiviere SilkScribe, kehre dann hierher zurück und prüfe erneut."
+        },
+        "manualHint": "Wenn du „Nicht erlauben“ gewählt hast, aktiviere SilkScribe in Systemeinstellungen > Datenschutz & Sicherheit > Mikrofon.",
+        "statusHelp": {
+          "checking": "Es wird geprüft, ob der Mikrofonzugriff bereits aktiviert ist.",
+          "needed": "Der Mikrofonzugriff ist noch deaktiviert.",
+          "error": "SilkScribe konnte den Mikrofonzugriff nicht prüfen.",
+          "requesting": "Der macOS-Berechtigungsdialog sollte jetzt erscheinen.",
+          "waiting_for_user": "Erlaube die Berechtigung und komm dann zurück, um erneut zu prüfen.",
+          "granted": "Der Mikrofonzugriff ist aktiviert."
+        }
       },
       "accessibility": {
-        "title": "Bedienungshilfen-Zugriff",
-        "description": "Erforderlich, um transkribierten Text in Ihre Anwendungen einzugeben."
-      },
-      "grant": "Berechtigung erteilen",
-      "granted": "Erteilt",
-      "waiting": "Warten...",
-      "allGranted": "Alles bereit!",
-      "errors": {
-        "checkFailed": "Berechtigungsprüfung fehlgeschlagen. Bitte erneut versuchen.",
-        "requestFailed": "Berechtigungsanfrage fehlgeschlagen. Bitte erneut versuchen."
+        "title": "Erlaube SilkScribe, für dich zu tippen",
+        "description": "SilkScribe benötigt Bedienungshilfen-Zugriff, um Text in deine Apps einzufügen.",
+        "needLabel": "Zum Einfügen von Text erforderlich",
+        "whyItMattersTitle": "Warum das wichtig ist",
+        "whyItMattersBody": "SilkScribe fügt fertigen Text in das Feld ein, das du gerade verwendest. macOS schützt das mit Bedienungshilfen-Zugriff.",
+        "breaksWithoutTitle": "Ohne diese Berechtigung",
+        "breaksWithoutBody": "SilkScribe kann zwar transkribieren, aber das Ergebnis nicht zuverlässig in deine Apps eingeben.",
+        "afterGrantTitle": "Nachdem du sie erlaubst",
+        "afterGrantBody": "SilkScribe kann in Apps tippen und die Einrichtung normal abschließen.",
+        "steps": {
+          "step1": "Klicke auf „macOS-Dialog öffnen“.",
+          "step2": "Wenn macOS dich zu den Systemeinstellungen schickt, fahre dort fort.",
+          "step3": "Öffne Datenschutz & Sicherheit > Bedienungshilfen und suche SilkScribe.",
+          "step4": "Aktiviere SilkScribe, kehre dann hierher zurück und prüfe erneut."
+        },
+        "manualHint": "Wenn SilkScribe weiterhin deaktiviert aussieht, öffne die App nach dem Aktivieren erneut und prüfe dann noch einmal.",
+        "statusHelp": {
+          "checking": "Es wird geprüft, ob der Bedienungshilfen-Zugriff bereits aktiviert ist.",
+          "needed": "Der Bedienungshilfen-Zugriff ist noch deaktiviert.",
+          "error": "SilkScribe konnte den Bedienungshilfen-Zugriff nicht prüfen.",
+          "requesting": "Der macOS-Freigabeablauf sollte jetzt geöffnet werden.",
+          "waiting_for_user": "Aktiviere SilkScribe in Systemeinstellungen > Datenschutz & Sicherheit > Bedienungshilfen und prüfe dann erneut.",
+          "granted": "Der Bedienungshilfen-Zugriff ist aktiviert."
+        }
       }
+    },
+    "progress": {
+      "welcome": "Willkommen",
+      "microphone": "Mikrofon",
+      "accessibility": "Texteingabe",
+      "setup": "Einrichtung",
+      "practice": "Testen"
+    },
+    "welcome": {
+      "eyebrow": "Schnell einrichten",
+      "title": "Richte SilkScribe in einer Minute ein.",
+      "description": "Wir aktivieren die nötigen Berechtigungen, schließen die Einrichtung im Hintergrund ab und lassen dich eine echte Diktierprobe machen.",
+      "badge": "Schnelle Einrichtung",
+      "features": {
+        "permissions": {
+          "title": "Klare Hilfe zu Berechtigungen",
+          "description": "Sieh genau, was du erlauben musst und warum."
+        },
+        "engine": {
+          "title": "Automatische Einrichtung",
+          "description": "SilkScribe wählt die passende Offline-Engine für dieses Gerät."
+        },
+        "practice": {
+          "title": "Ein echter Test",
+          "description": "Stelle sicher, dass alles funktioniert, bevor du loslegst."
+        }
+      },
+      "outcomeLabel": "Nach der Einrichtung",
+      "outcome": "Halte dein Tastenkürzel gedrückt, sprich, und SilkScribe setzt den Text dort ein, wo du ihn brauchst.",
+      "planLabel": "So läuft es ab",
+      "plan": {
+        "step1": {
+          "title": "Mikrofon erlauben",
+          "description": "Damit SilkScribe dich hören kann."
+        },
+        "step2": {
+          "title": "Textzugriff erlauben",
+          "description": "Damit SilkScribe in deine Apps tippen kann."
+        },
+        "step3": {
+          "title": "Einmal ausprobieren",
+          "description": "Die Einrichtung wird abgeschlossen, dann machst du einen kurzen Test."
+        }
+      },
+      "permissionPromise": "Diese Schritte sind erforderlich, damit SilkScribe richtig funktioniert.",
+      "continue": "Weiter"
+    },
+    "setup": {
+      "eyebrow": "Einrichtung läuft",
+      "title": "SilkScribe macht sich bereit.",
+      "description": "Wir bereiten die beste Offline-Sprachengine für {{language}} vor, danach machst du einen kurzen Test.",
+      "defaultLanguage": "deine Sprache",
+      "autoLabel": "Automatisch",
+      "engineTitle": "Keine Einrichtungsentscheidung nötig",
+      "engineBody": "SilkScribe wählt die beste Option für {{language}} und richtet sie lokal ein.",
+      "progressLabel": "Fortschritt",
+      "sizeLabel": "Download",
+      "speedLabel": "Geschwindigkeit",
+      "etaLabel": "Verbleibend",
+      "speedValue": "{{speed}} MB/s",
+      "notAvailable": "Noch nicht",
+      "preparingDetail": "Wird vorbereitet…",
+      "shortcutTitle": "Dein Tastenkürzel",
+      "shortcutBody": "Halte {{shortcut}} gedrückt, um zu sprechen. Lasse los, um zu transkribieren.",
+      "prepBadge": "Fast bereit",
+      "prepTitle": "Das sollte kurz bleiben und automatisch wirken",
+      "prepBody": "Während die Einrichtung läuft, lädt SilkScribe die für dieses Gerät ausgewählte Sprachengine herunter oder lädt sie lokal. Du kannst hier einfach auf den nächsten Schritt warten.",
+      "retry": "Erneut versuchen",
+      "ready": "Alles ist bereit. Der Testschritt wird jetzt geöffnet.",
+      "states": {
+        "resolving": "Wird ausgewählt",
+        "downloading": "Wird heruntergeladen",
+        "preparing": "Wird vorbereitet",
+        "ready": "Bereit",
+        "error": "Benötigt Aufmerksamkeit"
+      },
+      "panelStates": {
+        "resolving": "Die beste Engine wird ausgewählt",
+        "downloading": "Dateien werden heruntergeladen",
+        "preparing": "Die Engine wird vorbereitet",
+        "ready": "Bereit zum Testen",
+        "error": "Die Einrichtung benötigt Aufmerksamkeit"
+      },
+      "panelHelp": {
+        "resolving": "SilkScribe prüft gerade, was verfügbar ist, und wählt die beste Engine für dieses Gerät aus.",
+        "downloading": "Die benötigten Dateien werden jetzt heruntergeladen.",
+        "preparing": "Der Download ist abgeschlossen. SilkScribe lädt jetzt alles lokal.",
+        "ready": "Die Einrichtung ist abgeschlossen. Als Nächstes folgt ein kurzer echter Test.",
+        "error": "Die Einrichtung konnte nicht abgeschlossen werden. Bitte versuche es erneut."
+      },
+      "errors": {
+        "loadModels": "SilkScribe konnte die verfügbaren Sprach-Engines nicht laden.",
+        "downloadModel": "SilkScribe konnte den Download nicht abschließen.",
+        "selectModel": "SilkScribe konnte deine Sprach-Engine nicht vorbereiten."
+      },
+      "tipsBadge": "Hilfreich, während du wartest",
+      "previousCard": "Vorheriger Tipp",
+      "nextCard": "Nächster Tipp",
+      "goToCard": "Zu Tipp {{index}} wechseln",
+      "tips": {
+        "cards": {
+          "shortcutHabit": {
+            "title": "Ein Tastenkürzel, eine schnelle Gewohnheit",
+            "description": "SilkScribe folgt einem sehr einfachen Rhythmus: halten, sprechen, loslassen.",
+            "point1": "Halte {{shortcut}} gedrückt, während du sprichst.",
+            "point2": "Lass los, wenn du fertig bist.",
+            "point3": "SilkScribe macht daraus sofort Text."
+          },
+          "focusField": {
+            "title": "Fokussiere immer das Ziel für deinen Text",
+            "description": "SilkScribe sendet das Ergebnis in das Feld, das aktiv ist, wenn die Transkription abgeschlossen wird.",
+            "point1": "Klicke in das Textfeld, das du verwenden willst, bevor du sprichst.",
+            "point2": "Lass dieses Feld fokussiert, bis die Transkription abgeschlossen ist.",
+            "point3": "Während des Onboardings gibt es genau dafür ein Übungsfeld."
+          },
+          "shortBursts": {
+            "title": "Kurze Abschnitte fühlen sich am schnellsten an",
+            "description": "Neue Nutzer bekommen meist die saubersten ersten Ergebnisse, wenn jede Aufnahme kurz bleibt.",
+            "point1": "Versuche ein oder zwei Sätze auf einmal.",
+            "point2": "Pausiere natürlich zwischen Gedanken.",
+            "point3": "Du kannst direkt danach sofort erneut aufnehmen."
+          },
+          "quietSpace": {
+            "title": "Eine ruhigere Umgebung macht den ersten Erfolg leichter",
+            "description": "SilkScribe funktioniert am besten, wenn sich deine Stimme klar vom Raum abhebt.",
+            "point1": "Nutze, wenn möglich, das Mikrofon, das du normalerweise bevorzugst.",
+            "point2": "Halte Lüfter, Lautsprecher oder Hintergrundgespräche so leise wie möglich.",
+            "point3": "Sprich in gleichmäßigem, normalem Tempo."
+          },
+          "privacy": {
+            "title": "Deine Einrichtung bleibt beim Wesentlichen",
+            "description": "Dieses Onboarding vermeidet zusätzliche Konfiguration, damit du schneller zu einer funktionierenden ersten Transkription kommst.",
+            "point1": "Berechtigungen kommen zuerst, weil sie entscheidend für die App sind.",
+            "point2": "Die Sprach-Engine wird automatisch im Hintergrund ausgewählt.",
+            "point3": "Feinabstimmungen kannst du später vornehmen, sobald der Grundablauf funktioniert."
+          },
+          "firstWin": {
+            "title": "Der nächste Bildschirm ist keine Fake-Demo",
+            "description": "Du probierst gleich eine echte Push-to-Talk-Transkription in der App aus.",
+            "point1": "Lass das Übungsfeld fokussiert.",
+            "point2": "Verwende dein normales Tastenkürzel genauso, wie du es später nutzen wirst.",
+            "point3": "Wenn Text im Feld erscheint, ist SilkScribe einsatzbereit."
+          }
+        }
+      }
+    },
+    "practice": {
+      "eyebrow": "Ausprobieren",
+      "title": "Probiere SilkScribe einmal aus",
+      "description": "Klicke in das Übungsfeld, halte dein Tastenkürzel gedrückt, sage einen kurzen Satz und lasse dann los.",
+      "badge": "Schnelltest",
+      "shortcutFallback": "Tastenkürzel",
+      "steps": {
+        "step1": {
+          "title": "Fokussiere das Übungsfeld",
+          "description": "Lass dieses Feld ausgewählt, damit SilkScribe weiß, wo der Text eingefügt werden soll."
+        },
+        "step2": {
+          "title": "{{shortcut}} gedrückt halten und sprechen",
+          "description": "Sage einen kurzen Satz mit natürlicher Stimme."
+        },
+        "step3": {
+          "title": "Loslassen zum Transkribieren",
+          "description": "Wenn der Text hier erscheint, ist SilkScribe bereit."
+        }
+      },
+      "tipTitle": "Versuche das",
+      "tipBody": "Sage: „SilkScribe ist heute bereit für meine Notizen.“",
+      "helperTitle": "Hier ausprobieren",
+      "helper": "Lass dieses Feld fokussiert und nutze dann dein Tastenkürzel. Deine Wörter sollten hier erscheinen.",
+      "placeholder": "Halte dein Tastenkürzel gedrückt, sprich und lasse dann los. Dein Text erscheint hier…",
+      "success": "Das hat funktioniert",
+      "readyToFinish": "Dein Test war erfolgreich. Du kannst SilkScribe jetzt verwenden.",
+      "prompt": "Du kannst diesen Schritt vorerst überspringen und später testen.",
+      "finish": "SilkScribe verwenden",
+      "skip": "Vorerst überspringen",
+      "finishing": "Einrichtung wird abgeschlossen…",
+      "finishFailed": "SilkScribe konnte das Onboarding nicht abschließen. Bitte versuche es erneut."
+    },
+    "shared": {
+      "stepCounter": "Schritt {{current}} / {{total}}"
     }
   },
   "modelSelector": {
@@ -279,7 +510,8 @@
         "options": {
           "dontModify": "Zwischenablage nicht ändern",
           "copyToClipboard": "In Zwischenablage kopieren"
-        }
+        },
+        "directInsertHint": "SilkScribe fügt hier Text direkt ein, damit deine Zwischenablage unverändert bleibt."
       },
       "autoSubmit": {
         "title": "Automatisch absenden",
@@ -389,7 +621,9 @@
       "save": "Transkription speichern",
       "unsave": "Aus Gespeicherten entfernen",
       "delete": "Eintrag löschen",
-      "deleteError": "Eintrag konnte nicht gelöscht werden. Bitte versuche es erneut."
+      "deleteError": "Eintrag konnte nicht gelöscht werden. Bitte versuche es erneut.",
+      "loadError": "Der Verlauf kann gerade nicht geladen werden. Bitte versuche es erneut.",
+      "retry": "Erneut versuchen"
     },
     "debug": {
       "title": "Debug",
@@ -509,7 +743,8 @@
     "off": "Aus",
     "yes": "Ja",
     "no": "Nein",
-    "noOptionsFound": "Keine Optionen gefunden"
+    "noOptionsFound": "Keine Optionen gefunden",
+    "versionLabel": "v{{version}}"
   },
   "accessibility": {
     "permissionsRequired": "Bedienungshilfen-Berechtigungen erforderlich",
@@ -523,9 +758,5 @@
   "appLanguage": {
     "title": "Anwendungssprache",
     "description": "Sprache der SilkScribe-Oberfläche ändern"
-  },
-  "overlay": {
-    "transcribing": "Transkribiere...",
-    "processing": "Verarbeite..."
   }
 }

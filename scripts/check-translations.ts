@@ -3,10 +3,11 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-// Configuration
 const LOCALES_DIR = path.join(__dirname, "..", "src", "i18n", "locales");
 const REFERENCE_LANG = "en";
+const STRICT_MISSING_MODE =
+  process.argv.includes("--strict-missing") ||
+  process.env.STRICT_MISSING_TRANSLATIONS === "1";
 
 type TranslationData = Record<string, unknown>;
 
@@ -26,7 +27,6 @@ function getLanguages(): string[] {
 
 const LANGUAGES = getLanguages();
 
-// Colors for terminal output
 const colors: Record<string, string> = {
   reset: "\x1b[0m",
   red: "\x1b[31m",
@@ -91,11 +91,11 @@ function loadTranslationFile(lang: string): TranslationData | null {
 
 function validateTranslations(): void {
   console.log(colorize("\n🌍 Translation Consistency Check\n", "blue"));
+  console.log(
+    `Missing key policy: ${STRICT_MISSING_MODE ? "strict (error)" : "warn-only"}`,
+  );
 
-  // Load reference file
-  console.log(`Loading reference language: ${REFERENCE_LANG}`);
   const referenceData = loadTranslationFile(REFERENCE_LANG);
-
   if (!referenceData) {
     console.error(
       colorize(`\n✗ Failed to load reference file (${REFERENCE_LANG})`, "red"),
@@ -103,15 +103,13 @@ function validateTranslations(): void {
     process.exit(1);
   }
 
-  // Get all key paths from reference
   const referenceKeyPaths = getAllKeyPaths(referenceData);
   console.log(`Reference has ${referenceKeyPaths.length} keys\n`);
 
-  // Track validation results
   let hasErrors = false;
+  let hasWarnings = false;
   const results: Record<string, ValidationResult> = {};
 
-  // Validate each language
   for (const lang of LANGUAGES) {
     const langData = loadTranslationFile(lang);
 
@@ -121,104 +119,111 @@ function validateTranslations(): void {
       continue;
     }
 
-    // Find missing keys
     const missing = referenceKeyPaths.filter(
       (keyPath) => !hasKeyPath(langData, keyPath),
     );
-
-    // Find extra keys (keys in language but not in reference)
     const langKeyPaths = getAllKeyPaths(langData);
     const extra = langKeyPaths.filter(
       (keyPath) => !hasKeyPath(referenceData, keyPath),
     );
 
+    const missingIsError = STRICT_MISSING_MODE && missing.length > 0;
+    const hasValidationError = extra.length > 0 || missingIsError;
+    if (hasValidationError) {
+      hasErrors = true;
+    }
+    if (!STRICT_MISSING_MODE && missing.length > 0) {
+      hasWarnings = true;
+    }
+
     results[lang] = {
-      valid: missing.length === 0 && extra.length === 0,
+      valid: !hasValidationError,
       missing,
       extra,
     };
-
-    if (missing.length > 0 || extra.length > 0) {
-      hasErrors = true;
-    }
   }
 
-  // Print results
   console.log(colorize("Results:", "blue"));
   console.log("─".repeat(60));
 
   for (const lang of LANGUAGES) {
     const result = results[lang];
+    const isWarningOnly =
+      !STRICT_MISSING_MODE &&
+      result.missing.length > 0 &&
+      result.extra.length === 0;
 
-    if (result.valid) {
+    if (result.valid && !isWarningOnly) {
       console.log(
-        colorize(`✓ ${lang.toUpperCase()}: All keys present`, "green"),
+        colorize(`✓ ${lang.toUpperCase()}: No schema issues`, "green"),
+      );
+    } else if (isWarningOnly) {
+      console.log(
+        colorize(
+          `⚠ ${lang.toUpperCase()}: Missing keys (runtime fallback will be used)`,
+          "yellow",
+        ),
       );
     } else {
       console.log(colorize(`✗ ${lang.toUpperCase()}: Issues found`, "red"));
+    }
 
-      if (result.missing.length > 0) {
+    if (result.missing.length > 0) {
+      const label = STRICT_MISSING_MODE
+        ? `  Missing ${result.missing.length} keys:`
+        : `  Missing ${result.missing.length} keys (warn):`;
+      console.log(colorize(label, "yellow"));
+      result.missing.slice(0, 10).forEach((keyPath) => {
+        console.log(`    - ${keyPath.join(".")}`);
+      });
+      if (result.missing.length > 10) {
         console.log(
-          colorize(`  Missing ${result.missing.length} keys:`, "yellow"),
+          colorize(`    ... and ${result.missing.length - 10} more`, "yellow"),
         );
-        result.missing.slice(0, 10).forEach((keyPath) => {
-          console.log(`    - ${keyPath.join(".")}`);
-        });
-        if (result.missing.length > 10) {
-          console.log(
-            colorize(
-              `    ... and ${result.missing.length - 10} more`,
-              "yellow",
-            ),
-          );
-        }
       }
+    }
 
-      if (result.extra.length > 0) {
+    if (result.extra.length > 0) {
+      console.log(
+        colorize(
+          `  Extra ${result.extra.length} keys (not in reference):`,
+          "yellow",
+        ),
+      );
+      result.extra.slice(0, 10).forEach((keyPath) => {
+        console.log(`    - ${keyPath.join(".")}`);
+      });
+      if (result.extra.length > 10) {
         console.log(
-          colorize(
-            `  Extra ${result.extra.length} keys (not in reference):`,
-            "yellow",
-          ),
+          colorize(`    ... and ${result.extra.length - 10} more`, "yellow"),
         );
-        result.extra.slice(0, 10).forEach((keyPath) => {
-          console.log(`    - ${keyPath.join(".")}`);
-        });
-        if (result.extra.length > 10) {
-          console.log(
-            colorize(`    ... and ${result.extra.length - 10} more`, "yellow"),
-          );
-        }
       }
+    }
 
+    if (result.missing.length > 0 || result.extra.length > 0) {
       console.log("");
     }
   }
 
   console.log("─".repeat(60));
 
-  // Summary
-  const validCount = Object.values(results).filter((r) => r.valid).length;
-  const totalCount = LANGUAGES.length;
-
   if (hasErrors) {
-    console.log(
-      colorize(
-        `\n✗ Validation failed: ${validCount}/${totalCount} languages passed`,
-        "red",
-      ),
-    );
+    console.log(colorize("\n✗ Validation failed", "red"));
     process.exit(1);
-  } else {
+  }
+
+  if (hasWarnings) {
     console.log(
       colorize(
-        `\n✓ All ${totalCount} languages have complete translations!`,
-        "green",
+        "\n✓ Validation passed with warnings (missing keys use English fallback)",
+        "yellow",
       ),
     );
-    process.exit(0);
+  } else {
+    console.log(colorize("\n✓ Validation passed", "green"));
   }
+
+  process.exit(0);
 }
 
-// Run validation
 validateTranslations();

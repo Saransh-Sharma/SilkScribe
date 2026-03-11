@@ -8,6 +8,7 @@
     "cancel": "キャンセル"
   },
   "sidebar": {
+    "home": "ホーム",
     "general": "一般",
     "models": "モデル",
     "advanced": "詳細設定",
@@ -77,29 +78,259 @@
         "description": "非常に高速。中国語、英語、日本語、韓国語、広東語。"
       }
     },
-    "errors": {
-      "loadModels": "利用可能なモデルの読み込みに失敗しました",
-      "downloadModel": "モデルのダウンロードに失敗しました: {{error}}"
-    },
     "permissions": {
-      "title": "権限が必要です",
-      "description": "SilkScribeが正常に動作するにはいくつかの権限が必要です。",
+      "shared": {
+        "eyebrow": "アクセス許可",
+        "repairEyebrow": "アクセス許可が必要です",
+        "stepByStep": "やること",
+        "statusLabel": "状態",
+        "openPrompt": "macOS のダイアログを開く",
+        "openingPrompt": "macOS のダイアログを開いています…",
+        "iEnabledIt": "有効にしました",
+        "checkAgain": "もう一度確認",
+        "continue": "続ける",
+        "statuses": {
+          "checking": "確認中",
+          "needed": "まだ必要です",
+          "error": "対応が必要です",
+          "requesting": "macOS を開いています",
+          "waiting_for_user": "あなたの操作を待っています",
+          "granted": "許可済み"
+        }
+      },
       "microphone": {
-        "title": "マイクへのアクセス",
-        "description": "文字起こしのためにあなたの声を聞くために必要です。"
+        "title": "マイクへのアクセスを許可する",
+        "description": "SilkScribe が音声をテキストに変換するにはマイクが必要です。",
+        "needLabel": "聞き取るために必要",
+        "whyItMattersTitle": "これが重要な理由",
+        "whyItMattersBody": "SilkScribe は録音中だけ音声を聞き取ります。マイクへのアクセスがないと文字起こしできません。",
+        "breaksWithoutTitle": "許可しない場合",
+        "breaksWithoutBody": "録音は開始できますが、SilkScribe はあなたの声を聞き取れません。",
+        "afterGrantTitle": "許可すると",
+        "afterGrantBody": "SilkScribe が音声を録音できるようになり、セットアップを続行できます。",
+        "steps": {
+          "step1": "「macOS のダイアログを開く」をクリックします。",
+          "step2": "macOS に確認されたら「許可」を選びます。",
+          "step3": "ダイアログが表示されない場合は、システム設定 > プライバシーとセキュリティ > マイクを開きます。",
+          "step4": "SilkScribe をオンにしてからここに戻り、もう一度確認します。"
+        },
+        "manualHint": "「許可しない」を選んだ場合は、システム設定 > プライバシーとセキュリティ > マイクで SilkScribe をオンにしてください。",
+        "statusHelp": {
+          "checking": "マイクへのアクセスがすでに有効か確認しています。",
+          "needed": "マイクへのアクセスはまだオフです。",
+          "error": "SilkScribe はマイクへのアクセスを確認できませんでした。",
+          "requesting": "macOS の許可ダイアログが表示されるはずです。",
+          "waiting_for_user": "許可したら戻って、もう一度確認してください。",
+          "granted": "マイクへのアクセスは有効です。"
+        }
       },
       "accessibility": {
-        "title": "アクセシビリティへのアクセス",
-        "description": "アプリケーションに文字起こしテキストを入力するために必要です。"
-      },
-      "grant": "権限を許可",
-      "granted": "許可済み",
-      "waiting": "待機中...",
-      "allGranted": "準備完了！",
-      "errors": {
-        "checkFailed": "権限の確認に失敗しました。もう一度お試しください。",
-        "requestFailed": "権限のリクエストに失敗しました。もう一度お試しください。"
+        "title": "SilkScribe が代わりに入力できるようにする",
+        "description": "SilkScribe がアプリにテキストを入力するにはアクセシビリティへのアクセスが必要です。",
+        "needLabel": "テキスト挿入に必要",
+        "whyItMattersTitle": "これが重要な理由",
+        "whyItMattersBody": "SilkScribe は完成したテキストを現在使っている入力欄に入れます。macOS ではその操作がアクセシビリティで保護されています。",
+        "breaksWithoutTitle": "許可しない場合",
+        "breaksWithoutBody": "SilkScribe は文字起こしできても、結果をアプリに確実に入力できません。",
+        "afterGrantTitle": "許可すると",
+        "afterGrantBody": "SilkScribe がアプリに入力できるようになり、セットアップを通常どおり完了できます。",
+        "steps": {
+          "step1": "「macOS のダイアログを開く」をクリックします。",
+          "step2": "macOS がシステム設定を開いたら、そのまま続行します。",
+          "step3": "プライバシーとセキュリティ > アクセシビリティを開き、SilkScribe を探します。",
+          "step4": "SilkScribe をオンにしてからここに戻り、もう一度確認します。"
+        },
+        "manualHint": "SilkScribe がまだ無効に見える場合は、オンにしたあとでアプリを再度開いてからもう一度確認してください。",
+        "statusHelp": {
+          "checking": "アクセシビリティへのアクセスがすでに有効か確認しています。",
+          "needed": "アクセシビリティへのアクセスはまだオフです。",
+          "error": "SilkScribe はアクセシビリティへのアクセスを確認できませんでした。",
+          "requesting": "macOS の承認フローが開くはずです。",
+          "waiting_for_user": "システム設定 > プライバシーとセキュリティ > アクセシビリティで SilkScribe をオンにしてから、もう一度確認してください。",
+          "granted": "アクセシビリティへのアクセスは有効です。"
+        }
       }
+    },
+    "progress": {
+      "welcome": "ようこそ",
+      "microphone": "マイク",
+      "accessibility": "テキストアクセス",
+      "setup": "セットアップ",
+      "practice": "試してみる"
+    },
+    "welcome": {
+      "eyebrow": "準備しましょう",
+      "title": "1 分で SilkScribe を設定しましょう。",
+      "description": "必要なアクセス許可を有効にし、バックグラウンドでセットアップを完了し、最後に実際の音声入力を 1 回試します。",
+      "badge": "クイックセットアップ",
+      "features": {
+        "permissions": {
+          "title": "わかりやすい許可案内",
+          "description": "何を許可する必要があるのかを正確に確認できます。"
+        },
+        "engine": {
+          "title": "自動セットアップ",
+          "description": "SilkScribe がこのデバイスに合ったオフラインエンジンを選びます。"
+        },
+        "practice": {
+          "title": "実際のテストを 1 回",
+          "description": "使い始める前に、すべてが動くことを確認します。"
+        }
+      },
+      "outcomeLabel": "セットアップ後",
+      "outcome": "ショートカットを押しながら話すと、SilkScribe が必要な場所にテキストを入力します。",
+      "planLabel": "流れ",
+      "plan": {
+        "step1": {
+          "title": "マイクを許可する",
+          "description": "SilkScribe があなたの声を聞けるようにします。"
+        },
+        "step2": {
+          "title": "テキストアクセスを許可する",
+          "description": "SilkScribe がアプリに入力できるようにします。"
+        },
+        "step3": {
+          "title": "一度試してみる",
+          "description": "セットアップが完了したら短いテストを行います。"
+        }
+      },
+      "permissionPromise": "これらの手順は SilkScribe を正しく動作させるために必要です。",
+      "continue": "続ける"
+    },
+    "setup": {
+      "eyebrow": "準備しています",
+      "title": "SilkScribe を準備しています。",
+      "description": "{{language}} に最適なオフライン音声エンジンを用意したあと、短いテストを行います。",
+      "defaultLanguage": "あなたの言語",
+      "autoLabel": "自動",
+      "engineTitle": "セットアップの選択は不要です",
+      "engineBody": "SilkScribe が {{language}} に最適なものを選び、ローカルでセットアップしています。",
+      "progressLabel": "進行状況",
+      "sizeLabel": "ダウンロード",
+      "speedLabel": "速度",
+      "etaLabel": "残り時間",
+      "speedValue": "{{speed}} MB/s",
+      "notAvailable": "まだありません",
+      "preparingDetail": "準備中…",
+      "shortcutTitle": "あなたのショートカット",
+      "shortcutBody": "{{shortcut}} を押しながら話してください。離すと文字起こしされます。",
+      "prepBadge": "もうすぐ完了",
+      "prepTitle": "ここは短く、自動的に進むはずです",
+      "prepBody": "セットアップ中、SilkScribe はこのデバイス向けに選んだ音声エンジンをダウンロードまたは読み込みしています。ここで次のステップを待つだけで大丈夫です。",
+      "retry": "もう一度試す",
+      "ready": "準備が整いました。練習ステップを開きます。",
+      "states": {
+        "resolving": "選択中",
+        "downloading": "ダウンロード中",
+        "preparing": "準備中",
+        "ready": "準備完了",
+        "error": "対応が必要です"
+      },
+      "panelStates": {
+        "resolving": "最適なエンジンを選択中",
+        "downloading": "ファイルをダウンロード中",
+        "preparing": "エンジンを準備中",
+        "ready": "テストの準備完了",
+        "error": "セットアップに対応が必要です"
+      },
+      "panelHelp": {
+        "resolving": "SilkScribe が利用可能なものを確認し、このデバイスに最適なエンジンを選んでいます。",
+        "downloading": "必要なファイルをダウンロードしています。",
+        "preparing": "ダウンロードが完了しました。SilkScribe がローカルで準備しています。",
+        "ready": "セットアップが完了しました。次は短い実際のテストです。",
+        "error": "セットアップが完了しませんでした。もう一度お試しください。"
+      },
+      "errors": {
+        "loadModels": "SilkScribe は利用可能な音声エンジンを読み込めませんでした。",
+        "downloadModel": "SilkScribe はダウンロードを完了できませんでした。",
+        "selectModel": "SilkScribe は音声エンジンを準備できませんでした。"
+      },
+      "tipsBadge": "待っている間のヒント",
+      "previousCard": "前のヒント",
+      "nextCard": "次のヒント",
+      "goToCard": "ヒント {{index}} に移動",
+      "tips": {
+        "cards": {
+          "shortcutHabit": {
+            "title": "ショートカットは 1 つ、流れも 1 つ",
+            "description": "SilkScribe は「押す、話す、離す」というとてもシンプルな流れで使います。",
+            "point1": "話している間は {{shortcut}} を押したままにします。",
+            "point2": "話し終えたら離します。",
+            "point3": "SilkScribe がその短い発話をすぐにテキストに変えます。"
+          },
+          "focusField": {
+            "title": "テキストを入れたい場所に常にフォーカスを合わせる",
+            "description": "SilkScribe は文字起こし完了時にアクティブな入力欄へ結果を送ります。",
+            "point1": "話し始める前に、使いたい入力欄をクリックします。",
+            "point2": "文字起こしが終わるまでその欄からフォーカスを外さないでください。",
+            "point3": "オンボーディングではそのための練習欄を用意しています。"
+          },
+          "shortBursts": {
+            "title": "短い発話のほうが速く感じます",
+            "description": "最初の結果をきれいに得るには、各録音を短く保つのが一般的です。",
+            "point1": "1 回につき 1〜2 文を目安にしてください。",
+            "point2": "考えの区切りで自然に間を空けます。",
+            "point3": "必要ならすぐ次の短い発話を録音できます。"
+          },
+          "quietSpace": {
+            "title": "静かな場所のほうが最初の成功が簡単です",
+            "description": "SilkScribe は周囲の音より声がはっきりしていると最もよく動作します。",
+            "point1": "可能なら普段使い慣れたマイクを使ってください。",
+            "point2": "ファン、スピーカー、周囲の話し声はできるだけ小さくします。",
+            "point3": "落ち着いた自然な速さで話してください。"
+          },
+          "privacy": {
+            "title": "セットアップは必要最小限です",
+            "description": "このオンボーディングでは余計な設定を避け、最初の実用的な文字起こしに早く到達できるようにしています。",
+            "point1": "アクセス許可はアプリの動作に不可欠なので最初に行います。",
+            "point2": "音声エンジンはバックグラウンドで自動的に選ばれます。",
+            "point3": "基本の流れが動いたあとで設定を微調整できます。"
+          },
+          "firstWin": {
+            "title": "次の画面はダミーデモではありません",
+            "description": "次に試すのはアプリ内の本物のプッシュトゥトーク文字起こしです。",
+            "point1": "練習欄にフォーカスを保ってください。",
+            "point2": "普段使う予定のショートカットをそのまま使ってください。",
+            "point3": "欄にテキストが表示されたら SilkScribe は実運用の準備ができています。"
+          }
+        }
+      }
+    },
+    "practice": {
+      "eyebrow": "試してみる",
+      "title": "SilkScribe を 1 回試してみましょう",
+      "description": "練習ボックスをクリックし、ショートカットを押したまま短い文を話してから離してください。",
+      "badge": "クイックテスト",
+      "shortcutFallback": "ショートカット",
+      "steps": {
+        "step1": {
+          "title": "練習ボックスにフォーカスする",
+          "description": "SilkScribe がどこにテキストを入れるか分かるように、このボックスを選択したままにします。"
+        },
+        "step2": {
+          "title": "{{shortcut}} を押しながら話す",
+          "description": "自然な声で短い文を 1 つ話してください。"
+        },
+        "step3": {
+          "title": "離して文字起こしする",
+          "description": "ここにテキストが表示されれば、SilkScribe の準備は完了です。"
+        }
+      },
+      "tipTitle": "こんなふうに試してください",
+      "tipBody": "「SilkScribe は今日のメモの準備ができています」と話してみてください。",
+      "helperTitle": "ここで試す",
+      "helper": "このボックスにフォーカスを合わせたままショートカットを使ってください。話した内容がここに表示されるはずです。",
+      "placeholder": "ショートカットを押しながら話し、離してください。ここにテキストが表示されます…",
+      "success": "うまくいきました",
+      "readyToFinish": "テストは成功しました。SilkScribe を使い始められます。",
+      "prompt": "今はスキップして、あとで試すこともできます。",
+      "finish": "SilkScribe を使い始める",
+      "skip": "今はスキップ",
+      "finishing": "セットアップを完了しています…",
+      "finishFailed": "SilkScribe はオンボーディングを完了できませんでした。もう一度お試しください。"
+    },
+    "shared": {
+      "stepCounter": "ステップ {{current}} / {{total}}"
     }
   },
   "modelSelector": {
@@ -279,7 +510,8 @@
         "options": {
           "dontModify": "クリップボードを変更しない",
           "copyToClipboard": "クリップボードにコピー"
-        }
+        },
+        "directInsertHint": "SilkScribe はここに直接テキストを挿入するため、クリップボードの内容は変わりません。"
       },
       "autoSubmit": {
         "title": "自動送信",
@@ -389,7 +621,9 @@
       "save": "文字起こしを保存",
       "unsave": "保存から削除",
       "delete": "エントリーを削除",
-      "deleteError": "エントリーの削除に失敗しました。もう一度お試しください。"
+      "deleteError": "エントリーの削除に失敗しました。もう一度お試しください。",
+      "loadError": "現在履歴を読み込めません。もう一度お試しください。",
+      "retry": "再試行"
     },
     "debug": {
       "title": "デバッグ",
@@ -509,7 +743,8 @@
     "off": "オフ",
     "yes": "はい",
     "no": "いいえ",
-    "noOptionsFound": "オプションが見つかりません"
+    "noOptionsFound": "オプションが見つかりません",
+    "versionLabel": "v{{version}}"
   },
   "accessibility": {
     "permissionsRequired": "アクセシビリティ権限が必要です",
@@ -523,9 +758,5 @@
   "appLanguage": {
     "title": "アプリケーション言語",
     "description": "SilkScribeインターフェースの言語を変更"
-  },
-  "overlay": {
-    "transcribing": "文字起こし中...",
-    "processing": "処理中..."
   }
 }

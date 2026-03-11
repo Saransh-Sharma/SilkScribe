@@ -22,6 +22,79 @@ enum Cmd {
     Shutdown,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum ResolvedSampleFormat {
+    I8,
+    I16,
+    I24,
+    I32,
+    I64,
+    U8,
+    U16,
+    U32,
+    U64,
+    F32,
+    F64,
+}
+
+impl ResolvedSampleFormat {
+    fn label(self) -> &'static str {
+        match self {
+            Self::I8 => "i8",
+            Self::I16 => "i16",
+            Self::I24 => "i24",
+            Self::I32 => "i32",
+            Self::I64 => "i64",
+            Self::U8 => "u8",
+            Self::U16 => "u16",
+            Self::U32 => "u32",
+            Self::U64 => "u64",
+            Self::F32 => "f32",
+            Self::F64 => "f64",
+        }
+    }
+}
+
+fn sample_format_label(sample_format: cpal::SampleFormat) -> &'static str {
+    match sample_format {
+        cpal::SampleFormat::I8 => "i8",
+        cpal::SampleFormat::I16 => "i16",
+        cpal::SampleFormat::I24 => "i24",
+        cpal::SampleFormat::I32 => "i32",
+        cpal::SampleFormat::I64 => "i64",
+        cpal::SampleFormat::U8 => "u8",
+        cpal::SampleFormat::U16 => "u16",
+        cpal::SampleFormat::U32 => "u32",
+        cpal::SampleFormat::U64 => "u64",
+        cpal::SampleFormat::F32 => "f32",
+        cpal::SampleFormat::F64 => "f64",
+        _ => "unknown",
+    }
+}
+
+fn resolve_supported_sample_format(
+    sample_format: cpal::SampleFormat,
+) -> Result<ResolvedSampleFormat, String> {
+    resolve_supported_sample_format_name(sample_format_label(sample_format))
+}
+
+fn resolve_supported_sample_format_name(format_name: &str) -> Result<ResolvedSampleFormat, String> {
+    match format_name {
+        "i8" => Ok(ResolvedSampleFormat::I8),
+        "i16" => Ok(ResolvedSampleFormat::I16),
+        "i24" => Ok(ResolvedSampleFormat::I24),
+        "i32" => Ok(ResolvedSampleFormat::I32),
+        "i64" => Ok(ResolvedSampleFormat::I64),
+        "u8" => Ok(ResolvedSampleFormat::U8),
+        "u16" => Ok(ResolvedSampleFormat::U16),
+        "u32" => Ok(ResolvedSampleFormat::U32),
+        "u64" => Ok(ResolvedSampleFormat::U64),
+        "f32" => Ok(ResolvedSampleFormat::F32),
+        "f64" => Ok(ResolvedSampleFormat::F64),
+        _ => Err(format!("unsupported sample format: {format_name}")),
+    }
+}
+
 pub struct AudioRecorder {
     device: Option<Device>,
     cmd_tx: Option<mpsc::Sender<Cmd>>,
@@ -61,6 +134,7 @@ impl AudioRecorder {
 
         let (sample_tx, sample_rx) = mpsc::channel::<Vec<f32>>();
         let (cmd_tx, cmd_rx) = mpsc::channel::<Cmd>();
+        let (init_tx, init_rx) = mpsc::channel::<Result<(), String>>();
 
         let host = crate::audio_toolkit::get_cpal_host();
         let device = match device {
@@ -70,56 +144,82 @@ impl AudioRecorder {
                 .ok_or_else(|| Error::new(std::io::ErrorKind::NotFound, "No input device found"))?,
         };
 
+        let device_name = device
+            .name()
+            .unwrap_or_else(|_| "<unavailable>".to_string());
         let thread_device = device.clone();
         let vad = self.vad.clone();
-        // Move the optional level callback into the worker thread
         let level_cb = self.level_cb.clone();
 
         let worker = std::thread::spawn(move || {
-            let config = AudioRecorder::get_preferred_config(&thread_device)
-                .expect("failed to fetch preferred config");
+            let init_result = (|| -> Result<(cpal::Stream, u32), String> {
+                let config = AudioRecorder::get_preferred_config(&thread_device).map_err(|e| {
+                    format!(
+                        "Failed to initialize recorder (stage=config, device={device_name}): {e}"
+                    )
+                })?;
 
-            let sample_rate = config.sample_rate().0;
-            let channels = config.channels() as usize;
+                let sample_rate = config.sample_rate().0;
+                let channels = config.channels() as usize;
+                let sample_format = resolve_supported_sample_format(config.sample_format()).map_err(
+                    |e| {
+                        format!(
+                            "Failed to initialize recorder (stage=format, device={device_name}, sample_rate={sample_rate}, sample_format={}): {e}",
+                            sample_format_label(config.sample_format())
+                        )
+                    },
+                )?;
 
-            log::info!(
-                "Using device: {:?}\nSample rate: {}\nChannels: {}\nFormat: {:?}",
-                thread_device.name(),
-                sample_rate,
-                channels,
-                config.sample_format()
-            );
+                log::info!(
+                    "Using device: {}\nSample rate: {}\nChannels: {}\nFormat: {}",
+                    device_name,
+                    sample_rate,
+                    channels,
+                    sample_format.label()
+                );
 
-            let stream = match config.sample_format() {
-                cpal::SampleFormat::U8 => {
-                    AudioRecorder::build_stream::<u8>(&thread_device, &config, sample_tx, channels)
-                        .unwrap()
-                }
-                cpal::SampleFormat::I8 => {
-                    AudioRecorder::build_stream::<i8>(&thread_device, &config, sample_tx, channels)
-                        .unwrap()
-                }
-                cpal::SampleFormat::I16 => {
-                    AudioRecorder::build_stream::<i16>(&thread_device, &config, sample_tx, channels)
-                        .unwrap()
-                }
-                cpal::SampleFormat::I32 => {
-                    AudioRecorder::build_stream::<i32>(&thread_device, &config, sample_tx, channels)
-                        .unwrap()
-                }
-                cpal::SampleFormat::F32 => {
-                    AudioRecorder::build_stream::<f32>(&thread_device, &config, sample_tx, channels)
-                        .unwrap()
-                }
-                _ => panic!("unsupported sample format"),
-            };
+                let stream = AudioRecorder::build_stream_for_format(
+                    &thread_device,
+                    &config,
+                    sample_tx,
+                    channels,
+                    sample_format,
+                )
+                .map_err(|e| {
+                    format!(
+                        "Failed to initialize recorder (stage=build_stream, device={device_name}, sample_rate={sample_rate}, sample_format={}): {e}",
+                        sample_format.label()
+                    )
+                })?;
 
-            stream.play().expect("failed to start stream");
+                stream.play().map_err(|e| {
+                    format!(
+                        "Failed to initialize recorder (stage=play, device={device_name}, sample_rate={sample_rate}, sample_format={}): {e}",
+                        sample_format.label()
+                    )
+                })?;
 
-            // keep the stream alive while we process samples
-            run_consumer(sample_rate, vad, sample_rx, cmd_rx, level_cb);
-            // stream is dropped here, after run_consumer returns
+                Ok((stream, sample_rate))
+            })();
+
+            match init_result {
+                Ok((stream, sample_rate)) => {
+                    let _ = init_tx.send(Ok(()));
+                    run_consumer(sample_rate, vad, sample_rx, cmd_rx, level_cb);
+                    drop(stream);
+                }
+                Err(error) => {
+                    let _ = init_tx.send(Err(error));
+                }
+            }
         });
+
+        let worker = match Self::wait_for_worker_init(init_rx, worker) {
+            Ok(worker) => worker,
+            Err(error) => {
+                return Err(Box::new(Error::new(std::io::ErrorKind::Other, error)));
+            }
+        };
 
         self.device = Some(device);
         self.cmd_tx = Some(cmd_tx);
@@ -200,6 +300,51 @@ impl AudioRecorder {
         )
     }
 
+    fn build_stream_for_format(
+        device: &cpal::Device,
+        config: &cpal::SupportedStreamConfig,
+        sample_tx: mpsc::Sender<Vec<f32>>,
+        channels: usize,
+        sample_format: ResolvedSampleFormat,
+    ) -> Result<cpal::Stream, String> {
+        match sample_format {
+            ResolvedSampleFormat::I8 => {
+                Self::build_stream::<i8>(device, config, sample_tx, channels)
+            }
+            ResolvedSampleFormat::I16 => {
+                Self::build_stream::<i16>(device, config, sample_tx, channels)
+            }
+            ResolvedSampleFormat::I24 => {
+                Self::build_stream::<cpal::I24>(device, config, sample_tx, channels)
+            }
+            ResolvedSampleFormat::I32 => {
+                Self::build_stream::<i32>(device, config, sample_tx, channels)
+            }
+            ResolvedSampleFormat::I64 => {
+                Self::build_stream::<i64>(device, config, sample_tx, channels)
+            }
+            ResolvedSampleFormat::U8 => {
+                Self::build_stream::<u8>(device, config, sample_tx, channels)
+            }
+            ResolvedSampleFormat::U16 => {
+                Self::build_stream::<u16>(device, config, sample_tx, channels)
+            }
+            ResolvedSampleFormat::U32 => {
+                Self::build_stream::<u32>(device, config, sample_tx, channels)
+            }
+            ResolvedSampleFormat::U64 => {
+                Self::build_stream::<u64>(device, config, sample_tx, channels)
+            }
+            ResolvedSampleFormat::F32 => {
+                Self::build_stream::<f32>(device, config, sample_tx, channels)
+            }
+            ResolvedSampleFormat::F64 => {
+                Self::build_stream::<f64>(device, config, sample_tx, channels)
+            }
+        }
+        .map_err(|e| e.to_string())
+    }
+
     fn get_preferred_config(
         device: &cpal::Device,
     ) -> Result<cpal::SupportedStreamConfig, Box<dyn std::error::Error>> {
@@ -236,6 +381,23 @@ impl AudioRecorder {
 
         // If no config supports 16kHz, fall back to default
         Ok(device.default_input_config()?)
+    }
+
+    fn wait_for_worker_init(
+        init_rx: mpsc::Receiver<Result<(), String>>,
+        worker: std::thread::JoinHandle<()>,
+    ) -> Result<std::thread::JoinHandle<()>, String> {
+        match init_rx.recv() {
+            Ok(Ok(())) => Ok(worker),
+            Ok(Err(error)) => {
+                let _ = worker.join();
+                Err(error)
+            }
+            Err(_) => {
+                let _ = worker.join();
+                Err("Recorder initialization thread exited before reporting status".into())
+            }
+        }
     }
 }
 
@@ -335,5 +497,57 @@ fn run_consumer(
                 Cmd::Shutdown => return,
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn resolves_extended_sample_formats() {
+        assert_eq!(
+            resolve_supported_sample_format(cpal::SampleFormat::F64).unwrap(),
+            ResolvedSampleFormat::F64
+        );
+        assert_eq!(
+            resolve_supported_sample_format(cpal::SampleFormat::U16).unwrap(),
+            ResolvedSampleFormat::U16
+        );
+        assert_eq!(
+            resolve_supported_sample_format(cpal::SampleFormat::U32).unwrap(),
+            ResolvedSampleFormat::U32
+        );
+        assert_eq!(
+            resolve_supported_sample_format(cpal::SampleFormat::I24).unwrap(),
+            ResolvedSampleFormat::I24
+        );
+    }
+
+    #[test]
+    fn rejects_unknown_sample_format_names_without_panicking() {
+        let error = resolve_supported_sample_format_name("future_format").unwrap_err();
+        assert!(error.contains("future_format"));
+    }
+
+    #[test]
+    fn worker_init_error_returns_err() {
+        let (tx, rx) = mpsc::channel();
+        let worker = std::thread::spawn(move || {
+            let _ = tx.send(Err("startup failed".to_string()));
+        });
+
+        assert!(AudioRecorder::wait_for_worker_init(rx, worker).is_err());
+    }
+
+    #[test]
+    fn worker_init_success_returns_worker_handle() {
+        let (tx, rx) = mpsc::channel();
+        let worker = std::thread::spawn(move || {
+            let _ = tx.send(Ok(()));
+        });
+
+        let worker = AudioRecorder::wait_for_worker_init(rx, worker).unwrap();
+        worker.join().unwrap();
     }
 }
