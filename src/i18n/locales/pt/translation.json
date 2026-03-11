@@ -8,7 +8,7 @@
     "cancel": "Cancelar"
   },
   "sidebar": {
-    "home": "Home",
+    "home": "Início",
     "general": "Geral",
     "models": "Modelos",
     "advanced": "Avançado",
@@ -80,254 +80,257 @@
     },
     "permissions": {
       "shared": {
-        "eyebrow": "Permissions",
-        "repairEyebrow": "Permission needed",
-        "stepByStep": "What to do",
-        "statusLabel": "Status",
-        "openPrompt": "Open macOS prompt",
-        "openingPrompt": "Opening macOS prompt…",
-        "iEnabledIt": "I turned it on",
-        "checkAgain": "Check again",
-        "continue": "Continue",
+        "eyebrow": "Permissões",
+        "repairEyebrow": "Permissão necessária",
+        "stepByStep": "O que fazer",
+        "statusLabel": "Estado",
+        "openPrompt": "Abrir aviso do macOS",
+        "openingPrompt": "A abrir o aviso do macOS…",
+        "iEnabledIt": "Já ativei",
+        "checkAgain": "Verificar novamente",
+        "continue": "Continuar",
         "statuses": {
-          "checking": "Checking",
-          "needed": "Still needed",
-          "requesting": "Opening macOS",
-          "waiting_for_user": "Waiting for you",
-          "granted": "Allowed"
+          "checking": "A verificar",
+          "needed": "Ainda necessário",
+          "error": "Precisa de atenção",
+          "requesting": "A abrir o macOS",
+          "waiting_for_user": "À tua espera",
+          "granted": "Permitido"
         }
       },
       "microphone": {
-        "title": "Allow microphone access",
-        "description": "SilkScribe needs your mic to turn speech into text.",
-        "needLabel": "Needed to listen",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe only listens while you record. Without mic access, it has nothing to transcribe.",
-        "breaksWithoutTitle": "Without it",
-        "breaksWithoutBody": "Recording can start, but SilkScribe cannot hear your voice.",
-        "afterGrantTitle": "After you allow it",
-        "afterGrantBody": "SilkScribe can record your voice and continue setup.",
+        "title": "Permitir acesso ao microfone",
+        "description": "O SilkScribe precisa do teu microfone para transformar fala em texto.",
+        "needLabel": "Necessário para ouvir",
+        "whyItMattersTitle": "Porque é importante",
+        "whyItMattersBody": "O SilkScribe só ouve enquanto estás a gravar. Sem acesso ao microfone, não há nada para transcrever.",
+        "breaksWithoutTitle": "Sem isto",
+        "breaksWithoutBody": "A gravação pode começar, mas o SilkScribe não consegue ouvir a tua voz.",
+        "afterGrantTitle": "Depois de permitires",
+        "afterGrantBody": "O SilkScribe pode gravar a tua voz e continuar a configuração.",
         "steps": {
-          "step1": "Click “Open macOS prompt.”",
-          "step2": "When macOS asks, choose “Allow.”",
-          "step3": "If no prompt appears, open System Settings > Privacy & Security > Microphone.",
-          "step4": "Turn on SilkScribe, then return here and check again."
+          "step1": "Clica em “Abrir aviso do macOS”.",
+          "step2": "Quando o macOS perguntar, escolhe “Permitir”.",
+          "step3": "Se não aparecer nenhum aviso, abre Definições do Sistema > Privacidade e segurança > Microfone.",
+          "step4": "Ativa o SilkScribe, volta aqui e verifica novamente."
         },
-        "manualHint": "If you chose “Don’t Allow,” turn SilkScribe on in System Settings > Privacy & Security > Microphone.",
+        "manualHint": "Se escolheste “Não Permitir”, ativa o SilkScribe em Definições do Sistema > Privacidade e segurança > Microfone.",
         "statusHelp": {
-          "checking": "Checking whether microphone access is already on.",
-          "needed": "Microphone access is still off.",
-          "requesting": "The macOS permission prompt should appear now.",
-          "waiting_for_user": "Allow the permission, then come back and check again.",
-          "granted": "Microphone access is on."
+          "checking": "A verificar se o acesso ao microfone já está ativo.",
+          "needed": "O acesso ao microfone ainda está desligado.",
+          "error": "O SilkScribe não conseguiu verificar o acesso ao microfone.",
+          "requesting": "O aviso de permissão do macOS deve aparecer agora.",
+          "waiting_for_user": "Permite a permissão e depois volta para verificar novamente.",
+          "granted": "O acesso ao microfone está ativo."
         }
       },
       "accessibility": {
-        "title": "Allow SilkScribe to type for you",
-        "description": "SilkScribe needs Accessibility access to place text into your apps.",
-        "needLabel": "Needed to insert text",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe puts finished text into the field you’re using. macOS protects that with Accessibility access.",
-        "breaksWithoutTitle": "Without it",
-        "breaksWithoutBody": "SilkScribe may transcribe, but it cannot reliably type the result into your apps.",
-        "afterGrantTitle": "After you allow it",
-        "afterGrantBody": "SilkScribe can type into apps and finish setup normally.",
+        "title": "Permitir que o SilkScribe escreva por ti",
+        "description": "O SilkScribe precisa de acesso de Acessibilidade para colocar texto nas tuas apps.",
+        "needLabel": "Necessário para inserir texto",
+        "whyItMattersTitle": "Porque é importante",
+        "whyItMattersBody": "O SilkScribe coloca o texto final no campo que estás a usar. O macOS protege isso com acesso de Acessibilidade.",
+        "breaksWithoutTitle": "Sem isto",
+        "breaksWithoutBody": "O SilkScribe pode transcrever, mas não consegue escrever o resultado nas tuas apps de forma fiável.",
+        "afterGrantTitle": "Depois de permitires",
+        "afterGrantBody": "O SilkScribe pode escrever nas apps e terminar a configuração normalmente.",
         "steps": {
-          "step1": "Click “Open macOS prompt.”",
-          "step2": "If macOS sends you to System Settings, continue there.",
-          "step3": "Open Privacy & Security > Accessibility and find SilkScribe.",
-          "step4": "Turn on SilkScribe, then return here and check again."
+          "step1": "Clica em “Abrir aviso do macOS”.",
+          "step2": "Se o macOS te levar às Definições do Sistema, continua por lá.",
+          "step3": "Abre Privacidade e segurança > Acessibilidade e encontra o SilkScribe.",
+          "step4": "Ativa o SilkScribe, volta aqui e verifica novamente."
         },
-        "manualHint": "If SilkScribe still looks disabled, reopen the app after turning it on, then check again.",
+        "manualHint": "Se o SilkScribe continuar a parecer desativado, reabre a app depois de o ativares e verifica novamente.",
         "statusHelp": {
-          "checking": "Checking whether Accessibility access is already on.",
-          "needed": "Accessibility access is still off.",
-          "requesting": "The macOS approval flow should open now.",
-          "waiting_for_user": "Turn SilkScribe on in System Settings > Privacy & Security > Accessibility, then check again.",
-          "granted": "Accessibility access is on."
+          "checking": "A verificar se o acesso de Acessibilidade já está ativo.",
+          "needed": "O acesso de Acessibilidade ainda está desligado.",
+          "error": "O SilkScribe não conseguiu verificar o acesso de Acessibilidade.",
+          "requesting": "O fluxo de aprovação do macOS deve abrir agora.",
+          "waiting_for_user": "Ativa o SilkScribe em Definições do Sistema > Privacidade e segurança > Acessibilidade e verifica novamente.",
+          "granted": "O acesso de Acessibilidade está ativo."
         }
       }
     },
     "progress": {
-      "welcome": "Welcome",
-      "microphone": "Microphone",
-      "accessibility": "Text Access",
-      "setup": "Setup",
-      "practice": "Try It"
+      "welcome": "Boas-vindas",
+      "microphone": "Microfone",
+      "accessibility": "Acesso ao texto",
+      "setup": "Configuração",
+      "practice": "Experimentar"
     },
     "welcome": {
-      "eyebrow": "Get set up",
-      "title": "Set up SilkScribe in a minute.",
-      "description": "We’ll turn on the permissions it needs, finish setup in the background, and let you try one real dictation.",
-      "badge": "Quick setup",
+      "eyebrow": "Vamos preparar tudo",
+      "title": "Configura o SilkScribe num minuto.",
+      "description": "Vamos ativar as permissões necessárias, concluir a configuração em segundo plano e deixar-te experimentar um ditado real.",
+      "badge": "Configuração rápida",
       "features": {
         "permissions": {
-          "title": "Clear permission help",
-          "description": "See exactly what to allow and why."
+          "title": "Ajuda clara para permissões",
+          "description": "Vê exatamente o que permitir e porquê."
         },
         "engine": {
-          "title": "Automatic setup",
-          "description": "SilkScribe picks the right offline engine for this device."
+          "title": "Configuração automática",
+          "description": "O SilkScribe escolhe o motor offline certo para este dispositivo."
         },
         "practice": {
-          "title": "One real test",
-          "description": "Make sure everything works before you start."
+          "title": "Um teste real",
+          "description": "Confirma que tudo funciona antes de começares."
         }
       },
-      "outcomeLabel": "After setup",
-      "outcome": "Hold your shortcut, speak, and SilkScribe will place the text where you need it.",
-      "planLabel": "What happens",
+      "outcomeLabel": "Depois da configuração",
+      "outcome": "Mantém a tua tecla de atalho premida, fala e o SilkScribe colocará o texto onde precisares.",
+      "planLabel": "O que vai acontecer",
       "plan": {
         "step1": {
-          "title": "Allow the microphone",
-          "description": "So SilkScribe can hear you."
+          "title": "Permitir o microfone",
+          "description": "Para o SilkScribe te ouvir."
         },
         "step2": {
-          "title": "Allow text access",
-          "description": "So SilkScribe can type into your apps."
+          "title": "Permitir acesso ao texto",
+          "description": "Para o SilkScribe poder escrever nas tuas apps."
         },
         "step3": {
-          "title": "Try it once",
-          "description": "Setup finishes, then you run one quick test."
+          "title": "Experimentar uma vez",
+          "description": "A configuração termina e depois fazes um teste rápido."
         }
       },
-      "permissionPromise": "These steps are required for SilkScribe to work properly.",
-      "continue": "Continue"
+      "permissionPromise": "Estes passos são necessários para o SilkScribe funcionar corretamente.",
+      "continue": "Continuar"
     },
     "setup": {
-      "eyebrow": "Setting things up",
-      "title": "SilkScribe is getting ready.",
-      "description": "We’re preparing the best offline speech engine for {{language}}, then you’ll try a quick test.",
-      "defaultLanguage": "your language",
-      "autoLabel": "Automatic",
-      "engineTitle": "No setup choices needed",
-      "engineBody": "SilkScribe is choosing the best fit for {{language}} and setting it up locally.",
-      "progressLabel": "Progress",
-      "sizeLabel": "Download",
-      "speedLabel": "Speed",
-      "etaLabel": "ETA",
+      "eyebrow": "A configurar",
+      "title": "O SilkScribe está a preparar-se.",
+      "description": "Estamos a preparar o melhor motor de fala offline para {{language}} e depois farás um teste rápido.",
+      "defaultLanguage": "o teu idioma",
+      "autoLabel": "Automático",
+      "engineTitle": "Não são necessárias escolhas de configuração",
+      "engineBody": "O SilkScribe está a escolher a melhor opção para {{language}} e a configurá-la localmente.",
+      "progressLabel": "Progresso",
+      "sizeLabel": "Transferência",
+      "speedLabel": "Velocidade",
+      "etaLabel": "Tempo restante",
       "speedValue": "{{speed}} MB/s",
-      "notAvailable": "Not yet",
-      "preparingDetail": "Preparing…",
-      "shortcutTitle": "Your shortcut",
-      "shortcutBody": "Hold {{shortcut}} to speak. Release it to transcribe.",
-      "prepBadge": "Almost ready",
-      "prepTitle": "This should stay short and feel automatic",
-      "prepBody": "While setup runs, SilkScribe is downloading or loading the speech engine it picked for this machine. You can just wait here for the next step.",
-      "retry": "Try again",
-      "ready": "Everything is ready. Opening the practice step now.",
+      "notAvailable": "Ainda não",
+      "preparingDetail": "A preparar…",
+      "shortcutTitle": "A tua tecla de atalho",
+      "shortcutBody": "Mantém {{shortcut}} premido para falar. Solta para transcrever.",
+      "prepBadge": "Quase pronto",
+      "prepTitle": "Isto deve ser rápido e parecer automático",
+      "prepBody": "Enquanto a configuração decorre, o SilkScribe está a transferir ou a carregar o motor de fala escolhido para esta máquina. Podes simplesmente esperar aqui pelo passo seguinte.",
+      "retry": "Tentar novamente",
+      "ready": "Está tudo pronto. A abrir agora o passo de teste.",
       "states": {
-        "resolving": "Choosing",
-        "downloading": "Downloading",
-        "preparing": "Preparing",
-        "ready": "Ready",
-        "error": "Needs attention"
+        "resolving": "A escolher",
+        "downloading": "A transferir",
+        "preparing": "A preparar",
+        "ready": "Pronto",
+        "error": "Precisa de atenção"
       },
       "panelStates": {
-        "resolving": "Choosing the best engine",
-        "downloading": "Downloading files",
-        "preparing": "Preparing the engine",
-        "ready": "Ready to test",
-        "error": "Setup needs attention"
+        "resolving": "A escolher o melhor motor",
+        "downloading": "A transferir ficheiros",
+        "preparing": "A preparar o motor",
+        "ready": "Pronto para testar",
+        "error": "A configuração precisa de atenção"
       },
       "panelHelp": {
-        "resolving": "SilkScribe is checking what’s available and choosing the best engine for this device.",
-        "downloading": "The required files are downloading now.",
-        "preparing": "The download is done. SilkScribe is loading everything locally.",
-        "ready": "Setup is done. Next: one quick real test.",
-        "error": "Setup didn’t finish. Try again."
+        "resolving": "O SilkScribe está a verificar o que está disponível e a escolher o melhor motor para este dispositivo.",
+        "downloading": "Os ficheiros necessários estão a ser transferidos agora.",
+        "preparing": "A transferência terminou. O SilkScribe está a carregar tudo localmente.",
+        "ready": "A configuração terminou. A seguir: um teste real e rápido.",
+        "error": "A configuração não foi concluída. Tenta novamente."
       },
       "errors": {
-        "loadModels": "SilkScribe couldn’t load the available speech engines.",
-        "downloadModel": "SilkScribe couldn’t finish the download.",
-        "selectModel": "SilkScribe couldn’t prepare your speech engine."
+        "loadModels": "O SilkScribe não conseguiu carregar os motores de fala disponíveis.",
+        "downloadModel": "O SilkScribe não conseguiu concluir a transferência.",
+        "selectModel": "O SilkScribe não conseguiu preparar o teu motor de fala."
       },
-      "tipsBadge": "Helpful while you wait",
-      "previousCard": "Previous tip",
-      "nextCard": "Next tip",
-      "goToCard": "Go to tip {{index}}",
+      "tipsBadge": "Útil enquanto esperas",
+      "previousCard": "Dica anterior",
+      "nextCard": "Dica seguinte",
+      "goToCard": "Ir para a dica {{index}}",
       "tips": {
         "cards": {
           "shortcutHabit": {
-            "title": "One shortcut, one quick habit",
-            "description": "SilkScribe is built around a very simple rhythm: hold, speak, release.",
-            "point1": "Hold {{shortcut}} while you speak.",
-            "point2": "Release it when you are done talking.",
-            "point3": "SilkScribe turns that short burst into text right away."
+            "title": "Uma tecla de atalho, um hábito rápido",
+            "description": "O SilkScribe gira em torno de um ritmo muito simples: manter premido, falar, largar.",
+            "point1": "Mantém {{shortcut}} premido enquanto falas.",
+            "point2": "Larga quando terminares.",
+            "point3": "O SilkScribe transforma logo esse pequeno trecho em texto."
           },
           "focusField": {
-            "title": "Always focus the place you want text to go",
-            "description": "SilkScribe sends the result into the field that is active when transcription finishes.",
-            "point1": "Click into the text box you want before you start talking.",
-            "point2": "Keep that field focused until the transcription finishes.",
-            "point3": "During onboarding, we provide a practice box for this exact reason."
+            "title": "Mantém sempre o foco no local onde queres o texto",
+            "description": "O SilkScribe envia o resultado para o campo que estiver ativo quando a transcrição terminar.",
+            "point1": "Clica na caixa de texto que queres usar antes de começares a falar.",
+            "point2": "Mantém esse campo focado até a transcrição terminar.",
+            "point3": "Durante o onboarding, fornecemos uma caixa de prática exatamente por isso."
           },
           "shortBursts": {
-            "title": "Short bursts feel fastest",
-            "description": "New users usually get the cleanest first results when they keep each recording brief.",
-            "point1": "Try one or two sentences at a time.",
-            "point2": "Pause naturally between ideas.",
-            "point3": "You can always record another burst immediately after."
+            "title": "Trechos curtos parecem mais rápidos",
+            "description": "Os novos utilizadores costumam obter os primeiros resultados mais limpos quando mantêm cada gravação curta.",
+            "point1": "Experimenta uma ou duas frases de cada vez.",
+            "point2": "Faz pausas naturais entre ideias.",
+            "point3": "Podes sempre gravar outro trecho logo a seguir."
           },
           "quietSpace": {
-            "title": "A quieter space makes the first win easier",
-            "description": "SilkScribe works best when your voice stands out clearly from the room around you.",
-            "point1": "Use the microphone you normally prefer if you have one.",
-            "point2": "Keep fans, speakers, or background chatter as low as you can.",
-            "point3": "Speak at a steady, normal pace."
+            "title": "Um espaço mais silencioso facilita a primeira vitória",
+            "description": "O SilkScribe funciona melhor quando a tua voz se destaca claramente do ambiente.",
+            "point1": "Se tiveres um, usa o microfone que normalmente preferes.",
+            "point2": "Mantém ventoinhas, colunas ou conversa de fundo o mais baixo possível.",
+            "point3": "Fala a um ritmo estável e natural."
           },
           "privacy": {
-            "title": "Your setup stays on the essentials",
-            "description": "This onboarding avoids extra configuration so you can get to a working first transcription faster.",
-            "point1": "Permissions come first because they are critical to the app working correctly.",
-            "point2": "The speech engine is chosen automatically in the background.",
-            "point3": "You can fine-tune settings later after you have the core workflow working."
+            "title": "A tua configuração fica no essencial",
+            "description": "Este onboarding evita configurações extra para que chegues mais depressa a uma primeira transcrição funcional.",
+            "point1": "As permissões vêm primeiro porque são críticas para a app funcionar corretamente.",
+            "point2": "O motor de fala é escolhido automaticamente em segundo plano.",
+            "point3": "Podes afinar as definições mais tarde, depois de o fluxo principal estar a funcionar."
           },
           "firstWin": {
-            "title": "The next screen is not a fake demo",
-            "description": "You are about to try a real push-to-talk transcription inside the actual app.",
-            "point1": "Keep the practice box focused.",
-            "point2": "Use your normal shortcut exactly the way you will use it later.",
-            "point3": "If text appears in the box, SilkScribe is ready for real work."
+            "title": "O ecrã seguinte não é uma demonstração falsa",
+            "description": "Estás prestes a experimentar uma transcrição real de push-to-talk dentro da app.",
+            "point1": "Mantém a caixa de prática focada.",
+            "point2": "Usa a tua tecla de atalho normal exatamente como a vais usar depois.",
+            "point3": "Se o texto aparecer na caixa, o SilkScribe está pronto para trabalho real."
           }
         }
       }
     },
     "practice": {
-      "eyebrow": "Try it",
-      "title": "Try SilkScribe once",
-      "description": "Click the practice box, hold your shortcut, say a short sentence, then release.",
-      "badge": "Quick test",
-      "shortcutFallback": "Shortcut",
+      "eyebrow": "Experimentar",
+      "title": "Experimenta o SilkScribe uma vez",
+      "description": "Clica na caixa de prática, mantém a tua tecla de atalho premida, diz uma frase curta e depois larga.",
+      "badge": "Teste rápido",
+      "shortcutFallback": "Atalho",
       "steps": {
         "step1": {
-          "title": "Focus the practice box",
-          "description": "Keep this box selected so SilkScribe knows where to place the text."
+          "title": "Foca a caixa de prática",
+          "description": "Mantém esta caixa selecionada para o SilkScribe saber onde colocar o texto."
         },
         "step2": {
-          "title": "Hold {{shortcut}} and speak",
-          "description": "Say one short sentence in a natural voice."
+          "title": "Mantém {{shortcut}} premido e fala",
+          "description": "Diz uma frase curta com voz natural."
         },
         "step3": {
-          "title": "Release to transcribe",
-          "description": "If the text appears here, SilkScribe is ready."
+          "title": "Larga para transcrever",
+          "description": "Se o texto aparecer aqui, o SilkScribe está pronto."
         }
       },
-      "tipTitle": "Try this",
-      "tipBody": "Say: “SilkScribe is ready for my notes today.”",
-      "helperTitle": "Try here",
-      "helper": "Keep this box focused, then use your shortcut. Your words should appear here.",
-      "placeholder": "Hold your shortcut, speak, then release. Your text will appear here…",
-      "success": "That worked",
-      "readyToFinish": "Your test worked. You can start using SilkScribe.",
-      "prompt": "You can skip this for now and test it later.",
-      "finish": "Start using SilkScribe",
-      "skip": "Skip for now",
-      "finishing": "Finishing setup…",
-      "finishFailed": "SilkScribe couldn’t finish onboarding. Please try again."
+      "tipTitle": "Experimenta isto",
+      "tipBody": "Diz: “O SilkScribe está pronto para as minhas notas de hoje.”",
+      "helperTitle": "Experimenta aqui",
+      "helper": "Mantém esta caixa focada e depois usa a tua tecla de atalho. As tuas palavras devem aparecer aqui.",
+      "placeholder": "Mantém a tua tecla de atalho premida, fala e depois larga. O teu texto aparecerá aqui…",
+      "success": "Funcionou",
+      "readyToFinish": "O teu teste funcionou. Já podes começar a usar o SilkScribe.",
+      "prompt": "Podes saltar isto por agora e testar mais tarde.",
+      "finish": "Começar a usar o SilkScribe",
+      "skip": "Saltar por agora",
+      "finishing": "A concluir a configuração…",
+      "finishFailed": "O SilkScribe não conseguiu concluir o onboarding. Tenta novamente."
     },
     "shared": {
-      "stepCounter": "Step {{current}} / {{total}}"
+      "stepCounter": "Passo {{current}} / {{total}}"
     }
   },
   "modelSelector": {
@@ -508,7 +511,7 @@
           "dontModify": "Não Modificar Área de Transferência",
           "copyToClipboard": "Copiar para Área de Transferência"
         },
-        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
+        "directInsertHint": "O SilkScribe vai inserir texto aqui diretamente para que a tua área de transferência permaneça inalterada."
       },
       "autoSubmit": {
         "title": "Envio automático",
@@ -619,8 +622,8 @@
       "unsave": "Remover dos salvos",
       "delete": "Excluir entrada",
       "deleteError": "Falha ao excluir entrada. Por favor, tente novamente.",
-      "loadError": "Unable to load history right now. Please try again.",
-      "retry": "Retry"
+      "loadError": "Não foi possível carregar o histórico agora. Tenta novamente.",
+      "retry": "Tentar novamente"
     },
     "debug": {
       "title": "Depuração",

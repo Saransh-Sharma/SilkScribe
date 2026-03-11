@@ -8,7 +8,7 @@
     "cancel": "إلغاء"
   },
   "sidebar": {
-    "home": "Home",
+    "home": "الرئيسية",
     "general": "عام",
     "advanced": "متقدم",
     "postProcessing": "معالجة لاحقة",
@@ -80,254 +80,257 @@
     },
     "permissions": {
       "shared": {
-        "eyebrow": "Permissions",
-        "repairEyebrow": "Permission needed",
-        "stepByStep": "What to do",
-        "statusLabel": "Status",
-        "openPrompt": "Open macOS prompt",
-        "openingPrompt": "Opening macOS prompt…",
-        "iEnabledIt": "I turned it on",
-        "checkAgain": "Check again",
-        "continue": "Continue",
+        "eyebrow": "الأذونات",
+        "repairEyebrow": "الإذن مطلوب",
+        "stepByStep": "ما الذي يجب فعله",
+        "statusLabel": "الحالة",
+        "openPrompt": "افتح نافذة macOS",
+        "openingPrompt": "جارٍ فتح نافذة macOS…",
+        "iEnabledIt": "لقد فعّلته",
+        "checkAgain": "تحقّق مرة أخرى",
+        "continue": "متابعة",
         "statuses": {
-          "checking": "Checking",
-          "needed": "Still needed",
-          "requesting": "Opening macOS",
-          "waiting_for_user": "Waiting for you",
-          "granted": "Allowed"
+          "checking": "جارٍ التحقّق",
+          "needed": "ما زال مطلوبًا",
+          "error": "يحتاج إلى انتباه",
+          "requesting": "جارٍ فتح macOS",
+          "waiting_for_user": "بانتظارك",
+          "granted": "مسموح"
         }
       },
       "microphone": {
-        "title": "Allow microphone access",
-        "description": "SilkScribe needs your mic to turn speech into text.",
-        "needLabel": "Needed to listen",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe only listens while you record. Without mic access, it has nothing to transcribe.",
-        "breaksWithoutTitle": "Without it",
-        "breaksWithoutBody": "Recording can start, but SilkScribe cannot hear your voice.",
-        "afterGrantTitle": "After you allow it",
-        "afterGrantBody": "SilkScribe can record your voice and continue setup.",
+        "title": "اسمح بالوصول إلى الميكروفون",
+        "description": "يحتاج SilkScribe إلى الميكروفون لتحويل الكلام إلى نص.",
+        "needLabel": "مطلوب للاستماع",
+        "whyItMattersTitle": "لماذا هذا مهم",
+        "whyItMattersBody": "لا يستمع SilkScribe إلا أثناء التسجيل. من دون الوصول إلى الميكروفون لن يكون هناك ما يمكن تفريغه.",
+        "breaksWithoutTitle": "بدون هذا",
+        "breaksWithoutBody": "قد يبدأ التسجيل، لكن SilkScribe لن يتمكن من سماع صوتك.",
+        "afterGrantTitle": "بعد السماح به",
+        "afterGrantBody": "يمكن لـ SilkScribe تسجيل صوتك ومتابعة الإعداد.",
         "steps": {
-          "step1": "Click “Open macOS prompt.”",
-          "step2": "When macOS asks, choose “Allow.”",
-          "step3": "If no prompt appears, open System Settings > Privacy & Security > Microphone.",
-          "step4": "Turn on SilkScribe, then return here and check again."
+          "step1": "انقر على «افتح نافذة macOS».",
+          "step2": "عندما يطلب macOS ذلك، اختر «السماح».",
+          "step3": "إذا لم تظهر أي نافذة، افتح إعدادات النظام > الخصوصية والأمان > الميكروفون.",
+          "step4": "فعّل SilkScribe، ثم عد إلى هنا وتحقّق مرة أخرى."
         },
-        "manualHint": "If you chose “Don’t Allow,” turn SilkScribe on in System Settings > Privacy & Security > Microphone.",
+        "manualHint": "إذا اخترت «عدم السماح»، فعِّل SilkScribe من إعدادات النظام > الخصوصية والأمان > الميكروفون.",
         "statusHelp": {
-          "checking": "Checking whether microphone access is already on.",
-          "needed": "Microphone access is still off.",
-          "requesting": "The macOS permission prompt should appear now.",
-          "waiting_for_user": "Allow the permission, then come back and check again.",
-          "granted": "Microphone access is on."
+          "checking": "يجري التحقّق مما إذا كان الوصول إلى الميكروفون مفعّلًا بالفعل.",
+          "needed": "الوصول إلى الميكروفون ما زال معطّلًا.",
+          "error": "تعذّر على SilkScribe التحقّق من الوصول إلى الميكروفون.",
+          "requesting": "يجب أن تظهر نافذة إذن macOS الآن.",
+          "waiting_for_user": "اسمح بالإذن ثم عد وتحقّق مرة أخرى.",
+          "granted": "تم تفعيل الوصول إلى الميكروفون."
         }
       },
       "accessibility": {
-        "title": "Allow SilkScribe to type for you",
-        "description": "SilkScribe needs Accessibility access to place text into your apps.",
-        "needLabel": "Needed to insert text",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe puts finished text into the field you’re using. macOS protects that with Accessibility access.",
-        "breaksWithoutTitle": "Without it",
-        "breaksWithoutBody": "SilkScribe may transcribe, but it cannot reliably type the result into your apps.",
-        "afterGrantTitle": "After you allow it",
-        "afterGrantBody": "SilkScribe can type into apps and finish setup normally.",
+        "title": "اسمح لـ SilkScribe بالكتابة نيابةً عنك",
+        "description": "يحتاج SilkScribe إلى وصول تسهيلات الاستخدام لوضع النص داخل تطبيقاتك.",
+        "needLabel": "مطلوب لإدراج النص",
+        "whyItMattersTitle": "لماذا هذا مهم",
+        "whyItMattersBody": "يضع SilkScribe النص النهائي في الحقل الذي تستخدمه. ويحمي macOS ذلك عبر وصول تسهيلات الاستخدام.",
+        "breaksWithoutTitle": "بدون هذا",
+        "breaksWithoutBody": "قد يتمكن SilkScribe من التفريغ، لكنه لن يتمكن من كتابة النتيجة داخل تطبيقاتك بشكل موثوق.",
+        "afterGrantTitle": "بعد السماح به",
+        "afterGrantBody": "يمكن لـ SilkScribe الكتابة داخل التطبيقات وإكمال الإعداد بشكل طبيعي.",
         "steps": {
-          "step1": "Click “Open macOS prompt.”",
-          "step2": "If macOS sends you to System Settings, continue there.",
-          "step3": "Open Privacy & Security > Accessibility and find SilkScribe.",
-          "step4": "Turn on SilkScribe, then return here and check again."
+          "step1": "انقر على «افتح نافذة macOS».",
+          "step2": "إذا نقلك macOS إلى إعدادات النظام، فأكمل من هناك.",
+          "step3": "افتح الخصوصية والأمان > تسهيلات الاستخدام وابحث عن SilkScribe.",
+          "step4": "فعّل SilkScribe، ثم عد إلى هنا وتحقّق مرة أخرى."
         },
-        "manualHint": "If SilkScribe still looks disabled, reopen the app after turning it on, then check again.",
+        "manualHint": "إذا بدا SilkScribe ما زال معطّلًا، فأعد فتح التطبيق بعد تفعيله ثم تحقّق مرة أخرى.",
         "statusHelp": {
-          "checking": "Checking whether Accessibility access is already on.",
-          "needed": "Accessibility access is still off.",
-          "requesting": "The macOS approval flow should open now.",
-          "waiting_for_user": "Turn SilkScribe on in System Settings > Privacy & Security > Accessibility, then check again.",
-          "granted": "Accessibility access is on."
+          "checking": "يجري التحقّق مما إذا كان وصول تسهيلات الاستخدام مفعّلًا بالفعل.",
+          "needed": "وصول تسهيلات الاستخدام ما زال معطّلًا.",
+          "error": "تعذّر على SilkScribe التحقّق من وصول تسهيلات الاستخدام.",
+          "requesting": "يجب أن يفتح الآن مسار الموافقة في macOS.",
+          "waiting_for_user": "فعّل SilkScribe من إعدادات النظام > الخصوصية والأمان > تسهيلات الاستخدام ثم تحقّق مرة أخرى.",
+          "granted": "تم تفعيل وصول تسهيلات الاستخدام."
         }
       }
     },
     "progress": {
-      "welcome": "Welcome",
-      "microphone": "Microphone",
-      "accessibility": "Text Access",
-      "setup": "Setup",
-      "practice": "Try It"
+      "welcome": "مرحبًا",
+      "microphone": "الميكروفون",
+      "accessibility": "الوصول إلى النص",
+      "setup": "الإعداد",
+      "practice": "جرّبه"
     },
     "welcome": {
-      "eyebrow": "Get set up",
-      "title": "Set up SilkScribe in a minute.",
-      "description": "We’ll turn on the permissions it needs, finish setup in the background, and let you try one real dictation.",
-      "badge": "Quick setup",
+      "eyebrow": "لنبدأ الإعداد",
+      "title": "أعِد SilkScribe خلال دقيقة.",
+      "description": "سنفعّل الأذونات التي يحتاجها، وننهي الإعداد في الخلفية، ثم نمنحك تجربة إملاء حقيقية واحدة.",
+      "badge": "إعداد سريع",
       "features": {
         "permissions": {
-          "title": "Clear permission help",
-          "description": "See exactly what to allow and why."
+          "title": "مساعدة واضحة بشأن الأذونات",
+          "description": "اعرف بالضبط ما الذي يجب السماح به ولماذا."
         },
         "engine": {
-          "title": "Automatic setup",
-          "description": "SilkScribe picks the right offline engine for this device."
+          "title": "إعداد تلقائي",
+          "description": "يختار SilkScribe محرك العمل دون اتصال المناسب لهذا الجهاز."
         },
         "practice": {
-          "title": "One real test",
-          "description": "Make sure everything works before you start."
+          "title": "اختبار حقيقي واحد",
+          "description": "تأكد من أن كل شيء يعمل قبل أن تبدأ."
         }
       },
-      "outcomeLabel": "After setup",
-      "outcome": "Hold your shortcut, speak, and SilkScribe will place the text where you need it.",
-      "planLabel": "What happens",
+      "outcomeLabel": "بعد الإعداد",
+      "outcome": "اضغط باستمرار على الاختصار، وتحدث، وسيضع SilkScribe النص حيث تحتاجه.",
+      "planLabel": "ما الذي سيحدث",
       "plan": {
         "step1": {
-          "title": "Allow the microphone",
-          "description": "So SilkScribe can hear you."
+          "title": "اسمح بالميكروفون",
+          "description": "حتى يتمكن SilkScribe من سماعك."
         },
         "step2": {
-          "title": "Allow text access",
-          "description": "So SilkScribe can type into your apps."
+          "title": "اسمح بالوصول إلى النص",
+          "description": "حتى يتمكن SilkScribe من الكتابة داخل تطبيقاتك."
         },
         "step3": {
-          "title": "Try it once",
-          "description": "Setup finishes, then you run one quick test."
+          "title": "جرّبه مرة واحدة",
+          "description": "ينتهي الإعداد ثم تُجري اختبارًا سريعًا."
         }
       },
-      "permissionPromise": "These steps are required for SilkScribe to work properly.",
-      "continue": "Continue"
+      "permissionPromise": "هذه الخطوات مطلوبة لكي يعمل SilkScribe بشكل صحيح.",
+      "continue": "متابعة"
     },
     "setup": {
-      "eyebrow": "Setting things up",
-      "title": "SilkScribe is getting ready.",
-      "description": "We’re preparing the best offline speech engine for {{language}}, then you’ll try a quick test.",
-      "defaultLanguage": "your language",
-      "autoLabel": "Automatic",
-      "engineTitle": "No setup choices needed",
-      "engineBody": "SilkScribe is choosing the best fit for {{language}} and setting it up locally.",
-      "progressLabel": "Progress",
-      "sizeLabel": "Download",
-      "speedLabel": "Speed",
-      "etaLabel": "ETA",
+      "eyebrow": "جارٍ تجهيز الأشياء",
+      "title": "SilkScribe يستعد الآن.",
+      "description": "نحن نجهّز أفضل محرك كلام دون اتصال للغة {{language}}، ثم ستجري اختبارًا سريعًا.",
+      "defaultLanguage": "لغتك",
+      "autoLabel": "تلقائي",
+      "engineTitle": "لا حاجة إلى أي اختيارات إعداد",
+      "engineBody": "يختار SilkScribe أفضل خيار للغة {{language}} ويجهّزه محليًا.",
+      "progressLabel": "التقدّم",
+      "sizeLabel": "التنزيل",
+      "speedLabel": "السرعة",
+      "etaLabel": "الوقت المتبقي",
       "speedValue": "{{speed}} MB/s",
-      "notAvailable": "Not yet",
-      "preparingDetail": "Preparing…",
-      "shortcutTitle": "Your shortcut",
-      "shortcutBody": "Hold {{shortcut}} to speak. Release it to transcribe.",
-      "prepBadge": "Almost ready",
-      "prepTitle": "This should stay short and feel automatic",
-      "prepBody": "While setup runs, SilkScribe is downloading or loading the speech engine it picked for this machine. You can just wait here for the next step.",
-      "retry": "Try again",
-      "ready": "Everything is ready. Opening the practice step now.",
+      "notAvailable": "ليس بعد",
+      "preparingDetail": "جارٍ التحضير…",
+      "shortcutTitle": "الاختصار الخاص بك",
+      "shortcutBody": "اضغط باستمرار على {{shortcut}} للتحدث. اتركه لبدء التفريغ.",
+      "prepBadge": "أوشك على الجاهزية",
+      "prepTitle": "يُفترض أن يكون هذا سريعًا ويبدو تلقائيًا",
+      "prepBody": "أثناء سير الإعداد، يقوم SilkScribe بتنزيل أو تحميل محرك الكلام الذي اختاره لهذا الجهاز. يمكنك فقط الانتظار هنا حتى الخطوة التالية.",
+      "retry": "حاول مرة أخرى",
+      "ready": "كل شيء جاهز. جارٍ فتح خطوة التجربة الآن.",
       "states": {
-        "resolving": "Choosing",
-        "downloading": "Downloading",
-        "preparing": "Preparing",
-        "ready": "Ready",
-        "error": "Needs attention"
+        "resolving": "جارٍ الاختيار",
+        "downloading": "جارٍ التنزيل",
+        "preparing": "جارٍ التحضير",
+        "ready": "جاهز",
+        "error": "يحتاج إلى انتباه"
       },
       "panelStates": {
-        "resolving": "Choosing the best engine",
-        "downloading": "Downloading files",
-        "preparing": "Preparing the engine",
-        "ready": "Ready to test",
-        "error": "Setup needs attention"
+        "resolving": "اختيار أفضل محرك",
+        "downloading": "تنزيل الملفات",
+        "preparing": "تحضير المحرك",
+        "ready": "جاهز للاختبار",
+        "error": "الإعداد يحتاج إلى انتباه"
       },
       "panelHelp": {
-        "resolving": "SilkScribe is checking what’s available and choosing the best engine for this device.",
-        "downloading": "The required files are downloading now.",
-        "preparing": "The download is done. SilkScribe is loading everything locally.",
-        "ready": "Setup is done. Next: one quick real test.",
-        "error": "Setup didn’t finish. Try again."
+        "resolving": "يتحقق SilkScribe مما هو متاح ويختار أفضل محرك لهذا الجهاز.",
+        "downloading": "يتم الآن تنزيل الملفات المطلوبة.",
+        "preparing": "اكتمل التنزيل. يقوم SilkScribe الآن بتحميل كل شيء محليًا.",
+        "ready": "اكتمل الإعداد. التالي: اختبار حقيقي سريع.",
+        "error": "لم يكتمل الإعداد. حاول مرة أخرى."
       },
       "errors": {
-        "loadModels": "SilkScribe couldn’t load the available speech engines.",
-        "downloadModel": "SilkScribe couldn’t finish the download.",
-        "selectModel": "SilkScribe couldn’t prepare your speech engine."
+        "loadModels": "تعذّر على SilkScribe تحميل محركات الكلام المتاحة.",
+        "downloadModel": "تعذّر على SilkScribe إكمال التنزيل.",
+        "selectModel": "تعذّر على SilkScribe تجهيز محرك الكلام الخاص بك."
       },
-      "tipsBadge": "Helpful while you wait",
-      "previousCard": "Previous tip",
-      "nextCard": "Next tip",
-      "goToCard": "Go to tip {{index}}",
+      "tipsBadge": "مفيد بينما تنتظر",
+      "previousCard": "النصيحة السابقة",
+      "nextCard": "النصيحة التالية",
+      "goToCard": "اذهب إلى النصيحة {{index}}",
       "tips": {
         "cards": {
           "shortcutHabit": {
-            "title": "One shortcut, one quick habit",
-            "description": "SilkScribe is built around a very simple rhythm: hold, speak, release.",
-            "point1": "Hold {{shortcut}} while you speak.",
-            "point2": "Release it when you are done talking.",
-            "point3": "SilkScribe turns that short burst into text right away."
+            "title": "اختصار واحد وعادة سريعة واحدة",
+            "description": "يعتمد SilkScribe على إيقاع بسيط جدًا: اضغط باستمرار، تحدث، ثم اترك.",
+            "point1": "اضغط باستمرار على {{shortcut}} أثناء التحدث.",
+            "point2": "اتركه عندما تنتهي من الكلام.",
+            "point3": "سيحوّل SilkScribe هذا المقطع القصير إلى نص فورًا."
           },
           "focusField": {
-            "title": "Always focus the place you want text to go",
-            "description": "SilkScribe sends the result into the field that is active when transcription finishes.",
-            "point1": "Click into the text box you want before you start talking.",
-            "point2": "Keep that field focused until the transcription finishes.",
-            "point3": "During onboarding, we provide a practice box for this exact reason."
+            "title": "اجعل التركيز دائمًا على المكان الذي تريد أن يذهب إليه النص",
+            "description": "يرسل SilkScribe النتيجة إلى الحقل النشط عند انتهاء التفريغ.",
+            "point1": "انقر داخل مربع النص الذي تريده قبل أن تبدأ بالكلام.",
+            "point2": "أبقِ التركيز على ذلك الحقل حتى ينتهي التفريغ.",
+            "point3": "أثناء الإعداد الأولي، نوفر مربع تجربة لهذا السبب تحديدًا."
           },
           "shortBursts": {
-            "title": "Short bursts feel fastest",
-            "description": "New users usually get the cleanest first results when they keep each recording brief.",
-            "point1": "Try one or two sentences at a time.",
-            "point2": "Pause naturally between ideas.",
-            "point3": "You can always record another burst immediately after."
+            "title": "المقاطع القصيرة تبدو الأسرع",
+            "description": "عادةً ما يحصل المستخدمون الجدد على أنظف النتائج الأولى عندما يبقون كل تسجيل قصيرًا.",
+            "point1": "جرّب جملة أو جملتين في كل مرة.",
+            "point2": "توقف طبيعيًا بين الأفكار.",
+            "point3": "يمكنك دائمًا تسجيل مقطع آخر مباشرة بعد ذلك."
           },
           "quietSpace": {
-            "title": "A quieter space makes the first win easier",
-            "description": "SilkScribe works best when your voice stands out clearly from the room around you.",
-            "point1": "Use the microphone you normally prefer if you have one.",
-            "point2": "Keep fans, speakers, or background chatter as low as you can.",
-            "point3": "Speak at a steady, normal pace."
+            "title": "المكان الأكثر هدوءًا يجعل النجاح الأول أسهل",
+            "description": "يعمل SilkScribe بأفضل شكل عندما يبرز صوتك بوضوح عن البيئة المحيطة.",
+            "point1": "استخدم الميكروفون الذي تفضله عادةً إن كان لديك واحد.",
+            "point2": "خفّض أصوات المراوح أو السماعات أو الأحاديث الجانبية قدر الإمكان.",
+            "point3": "تحدث بوتيرة ثابتة وطبيعية."
           },
           "privacy": {
-            "title": "Your setup stays on the essentials",
-            "description": "This onboarding avoids extra configuration so you can get to a working first transcription faster.",
-            "point1": "Permissions come first because they are critical to the app working correctly.",
-            "point2": "The speech engine is chosen automatically in the background.",
-            "point3": "You can fine-tune settings later after you have the core workflow working."
+            "title": "يبقى إعدادك مركزًا على الأساسيات",
+            "description": "يتجنب هذا الإعداد الأولي التعقيد الإضافي حتى تصل بسرعة إلى أول تفريغ يعمل بالفعل.",
+            "point1": "تأتي الأذونات أولًا لأنها ضرورية لعمل التطبيق بشكل صحيح.",
+            "point2": "يُختار محرك الكلام تلقائيًا في الخلفية.",
+            "point3": "يمكنك ضبط الإعدادات لاحقًا بعد أن يعمل المسار الأساسي."
           },
           "firstWin": {
-            "title": "The next screen is not a fake demo",
-            "description": "You are about to try a real push-to-talk transcription inside the actual app.",
-            "point1": "Keep the practice box focused.",
-            "point2": "Use your normal shortcut exactly the way you will use it later.",
-            "point3": "If text appears in the box, SilkScribe is ready for real work."
+            "title": "الشاشة التالية ليست عرضًا تجريبيًا مزيفًا",
+            "description": "أنت على وشك تجربة تفريغ حقيقي بنمط اضغط لتتحدث داخل التطبيق نفسه.",
+            "point1": "أبقِ التركيز على مربع التجربة.",
+            "point2": "استخدم اختصارك المعتاد تمامًا كما ستستخدمه لاحقًا.",
+            "point3": "إذا ظهر النص في المربع، فهذا يعني أن SilkScribe جاهز للعمل الحقيقي."
           }
         }
       }
     },
     "practice": {
-      "eyebrow": "Try it",
-      "title": "Try SilkScribe once",
-      "description": "Click the practice box, hold your shortcut, say a short sentence, then release.",
-      "badge": "Quick test",
-      "shortcutFallback": "Shortcut",
+      "eyebrow": "جرّبه",
+      "title": "جرّب SilkScribe مرة واحدة",
+      "description": "انقر على مربع التجربة، واضغط باستمرار على اختصارك، وقل جملة قصيرة، ثم اترك.",
+      "badge": "اختبار سريع",
+      "shortcutFallback": "الاختصار",
       "steps": {
         "step1": {
-          "title": "Focus the practice box",
-          "description": "Keep this box selected so SilkScribe knows where to place the text."
+          "title": "ركّز على مربع التجربة",
+          "description": "أبقِ هذا المربع محددًا حتى يعرف SilkScribe أين يضع النص."
         },
         "step2": {
-          "title": "Hold {{shortcut}} and speak",
-          "description": "Say one short sentence in a natural voice."
+          "title": "اضغط باستمرار على {{shortcut}} وتحدث",
+          "description": "قل جملة قصيرة بصوت طبيعي."
         },
         "step3": {
-          "title": "Release to transcribe",
-          "description": "If the text appears here, SilkScribe is ready."
+          "title": "اتركه لبدء التفريغ",
+          "description": "إذا ظهر النص هنا، فـ SilkScribe جاهز."
         }
       },
-      "tipTitle": "Try this",
-      "tipBody": "Say: “SilkScribe is ready for my notes today.”",
-      "helperTitle": "Try here",
-      "helper": "Keep this box focused, then use your shortcut. Your words should appear here.",
-      "placeholder": "Hold your shortcut, speak, then release. Your text will appear here…",
-      "success": "That worked",
-      "readyToFinish": "Your test worked. You can start using SilkScribe.",
-      "prompt": "You can skip this for now and test it later.",
-      "finish": "Start using SilkScribe",
-      "skip": "Skip for now",
-      "finishing": "Finishing setup…",
-      "finishFailed": "SilkScribe couldn’t finish onboarding. Please try again."
+      "tipTitle": "جرّب هذا",
+      "tipBody": "قل: «SilkScribe جاهز لملاحظاتي اليوم.»",
+      "helperTitle": "جرّب هنا",
+      "helper": "أبقِ التركيز على هذا المربع ثم استخدم اختصارك. يجب أن تظهر كلماتك هنا.",
+      "placeholder": "اضغط باستمرار على اختصارك، وتحدث، ثم اتركه. سيظهر نصك هنا…",
+      "success": "نجح الأمر",
+      "readyToFinish": "نجح الاختبار. يمكنك الآن البدء باستخدام SilkScribe.",
+      "prompt": "يمكنك تخطي هذا الآن واختباره لاحقًا.",
+      "finish": "ابدأ باستخدام SilkScribe",
+      "skip": "تخطَّ هذا الآن",
+      "finishing": "جارٍ إنهاء الإعداد…",
+      "finishFailed": "تعذّر على SilkScribe إكمال الإعداد الأولي. يرجى المحاولة مرة أخرى."
     },
     "shared": {
-      "stepCounter": "Step {{current}} / {{total}}"
+      "stepCounter": "الخطوة {{current}} / {{total}}"
     }
   },
   "modelSelector": {
@@ -486,7 +489,7 @@
           "dontModify": "عدم تعديل الحافظة",
           "copyToClipboard": "نسخ إلى الحافظة"
         },
-        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
+        "directInsertHint": "سيُدرج SilkScribe النص هنا مباشرةً حتى تبقى الحافظة دون تغيير."
       },
       "autoSubmit": {
         "title": "إرسال تلقائي",
@@ -597,8 +600,8 @@
       "unsave": "إزالة من المحفوظات",
       "delete": "حذف الإدخال",
       "deleteError": ".فشل حذف الإدخال. يرجى المحاولة مرة أخرى",
-      "loadError": "Unable to load history right now. Please try again.",
-      "retry": "Retry"
+      "loadError": "تعذّر تحميل السجل الآن. يرجى المحاولة مرة أخرى.",
+      "retry": "أعد المحاولة"
     },
     "debug": {
       "title": "تصحيح الأخطاء",

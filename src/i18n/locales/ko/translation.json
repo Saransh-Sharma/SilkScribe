@@ -8,7 +8,7 @@
     "cancel": "취소"
   },
   "sidebar": {
-    "home": "Home",
+    "home": "홈",
     "general": "일반",
     "models": "모델",
     "advanced": "고급",
@@ -80,254 +80,257 @@
     },
     "permissions": {
       "shared": {
-        "eyebrow": "Permissions",
-        "repairEyebrow": "Permission needed",
-        "stepByStep": "What to do",
-        "statusLabel": "Status",
-        "openPrompt": "Open macOS prompt",
-        "openingPrompt": "Opening macOS prompt…",
-        "iEnabledIt": "I turned it on",
-        "checkAgain": "Check again",
-        "continue": "Continue",
+        "eyebrow": "권한",
+        "repairEyebrow": "권한이 필요합니다",
+        "stepByStep": "해야 할 일",
+        "statusLabel": "상태",
+        "openPrompt": "macOS 창 열기",
+        "openingPrompt": "macOS 창을 여는 중…",
+        "iEnabledIt": "이미 켰어요",
+        "checkAgain": "다시 확인",
+        "continue": "계속",
         "statuses": {
-          "checking": "Checking",
-          "needed": "Still needed",
-          "requesting": "Opening macOS",
-          "waiting_for_user": "Waiting for you",
-          "granted": "Allowed"
+          "checking": "확인 중",
+          "needed": "아직 필요함",
+          "error": "확인이 필요함",
+          "requesting": "macOS 여는 중",
+          "waiting_for_user": "사용자 입력 대기 중",
+          "granted": "허용됨"
         }
       },
       "microphone": {
-        "title": "Allow microphone access",
-        "description": "SilkScribe needs your mic to turn speech into text.",
-        "needLabel": "Needed to listen",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe only listens while you record. Without mic access, it has nothing to transcribe.",
-        "breaksWithoutTitle": "Without it",
-        "breaksWithoutBody": "Recording can start, but SilkScribe cannot hear your voice.",
-        "afterGrantTitle": "After you allow it",
-        "afterGrantBody": "SilkScribe can record your voice and continue setup.",
+        "title": "마이크 접근 허용",
+        "description": "SilkScribe가 음성을 텍스트로 바꾸려면 마이크가 필요합니다.",
+        "needLabel": "듣기 위해 필요함",
+        "whyItMattersTitle": "왜 중요한가요",
+        "whyItMattersBody": "SilkScribe는 녹음 중일 때만 듣습니다. 마이크 접근이 없으면 받아쓸 내용이 없습니다.",
+        "breaksWithoutTitle": "허용하지 않으면",
+        "breaksWithoutBody": "녹음은 시작될 수 있지만 SilkScribe가 당신의 목소리를 들을 수 없습니다.",
+        "afterGrantTitle": "허용하면",
+        "afterGrantBody": "SilkScribe가 목소리를 녹음하고 설정을 계속할 수 있습니다.",
         "steps": {
-          "step1": "Click “Open macOS prompt.”",
-          "step2": "When macOS asks, choose “Allow.”",
-          "step3": "If no prompt appears, open System Settings > Privacy & Security > Microphone.",
-          "step4": "Turn on SilkScribe, then return here and check again."
+          "step1": "“macOS 창 열기”를 클릭하세요.",
+          "step2": "macOS가 묻는다면 “허용”을 선택하세요.",
+          "step3": "창이 나타나지 않으면 시스템 설정 > 개인정보 보호 및 보안 > 마이크를 여세요.",
+          "step4": "SilkScribe를 켠 뒤 여기로 돌아와 다시 확인하세요."
         },
-        "manualHint": "If you chose “Don’t Allow,” turn SilkScribe on in System Settings > Privacy & Security > Microphone.",
+        "manualHint": "“허용 안 함”을 선택했다면 시스템 설정 > 개인정보 보호 및 보안 > 마이크에서 SilkScribe를 켜세요.",
         "statusHelp": {
-          "checking": "Checking whether microphone access is already on.",
-          "needed": "Microphone access is still off.",
-          "requesting": "The macOS permission prompt should appear now.",
-          "waiting_for_user": "Allow the permission, then come back and check again.",
-          "granted": "Microphone access is on."
+          "checking": "마이크 접근이 이미 켜져 있는지 확인하고 있습니다.",
+          "needed": "마이크 접근이 아직 꺼져 있습니다.",
+          "error": "SilkScribe가 마이크 접근을 확인하지 못했습니다.",
+          "requesting": "지금 macOS 권한 창이 나타나야 합니다.",
+          "waiting_for_user": "권한을 허용한 뒤 돌아와 다시 확인하세요.",
+          "granted": "마이크 접근이 켜져 있습니다."
         }
       },
       "accessibility": {
-        "title": "Allow SilkScribe to type for you",
-        "description": "SilkScribe needs Accessibility access to place text into your apps.",
-        "needLabel": "Needed to insert text",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe puts finished text into the field you’re using. macOS protects that with Accessibility access.",
-        "breaksWithoutTitle": "Without it",
-        "breaksWithoutBody": "SilkScribe may transcribe, but it cannot reliably type the result into your apps.",
-        "afterGrantTitle": "After you allow it",
-        "afterGrantBody": "SilkScribe can type into apps and finish setup normally.",
+        "title": "SilkScribe가 대신 입력하도록 허용",
+        "description": "SilkScribe가 앱에 텍스트를 넣으려면 손쉬운 사용 접근 권한이 필요합니다.",
+        "needLabel": "텍스트 입력에 필요함",
+        "whyItMattersTitle": "왜 중요한가요",
+        "whyItMattersBody": "SilkScribe는 완성된 텍스트를 현재 사용 중인 입력란에 넣습니다. macOS는 이를 손쉬운 사용 권한으로 보호합니다.",
+        "breaksWithoutTitle": "허용하지 않으면",
+        "breaksWithoutBody": "SilkScribe가 받아쓰기는 할 수 있어도 결과를 앱에 안정적으로 입력하지 못합니다.",
+        "afterGrantTitle": "허용하면",
+        "afterGrantBody": "SilkScribe가 앱에 입력하고 설정을 정상적으로 마칠 수 있습니다.",
         "steps": {
-          "step1": "Click “Open macOS prompt.”",
-          "step2": "If macOS sends you to System Settings, continue there.",
-          "step3": "Open Privacy & Security > Accessibility and find SilkScribe.",
-          "step4": "Turn on SilkScribe, then return here and check again."
+          "step1": "“macOS 창 열기”를 클릭하세요.",
+          "step2": "macOS가 시스템 설정으로 보낸다면 అక్కడ서 계속 진행하세요.",
+          "step3": "개인정보 보호 및 보안 > 손쉬운 사용을 열고 SilkScribe를 찾으세요.",
+          "step4": "SilkScribe를 켠 뒤 여기로 돌아와 다시 확인하세요."
         },
-        "manualHint": "If SilkScribe still looks disabled, reopen the app after turning it on, then check again.",
+        "manualHint": "SilkScribe가 아직 비활성화된 것처럼 보인다면 켠 뒤 앱을 다시 열고 다시 확인하세요.",
         "statusHelp": {
-          "checking": "Checking whether Accessibility access is already on.",
-          "needed": "Accessibility access is still off.",
-          "requesting": "The macOS approval flow should open now.",
-          "waiting_for_user": "Turn SilkScribe on in System Settings > Privacy & Security > Accessibility, then check again.",
-          "granted": "Accessibility access is on."
+          "checking": "손쉬운 사용 접근 권한이 이미 켜져 있는지 확인하고 있습니다.",
+          "needed": "손쉬운 사용 접근 권한이 아직 꺼져 있습니다.",
+          "error": "SilkScribe가 손쉬운 사용 접근 권한을 확인하지 못했습니다.",
+          "requesting": "지금 macOS 승인 흐름이 열려야 합니다.",
+          "waiting_for_user": "시스템 설정 > 개인정보 보호 및 보안 > 손쉬운 사용에서 SilkScribe를 켠 뒤 다시 확인하세요.",
+          "granted": "손쉬운 사용 접근 권한이 켜져 있습니다."
         }
       }
     },
     "progress": {
-      "welcome": "Welcome",
-      "microphone": "Microphone",
-      "accessibility": "Text Access",
-      "setup": "Setup",
-      "practice": "Try It"
+      "welcome": "환영합니다",
+      "microphone": "마이크",
+      "accessibility": "텍스트 접근",
+      "setup": "설정",
+      "practice": "사용해 보기"
     },
     "welcome": {
-      "eyebrow": "Get set up",
-      "title": "Set up SilkScribe in a minute.",
-      "description": "We’ll turn on the permissions it needs, finish setup in the background, and let you try one real dictation.",
-      "badge": "Quick setup",
+      "eyebrow": "준비해 봅시다",
+      "title": "1분 안에 SilkScribe를 설정하세요.",
+      "description": "필요한 권한을 켜고, 백그라운드에서 설정을 마무리한 뒤, 실제 받아쓰기를 한 번 테스트합니다.",
+      "badge": "빠른 설정",
       "features": {
         "permissions": {
-          "title": "Clear permission help",
-          "description": "See exactly what to allow and why."
+          "title": "명확한 권한 안내",
+          "description": "무엇을 왜 허용해야 하는지 정확히 볼 수 있습니다."
         },
         "engine": {
-          "title": "Automatic setup",
-          "description": "SilkScribe picks the right offline engine for this device."
+          "title": "자동 설정",
+          "description": "SilkScribe가 이 기기에 맞는 오프라인 엔진을 선택합니다."
         },
         "practice": {
-          "title": "One real test",
-          "description": "Make sure everything works before you start."
+          "title": "실제 테스트 한 번",
+          "description": "시작하기 전에 모든 것이 잘 동작하는지 확인하세요."
         }
       },
-      "outcomeLabel": "After setup",
-      "outcome": "Hold your shortcut, speak, and SilkScribe will place the text where you need it.",
-      "planLabel": "What happens",
+      "outcomeLabel": "설정 후",
+      "outcome": "단축키를 누른 채 말하면 SilkScribe가 필요한 곳에 텍스트를 넣어 줍니다.",
+      "planLabel": "진행 순서",
       "plan": {
         "step1": {
-          "title": "Allow the microphone",
-          "description": "So SilkScribe can hear you."
+          "title": "마이크 허용",
+          "description": "SilkScribe가 당신의 목소리를 들을 수 있도록 합니다."
         },
         "step2": {
-          "title": "Allow text access",
-          "description": "So SilkScribe can type into your apps."
+          "title": "텍스트 접근 허용",
+          "description": "SilkScribe가 앱에 입력할 수 있도록 합니다."
         },
         "step3": {
-          "title": "Try it once",
-          "description": "Setup finishes, then you run one quick test."
+          "title": "한 번 사용해 보기",
+          "description": "설정이 끝나면 짧은 테스트를 진행합니다."
         }
       },
-      "permissionPromise": "These steps are required for SilkScribe to work properly.",
-      "continue": "Continue"
+      "permissionPromise": "이 단계들은 SilkScribe가 제대로 작동하는 데 필요합니다.",
+      "continue": "계속"
     },
     "setup": {
-      "eyebrow": "Setting things up",
-      "title": "SilkScribe is getting ready.",
-      "description": "We’re preparing the best offline speech engine for {{language}}, then you’ll try a quick test.",
-      "defaultLanguage": "your language",
-      "autoLabel": "Automatic",
-      "engineTitle": "No setup choices needed",
-      "engineBody": "SilkScribe is choosing the best fit for {{language}} and setting it up locally.",
-      "progressLabel": "Progress",
-      "sizeLabel": "Download",
-      "speedLabel": "Speed",
-      "etaLabel": "ETA",
+      "eyebrow": "준비 중",
+      "title": "SilkScribe가 준비 중입니다.",
+      "description": "{{language}}에 가장 적합한 오프라인 음성 엔진을 준비한 뒤 짧은 테스트를 진행합니다.",
+      "defaultLanguage": "당신의 언어",
+      "autoLabel": "자동",
+      "engineTitle": "별도의 설정 선택이 필요하지 않습니다",
+      "engineBody": "SilkScribe가 {{language}}에 가장 적합한 옵션을 고르고 로컬에서 설정하고 있습니다.",
+      "progressLabel": "진행 상황",
+      "sizeLabel": "다운로드",
+      "speedLabel": "속도",
+      "etaLabel": "남은 시간",
       "speedValue": "{{speed}} MB/s",
-      "notAvailable": "Not yet",
-      "preparingDetail": "Preparing…",
-      "shortcutTitle": "Your shortcut",
-      "shortcutBody": "Hold {{shortcut}} to speak. Release it to transcribe.",
-      "prepBadge": "Almost ready",
-      "prepTitle": "This should stay short and feel automatic",
-      "prepBody": "While setup runs, SilkScribe is downloading or loading the speech engine it picked for this machine. You can just wait here for the next step.",
-      "retry": "Try again",
-      "ready": "Everything is ready. Opening the practice step now.",
+      "notAvailable": "아직 없음",
+      "preparingDetail": "준비 중…",
+      "shortcutTitle": "당신의 단축키",
+      "shortcutBody": "{{shortcut}}을(를) 누른 채 말하고, 놓으면 받아쓰기가 시작됩니다.",
+      "prepBadge": "거의 준비됨",
+      "prepTitle": "짧고 자동처럼 느껴져야 합니다",
+      "prepBody": "설정이 진행되는 동안 SilkScribe가 이 기기에 맞는 음성 엔진을 다운로드하거나 불러옵니다. 다음 단계까지 여기서 기다리면 됩니다.",
+      "retry": "다시 시도",
+      "ready": "모든 준비가 끝났습니다. 이제 연습 단계가 열립니다.",
       "states": {
-        "resolving": "Choosing",
-        "downloading": "Downloading",
-        "preparing": "Preparing",
-        "ready": "Ready",
-        "error": "Needs attention"
+        "resolving": "선택 중",
+        "downloading": "다운로드 중",
+        "preparing": "준비 중",
+        "ready": "준비 완료",
+        "error": "확인이 필요함"
       },
       "panelStates": {
-        "resolving": "Choosing the best engine",
-        "downloading": "Downloading files",
-        "preparing": "Preparing the engine",
-        "ready": "Ready to test",
-        "error": "Setup needs attention"
+        "resolving": "최적의 엔진 선택 중",
+        "downloading": "파일 다운로드 중",
+        "preparing": "엔진 준비 중",
+        "ready": "테스트 준비 완료",
+        "error": "설정에 확인이 필요함"
       },
       "panelHelp": {
-        "resolving": "SilkScribe is checking what’s available and choosing the best engine for this device.",
-        "downloading": "The required files are downloading now.",
-        "preparing": "The download is done. SilkScribe is loading everything locally.",
-        "ready": "Setup is done. Next: one quick real test.",
-        "error": "Setup didn’t finish. Try again."
+        "resolving": "SilkScribe가 사용 가능한 항목을 확인하고 이 기기에 가장 적합한 엔진을 고르고 있습니다.",
+        "downloading": "필요한 파일을 다운로드하고 있습니다.",
+        "preparing": "다운로드가 완료되었습니다. SilkScribe가 모든 것을 로컬에서 준비하고 있습니다.",
+        "ready": "설정이 완료되었습니다. 다음은 짧은 실제 테스트입니다.",
+        "error": "설정이 완료되지 않았습니다. 다시 시도해 주세요."
       },
       "errors": {
-        "loadModels": "SilkScribe couldn’t load the available speech engines.",
-        "downloadModel": "SilkScribe couldn’t finish the download.",
-        "selectModel": "SilkScribe couldn’t prepare your speech engine."
+        "loadModels": "SilkScribe가 사용 가능한 음성 엔진을 불러오지 못했습니다.",
+        "downloadModel": "SilkScribe가 다운로드를 완료하지 못했습니다.",
+        "selectModel": "SilkScribe가 음성 엔진을 준비하지 못했습니다."
       },
-      "tipsBadge": "Helpful while you wait",
-      "previousCard": "Previous tip",
-      "nextCard": "Next tip",
-      "goToCard": "Go to tip {{index}}",
+      "tipsBadge": "기다리는 동안 도움이 되는 팁",
+      "previousCard": "이전 팁",
+      "nextCard": "다음 팁",
+      "goToCard": "팁 {{index}}로 이동",
       "tips": {
         "cards": {
           "shortcutHabit": {
-            "title": "One shortcut, one quick habit",
-            "description": "SilkScribe is built around a very simple rhythm: hold, speak, release.",
-            "point1": "Hold {{shortcut}} while you speak.",
-            "point2": "Release it when you are done talking.",
-            "point3": "SilkScribe turns that short burst into text right away."
+            "title": "하나의 단축키, 하나의 빠른 습관",
+            "description": "SilkScribe는 누르고, 말하고, 놓는 아주 단순한 리듬으로 동작합니다.",
+            "point1": "말하는 동안 {{shortcut}}을(를) 누른 채 유지하세요.",
+            "point2": "말이 끝나면 놓으세요.",
+            "point3": "SilkScribe가 그 짧은 발화를 바로 텍스트로 바꿉니다."
           },
           "focusField": {
-            "title": "Always focus the place you want text to go",
-            "description": "SilkScribe sends the result into the field that is active when transcription finishes.",
-            "point1": "Click into the text box you want before you start talking.",
-            "point2": "Keep that field focused until the transcription finishes.",
-            "point3": "During onboarding, we provide a practice box for this exact reason."
+            "title": "텍스트가 들어갈 곳에 항상 포커스를 두세요",
+            "description": "SilkScribe는 받아쓰기가 끝나는 순간 활성화된 입력란에 결과를 넣습니다.",
+            "point1": "말하기 전에 원하는 입력란을 클릭하세요.",
+            "point2": "받아쓰기가 끝날 때까지 그 입력란에 포커스를 유지하세요.",
+            "point3": "온보딩 중에는 이를 위해 연습 상자를 제공합니다."
           },
           "shortBursts": {
-            "title": "Short bursts feel fastest",
-            "description": "New users usually get the cleanest first results when they keep each recording brief.",
-            "point1": "Try one or two sentences at a time.",
-            "point2": "Pause naturally between ideas.",
-            "point3": "You can always record another burst immediately after."
+            "title": "짧게 말할수록 더 빠르게 느껴집니다",
+            "description": "새 사용자는 각 녹음을 짧게 유지할 때 가장 깔끔한 첫 결과를 얻는 경우가 많습니다.",
+            "point1": "한 번에 한두 문장씩 말해 보세요.",
+            "point2": "생각 사이에 자연스럽게 멈추세요.",
+            "point3": "필요하면 바로 다음 짧은 녹음을 이어서 할 수 있습니다."
           },
           "quietSpace": {
-            "title": "A quieter space makes the first win easier",
-            "description": "SilkScribe works best when your voice stands out clearly from the room around you.",
-            "point1": "Use the microphone you normally prefer if you have one.",
-            "point2": "Keep fans, speakers, or background chatter as low as you can.",
-            "point3": "Speak at a steady, normal pace."
+            "title": "조용한 공간일수록 첫 성공이 더 쉽습니다",
+            "description": "SilkScribe는 주변보다 목소리가 분명하게 들릴 때 가장 잘 동작합니다.",
+            "point1": "가능하다면 평소 선호하는 마이크를 사용하세요.",
+            "point2": "선풍기, 스피커, 주변 대화 소리를 최대한 줄이세요.",
+            "point3": "일정하고 자연스러운 속도로 말하세요."
           },
           "privacy": {
-            "title": "Your setup stays on the essentials",
-            "description": "This onboarding avoids extra configuration so you can get to a working first transcription faster.",
-            "point1": "Permissions come first because they are critical to the app working correctly.",
-            "point2": "The speech engine is chosen automatically in the background.",
-            "point3": "You can fine-tune settings later after you have the core workflow working."
+            "title": "설정은 핵심만 다룹니다",
+            "description": "이 온보딩은 불필요한 설정을 줄여 첫 번째 실사용 가능한 받아쓰기에 더 빨리 도달하도록 돕습니다.",
+            "point1": "권한은 앱이 제대로 작동하는 데 필수이므로 가장 먼저 처리합니다.",
+            "point2": "음성 엔진은 백그라운드에서 자동으로 선택됩니다.",
+            "point3": "기본 흐름이 동작한 뒤 나중에 세부 설정을 조정할 수 있습니다."
           },
           "firstWin": {
-            "title": "The next screen is not a fake demo",
-            "description": "You are about to try a real push-to-talk transcription inside the actual app.",
-            "point1": "Keep the practice box focused.",
-            "point2": "Use your normal shortcut exactly the way you will use it later.",
-            "point3": "If text appears in the box, SilkScribe is ready for real work."
+            "title": "다음 화면은 가짜 데모가 아닙니다",
+            "description": "이제 실제 앱 안에서 진짜 push-to-talk 받아쓰기를 시도하게 됩니다.",
+            "point1": "연습 상자에 포커스를 유지하세요.",
+            "point2": "나중에 사용할 그대로 평소 단축키를 사용하세요.",
+            "point3": "상자에 텍스트가 나타나면 SilkScribe는 실제 사용 준비가 된 것입니다."
           }
         }
       }
     },
     "practice": {
-      "eyebrow": "Try it",
-      "title": "Try SilkScribe once",
-      "description": "Click the practice box, hold your shortcut, say a short sentence, then release.",
-      "badge": "Quick test",
-      "shortcutFallback": "Shortcut",
+      "eyebrow": "사용해 보기",
+      "title": "SilkScribe를 한 번 사용해 보세요",
+      "description": "연습 상자를 클릭하고, 단축키를 누른 채 짧은 문장을 말한 뒤 놓으세요.",
+      "badge": "빠른 테스트",
+      "shortcutFallback": "단축키",
       "steps": {
         "step1": {
-          "title": "Focus the practice box",
-          "description": "Keep this box selected so SilkScribe knows where to place the text."
+          "title": "연습 상자에 포커스 맞추기",
+          "description": "SilkScribe가 텍스트를 어디에 넣을지 알 수 있도록 이 상자를 선택된 상태로 유지하세요."
         },
         "step2": {
-          "title": "Hold {{shortcut}} and speak",
-          "description": "Say one short sentence in a natural voice."
+          "title": "{{shortcut}}을(를) 누른 채 말하기",
+          "description": "자연스러운 목소리로 짧은 문장을 하나 말하세요."
         },
         "step3": {
-          "title": "Release to transcribe",
-          "description": "If the text appears here, SilkScribe is ready."
+          "title": "놓아서 받아쓰기 시작하기",
+          "description": "여기에 텍스트가 나타나면 SilkScribe가 준비된 것입니다."
         }
       },
-      "tipTitle": "Try this",
-      "tipBody": "Say: “SilkScribe is ready for my notes today.”",
-      "helperTitle": "Try here",
-      "helper": "Keep this box focused, then use your shortcut. Your words should appear here.",
-      "placeholder": "Hold your shortcut, speak, then release. Your text will appear here…",
-      "success": "That worked",
-      "readyToFinish": "Your test worked. You can start using SilkScribe.",
-      "prompt": "You can skip this for now and test it later.",
-      "finish": "Start using SilkScribe",
-      "skip": "Skip for now",
-      "finishing": "Finishing setup…",
-      "finishFailed": "SilkScribe couldn’t finish onboarding. Please try again."
+      "tipTitle": "이렇게 말해 보세요",
+      "tipBody": "“SilkScribe가 오늘 내 메모를 받을 준비가 됐어요.”라고 말해 보세요.",
+      "helperTitle": "여기서 시도해 보세요",
+      "helper": "이 상자에 포커스를 둔 채 단축키를 사용하세요. 말한 내용이 여기에 나타나야 합니다.",
+      "placeholder": "단축키를 누른 채 말하고 놓으세요. 여기에 텍스트가 나타납니다…",
+      "success": "잘 됐습니다",
+      "readyToFinish": "테스트가 성공했습니다. 이제 SilkScribe를 사용할 수 있습니다.",
+      "prompt": "지금은 건너뛰고 나중에 다시 테스트할 수도 있습니다.",
+      "finish": "SilkScribe 사용 시작",
+      "skip": "지금은 건너뛰기",
+      "finishing": "설정을 마무리하는 중…",
+      "finishFailed": "SilkScribe가 온보딩을 완료하지 못했습니다. 다시 시도해 주세요."
     },
     "shared": {
-      "stepCounter": "Step {{current}} / {{total}}"
+      "stepCounter": "단계 {{current}} / {{total}}"
     }
   },
   "modelSelector": {
@@ -508,7 +511,7 @@
           "dontModify": "클립보드 수정 안 함",
           "copyToClipboard": "클립보드에 복사"
         },
-        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
+        "directInsertHint": "SilkScribe가 여기에 직접 텍스트를 넣으므로 클립보드 내용은 바뀌지 않습니다."
       },
       "autoSubmit": {
         "title": "자동 제출",
@@ -619,8 +622,8 @@
       "unsave": "저장에서 제거",
       "delete": "항목 삭제",
       "deleteError": "항목 삭제에 실패했습니다. 다시 시도해주세요.",
-      "loadError": "Unable to load history right now. Please try again.",
-      "retry": "Retry"
+      "loadError": "지금은 기록을 불러올 수 없습니다. 다시 시도해 주세요.",
+      "retry": "다시 시도"
     },
     "debug": {
       "title": "디버그",

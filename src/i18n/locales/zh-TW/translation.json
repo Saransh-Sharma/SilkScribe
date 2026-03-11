@@ -8,7 +8,7 @@
     "cancel": "取消"
   },
   "sidebar": {
-    "home": "Home",
+    "home": "首頁",
     "general": "一般",
     "models": "模型",
     "advanced": "進階",
@@ -80,254 +80,257 @@
     },
     "permissions": {
       "shared": {
-        "eyebrow": "Permissions",
-        "repairEyebrow": "Permission needed",
-        "stepByStep": "What to do",
-        "statusLabel": "Status",
-        "openPrompt": "Open macOS prompt",
-        "openingPrompt": "Opening macOS prompt…",
-        "iEnabledIt": "I turned it on",
-        "checkAgain": "Check again",
-        "continue": "Continue",
+        "eyebrow": "權限",
+        "repairEyebrow": "需要權限",
+        "stepByStep": "該怎麼做",
+        "statusLabel": "狀態",
+        "openPrompt": "開啟 macOS 提示視窗",
+        "openingPrompt": "正在開啟 macOS 提示視窗…",
+        "iEnabledIt": "我已經開啟了",
+        "checkAgain": "再檢查一次",
+        "continue": "繼續",
         "statuses": {
-          "checking": "Checking",
-          "needed": "Still needed",
-          "requesting": "Opening macOS",
-          "waiting_for_user": "Waiting for you",
-          "granted": "Allowed"
+          "checking": "檢查中",
+          "needed": "仍然需要",
+          "error": "需要注意",
+          "requesting": "正在開啟 macOS",
+          "waiting_for_user": "等待你操作",
+          "granted": "已允許"
         }
       },
       "microphone": {
-        "title": "Allow microphone access",
-        "description": "SilkScribe needs your mic to turn speech into text.",
-        "needLabel": "Needed to listen",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe only listens while you record. Without mic access, it has nothing to transcribe.",
-        "breaksWithoutTitle": "Without it",
-        "breaksWithoutBody": "Recording can start, but SilkScribe cannot hear your voice.",
-        "afterGrantTitle": "After you allow it",
-        "afterGrantBody": "SilkScribe can record your voice and continue setup.",
+        "title": "允許麥克風存取",
+        "description": "SilkScribe 需要使用你的麥克風，才能把語音轉成文字。",
+        "needLabel": "需要用來聆聽",
+        "whyItMattersTitle": "為什麼重要",
+        "whyItMattersBody": "SilkScribe 只會在你錄音時聆聽。若沒有麥克風權限，就沒有可轉寫的內容。",
+        "breaksWithoutTitle": "沒有這個權限",
+        "breaksWithoutBody": "錄音可以開始，但 SilkScribe 無法聽見你的聲音。",
+        "afterGrantTitle": "允許之後",
+        "afterGrantBody": "SilkScribe 就能錄下你的聲音並繼續完成設定。",
         "steps": {
-          "step1": "Click “Open macOS prompt.”",
-          "step2": "When macOS asks, choose “Allow.”",
-          "step3": "If no prompt appears, open System Settings > Privacy & Security > Microphone.",
-          "step4": "Turn on SilkScribe, then return here and check again."
+          "step1": "點一下「開啟 macOS 提示視窗」。",
+          "step2": "當 macOS 詢問時，選擇「允許」。",
+          "step3": "如果沒有出現提示視窗，請開啟「系統設定 > 隱私權與安全性 > 麥克風」。",
+          "step4": "打開 SilkScribe，然後回到這裡再檢查一次。"
         },
-        "manualHint": "If you chose “Don’t Allow,” turn SilkScribe on in System Settings > Privacy & Security > Microphone.",
+        "manualHint": "如果你選了「不允許」，請到「系統設定 > 隱私權與安全性 > 麥克風」開啟 SilkScribe。",
         "statusHelp": {
-          "checking": "Checking whether microphone access is already on.",
-          "needed": "Microphone access is still off.",
-          "requesting": "The macOS permission prompt should appear now.",
-          "waiting_for_user": "Allow the permission, then come back and check again.",
-          "granted": "Microphone access is on."
+          "checking": "正在檢查麥克風存取是否已經開啟。",
+          "needed": "麥克風存取仍然是關閉的。",
+          "error": "SilkScribe 無法檢查麥克風存取。",
+          "requesting": "現在應該會出現 macOS 權限提示視窗。",
+          "waiting_for_user": "允許權限後，回來再檢查一次。",
+          "granted": "麥克風存取已開啟。"
         }
       },
       "accessibility": {
-        "title": "Allow SilkScribe to type for you",
-        "description": "SilkScribe needs Accessibility access to place text into your apps.",
-        "needLabel": "Needed to insert text",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe puts finished text into the field you’re using. macOS protects that with Accessibility access.",
-        "breaksWithoutTitle": "Without it",
-        "breaksWithoutBody": "SilkScribe may transcribe, but it cannot reliably type the result into your apps.",
-        "afterGrantTitle": "After you allow it",
-        "afterGrantBody": "SilkScribe can type into apps and finish setup normally.",
+        "title": "允許 SilkScribe 替你輸入文字",
+        "description": "SilkScribe 需要「輔助使用」權限，才能把文字放進你的應用程式。",
+        "needLabel": "需要用來插入文字",
+        "whyItMattersTitle": "為什麼重要",
+        "whyItMattersBody": "SilkScribe 會把完成的文字放進你正在使用的欄位。macOS 會用「輔助使用」權限保護這項操作。",
+        "breaksWithoutTitle": "沒有這個權限",
+        "breaksWithoutBody": "SilkScribe 可能可以轉寫，但無法可靠地把結果輸入到你的應用程式。",
+        "afterGrantTitle": "允許之後",
+        "afterGrantBody": "SilkScribe 就能在應用程式中輸入文字，並正常完成設定。",
         "steps": {
-          "step1": "Click “Open macOS prompt.”",
-          "step2": "If macOS sends you to System Settings, continue there.",
-          "step3": "Open Privacy & Security > Accessibility and find SilkScribe.",
-          "step4": "Turn on SilkScribe, then return here and check again."
+          "step1": "點一下「開啟 macOS 提示視窗」。",
+          "step2": "如果 macOS 帶你前往「系統設定」，就在那裡繼續。",
+          "step3": "開啟「隱私權與安全性 > 輔助使用」，然後找到 SilkScribe。",
+          "step4": "打開 SilkScribe，然後回到這裡再檢查一次。"
         },
-        "manualHint": "If SilkScribe still looks disabled, reopen the app after turning it on, then check again.",
+        "manualHint": "如果 SilkScribe 看起來仍然是停用狀態，請在開啟後重新打開應用程式，再檢查一次。",
         "statusHelp": {
-          "checking": "Checking whether Accessibility access is already on.",
-          "needed": "Accessibility access is still off.",
-          "requesting": "The macOS approval flow should open now.",
-          "waiting_for_user": "Turn SilkScribe on in System Settings > Privacy & Security > Accessibility, then check again.",
-          "granted": "Accessibility access is on."
+          "checking": "正在檢查輔助使用權限是否已經開啟。",
+          "needed": "輔助使用權限仍然是關閉的。",
+          "error": "SilkScribe 無法檢查輔助使用權限。",
+          "requesting": "現在應該會開啟 macOS 的核准流程。",
+          "waiting_for_user": "請到「系統設定 > 隱私權與安全性 > 輔助使用」開啟 SilkScribe，然後再檢查一次。",
+          "granted": "輔助使用權限已開啟。"
         }
       }
     },
     "progress": {
-      "welcome": "Welcome",
-      "microphone": "Microphone",
-      "accessibility": "Text Access",
-      "setup": "Setup",
-      "practice": "Try It"
+      "welcome": "歡迎",
+      "microphone": "麥克風",
+      "accessibility": "文字存取",
+      "setup": "設定",
+      "practice": "試用"
     },
     "welcome": {
-      "eyebrow": "Get set up",
-      "title": "Set up SilkScribe in a minute.",
-      "description": "We’ll turn on the permissions it needs, finish setup in the background, and let you try one real dictation.",
-      "badge": "Quick setup",
+      "eyebrow": "開始設定",
+      "title": "用一分鐘完成 SilkScribe 設定。",
+      "description": "我們會開啟它需要的權限、在背景完成設定，並讓你實際試用一次語音輸入。",
+      "badge": "快速設定",
       "features": {
         "permissions": {
-          "title": "Clear permission help",
-          "description": "See exactly what to allow and why."
+          "title": "清楚的權限說明",
+          "description": "清楚知道該允許什麼以及原因。"
         },
         "engine": {
-          "title": "Automatic setup",
-          "description": "SilkScribe picks the right offline engine for this device."
+          "title": "自動設定",
+          "description": "SilkScribe 會為這台裝置挑選合適的離線引擎。"
         },
         "practice": {
-          "title": "One real test",
-          "description": "Make sure everything works before you start."
+          "title": "一次真實測試",
+          "description": "開始使用前先確認一切都正常。"
         }
       },
-      "outcomeLabel": "After setup",
-      "outcome": "Hold your shortcut, speak, and SilkScribe will place the text where you need it.",
-      "planLabel": "What happens",
+      "outcomeLabel": "設定完成後",
+      "outcome": "按住你的快捷鍵開始說話，SilkScribe 會把文字放到你需要的位置。",
+      "planLabel": "接下來會發生什麼",
       "plan": {
         "step1": {
-          "title": "Allow the microphone",
-          "description": "So SilkScribe can hear you."
+          "title": "允許麥克風",
+          "description": "讓 SilkScribe 能聽見你。"
         },
         "step2": {
-          "title": "Allow text access",
-          "description": "So SilkScribe can type into your apps."
+          "title": "允許文字存取",
+          "description": "讓 SilkScribe 能在你的應用程式中輸入文字。"
         },
         "step3": {
-          "title": "Try it once",
-          "description": "Setup finishes, then you run one quick test."
+          "title": "實際試一次",
+          "description": "設定完成後，你會做一次快速測試。"
         }
       },
-      "permissionPromise": "These steps are required for SilkScribe to work properly.",
-      "continue": "Continue"
+      "permissionPromise": "這些步驟是 SilkScribe 正常運作所必需的。",
+      "continue": "繼續"
     },
     "setup": {
-      "eyebrow": "Setting things up",
-      "title": "SilkScribe is getting ready.",
-      "description": "We’re preparing the best offline speech engine for {{language}}, then you’ll try a quick test.",
-      "defaultLanguage": "your language",
-      "autoLabel": "Automatic",
-      "engineTitle": "No setup choices needed",
-      "engineBody": "SilkScribe is choosing the best fit for {{language}} and setting it up locally.",
-      "progressLabel": "Progress",
-      "sizeLabel": "Download",
-      "speedLabel": "Speed",
-      "etaLabel": "ETA",
+      "eyebrow": "正在準備",
+      "title": "SilkScribe 正在準備中。",
+      "description": "我們正在為 {{language}} 準備最合適的離線語音引擎，之後你會做一個快速測試。",
+      "defaultLanguage": "你的語言",
+      "autoLabel": "自動",
+      "engineTitle": "不需要額外做設定選擇",
+      "engineBody": "SilkScribe 正在為 {{language}} 挑選最合適的方案，並在本機完成設定。",
+      "progressLabel": "進度",
+      "sizeLabel": "下載",
+      "speedLabel": "速度",
+      "etaLabel": "剩餘時間",
       "speedValue": "{{speed}} MB/s",
-      "notAvailable": "Not yet",
-      "preparingDetail": "Preparing…",
-      "shortcutTitle": "Your shortcut",
-      "shortcutBody": "Hold {{shortcut}} to speak. Release it to transcribe.",
-      "prepBadge": "Almost ready",
-      "prepTitle": "This should stay short and feel automatic",
-      "prepBody": "While setup runs, SilkScribe is downloading or loading the speech engine it picked for this machine. You can just wait here for the next step.",
-      "retry": "Try again",
-      "ready": "Everything is ready. Opening the practice step now.",
+      "notAvailable": "尚未提供",
+      "preparingDetail": "準備中…",
+      "shortcutTitle": "你的快捷鍵",
+      "shortcutBody": "按住 {{shortcut}} 說話，放開即可轉寫。",
+      "prepBadge": "即將就緒",
+      "prepTitle": "這個過程應該很短，而且感覺是自動完成的",
+      "prepBody": "設定進行時，SilkScribe 會下載或載入它為這台裝置挑選的語音引擎。你只要在這裡等下一步即可。",
+      "retry": "再試一次",
+      "ready": "一切都準備好了。現在會開啟試用步驟。",
       "states": {
-        "resolving": "Choosing",
-        "downloading": "Downloading",
-        "preparing": "Preparing",
-        "ready": "Ready",
-        "error": "Needs attention"
+        "resolving": "挑選中",
+        "downloading": "下載中",
+        "preparing": "準備中",
+        "ready": "已就緒",
+        "error": "需要注意"
       },
       "panelStates": {
-        "resolving": "Choosing the best engine",
-        "downloading": "Downloading files",
-        "preparing": "Preparing the engine",
-        "ready": "Ready to test",
-        "error": "Setup needs attention"
+        "resolving": "正在挑選最佳引擎",
+        "downloading": "正在下載檔案",
+        "preparing": "正在準備引擎",
+        "ready": "可以開始測試",
+        "error": "設定需要處理"
       },
       "panelHelp": {
-        "resolving": "SilkScribe is checking what’s available and choosing the best engine for this device.",
-        "downloading": "The required files are downloading now.",
-        "preparing": "The download is done. SilkScribe is loading everything locally.",
-        "ready": "Setup is done. Next: one quick real test.",
-        "error": "Setup didn’t finish. Try again."
+        "resolving": "SilkScribe 正在檢查可用項目，並為這台裝置挑選最適合的引擎。",
+        "downloading": "現在正在下載所需檔案。",
+        "preparing": "下載完成。SilkScribe 正在本機載入所有內容。",
+        "ready": "設定完成。下一步：做一次真實的快速測試。",
+        "error": "設定沒有完成。請再試一次。"
       },
       "errors": {
-        "loadModels": "SilkScribe couldn’t load the available speech engines.",
-        "downloadModel": "SilkScribe couldn’t finish the download.",
-        "selectModel": "SilkScribe couldn’t prepare your speech engine."
+        "loadModels": "SilkScribe 無法載入可用的語音引擎。",
+        "downloadModel": "SilkScribe 無法完成下載。",
+        "selectModel": "SilkScribe 無法準備你的語音引擎。"
       },
-      "tipsBadge": "Helpful while you wait",
-      "previousCard": "Previous tip",
-      "nextCard": "Next tip",
-      "goToCard": "Go to tip {{index}}",
+      "tipsBadge": "等待時可參考",
+      "previousCard": "上一則提示",
+      "nextCard": "下一則提示",
+      "goToCard": "前往提示 {{index}}",
       "tips": {
         "cards": {
           "shortcutHabit": {
-            "title": "One shortcut, one quick habit",
-            "description": "SilkScribe is built around a very simple rhythm: hold, speak, release.",
-            "point1": "Hold {{shortcut}} while you speak.",
-            "point2": "Release it when you are done talking.",
-            "point3": "SilkScribe turns that short burst into text right away."
+            "title": "一個快捷鍵、一個簡單習慣",
+            "description": "SilkScribe 的操作節奏很簡單：按住、說話、放開。",
+            "point1": "說話時按住 {{shortcut}}。",
+            "point2": "說完就放開。",
+            "point3": "SilkScribe 會立刻把這段短語音變成文字。"
           },
           "focusField": {
-            "title": "Always focus the place you want text to go",
-            "description": "SilkScribe sends the result into the field that is active when transcription finishes.",
-            "point1": "Click into the text box you want before you start talking.",
-            "point2": "Keep that field focused until the transcription finishes.",
-            "point3": "During onboarding, we provide a practice box for this exact reason."
+            "title": "把焦點放在你想輸入文字的位置",
+            "description": "SilkScribe 會把結果送到轉寫完成時仍然處於作用中的欄位。",
+            "point1": "在開始說話前，先點一下你想輸入的文字欄位。",
+            "point2": "保持那個欄位有焦點，直到轉寫完成。",
+            "point3": "在 onboarding 過程中，我們特別提供了一個練習欄位。"
           },
           "shortBursts": {
-            "title": "Short bursts feel fastest",
-            "description": "New users usually get the cleanest first results when they keep each recording brief.",
-            "point1": "Try one or two sentences at a time.",
-            "point2": "Pause naturally between ideas.",
-            "point3": "You can always record another burst immediately after."
+            "title": "短句通常感覺最快",
+            "description": "新使用者在每次錄音都保持簡短時，通常能得到最乾淨的初次結果。",
+            "point1": "一次說一到兩句話即可。",
+            "point2": "在不同想法之間自然停頓。",
+            "point3": "之後你也可以立刻再錄下一段。"
           },
           "quietSpace": {
-            "title": "A quieter space makes the first win easier",
-            "description": "SilkScribe works best when your voice stands out clearly from the room around you.",
-            "point1": "Use the microphone you normally prefer if you have one.",
-            "point2": "Keep fans, speakers, or background chatter as low as you can.",
-            "point3": "Speak at a steady, normal pace."
+            "title": "安靜一點的環境更容易獲得第一次成功",
+            "description": "當你的聲音能清楚從環境中脫穎而出時，SilkScribe 會表現得最好。",
+            "point1": "如果可以，使用你平常偏好的麥克風。",
+            "point2": "盡量降低風扇、喇叭或背景談話的聲音。",
+            "point3": "用穩定自然的速度說話。"
           },
           "privacy": {
-            "title": "Your setup stays on the essentials",
-            "description": "This onboarding avoids extra configuration so you can get to a working first transcription faster.",
-            "point1": "Permissions come first because they are critical to the app working correctly.",
-            "point2": "The speech engine is chosen automatically in the background.",
-            "point3": "You can fine-tune settings later after you have the core workflow working."
+            "title": "設定流程只保留必要內容",
+            "description": "這個 onboarding 避免額外設定，好讓你更快完成第一次可用的轉寫。",
+            "point1": "權限放在第一步，因為它們對應用程式能否正常運作很關鍵。",
+            "point2": "語音引擎會在背景自動挑選。",
+            "point3": "等基本流程跑通後，你之後再細調設定也不遲。"
           },
           "firstWin": {
-            "title": "The next screen is not a fake demo",
-            "description": "You are about to try a real push-to-talk transcription inside the actual app.",
-            "point1": "Keep the practice box focused.",
-            "point2": "Use your normal shortcut exactly the way you will use it later.",
-            "point3": "If text appears in the box, SilkScribe is ready for real work."
+            "title": "下一個畫面不是假的展示",
+            "description": "你即將在真正的應用程式中試用一次真實的按住說話轉寫。",
+            "point1": "保持練習欄位有焦點。",
+            "point2": "像你之後實際使用時一樣使用平常的快捷鍵。",
+            "point3": "如果欄位中出現文字，就代表 SilkScribe 已經可以投入實際使用。"
           }
         }
       }
     },
     "practice": {
-      "eyebrow": "Try it",
-      "title": "Try SilkScribe once",
-      "description": "Click the practice box, hold your shortcut, say a short sentence, then release.",
-      "badge": "Quick test",
-      "shortcutFallback": "Shortcut",
+      "eyebrow": "試用",
+      "title": "試用一次 SilkScribe",
+      "description": "點一下練習框，按住快捷鍵，說一句短話，然後放開。",
+      "badge": "快速測試",
+      "shortcutFallback": "快捷鍵",
       "steps": {
         "step1": {
-          "title": "Focus the practice box",
-          "description": "Keep this box selected so SilkScribe knows where to place the text."
+          "title": "聚焦在練習框",
+          "description": "保持這個方框被選取，SilkScribe 才知道要把文字放在哪裡。"
         },
         "step2": {
-          "title": "Hold {{shortcut}} and speak",
-          "description": "Say one short sentence in a natural voice."
+          "title": "按住 {{shortcut}} 並說話",
+          "description": "用自然的語氣說一句短話。"
         },
         "step3": {
-          "title": "Release to transcribe",
-          "description": "If the text appears here, SilkScribe is ready."
+          "title": "放開以開始轉寫",
+          "description": "如果文字出現在這裡，就代表 SilkScribe 已準備就緒。"
         }
       },
-      "tipTitle": "Try this",
-      "tipBody": "Say: “SilkScribe is ready for my notes today.”",
-      "helperTitle": "Try here",
-      "helper": "Keep this box focused, then use your shortcut. Your words should appear here.",
-      "placeholder": "Hold your shortcut, speak, then release. Your text will appear here…",
-      "success": "That worked",
-      "readyToFinish": "Your test worked. You can start using SilkScribe.",
-      "prompt": "You can skip this for now and test it later.",
-      "finish": "Start using SilkScribe",
-      "skip": "Skip for now",
-      "finishing": "Finishing setup…",
-      "finishFailed": "SilkScribe couldn’t finish onboarding. Please try again."
+      "tipTitle": "可以這樣試",
+      "tipBody": "試著說：「SilkScribe 已經準備好幫我記下今天的筆記。」",
+      "helperTitle": "在這裡試",
+      "helper": "讓這個方框保持焦點，然後使用你的快捷鍵。你說的話應該會出現在這裡。",
+      "placeholder": "按住快捷鍵、說話、再放開。你的文字會出現在這裡…",
+      "success": "成功了",
+      "readyToFinish": "測試成功。你可以開始使用 SilkScribe 了。",
+      "prompt": "你現在也可以先跳過，之後再測試。",
+      "finish": "開始使用 SilkScribe",
+      "skip": "先跳過",
+      "finishing": "正在完成設定…",
+      "finishFailed": "SilkScribe 無法完成 onboarding。請再試一次。"
     },
     "shared": {
-      "stepCounter": "Step {{current}} / {{total}}"
+      "stepCounter": "步驟 {{current}} / {{total}}"
     }
   },
   "modelSelector": {
@@ -508,7 +511,7 @@
           "dontModify": "不修改剪貼簿",
           "copyToClipboard": "複製到剪貼簿"
         },
-        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
+        "directInsertHint": "SilkScribe 會直接在這裡插入文字，因此剪貼簿內容不會被改變。"
       },
       "autoSubmit": {
         "title": "自動送出",
@@ -619,8 +622,8 @@
       "unsave": "從已儲存中移除",
       "delete": "刪除條目",
       "deleteError": "刪除條目失敗，請重試",
-      "loadError": "Unable to load history right now. Please try again.",
-      "retry": "Retry"
+      "loadError": "目前無法載入歷史記錄。請再試一次。",
+      "retry": "重試"
     },
     "debug": {
       "title": "偵錯",

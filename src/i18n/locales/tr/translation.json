@@ -8,7 +8,7 @@
     "cancel": "İptal"
   },
   "sidebar": {
-    "home": "Home",
+    "home": "Ana Sayfa",
     "general": "Genel",
     "models": "Modeller",
     "advanced": "Gelişmiş",
@@ -80,254 +80,257 @@
     },
     "permissions": {
       "shared": {
-        "eyebrow": "Permissions",
-        "repairEyebrow": "Permission needed",
-        "stepByStep": "What to do",
-        "statusLabel": "Status",
-        "openPrompt": "Open macOS prompt",
-        "openingPrompt": "Opening macOS prompt…",
-        "iEnabledIt": "I turned it on",
-        "checkAgain": "Check again",
-        "continue": "Continue",
+        "eyebrow": "İzinler",
+        "repairEyebrow": "İzin gerekli",
+        "stepByStep": "Ne yapmalısın",
+        "statusLabel": "Durum",
+        "openPrompt": "macOS penceresini aç",
+        "openingPrompt": "macOS penceresi açılıyor…",
+        "iEnabledIt": "Etkinleştirdim",
+        "checkAgain": "Tekrar kontrol et",
+        "continue": "Devam et",
         "statuses": {
-          "checking": "Checking",
-          "needed": "Still needed",
-          "requesting": "Opening macOS",
-          "waiting_for_user": "Waiting for you",
-          "granted": "Allowed"
+          "checking": "Kontrol ediliyor",
+          "needed": "Hâlâ gerekli",
+          "error": "İlgilenmek gerekiyor",
+          "requesting": "macOS açılıyor",
+          "waiting_for_user": "Seni bekliyor",
+          "granted": "İzin verildi"
         }
       },
       "microphone": {
-        "title": "Allow microphone access",
-        "description": "SilkScribe needs your mic to turn speech into text.",
-        "needLabel": "Needed to listen",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe only listens while you record. Without mic access, it has nothing to transcribe.",
-        "breaksWithoutTitle": "Without it",
-        "breaksWithoutBody": "Recording can start, but SilkScribe cannot hear your voice.",
-        "afterGrantTitle": "After you allow it",
-        "afterGrantBody": "SilkScribe can record your voice and continue setup.",
+        "title": "Mikrofon erişimine izin ver",
+        "description": "SilkScribe konuşmayı metne dönüştürmek için mikrofonuna ihtiyaç duyar.",
+        "needLabel": "Dinlemek için gerekli",
+        "whyItMattersTitle": "Neden önemli",
+        "whyItMattersBody": "SilkScribe yalnızca kayıt yaparken dinler. Mikrofon erişimi olmadan yazıya dökecek bir şey olmaz.",
+        "breaksWithoutTitle": "Bu olmadan",
+        "breaksWithoutBody": "Kayıt başlayabilir ama SilkScribe sesini duyamaz.",
+        "afterGrantTitle": "İzin verdikten sonra",
+        "afterGrantBody": "SilkScribe sesini kaydedebilir ve kuruluma devam edebilir.",
         "steps": {
-          "step1": "Click “Open macOS prompt.”",
-          "step2": "When macOS asks, choose “Allow.”",
-          "step3": "If no prompt appears, open System Settings > Privacy & Security > Microphone.",
-          "step4": "Turn on SilkScribe, then return here and check again."
+          "step1": "“macOS penceresini aç”a tıkla.",
+          "step2": "macOS sorduğunda “İzin Ver”i seç.",
+          "step3": "Pencere çıkmazsa Sistem Ayarları > Gizlilik ve Güvenlik > Mikrofon bölümünü aç.",
+          "step4": "SilkScribe’ı aç, sonra buraya dönüp tekrar kontrol et."
         },
-        "manualHint": "If you chose “Don’t Allow,” turn SilkScribe on in System Settings > Privacy & Security > Microphone.",
+        "manualHint": "“İzin Verme”yi seçtiysen Sistem Ayarları > Gizlilik ve Güvenlik > Mikrofon bölümünden SilkScribe’ı aç.",
         "statusHelp": {
-          "checking": "Checking whether microphone access is already on.",
-          "needed": "Microphone access is still off.",
-          "requesting": "The macOS permission prompt should appear now.",
-          "waiting_for_user": "Allow the permission, then come back and check again.",
-          "granted": "Microphone access is on."
+          "checking": "Mikrofon erişiminin açık olup olmadığı kontrol ediliyor.",
+          "needed": "Mikrofon erişimi hâlâ kapalı.",
+          "error": "SilkScribe mikrofon erişimini doğrulayamadı.",
+          "requesting": "macOS izin penceresi şimdi görünmelidir.",
+          "waiting_for_user": "İzni ver, sonra geri gelip tekrar kontrol et.",
+          "granted": "Mikrofon erişimi açık."
         }
       },
       "accessibility": {
-        "title": "Allow SilkScribe to type for you",
-        "description": "SilkScribe needs Accessibility access to place text into your apps.",
-        "needLabel": "Needed to insert text",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe puts finished text into the field you’re using. macOS protects that with Accessibility access.",
-        "breaksWithoutTitle": "Without it",
-        "breaksWithoutBody": "SilkScribe may transcribe, but it cannot reliably type the result into your apps.",
-        "afterGrantTitle": "After you allow it",
-        "afterGrantBody": "SilkScribe can type into apps and finish setup normally.",
+        "title": "SilkScribe’ın senin için yazmasına izin ver",
+        "description": "SilkScribe’ın uygulamalarına metin yerleştirebilmesi için Erişilebilirlik erişimine ihtiyacı var.",
+        "needLabel": "Metin eklemek için gerekli",
+        "whyItMattersTitle": "Neden önemli",
+        "whyItMattersBody": "SilkScribe tamamlanan metni kullandığın alana yerleştirir. macOS bunu Erişilebilirlik erişimiyle korur.",
+        "breaksWithoutTitle": "Bu olmadan",
+        "breaksWithoutBody": "SilkScribe yazıya dökebilir ama sonucu uygulamalarına güvenilir şekilde yazamaz.",
+        "afterGrantTitle": "İzin verdikten sonra",
+        "afterGrantBody": "SilkScribe uygulamalara yazabilir ve kurulumu normal şekilde tamamlayabilir.",
         "steps": {
-          "step1": "Click “Open macOS prompt.”",
-          "step2": "If macOS sends you to System Settings, continue there.",
-          "step3": "Open Privacy & Security > Accessibility and find SilkScribe.",
-          "step4": "Turn on SilkScribe, then return here and check again."
+          "step1": "“macOS penceresini aç”a tıkla.",
+          "step2": "macOS seni Sistem Ayarları’na götürürse oradan devam et.",
+          "step3": "Gizlilik ve Güvenlik > Erişilebilirlik bölümünü aç ve SilkScribe’ı bul.",
+          "step4": "SilkScribe’ı aç, sonra buraya dönüp tekrar kontrol et."
         },
-        "manualHint": "If SilkScribe still looks disabled, reopen the app after turning it on, then check again.",
+        "manualHint": "SilkScribe hâlâ devre dışı görünüyorsa etkinleştirdikten sonra uygulamayı yeniden aç ve tekrar kontrol et.",
         "statusHelp": {
-          "checking": "Checking whether Accessibility access is already on.",
-          "needed": "Accessibility access is still off.",
-          "requesting": "The macOS approval flow should open now.",
-          "waiting_for_user": "Turn SilkScribe on in System Settings > Privacy & Security > Accessibility, then check again.",
-          "granted": "Accessibility access is on."
+          "checking": "Erişilebilirlik erişiminin açık olup olmadığı kontrol ediliyor.",
+          "needed": "Erişilebilirlik erişimi hâlâ kapalı.",
+          "error": "SilkScribe Erişilebilirlik erişimini doğrulayamadı.",
+          "requesting": "macOS onay akışı şimdi açılmalıdır.",
+          "waiting_for_user": "Sistem Ayarları > Gizlilik ve Güvenlik > Erişilebilirlik bölümünde SilkScribe’ı açıp tekrar kontrol et.",
+          "granted": "Erişilebilirlik erişimi açık."
         }
       }
     },
     "progress": {
-      "welcome": "Welcome",
-      "microphone": "Microphone",
-      "accessibility": "Text Access",
-      "setup": "Setup",
-      "practice": "Try It"
+      "welcome": "Hoş geldin",
+      "microphone": "Mikrofon",
+      "accessibility": "Metin Erişimi",
+      "setup": "Kurulum",
+      "practice": "Dene"
     },
     "welcome": {
-      "eyebrow": "Get set up",
-      "title": "Set up SilkScribe in a minute.",
-      "description": "We’ll turn on the permissions it needs, finish setup in the background, and let you try one real dictation.",
-      "badge": "Quick setup",
+      "eyebrow": "Hazırlan",
+      "title": "SilkScribe’ı bir dakikada kur.",
+      "description": "Gerekli izinleri açacağız, kurulumu arka planda tamamlayacağız ve sana gerçek bir dikte denemesi yaptıracağız.",
+      "badge": "Hızlı kurulum",
       "features": {
         "permissions": {
-          "title": "Clear permission help",
-          "description": "See exactly what to allow and why."
+          "title": "Açık izin yardımı",
+          "description": "Tam olarak neye neden izin vermen gerektiğini gör."
         },
         "engine": {
-          "title": "Automatic setup",
-          "description": "SilkScribe picks the right offline engine for this device."
+          "title": "Otomatik kurulum",
+          "description": "SilkScribe bu cihaz için doğru çevrimdışı motoru seçer."
         },
         "practice": {
-          "title": "One real test",
-          "description": "Make sure everything works before you start."
+          "title": "Gerçek bir test",
+          "description": "Başlamadan önce her şeyin çalıştığından emin ol."
         }
       },
-      "outcomeLabel": "After setup",
-      "outcome": "Hold your shortcut, speak, and SilkScribe will place the text where you need it.",
-      "planLabel": "What happens",
+      "outcomeLabel": "Kurulumdan sonra",
+      "outcome": "Kısayolunu basılı tut, konuş ve SilkScribe metni ihtiyacın olan yere yerleştirsin.",
+      "planLabel": "Neler olacak",
       "plan": {
         "step1": {
-          "title": "Allow the microphone",
-          "description": "So SilkScribe can hear you."
+          "title": "Mikrofonu izin ver",
+          "description": "Böylece SilkScribe seni duyabilir."
         },
         "step2": {
-          "title": "Allow text access",
-          "description": "So SilkScribe can type into your apps."
+          "title": "Metin erişimine izin ver",
+          "description": "Böylece SilkScribe uygulamalarına yazabilir."
         },
         "step3": {
-          "title": "Try it once",
-          "description": "Setup finishes, then you run one quick test."
+          "title": "Bir kez dene",
+          "description": "Kurulum biter, sonra hızlı bir test yaparsın."
         }
       },
-      "permissionPromise": "These steps are required for SilkScribe to work properly.",
-      "continue": "Continue"
+      "permissionPromise": "Bu adımlar SilkScribe’ın düzgün çalışması için gereklidir.",
+      "continue": "Devam et"
     },
     "setup": {
-      "eyebrow": "Setting things up",
-      "title": "SilkScribe is getting ready.",
-      "description": "We’re preparing the best offline speech engine for {{language}}, then you’ll try a quick test.",
-      "defaultLanguage": "your language",
-      "autoLabel": "Automatic",
-      "engineTitle": "No setup choices needed",
-      "engineBody": "SilkScribe is choosing the best fit for {{language}} and setting it up locally.",
-      "progressLabel": "Progress",
-      "sizeLabel": "Download",
-      "speedLabel": "Speed",
-      "etaLabel": "ETA",
+      "eyebrow": "Hazırlanıyor",
+      "title": "SilkScribe hazırlanıyor.",
+      "description": "{{language}} için en iyi çevrimdışı konuşma motorunu hazırlıyoruz, sonra kısa bir test yapacaksın.",
+      "defaultLanguage": "dilin",
+      "autoLabel": "Otomatik",
+      "engineTitle": "Kurulum seçimi gerekmiyor",
+      "engineBody": "SilkScribe {{language}} için en iyi seçeneği belirleyip yerel olarak kuruyor.",
+      "progressLabel": "İlerleme",
+      "sizeLabel": "İndirme",
+      "speedLabel": "Hız",
+      "etaLabel": "Kalan süre",
       "speedValue": "{{speed}} MB/s",
-      "notAvailable": "Not yet",
-      "preparingDetail": "Preparing…",
-      "shortcutTitle": "Your shortcut",
-      "shortcutBody": "Hold {{shortcut}} to speak. Release it to transcribe.",
-      "prepBadge": "Almost ready",
-      "prepTitle": "This should stay short and feel automatic",
-      "prepBody": "While setup runs, SilkScribe is downloading or loading the speech engine it picked for this machine. You can just wait here for the next step.",
-      "retry": "Try again",
-      "ready": "Everything is ready. Opening the practice step now.",
+      "notAvailable": "Henüz yok",
+      "preparingDetail": "Hazırlanıyor…",
+      "shortcutTitle": "Kısayolun",
+      "shortcutBody": "Konuşmak için {{shortcut}} kısayolunu basılı tut. Yazıya dökmek için bırak.",
+      "prepBadge": "Neredeyse hazır",
+      "prepTitle": "Bu kısa sürmeli ve otomatik hissettirmeli",
+      "prepBody": "Kurulum sürerken SilkScribe bu makine için seçtiği konuşma motorunu indiriyor veya yüklüyor. Bir sonraki adım için burada bekleyebilirsin.",
+      "retry": "Tekrar dene",
+      "ready": "Her şey hazır. Şimdi deneme adımı açılıyor.",
       "states": {
-        "resolving": "Choosing",
-        "downloading": "Downloading",
-        "preparing": "Preparing",
-        "ready": "Ready",
-        "error": "Needs attention"
+        "resolving": "Seçiliyor",
+        "downloading": "İndiriliyor",
+        "preparing": "Hazırlanıyor",
+        "ready": "Hazır",
+        "error": "İlgilenmek gerekiyor"
       },
       "panelStates": {
-        "resolving": "Choosing the best engine",
-        "downloading": "Downloading files",
-        "preparing": "Preparing the engine",
-        "ready": "Ready to test",
-        "error": "Setup needs attention"
+        "resolving": "En iyi motor seçiliyor",
+        "downloading": "Dosyalar indiriliyor",
+        "preparing": "Motor hazırlanıyor",
+        "ready": "Teste hazır",
+        "error": "Kurulum ilgilenmeyi gerektiriyor"
       },
       "panelHelp": {
-        "resolving": "SilkScribe is checking what’s available and choosing the best engine for this device.",
-        "downloading": "The required files are downloading now.",
-        "preparing": "The download is done. SilkScribe is loading everything locally.",
-        "ready": "Setup is done. Next: one quick real test.",
-        "error": "Setup didn’t finish. Try again."
+        "resolving": "SilkScribe nelerin mevcut olduğunu kontrol ediyor ve bu cihaz için en iyi motoru seçiyor.",
+        "downloading": "Gerekli dosyalar şimdi indiriliyor.",
+        "preparing": "İndirme tamamlandı. SilkScribe her şeyi yerel olarak yüklüyor.",
+        "ready": "Kurulum tamamlandı. Sırada kısa bir gerçek test var.",
+        "error": "Kurulum tamamlanmadı. Lütfen tekrar dene."
       },
       "errors": {
-        "loadModels": "SilkScribe couldn’t load the available speech engines.",
-        "downloadModel": "SilkScribe couldn’t finish the download.",
-        "selectModel": "SilkScribe couldn’t prepare your speech engine."
+        "loadModels": "SilkScribe kullanılabilir konuşma motorlarını yükleyemedi.",
+        "downloadModel": "SilkScribe indirmeyi tamamlayamadı.",
+        "selectModel": "SilkScribe konuşma motorunu hazırlayamadı."
       },
-      "tipsBadge": "Helpful while you wait",
-      "previousCard": "Previous tip",
-      "nextCard": "Next tip",
-      "goToCard": "Go to tip {{index}}",
+      "tipsBadge": "Beklerken işine yarayacak",
+      "previousCard": "Önceki ipucu",
+      "nextCard": "Sonraki ipucu",
+      "goToCard": "{{index}} numaralı ipucuna git",
       "tips": {
         "cards": {
           "shortcutHabit": {
-            "title": "One shortcut, one quick habit",
-            "description": "SilkScribe is built around a very simple rhythm: hold, speak, release.",
-            "point1": "Hold {{shortcut}} while you speak.",
-            "point2": "Release it when you are done talking.",
-            "point3": "SilkScribe turns that short burst into text right away."
+            "title": "Bir kısayol, hızlı bir alışkanlık",
+            "description": "SilkScribe çok basit bir ritim üzerine kurulu: basılı tut, konuş, bırak.",
+            "point1": "Konuşurken {{shortcut}} tuşunu basılı tut.",
+            "point2": "İşin bitince bırak.",
+            "point3": "SilkScribe bu kısa kaydı hemen metne çevirir."
           },
           "focusField": {
-            "title": "Always focus the place you want text to go",
-            "description": "SilkScribe sends the result into the field that is active when transcription finishes.",
-            "point1": "Click into the text box you want before you start talking.",
-            "point2": "Keep that field focused until the transcription finishes.",
-            "point3": "During onboarding, we provide a practice box for this exact reason."
+            "title": "Metnin gideceği yeri her zaman odakta tut",
+            "description": "SilkScribe sonucu, yazıya dökme bittiğinde etkin olan alana gönderir.",
+            "point1": "Konuşmaya başlamadan önce istediğin metin kutusuna tıkla.",
+            "point2": "Yazıya dökme bitene kadar o alan odakta kalsın.",
+            "point3": "Onboarding sırasında bunun için özel bir deneme kutusu sunuyoruz."
           },
           "shortBursts": {
-            "title": "Short bursts feel fastest",
-            "description": "New users usually get the cleanest first results when they keep each recording brief.",
-            "point1": "Try one or two sentences at a time.",
-            "point2": "Pause naturally between ideas.",
-            "point3": "You can always record another burst immediately after."
+            "title": "Kısa bölümler daha hızlı hissettirir",
+            "description": "Yeni kullanıcılar genelde her kaydı kısa tuttuklarında en temiz ilk sonuçları alır.",
+            "point1": "Bir seferde bir veya iki cümle dene.",
+            "point2": "Fikirler arasında doğal duraklamalar ver.",
+            "point3": "İstersen hemen ardından bir kısa kayıt daha yapabilirsin."
           },
           "quietSpace": {
-            "title": "A quieter space makes the first win easier",
-            "description": "SilkScribe works best when your voice stands out clearly from the room around you.",
-            "point1": "Use the microphone you normally prefer if you have one.",
-            "point2": "Keep fans, speakers, or background chatter as low as you can.",
-            "point3": "Speak at a steady, normal pace."
+            "title": "Daha sessiz bir ortam ilk başarıyı kolaylaştırır",
+            "description": "SilkScribe en iyi, sesin etraftaki ortamdan net biçimde ayrıştığında çalışır.",
+            "point1": "Varsa normalde tercih ettiğin mikrofonu kullan.",
+            "point2": "Fanları, hoparlörleri veya arka plan konuşmalarını mümkün olduğunca azalt.",
+            "point3": "Sabit ve doğal bir tempoda konuş."
           },
           "privacy": {
-            "title": "Your setup stays on the essentials",
-            "description": "This onboarding avoids extra configuration so you can get to a working first transcription faster.",
-            "point1": "Permissions come first because they are critical to the app working correctly.",
-            "point2": "The speech engine is chosen automatically in the background.",
-            "point3": "You can fine-tune settings later after you have the core workflow working."
+            "title": "Kurulumun temel şeylere odaklanır",
+            "description": "Bu onboarding, çalışan ilk yazıya dökmeye daha hızlı ulaşman için ekstra yapılandırmadan kaçınır.",
+            "point1": "İzinler önce gelir çünkü uygulamanın çalışması için kritiktir.",
+            "point2": "Konuşma motoru arka planda otomatik olarak seçilir.",
+            "point3": "Temel akış çalıştıktan sonra ayarları daha sonra ince ayar yapabilirsin."
           },
           "firstWin": {
-            "title": "The next screen is not a fake demo",
-            "description": "You are about to try a real push-to-talk transcription inside the actual app.",
-            "point1": "Keep the practice box focused.",
-            "point2": "Use your normal shortcut exactly the way you will use it later.",
-            "point3": "If text appears in the box, SilkScribe is ready for real work."
+            "title": "Sonraki ekran sahte bir demo değil",
+            "description": "Gerçek uygulamanın içinde gerçek bir bas-konuş yazıya dökme deneyeceksin.",
+            "point1": "Deneme kutusunu odakta tut.",
+            "point2": "Normal kısayolunu daha sonra kullanacağın şekilde aynen kullan.",
+            "point3": "Kutuda metin görünürse SilkScribe gerçek kullanım için hazırdır."
           }
         }
       }
     },
     "practice": {
-      "eyebrow": "Try it",
-      "title": "Try SilkScribe once",
-      "description": "Click the practice box, hold your shortcut, say a short sentence, then release.",
-      "badge": "Quick test",
-      "shortcutFallback": "Shortcut",
+      "eyebrow": "Dene",
+      "title": "SilkScribe’ı bir kez dene",
+      "description": "Deneme kutusuna tıkla, kısayolunu basılı tut, kısa bir cümle söyle ve bırak.",
+      "badge": "Hızlı test",
+      "shortcutFallback": "Kısayol",
       "steps": {
         "step1": {
-          "title": "Focus the practice box",
-          "description": "Keep this box selected so SilkScribe knows where to place the text."
+          "title": "Deneme kutusuna odaklan",
+          "description": "SilkScribe’ın metni nereye yerleştireceğini bilmesi için bu kutuyu seçili tut."
         },
         "step2": {
-          "title": "Hold {{shortcut}} and speak",
-          "description": "Say one short sentence in a natural voice."
+          "title": "{{shortcut}} kısayolunu basılı tut ve konuş",
+          "description": "Doğal bir ses tonuyla kısa bir cümle söyle."
         },
         "step3": {
-          "title": "Release to transcribe",
-          "description": "If the text appears here, SilkScribe is ready."
+          "title": "Yazıya dökmek için bırak",
+          "description": "Metin burada görünürse SilkScribe hazır demektir."
         }
       },
-      "tipTitle": "Try this",
-      "tipBody": "Say: “SilkScribe is ready for my notes today.”",
-      "helperTitle": "Try here",
-      "helper": "Keep this box focused, then use your shortcut. Your words should appear here.",
-      "placeholder": "Hold your shortcut, speak, then release. Your text will appear here…",
-      "success": "That worked",
-      "readyToFinish": "Your test worked. You can start using SilkScribe.",
-      "prompt": "You can skip this for now and test it later.",
-      "finish": "Start using SilkScribe",
-      "skip": "Skip for now",
-      "finishing": "Finishing setup…",
-      "finishFailed": "SilkScribe couldn’t finish onboarding. Please try again."
+      "tipTitle": "Bunu dene",
+      "tipBody": "Şunu söyle: “SilkScribe bugün notlarım için hazır.”",
+      "helperTitle": "Burada dene",
+      "helper": "Bu kutuyu odakta tut ve sonra kısayolunu kullan. Söylediklerin burada görünmelidir.",
+      "placeholder": "Kısayolunu basılı tut, konuş ve bırak. Metnin burada görünecek…",
+      "success": "Bu işe yaradı",
+      "readyToFinish": "Testin çalıştı. SilkScribe’ı kullanmaya başlayabilirsin.",
+      "prompt": "İstersen bunu şimdilik atlayıp daha sonra test edebilirsin.",
+      "finish": "SilkScribe kullanmaya başla",
+      "skip": "Şimdilik atla",
+      "finishing": "Kurulum tamamlanıyor…",
+      "finishFailed": "SilkScribe onboarding’i tamamlayamadı. Lütfen tekrar dene."
     },
     "shared": {
-      "stepCounter": "Step {{current}} / {{total}}"
+      "stepCounter": "Adım {{current}} / {{total}}"
     }
   },
   "modelSelector": {
@@ -508,7 +511,7 @@
           "dontModify": "Panoyu Değiştirme",
           "copyToClipboard": "Panoya Kopyala"
         },
-        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
+        "directInsertHint": "SilkScribe metni doğrudan buraya ekler, böylece panon değişmeden kalır."
       },
       "autoSubmit": {
         "title": "Otomatik Gönder",
@@ -619,8 +622,8 @@
       "unsave": "Kaydedilenlerden kaldır",
       "delete": "Kaydı sil",
       "deleteError": "Kayıt silinemedi. Lütfen tekrar deneyin.",
-      "loadError": "Unable to load history right now. Please try again.",
-      "retry": "Retry"
+      "loadError": "Geçmiş şu anda yüklenemiyor. Lütfen tekrar dene.",
+      "retry": "Tekrar dene"
     },
     "debug": {
       "title": "Hata Ayıklama",
