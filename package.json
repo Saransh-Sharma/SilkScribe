@@ -5,8 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "site:dev": "vite --config vite.site.config.ts",
     "build": "tsc && vite build",
+    "build:site": "bun run site:assets && tsc -p tsconfig.site.json && vite build --config vite.site.config.ts && bun run site:prerender",
     "preview": "vite preview",
+    "preview:site": "vite preview --config vite.site.config.ts",
+    "site:assets": "bun scripts/prepare-site-assets.ts",
+    "site:prerender": "bun scripts/prerender-site.tsx",
     "tauri": "tauri",
     "brand:sync": "bun scripts/sync-brand-assets.mjs",
     "lint": "eslint src",
@@ -20,6 +25,8 @@
     "check:translations": "bun scripts/check-translations.ts"
   },
   "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.2.11",
+    "@fontsource/manrope": "^5.2.8",
     "@tailwindcss/vite": "^4.1.16",
     "@tauri-apps/api": "^2.9.0",
     "@tauri-apps/plugin-autostart": "~2.5.1",
