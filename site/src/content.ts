@@ -58,7 +58,6 @@ export const externalLinks = {
   github: "https://github.com/SilkScribe/SilkScribe",
   githubIssues: "https://github.com/SilkScribe/SilkScribe/issues",
   githubReleases: "https://github.com/SilkScribe/SilkScribe/releases",
-  discord: "https://discord.com/invite/WVBeWsNXK4",
   email: "mailto:contact@silkscribe.app",
   appStore: import.meta.env.VITE_SITE_APP_STORE_URL?.trim() || null,
   siteUrl: normalizedSiteUrl,
@@ -157,12 +156,6 @@ export const supportChannels: SupportChannel[] = [
     href: externalLinks.githubIssues,
     label: "Open an issue",
     body: "Best for reproducible bugs, crash reports, feature requests, and known limitations that should stay discoverable.",
-  },
-  {
-    title: "Community Discord",
-    href: externalLinks.discord,
-    label: "Join Discord",
-    body: "Good for quick questions, setup guidance, and sharing what is working on your Mac configuration.",
   },
 ];
 

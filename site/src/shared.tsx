@@ -5,7 +5,6 @@ import {
   ChevronRight,
   Github,
   Mail,
-  MessageCircle,
   Sparkles,
 } from "lucide-react";
 import {
@@ -158,10 +157,6 @@ export const SiteFrame = ({
           <a href={externalLinks.github} target="_blank" rel="noreferrer">
             <Github aria-hidden="true" />
             GitHub
-          </a>
-          <a href={externalLinks.discord} target="_blank" rel="noreferrer">
-            <MessageCircle aria-hidden="true" />
-            Discord
           </a>
           <a href={externalLinks.email}>
             <Mail aria-hidden="true" />
