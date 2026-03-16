@@ -758,7 +758,12 @@
     "downloading": "Downloading... {{progress}}%",
     "installing": "Installing...",
     "preparing": "Preparing...",
-    "checkForUpdates": "Check for updates"
+    "checkForUpdates": "Check for updates",
+    "support": {
+      "label": "Support",
+      "appData": "Open app data",
+      "logs": "Open logs"
+    }
   },
   "common": {
     "loading": "Loading...",
