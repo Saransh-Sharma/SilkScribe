@@ -37,10 +37,13 @@ interface PermissionSnapshot {
   microphone: boolean;
 }
 
-const renderSettingsContent = (section: SidebarSection) => {
+const renderSettingsContent = (
+  section: SidebarSection,
+  onNavigate: (section: SidebarSection) => void,
+) => {
   const ActiveComponent =
     SECTIONS_CONFIG[section]?.component || SECTIONS_CONFIG.general.component;
-  return <ActiveComponent />;
+  return <ActiveComponent onNavigate={onNavigate} />;
 };
 
 function App() {
@@ -357,16 +360,16 @@ function App() {
         <div className="pointer-events-none absolute right-0 top-0 h-56 w-56 rounded-full bg-ss-brand-highlight/12 blur-3xl" />
 
         <div className="relative flex h-full flex-col px-4 py-4">
-          <div className="flex min-h-0 flex-1 overflow-hidden rounded-[24px] border border-ss-border-subtle bg-ss-bg-surface/90 shadow-[var(--ss-shadow-lift)] backdrop-blur-sm">
+          <div className="flex min-h-0 flex-1 overflow-hidden rounded-[28px] border border-ss-border-subtle bg-[color-mix(in_srgb,var(--ss-bg-surface)_92%,transparent)] shadow-[var(--ss-shadow-lift)] backdrop-blur-sm">
             <Sidebar
               activeSection={currentSection}
               onSectionChange={setCurrentSection}
             />
             <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
               <div className="app-content-scroll flex-1 overflow-y-auto">
-                <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-5 px-5 py-5">
+                <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-6 px-5 py-6">
                   <AccessibilityPermissions />
-                  {renderSettingsContent(currentSection)}
+                  {renderSettingsContent(currentSection, setCurrentSection)}
                 </div>
               </div>
             </div>

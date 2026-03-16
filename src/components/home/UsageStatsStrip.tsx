@@ -33,17 +33,17 @@ export const UsageStatsStrip = ({ summary, loading }: UsageStatsStripProps) => {
   ];
 
   return (
-    <div className="flex flex-wrap gap-2.5 xl:max-w-[520px] xl:justify-end">
+    <div className="flex flex-wrap gap-2.5">
       {stats.map((stat, index) => {
         const Icon = stat.icon;
 
         return (
           <div
             key={stat.key}
-            className="home-fade-in flex min-h-11 min-w-[150px] flex-1 items-center gap-3 rounded-[var(--ss-radius-pill)] border border-ss-border-subtle bg-ss-bg-surface px-3.5 py-2 shadow-[var(--ss-shadow-card)] transition-transform duration-150 hover:-translate-y-px sm:flex-none"
+            className="home-fade-in flex min-h-11 min-w-[150px] flex-1 items-center gap-3 rounded-[18px] border border-ss-border-subtle/80 bg-ss-bg-surface/72 px-3.5 py-2.5 shadow-[var(--ss-shadow-card)] transition-transform duration-150 hover:-translate-y-px sm:flex-none"
             style={{ animationDelay: `${40 + index * 40}ms` }}
           >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ss-brand-secondary/10 text-ss-brand-secondary">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[14px] bg-ss-bg-surface-alt text-ss-brand-primary">
               <Icon width={16} height={16} />
             </span>
             <div className="min-w-0">

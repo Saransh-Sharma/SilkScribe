@@ -813,6 +813,50 @@
   "home": {
     "title": "Welcome back",
     "subtitle": "Your recent dictation activity and listening history.",
+    "welcome": {
+      "eyebrow": "Home",
+      "title": "Welcome back.",
+      "firstRunTitle": "Welcome to SilkScribe.",
+      "readyDescription": "Everything looks ready. Hold your shortcut, speak naturally, and SilkScribe will place the text where you need it.",
+      "setupDescription": "Finish the essentials once, then SilkScribe stays out of your way and is ready whenever you need quick dictation.",
+      "primaryReady": "Review recording setup",
+      "primarySetup": "Finish setup",
+      "secondaryAction": "Browse models"
+    },
+    "setup": {
+      "title": "A few essentials still need attention.",
+      "description": "Once your shortcut, model, and permissions are in place, SilkScribe is ready for everyday dictation.",
+      "modelAction": "Choose a model",
+      "generalAction": "Open general setup"
+    },
+    "readiness": {
+      "shortcut": {
+        "label": "Shortcut",
+        "missingValue": "Set your recording shortcut",
+        "action": "Edit"
+      },
+      "microphone": {
+        "label": "Microphone",
+        "action": "Change"
+      },
+      "model": {
+        "label": "Model",
+        "missingValue": "Choose a speech model",
+        "action": "Manage"
+      },
+      "permissions": {
+        "label": "Permissions",
+        "ready": "Ready to type into your apps",
+        "needsAttention": "Needs attention before dictation is complete",
+        "action": "Review"
+      }
+    },
+    "firstUse": {
+      "title": "Your first transcript will show up here.",
+      "description": "Click into a text field, hold your shortcut, speak a sentence, then release. SilkScribe will save the result here so you can revisit it later.",
+      "generalAction": "Check basics",
+      "modelsAction": "Pick a model"
+    },
     "activityTitle": "Recent activity",
     "loadMore": "Load more",
     "stats": {
@@ -821,8 +865,8 @@
       "wpm": "Average WPM"
     },
     "empty": {
-      "title": "Your dashboard fills in after your first transcription.",
-      "description": "Recordings and transcripts will appear here automatically."
+      "title": "No recent transcriptions yet.",
+      "description": "Once you record something, SilkScribe will keep the transcript and audio here automatically."
     },
     "error": {
       "title": "Couldn't load your dashboard.",
