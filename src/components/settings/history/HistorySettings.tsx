@@ -3,6 +3,7 @@ import { FolderOpen } from "lucide-react";
 import { commands, type HistoryEntry } from "@/bindings";
 import { HistoryFeed } from "@/components/history/HistoryFeed";
 import { Button } from "@/components/ui/Button";
+import { AppPage } from "@/components/ui";
 import { useHistoryFeed } from "@/hooks/useHistoryFeed";
 
 const fetchHistoryEntries = async (): Promise<HistoryEntry[]> => {
@@ -41,13 +42,11 @@ export const HistorySettings = () => {
   };
 
   return (
-    <div className="w-full space-y-3">
-      <div className="flex items-end justify-between gap-4 px-1">
-        <div className="min-w-0">
-          <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-ss-text-tertiary">
-            {t("settings.history.title")}
-          </h2>
-        </div>
+    <AppPage
+      eyebrow={t("settings.history.eyebrow")}
+      title={t("settings.history.pageTitle")}
+      description={t("settings.history.pageDescription")}
+      actions={
         <Button
           type="button"
           variant="secondary"
@@ -60,12 +59,14 @@ export const HistorySettings = () => {
           <FolderOpen className="h-4 w-4" />
           <span>{t("settings.history.openFolder")}</span>
         </Button>
-      </div>
+      }
+    >
       <HistoryFeed
         entries={entries}
         loading={loading}
         error={error}
         emptyTitle={t("settings.history.empty")}
+        emptyDescription={t("settings.history.emptyDescription")}
         errorTitle={t("settings.history.loadError")}
         errorDescription={t("settings.history.loadError")}
         retryLabel={t("settings.history.retry")}
@@ -81,6 +82,6 @@ export const HistorySettings = () => {
         }}
         getAudioUrl={getAudioUrl}
       />
-    </div>
+    </AppPage>
   );
 };

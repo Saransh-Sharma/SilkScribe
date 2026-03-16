@@ -33,12 +33,12 @@ export const HistoryFeedItem = ({
   };
 
   return (
-    <div className="grid gap-3 px-4 py-4 transition-[background-color,border-color,transform] duration-200 hover:bg-ss-bg-surface-alt/55 md:grid-cols-[92px_minmax(0,1fr)]">
+    <div className="grid gap-3 px-4 py-4 transition-[background-color,border-color,transform] duration-200 hover:bg-ss-bg-surface-alt/38 md:grid-cols-[92px_minmax(0,1fr)]">
       <p className="pt-1 text-xs font-semibold uppercase tracking-[0.16em] text-ss-text-tertiary md:text-right">
         {timestampLabel}
       </p>
       <div className="min-w-0 space-y-3">
-        <p className="max-w-[72ch] text-sm leading-relaxed text-ss-text-secondary select-text cursor-text">
+        <p className="max-w-[72ch] text-sm leading-relaxed text-ss-text-primary select-text cursor-text">
           {transcriptText}
         </p>
         <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">

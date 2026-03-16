@@ -6,7 +6,6 @@ import {
   FlaskConical,
   History,
   Home as HomeIcon,
-  Info,
   Sparkles,
 } from "lucide-react";
 import SilkScribeWordmark from "./icons/SilkScribeWordmark";
@@ -18,7 +17,6 @@ import {
   AdvancedSettings,
   HistorySettings,
   DebugSettings,
-  AboutSettings,
   PostProcessingSettings,
   ModelsSettings,
 } from "./settings";
@@ -36,7 +34,7 @@ interface IconProps {
 interface SectionConfig {
   labelKey: string;
   icon: React.ComponentType<IconProps>;
-  component: React.ComponentType;
+  component: React.ComponentType<any>;
   enabled: (settings: any) => boolean;
 }
 
@@ -83,12 +81,6 @@ export const SECTIONS_CONFIG = {
     component: DebugSettings,
     enabled: (settings) => settings?.debug_mode ?? false,
   },
-  about: {
-    labelKey: "sidebar.about",
-    icon: Info,
-    component: AboutSettings,
-    enabled: () => true,
-  },
 } as const satisfies Record<string, SectionConfig>;
 
 interface SidebarProps {
@@ -107,18 +99,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
     .filter(([_, config]) => config.enabled(settings))
     .map(([id, config]) => ({ id: id as SidebarSection, ...config }));
 
-  return (
-    <aside className="flex h-full w-[240px] shrink-0 flex-col border-e border-ss-border-subtle bg-ss-bg-surface-alt/70 px-4 py-5">
-      <div className="flex items-center justify-center overflow-hidden px-2 py-2">
-        <SilkScribeWordmark
-          height={46}
-          fit="cover"
-          className="w-full shrink-0"
-          imageScale={1.68}
-        />
-      </div>
-      <div className="mt-5 flex flex-1 flex-col gap-1.5">
-        {availableSections.map((section) => {
+  const primarySections = availableSections.filter(
+    (section) => section.id === "home",
+  );
+  const secondarySections = availableSections.filter(
+    (section) => section.id !== "home" && section.id !== "debug",
+  );
+  const developerSections = availableSections.filter(
+    (section) => section.id === "debug",
+  );
+
+  const renderSectionList = (
+    sections: typeof availableSections,
+    labelKey?: string,
+  ) => (
+    <div className="space-y-1.5">
+      {labelKey ? (
+        <p className="px-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-ss-text-tertiary">
+          {t(labelKey)}
+        </p>
+      ) : null}
+      <div className="flex flex-col gap-1.5">
+        {sections.map((section) => {
           const Icon = section.icon;
           const isActive = activeSection === section.id;
 
@@ -151,6 +153,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
           );
         })}
+      </div>
+    </div>
+  );
+
+  return (
+    <aside className="flex h-full w-[240px] shrink-0 flex-col border-e border-ss-border-subtle bg-ss-bg-surface-alt/70 px-4 py-5">
+      <div className="flex items-center justify-center overflow-hidden px-2 py-2">
+        <SilkScribeWordmark
+          height={46}
+          fit="cover"
+          className="w-full shrink-0"
+          imageScale={1.68}
+        />
+      </div>
+      <div className="mt-5 flex flex-1 flex-col gap-5">
+        {renderSectionList(primarySections)}
+        {secondarySections.length > 0
+          ? renderSectionList(secondarySections, "sidebar.preferences")
+          : null}
+        {developerSections.length > 0
+          ? renderSectionList(developerSections, "sidebar.developer")
+          : null}
       </div>
     </aside>
   );

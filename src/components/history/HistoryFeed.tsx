@@ -129,7 +129,7 @@ export const HistoryFeed = ({
 
   if (entries.length === 0) {
     return (
-      <div className="rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface px-5 py-8 shadow-[var(--ss-shadow-card)]">
+      <div className="rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-[linear-gradient(180deg,color-mix(in_srgb,var(--ss-bg-surface-alt)_70%,var(--ss-bg-surface))_0%,var(--ss-bg-surface)_100%)] px-5 py-8 shadow-[var(--ss-shadow-card)]">
         <p className="text-sm font-semibold text-ss-text-primary">
           {emptyTitle}
         </p>
