@@ -11,19 +11,7 @@
   },
   "app": {
     "macOSPrivateApi": true,
-    "windows": [
-      {
-        "label": "main",
-        "title": "SilkScribe",
-        "width": 1360,
-        "height": 920,
-        "minWidth": 1180,
-        "minHeight": 820,
-        "resizable": true,
-        "maximizable": false,
-        "visible": false
-      }
-    ],
+    "windows": [],
     "security": {
       "csp": null,
       "assetProtocol": {
@@ -51,7 +39,7 @@
     "macOS": {
       "files": {},
       "hardenedRuntime": true,
-      "minimumSystemVersion": "10.13",
+      "minimumSystemVersion": "10.15",
       "signingIdentity": "-",
       "entitlements": "Entitlements.plist"
     },
