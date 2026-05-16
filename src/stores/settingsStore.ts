@@ -135,6 +135,16 @@ const settingUpdaters: {
     commands.changeExperimentalEnabledSetting(value as boolean),
   show_tray_icon: (value) =>
     commands.changeShowTrayIconSetting(value as boolean),
+  lazy_stream_close: (value) =>
+    commands.changeLazyStreamCloseSetting(value as boolean),
+  extra_recording_buffer_ms: (value) =>
+    commands.changeExtraRecordingBufferSetting(value as number),
+  whisper_accelerator: (value) =>
+    commands.changeWhisperAcceleratorSetting(value as any),
+  ort_accelerator: (value) =>
+    commands.changeOrtAcceleratorSetting(value as any),
+  whisper_gpu_device: (value) =>
+    commands.changeWhisperGpuDevice(value as number),
 };
 
 export const useSettingsStore = create<SettingsStore>()(

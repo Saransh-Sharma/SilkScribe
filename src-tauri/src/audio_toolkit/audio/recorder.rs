@@ -1,6 +1,9 @@
 use std::{
     io::Error,
-    sync::{mpsc, Arc, Mutex},
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        mpsc, Arc, Mutex,
+    },
     time::Duration,
 };
 
@@ -20,6 +23,11 @@ enum Cmd {
     Start,
     Stop(mpsc::Sender<Vec<f32>>),
     Shutdown,
+}
+
+enum AudioChunk {
+    Samples(Vec<f32>),
+    EndOfStream,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -132,7 +140,7 @@ impl AudioRecorder {
             return Ok(()); // already open
         }
 
-        let (sample_tx, sample_rx) = mpsc::channel::<Vec<f32>>();
+        let (sample_tx, sample_rx) = mpsc::channel::<AudioChunk>();
         let (cmd_tx, cmd_rx) = mpsc::channel::<Cmd>();
         let (init_tx, init_rx) = mpsc::channel::<Result<(), String>>();
 
@@ -152,6 +160,8 @@ impl AudioRecorder {
         let level_cb = self.level_cb.clone();
 
         let worker = std::thread::spawn(move || {
+            let stop_flag = Arc::new(AtomicBool::new(false));
+            let stop_flag_for_stream = stop_flag.clone();
             let init_result = (|| -> Result<(cpal::Stream, u32), String> {
                 let config = AudioRecorder::get_preferred_config(&thread_device).map_err(|e| {
                     format!(
@@ -184,6 +194,7 @@ impl AudioRecorder {
                     sample_tx,
                     channels,
                     sample_format,
+                    stop_flag_for_stream,
                 )
                 .map_err(|e| {
                     format!(
@@ -205,7 +216,7 @@ impl AudioRecorder {
             match init_result {
                 Ok((stream, sample_rate)) => {
                     let _ = init_tx.send(Ok(()));
-                    run_consumer(sample_rate, vad, sample_rx, cmd_rx, level_cb);
+                    run_consumer(sample_rate, vad, sample_rx, cmd_rx, level_cb, stop_flag);
                     drop(stream);
                 }
                 Err(error) => {
@@ -257,16 +268,27 @@ impl AudioRecorder {
     fn build_stream<T>(
         device: &cpal::Device,
         config: &cpal::SupportedStreamConfig,
-        sample_tx: mpsc::Sender<Vec<f32>>,
+        sample_tx: mpsc::Sender<AudioChunk>,
         channels: usize,
+        stop_flag: Arc<AtomicBool>,
     ) -> Result<cpal::Stream, cpal::BuildStreamError>
     where
         T: Sample + SizedSample + Send + 'static,
         f32: cpal::FromSample<T>,
     {
         let mut output_buffer = Vec::new();
+        let mut eos_sent = false;
 
         let stream_cb = move |data: &[T], _: &cpal::InputCallbackInfo| {
+            if stop_flag.load(Ordering::Relaxed) {
+                if !eos_sent {
+                    let _ = sample_tx.send(AudioChunk::EndOfStream);
+                    eos_sent = true;
+                }
+                return;
+            }
+            eos_sent = false;
+
             output_buffer.clear();
 
             if channels == 1 {
@@ -287,7 +309,10 @@ impl AudioRecorder {
                 }
             }
 
-            if sample_tx.send(output_buffer.clone()).is_err() {
+            if sample_tx
+                .send(AudioChunk::Samples(output_buffer.clone()))
+                .is_err()
+            {
                 log::error!("Failed to send samples");
             }
         };
@@ -303,43 +328,44 @@ impl AudioRecorder {
     fn build_stream_for_format(
         device: &cpal::Device,
         config: &cpal::SupportedStreamConfig,
-        sample_tx: mpsc::Sender<Vec<f32>>,
+        sample_tx: mpsc::Sender<AudioChunk>,
         channels: usize,
         sample_format: ResolvedSampleFormat,
+        stop_flag: Arc<AtomicBool>,
     ) -> Result<cpal::Stream, String> {
         match sample_format {
             ResolvedSampleFormat::I8 => {
-                Self::build_stream::<i8>(device, config, sample_tx, channels)
+                Self::build_stream::<i8>(device, config, sample_tx, channels, stop_flag)
             }
             ResolvedSampleFormat::I16 => {
-                Self::build_stream::<i16>(device, config, sample_tx, channels)
+                Self::build_stream::<i16>(device, config, sample_tx, channels, stop_flag)
             }
             ResolvedSampleFormat::I24 => {
-                Self::build_stream::<cpal::I24>(device, config, sample_tx, channels)
+                Self::build_stream::<cpal::I24>(device, config, sample_tx, channels, stop_flag)
             }
             ResolvedSampleFormat::I32 => {
-                Self::build_stream::<i32>(device, config, sample_tx, channels)
+                Self::build_stream::<i32>(device, config, sample_tx, channels, stop_flag)
             }
             ResolvedSampleFormat::I64 => {
-                Self::build_stream::<i64>(device, config, sample_tx, channels)
+                Self::build_stream::<i64>(device, config, sample_tx, channels, stop_flag)
             }
             ResolvedSampleFormat::U8 => {
-                Self::build_stream::<u8>(device, config, sample_tx, channels)
+                Self::build_stream::<u8>(device, config, sample_tx, channels, stop_flag)
             }
             ResolvedSampleFormat::U16 => {
-                Self::build_stream::<u16>(device, config, sample_tx, channels)
+                Self::build_stream::<u16>(device, config, sample_tx, channels, stop_flag)
             }
             ResolvedSampleFormat::U32 => {
-                Self::build_stream::<u32>(device, config, sample_tx, channels)
+                Self::build_stream::<u32>(device, config, sample_tx, channels, stop_flag)
             }
             ResolvedSampleFormat::U64 => {
-                Self::build_stream::<u64>(device, config, sample_tx, channels)
+                Self::build_stream::<u64>(device, config, sample_tx, channels, stop_flag)
             }
             ResolvedSampleFormat::F32 => {
-                Self::build_stream::<f32>(device, config, sample_tx, channels)
+                Self::build_stream::<f32>(device, config, sample_tx, channels, stop_flag)
             }
             ResolvedSampleFormat::F64 => {
-                Self::build_stream::<f64>(device, config, sample_tx, channels)
+                Self::build_stream::<f64>(device, config, sample_tx, channels, stop_flag)
             }
         }
         .map_err(|e| e.to_string())
@@ -404,9 +430,10 @@ impl AudioRecorder {
 fn run_consumer(
     in_sample_rate: u32,
     vad: Option<Arc<Mutex<Box<dyn vad::VoiceActivityDetector>>>>,
-    sample_rx: mpsc::Receiver<Vec<f32>>,
+    sample_rx: mpsc::Receiver<AudioChunk>,
     cmd_rx: mpsc::Receiver<Cmd>,
     level_cb: Option<Arc<dyn Fn(Vec<f32>) + Send + Sync + 'static>>,
+    stop_flag: Arc<AtomicBool>,
 ) {
     let mut frame_resampler = FrameResampler::new(
         in_sample_rate as usize,
@@ -451,7 +478,8 @@ fn run_consumer(
 
     loop {
         let raw = match sample_rx.recv() {
-            Ok(s) => s,
+            Ok(AudioChunk::Samples(s)) => s,
+            Ok(AudioChunk::EndOfStream) => continue,
             Err(_) => break, // stream closed
         };
 
@@ -471,6 +499,7 @@ fn run_consumer(
         while let Ok(cmd) = cmd_rx.try_recv() {
             match cmd {
                 Cmd::Start => {
+                    stop_flag.store(false, Ordering::Relaxed);
                     processed_samples.clear();
                     recording = true;
                     visualizer.reset(); // Reset visualization buffer
@@ -480,12 +509,21 @@ fn run_consumer(
                 }
                 Cmd::Stop(reply_tx) => {
                     recording = false;
+                    stop_flag.store(true, Ordering::Relaxed);
 
-                    // Drain any audio chunks that were captured but not yet consumed
-                    while let Ok(remaining) = sample_rx.try_recv() {
-                        frame_resampler.push(&remaining, &mut |frame: &[f32]| {
-                            handle_frame(frame, true, &vad, &mut processed_samples)
-                        });
+                    loop {
+                        match sample_rx.recv_timeout(Duration::from_secs(2)) {
+                            Ok(AudioChunk::Samples(remaining)) => {
+                                frame_resampler.push(&remaining, &mut |frame: &[f32]| {
+                                    handle_frame(frame, true, &vad, &mut processed_samples)
+                                });
+                            }
+                            Ok(AudioChunk::EndOfStream) => break,
+                            Err(_) => {
+                                log::warn!("Timed out waiting for EndOfStream from audio callback");
+                                break;
+                            }
+                        }
                     }
 
                     frame_resampler.finish(&mut |frame: &[f32]| {
@@ -493,8 +531,12 @@ fn run_consumer(
                     });
 
                     let _ = reply_tx.send(std::mem::take(&mut processed_samples));
+                    stop_flag.store(false, Ordering::Relaxed);
                 }
-                Cmd::Shutdown => return,
+                Cmd::Shutdown => {
+                    stop_flag.store(true, Ordering::Relaxed);
+                    return;
+                }
             }
         }
     }
