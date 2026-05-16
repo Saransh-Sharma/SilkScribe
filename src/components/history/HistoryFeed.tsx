@@ -21,6 +21,7 @@ interface HistoryFeedProps {
   onToggleSaved: (id: number) => void;
   onCopyText: (text: string) => void;
   onDelete: (id: number) => void;
+  onRetryTranscription?: (id: number) => void;
   getAudioUrl: (fileName: string) => Promise<string | null>;
 }
 
@@ -66,6 +67,7 @@ export const HistoryFeed = ({
   onToggleSaved,
   onCopyText,
   onDelete,
+  onRetryTranscription,
   getAudioUrl,
 }: HistoryFeedProps) => {
   const { t, i18n } = useTranslation();
@@ -181,6 +183,7 @@ export const HistoryFeed = ({
           onToggleSaved={onToggleSaved}
           onCopyText={onCopyText}
           onDelete={onDelete}
+          onRetryTranscription={onRetryTranscription}
           getAudioUrl={getAudioUrl}
           animationDelayMs={120 + index * 40}
         />
