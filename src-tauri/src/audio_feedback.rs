@@ -20,6 +20,9 @@ fn resolve_sound_path(
     sound_type: SoundType,
 ) -> Option<PathBuf> {
     let sound_file = get_sound_path(settings, sound_type);
+    if settings.sound_theme == SoundTheme::Custom {
+        return crate::portable::resolve_app_data(app, &sound_file).ok();
+    }
     let base_dir = get_sound_base_dir(settings);
     app.path().resolve(&sound_file, base_dir).ok()
 }

@@ -1090,3 +1090,74 @@ pub fn change_show_tray_icon_setting(app: AppHandle, enabled: bool) -> Result<()
 
     Ok(())
 }
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_lazy_stream_close_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.lazy_stream_close = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_extra_recording_buffer_setting(app: AppHandle, ms: u64) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.extra_recording_buffer_ms = ms;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+fn apply_and_reload_accelerator(app: &AppHandle, settings: settings::AppSettings) {
+    settings::write_settings(app, settings);
+    crate::managers::transcription::apply_accelerator_settings(app);
+
+    let tm = app.state::<std::sync::Arc<crate::managers::transcription::TranscriptionManager>>();
+    if tm.is_model_loaded() {
+        if let Err(e) = tm.unload_model() {
+            warn!("Failed to unload model after accelerator change: {e}");
+        }
+    }
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_whisper_accelerator_setting(
+    app: AppHandle,
+    accelerator: settings::WhisperAcceleratorSetting,
+) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.whisper_accelerator = accelerator;
+    apply_and_reload_accelerator(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_ort_accelerator_setting(
+    app: AppHandle,
+    accelerator: settings::OrtAcceleratorSetting,
+) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.ort_accelerator = accelerator;
+    apply_and_reload_accelerator(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_whisper_gpu_device(app: AppHandle, device: i32) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.whisper_gpu_device = device;
+    apply_and_reload_accelerator(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn get_available_accelerators() -> crate::managers::transcription::AvailableAccelerators {
+    tauri::async_runtime::spawn_blocking(crate::managers::transcription::get_available_accelerators)
+        .await
+        .expect("get_available_accelerators panicked")
+}

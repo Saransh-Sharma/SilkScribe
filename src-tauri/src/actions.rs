@@ -38,6 +38,11 @@ fn handle_recording_start_failure(app: &AppHandle) {
     utils::hide_recording_overlay_after(app, 1500);
 }
 
+pub(crate) struct ProcessedTranscription {
+    pub post_processed_text: Option<String>,
+    pub post_process_prompt: Option<String>,
+}
+
 // Shortcut Action Trait
 pub trait ShortcutAction: Send + Sync {
     fn start(&self, app: &AppHandle, binding_id: &str, shortcut_str: &str);
@@ -315,6 +320,44 @@ async fn maybe_convert_chinese_variant(
     }
 }
 
+pub(crate) async fn process_transcription_output(
+    app: &AppHandle,
+    transcription: &str,
+    post_process: bool,
+) -> ProcessedTranscription {
+    let settings = get_settings(app);
+    let mut final_text = transcription.to_string();
+    let mut post_processed_text: Option<String> = None;
+    let mut post_process_prompt: Option<String> = None;
+
+    if let Some(converted_text) = maybe_convert_chinese_variant(&settings, transcription).await {
+        final_text = converted_text;
+    }
+
+    if post_process {
+        if let Some(processed_text) = post_process_transcription(&settings, &final_text).await {
+            post_processed_text = Some(processed_text.clone());
+
+            if let Some(prompt_id) = &settings.post_process_selected_prompt_id {
+                if let Some(prompt) = settings
+                    .post_process_prompts
+                    .iter()
+                    .find(|prompt| &prompt.id == prompt_id)
+                {
+                    post_process_prompt = Some(prompt.prompt.clone());
+                }
+            }
+        }
+    } else if final_text != transcription {
+        post_processed_text = Some(final_text.clone());
+    }
+
+    ProcessedTranscription {
+        post_processed_text,
+        post_process_prompt,
+    }
+}
+
 impl ShortcutAction for TranscribeAction {
     fn start(&self, app: &AppHandle, binding_id: &str, _shortcut_str: &str) {
         let start_time = Instant::now();
@@ -488,6 +531,7 @@ impl ShortcutAction for TranscribeAction {
                                     .save_transcription(
                                         samples_clone,
                                         transcription_for_history,
+                                        post_process,
                                         post_processed_text,
                                         post_process_prompt,
                                     )
@@ -531,6 +575,18 @@ impl ShortcutAction for TranscribeAction {
                     }
                     Err(err) => {
                         debug!("Global Shortcut Transcription error: {}", err);
+                        if let Err(e) = hm
+                            .save_transcription(
+                                samples_clone,
+                                String::new(),
+                                post_process,
+                                None,
+                                None,
+                            )
+                            .await
+                        {
+                            error!("Failed to save failed transcription to history: {}", e);
+                        }
                         show_error_overlay(&ah);
                         utils::hide_recording_overlay_after(&ah, 1500);
                         change_tray_icon(&ah, TrayIconState::Idle);
