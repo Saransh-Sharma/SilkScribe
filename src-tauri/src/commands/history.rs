@@ -1,6 +1,7 @@
 use crate::managers::history::{
-    HistoryEntry, HistoryManager, HomeDashboardPageData, HomeHistoryCursor,
+    HistoryManager, HomeDashboardPageData, HomeHistoryCursor, PaginatedHistory,
 };
+use crate::managers::transcription::TranscriptionManager;
 use std::sync::Arc;
 use tauri::{AppHandle, State};
 
@@ -9,9 +10,11 @@ use tauri::{AppHandle, State};
 pub async fn get_history_entries(
     _app: AppHandle,
     history_manager: State<'_, Arc<HistoryManager>>,
-) -> Result<Vec<HistoryEntry>, String> {
+    cursor: Option<i64>,
+    limit: Option<usize>,
+) -> Result<PaginatedHistory, String> {
     history_manager
-        .get_history_entries()
+        .get_history_entries(cursor, limit)
         .await
         .map_err(|e| e.to_string())
 }
@@ -67,6 +70,61 @@ pub async fn delete_history_entry(
         .delete_entry(id)
         .await
         .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn retry_history_entry_transcription(
+    app: AppHandle,
+    history_manager: State<'_, Arc<HistoryManager>>,
+    transcription_manager: State<'_, Arc<TranscriptionManager>>,
+    id: i64,
+) -> Result<(), String> {
+    let entry = history_manager
+        .get_entry_by_id(id)
+        .await
+        .map_err(|e| e.to_string())?
+        .ok_or_else(|| format!("History entry {} not found", id))?;
+
+    let audio_path = history_manager.get_audio_file_path(&entry.file_name);
+    let mut reader = hound::WavReader::open(&audio_path)
+        .map_err(|e| format!("Failed to open recording: {}", e))?;
+    let spec = reader.spec();
+    let samples: Result<Vec<f32>, String> = match spec.sample_format {
+        hound::SampleFormat::Float => reader
+            .samples::<f32>()
+            .map(|s| s.map_err(|e| e.to_string()))
+            .collect(),
+        hound::SampleFormat::Int => {
+            let max_value = (1_i64 << (spec.bits_per_sample.saturating_sub(1) as u32)) as f32;
+            reader
+                .samples::<i32>()
+                .map(|s| s.map(|v| v as f32 / max_value).map_err(|e| e.to_string()))
+                .collect()
+        }
+    };
+    let samples = samples?;
+
+    let transcription = transcription_manager
+        .transcribe(samples)
+        .map_err(|e| e.to_string())?;
+    let processed = crate::actions::process_transcription_output(
+        &app,
+        &transcription,
+        entry.post_process_requested,
+    )
+    .await;
+
+    history_manager
+        .update_transcription(
+            id,
+            transcription,
+            processed.post_processed_text,
+            processed.post_process_prompt,
+        )
+        .map_err(|e| e.to_string())?;
+
+    Ok(())
 }
 
 #[tauri::command]
