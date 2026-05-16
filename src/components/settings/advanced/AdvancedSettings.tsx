@@ -19,6 +19,8 @@ import { useSettings } from "../../../hooks/useSettings";
 import { KeyboardImplementationSelector } from "../debug/KeyboardImplementationSelector";
 import { AppDataDirectory } from "../AppDataDirectory";
 import { UpdateChecksToggle } from "../UpdateChecksToggle";
+import { AccelerationSelector } from "../AccelerationSelector";
+import { LazyStreamClose } from "../LazyStreamClose";
 import { LogDirectory } from "../debug";
 import { AppPage, DisclosureSection } from "../../ui";
 
@@ -71,6 +73,7 @@ export const AdvancedSettings: React.FC = () => {
           title={t("settings.advanced.groups.transcription")}
           description={t("settings.advanced.groupDescriptions.transcription")}
         >
+          <AccelerationSelector descriptionMode="inline" grouped={true} />
           <CustomWords descriptionMode="inline" grouped />
           <AppendTrailingSpace descriptionMode="inline" grouped={true} />
         </DisclosureSection>
@@ -108,6 +111,7 @@ export const AdvancedSettings: React.FC = () => {
                 descriptionMode="inline"
                 grouped={true}
               />
+              <LazyStreamClose descriptionMode="inline" grouped={true} />
             </>
           ) : null}
         </DisclosureSection>
