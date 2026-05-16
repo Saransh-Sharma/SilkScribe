@@ -496,6 +496,25 @@
         "label": "Experimental Features",
         "description": "Turn on features that are still being tested."
       },
+      "lazyStreamClose": {
+        "label": "Keep Mic Open Between Transcriptions",
+        "description": "Keep the microphone stream open briefly after recording stops to reduce latency for back-to-back transcriptions. May affect Bluetooth audio quality while active."
+      },
+      "acceleration": {
+        "whisper": {
+          "title": "Whisper acceleration",
+          "description": "Choose hardware acceleration for Whisper models. Auto uses GPU when available."
+        },
+        "ort": {
+          "title": "ONNX acceleration",
+          "description": "Choose hardware acceleration for ONNX models. Some backends are experimental and may not work with every model."
+        },
+        "gpuDevice": {
+          "title": "GPU device",
+          "description": "Select which GPU SilkScribe should use for Whisper inference.",
+          "auto": "Auto"
+        }
+      },
       "startHidden": {
         "label": "Start Hidden",
         "description": "Open SilkScribe in the background instead of showing the app window."
@@ -660,6 +679,10 @@
       "delete": "Delete entry",
       "deleteError": "Failed to delete entry. Please try again.",
       "loadError": "Unable to load history right now. Please try again.",
+      "loadMore": "Load more",
+      "retryableEmpty": "Transcription failed. The recording is available to retry.",
+      "retryTranscription": "Retry transcription",
+      "retryTranscriptionError": "Failed to retry transcription. Please try again.",
       "retry": "Retry"
     },
     "debug": {
@@ -732,6 +755,10 @@
       "pasteDelay": {
         "title": "Paste Delay",
         "description": "Delay before sending the paste keystroke (in milliseconds) when SilkScribe is using a clipboard hotkey."
+      },
+      "recordingBuffer": {
+        "title": "Extra Recording Buffer",
+        "description": "Keep recording for a short time after you release the key to capture trailing speech."
       }
     },
     "about": {
