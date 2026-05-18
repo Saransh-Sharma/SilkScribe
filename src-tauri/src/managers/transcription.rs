@@ -414,21 +414,20 @@ impl TranscriptionManager {
 
     /// Kicks off the model loading in a background thread if it's not already loaded
     pub fn initiate_model_load(&self) {
-        let mut is_loading = self.is_loading.lock().unwrap();
-        if *is_loading || self.is_model_loaded() {
+        let Some(loading_guard) = self.try_start_loading() else {
+            return;
+        };
+        if self.is_model_loaded() {
             return;
         }
 
-        *is_loading = true;
         let self_clone = self.clone();
         thread::spawn(move || {
+            let _loading_guard = loading_guard;
             let settings = get_settings(&self_clone.app_handle);
             if let Err(e) = self_clone.load_model(&settings.selected_model) {
                 error!("Failed to load model: {}", e);
             }
-            let mut is_loading = self_clone.is_loading.lock().unwrap();
-            *is_loading = false;
-            self_clone.loading_condvar.notify_all();
         });
     }
 

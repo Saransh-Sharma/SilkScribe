@@ -335,8 +335,9 @@ pub(crate) async fn process_transcription_output(
     }
 
     if post_process {
-        if let Some(processed_text) = post_process_transcription(&settings, &final_text).await {
-            post_processed_text = Some(processed_text.clone());
+        let processed_text = post_process_transcription(&settings, &final_text).await;
+        if let Some(processed_text) = processed_text {
+            post_processed_text = Some(processed_text);
 
             if let Some(prompt_id) = &settings.post_process_selected_prompt_id {
                 if let Some(prompt) = settings
@@ -347,6 +348,8 @@ pub(crate) async fn process_transcription_output(
                     post_process_prompt = Some(prompt.prompt.clone());
                 }
             }
+        } else {
+            post_processed_text = Some(final_text.clone());
         }
     } else if final_text != transcription {
         post_processed_text = Some(final_text.clone());

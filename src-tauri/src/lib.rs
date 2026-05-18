@@ -116,7 +116,7 @@ fn should_force_show_permissions_window(_app: &AppHandle) -> bool {
     #[cfg(target_os = "windows")]
     {
         if !get_settings(_app).has_completed_onboarding {
-            return false;
+            return true;
         }
 
         let status = commands::audio::get_windows_microphone_permission_status();

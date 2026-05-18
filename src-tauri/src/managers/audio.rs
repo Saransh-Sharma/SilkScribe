@@ -108,6 +108,7 @@ const WHISPER_SAMPLE_RATE: usize = 16000;
 pub enum RecordingState {
     Idle,
     Recording { binding_id: String },
+    Stopping,
 }
 
 #[derive(Clone, Debug)]
@@ -274,10 +275,10 @@ impl AudioRecordingManager {
                     tauri::path::BaseDirectory::Resource,
                 )
                 .map_err(|e| anyhow::anyhow!("Failed to resolve VAD path: {}", e))?;
-            *recorder_opt = Some(create_audio_recorder(
-                vad_path.to_str().unwrap(),
-                &self.app_handle,
-            )?);
+            let vad_path = vad_path
+                .to_str()
+                .ok_or_else(|| anyhow::anyhow!("VAD path is not valid UTF-8"))?;
+            *recorder_opt = Some(create_audio_recorder(vad_path, &self.app_handle)?);
         }
         Ok(())
     }
@@ -432,7 +433,7 @@ impl AudioRecordingManager {
             RecordingState::Recording {
                 binding_id: ref active,
             } if active == binding_id => {
-                *state = RecordingState::Idle;
+                *state = RecordingState::Stopping;
                 drop(state);
 
                 let settings = get_settings(&self.app_handle);
@@ -468,6 +469,8 @@ impl AudioRecordingManager {
                     }
                 }
 
+                *self.state.lock().unwrap() = RecordingState::Idle;
+
                 // Pad if very short
                 let s_len = samples.len();
                 // debug!("Got {} samples", s_len);
@@ -485,7 +488,7 @@ impl AudioRecordingManager {
     pub fn is_recording(&self) -> bool {
         matches!(
             *self.state.lock().unwrap(),
-            RecordingState::Recording { .. }
+            RecordingState::Recording { .. } | RecordingState::Stopping
         )
     }
 

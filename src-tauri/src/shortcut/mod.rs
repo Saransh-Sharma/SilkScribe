@@ -1104,7 +1104,7 @@ pub fn change_lazy_stream_close_setting(app: AppHandle, enabled: bool) -> Result
 #[specta::specta]
 pub fn change_extra_recording_buffer_setting(app: AppHandle, ms: u64) -> Result<(), String> {
     let mut settings = settings::get_settings(&app);
-    settings.extra_recording_buffer_ms = ms;
+    settings.extra_recording_buffer_ms = ms.clamp(0, 1500);
     settings::write_settings(&app, settings);
     Ok(())
 }
@@ -1156,8 +1156,9 @@ pub fn change_whisper_gpu_device(app: AppHandle, device: i32) -> Result<(), Stri
 
 #[tauri::command]
 #[specta::specta]
-pub async fn get_available_accelerators() -> crate::managers::transcription::AvailableAccelerators {
+pub async fn get_available_accelerators(
+) -> Result<crate::managers::transcription::AvailableAccelerators, String> {
     tauri::async_runtime::spawn_blocking(crate::managers::transcription::get_available_accelerators)
         .await
-        .expect("get_available_accelerators panicked")
+        .map_err(|e| format!("Failed to get available accelerators: {}", e))
 }

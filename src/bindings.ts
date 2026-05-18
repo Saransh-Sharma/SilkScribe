@@ -629,8 +629,18 @@ export const commands = {
       else return { status: "error", error: e as any };
     }
   },
-  async getAvailableAccelerators(): Promise<AvailableAccelerators> {
-    return await TAURI_INVOKE("get_available_accelerators");
+  async getAvailableAccelerators(): Promise<
+    Result<AvailableAccelerators, string>
+  > {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("get_available_accelerators"),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
   },
   /**
    * Start key recording mode
@@ -1221,26 +1231,26 @@ export type AppSettings = {
   post_process_selected_prompt_id?: string | null;
   mute_while_recording?: boolean;
   append_trailing_space?: boolean;
-	  app_language?: string;
-	  experimental_enabled?: boolean;
-	  lazy_stream_close?: boolean;
-	  keyboard_implementation?: KeyboardImplementation;
-	  show_tray_icon?: boolean;
-	  paste_delay_ms?: number;
-	  typing_tool?: TypingTool;
-	  external_script_path: string | null;
-	  custom_filler_words?: string[] | null;
-	  whisper_accelerator?: WhisperAcceleratorSetting;
-	  ort_accelerator?: OrtAcceleratorSetting;
-	  whisper_gpu_device?: number;
-	  extra_recording_buffer_ms?: number;
-	};
-	export type AudioDevice = { index: string; name: string; is_default: boolean };
-	export type AvailableAccelerators = {
-	  whisper: string[];
-	  ort: string[];
-	  gpu_devices: GpuDeviceOption[];
-	};
+  app_language?: string;
+  experimental_enabled?: boolean;
+  lazy_stream_close?: boolean;
+  keyboard_implementation?: KeyboardImplementation;
+  show_tray_icon?: boolean;
+  paste_delay_ms?: number;
+  typing_tool?: TypingTool;
+  external_script_path: string | null;
+  custom_filler_words?: string[] | null;
+  whisper_accelerator?: WhisperAcceleratorSetting;
+  ort_accelerator?: OrtAcceleratorSetting;
+  whisper_gpu_device?: number;
+  extra_recording_buffer_ms?: number;
+};
+export type AudioDevice = { index: string; name: string; is_default: boolean };
+export type AvailableAccelerators = {
+  whisper: string[];
+  ort: string[];
+  gpu_devices: GpuDeviceOption[];
+};
 export type AutoSubmitKey = "enter" | "ctrl_enter" | "cmd_enter";
 export type BindingResponse = {
   success: boolean;
@@ -1251,34 +1261,34 @@ export type ClipboardHandling = "dont_modify" | "copy_to_clipboard";
 export type CustomSounds = { start: boolean; stop: boolean };
 export type EngineType =
   | "Whisper"
-	  | "Parakeet"
-	  | "Moonshine"
-	  | "MoonshineStreaming"
-	  | "SenseVoice"
-	  | "GigaAM"
-	  | "Canary"
-	  | "Cohere";
-	export type GpuDeviceOption = {
-	  id: number;
-	  name: string;
-	  total_vram_mb: number;
-	};
-	export type HistoryEntry = {
+  | "Parakeet"
+  | "Moonshine"
+  | "MoonshineStreaming"
+  | "SenseVoice"
+  | "GigaAM"
+  | "Canary"
+  | "Cohere";
+export type GpuDeviceOption = {
+  id: number;
+  name: string;
+  total_vram_mb: number;
+};
+export type HistoryEntry = {
   id: number;
   file_name: string;
   timestamp: number;
   saved: boolean;
   title: string;
-	  transcription_text: string;
-	  post_processed_text: string | null;
-	  post_process_prompt: string | null;
-	  post_process_requested: boolean;
-	};
-	export type HistoryUpdatePayload =
-	  | { action: "added"; entry: HistoryEntry }
-	  | { action: "updated"; entry: HistoryEntry }
-	  | { action: "deleted"; id: number }
-	  | { action: "toggled"; id: number };
+  transcription_text: string;
+  post_processed_text: string | null;
+  post_process_prompt: string | null;
+  post_process_requested: boolean;
+};
+export type HistoryUpdatePayload =
+  | { action: "added"; entry: HistoryEntry }
+  | { action: "updated"; entry: HistoryEntry }
+  | { action: "deleted"; id: number }
+  | { action: "toggled"; id: number };
 export type HomeDashboardPageData = {
   summary: UsageSummary;
   entries: HistoryEntry[];
@@ -1303,10 +1313,10 @@ export type ModelInfo = {
   id: string;
   name: string;
   description: string;
-	  filename: string;
-	  url: string | null;
-	  sha256: string | null;
-	  size_mb: number;
+  filename: string;
+  url: string | null;
+  sha256: string | null;
+  size_mb: number;
   is_downloaded: boolean;
   is_downloading: boolean;
   partial_size: number;
@@ -1314,17 +1324,17 @@ export type ModelInfo = {
   engine_type: EngineType;
   accuracy_score: number;
   speed_score: number;
-	  supports_translation: boolean;
-	  is_recommended: boolean;
-	  supported_languages: string[];
-	  supports_language_selection: boolean;
-	  is_custom: boolean;
-	};
+  supports_translation: boolean;
+  is_recommended: boolean;
+  supported_languages: string[];
+  supports_language_selection: boolean;
+  is_custom: boolean;
+};
 export type ModelLoadStatus = {
   is_loaded: boolean;
   current_model: string | null;
 };
-	export type ModelUnloadTimeout =
+export type ModelUnloadTimeout =
   | "never"
   | "immediately"
   | "min_2"
@@ -1332,27 +1342,27 @@ export type ModelLoadStatus = {
   | "min_10"
   | "min_15"
   | "hour_1"
-	  | "sec_5";
-	export type OrtAcceleratorSetting =
-	  | "auto"
-	  | "cpu"
-	  | "cuda"
-	  | "directml"
-	  | "rocm";
-	export type OverlayPosition = "none" | "top" | "bottom";
-	export type PaginatedHistory = {
-	  entries: HistoryEntry[];
-	  has_more: boolean;
-	};
-	export type PasteMethod =
+  | "sec_5";
+export type OrtAcceleratorSetting =
+  | "auto"
+  | "cpu"
+  | "cuda"
+  | "directml"
+  | "rocm";
+export type OverlayPosition = "none" | "top" | "bottom";
+export type PaginatedHistory = {
+  entries: HistoryEntry[];
+  has_more: boolean;
+};
+export type PasteMethod =
   | "ctrl_v"
   | "direct"
   | "none"
   | "shift_insert"
-	  | "ctrl_shift_v"
-	  | "external_script";
-	export type PermissionAccess = "allowed" | "denied" | "unknown";
-	export type PostProcessProvider = {
+  | "ctrl_shift_v"
+  | "external_script";
+export type PermissionAccess = "allowed" | "denied" | "unknown";
+export type PostProcessProvider = {
   id: string;
   label: string;
   base_url: string;
@@ -1379,16 +1389,16 @@ export type TypingTool =
   | "wtype"
   | "kwtype"
   | "dotool"
-	  | "ydotool"
-	  | "xdotool";
-	export type WhisperAcceleratorSetting = "auto" | "cpu" | "gpu";
-	export type WindowsMicrophonePermissionStatus = {
-	  supported: boolean;
-	  overall_access: PermissionAccess;
-	  device_access: PermissionAccess;
-	  app_access: PermissionAccess;
-	  desktop_app_access: PermissionAccess;
-	};
+  | "ydotool"
+  | "xdotool";
+export type WhisperAcceleratorSetting = "auto" | "cpu" | "gpu";
+export type WindowsMicrophonePermissionStatus = {
+  supported: boolean;
+  overall_access: PermissionAccess;
+  device_access: PermissionAccess;
+  app_access: PermissionAccess;
+  desktop_app_access: PermissionAccess;
+};
 export type UsageSummary = {
   current_streak_days: number;
   total_words: number;

@@ -87,27 +87,32 @@ pub async fn retry_history_entry_transcription(
         .ok_or_else(|| format!("History entry {} not found", id))?;
 
     let audio_path = history_manager.get_audio_file_path(&entry.file_name);
-    let mut reader = hound::WavReader::open(&audio_path)
-        .map_err(|e| format!("Failed to open recording: {}", e))?;
-    let spec = reader.spec();
-    let samples: Result<Vec<f32>, String> = match spec.sample_format {
-        hound::SampleFormat::Float => reader
-            .samples::<f32>()
-            .map(|s| s.map_err(|e| e.to_string()))
-            .collect(),
-        hound::SampleFormat::Int => {
-            let max_value = (1_i64 << (spec.bits_per_sample.saturating_sub(1) as u32)) as f32;
-            reader
-                .samples::<i32>()
-                .map(|s| s.map(|v| v as f32 / max_value).map_err(|e| e.to_string()))
-                .collect()
-        }
-    };
-    let samples = samples?;
+    let transcription_manager = Arc::clone(transcription_manager.inner());
+    let transcription = tauri::async_runtime::spawn_blocking(move || -> Result<String, String> {
+        let mut reader = hound::WavReader::open(&audio_path)
+            .map_err(|e| format!("Failed to open recording: {}", e))?;
+        let spec = reader.spec();
+        let samples: Result<Vec<f32>, String> = match spec.sample_format {
+            hound::SampleFormat::Float => reader
+                .samples::<f32>()
+                .map(|s| s.map_err(|e| e.to_string()))
+                .collect(),
+            hound::SampleFormat::Int => {
+                let max_value = (1_i64 << (spec.bits_per_sample.saturating_sub(1) as u32)) as f32;
+                reader
+                    .samples::<i32>()
+                    .map(|s| s.map(|v| v as f32 / max_value).map_err(|e| e.to_string()))
+                    .collect()
+            }
+        };
+        let samples = samples?;
 
-    let transcription = transcription_manager
-        .transcribe(samples)
-        .map_err(|e| e.to_string())?;
+        transcription_manager
+            .transcribe(samples)
+            .map_err(|e| e.to_string())
+    })
+    .await
+    .map_err(|e| format!("Retry transcription task failed: {}", e))??;
     let processed = crate::actions::process_transcription_output(
         &app,
         &transcription,

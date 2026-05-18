@@ -300,7 +300,7 @@ pub fn filter_transcription_output(
             .collect(),
         None => get_filler_words_for_language(lang)
             .iter()
-            .map(|word| Regex::new(&format!(r"(?i)\b{}\b[,.]?", regex::escape(word))).unwrap())
+            .filter_map(|word| Regex::new(&format!(r"(?i)\b{}\b[,.]?", regex::escape(word))).ok())
             .collect(),
     };
 
