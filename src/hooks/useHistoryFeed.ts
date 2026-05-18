@@ -13,6 +13,10 @@ import { useOsType } from "./useOsType";
 
 type FeedLoadMode = "replace" | "append";
 
+const hasCursor = <TCursor>(
+  cursor: TCursor | null | undefined,
+): cursor is TCursor => cursor !== null && cursor !== undefined;
+
 interface HistoryFetchParams<TCursor = HomeHistoryCursor> {
   limit?: number;
   cursor?: TCursor | null;
@@ -105,7 +109,7 @@ export const useHistoryFeed = <TData, TCursor = HomeHistoryCursor>({
       if (paginationOptions) {
         const cursor = paginationOptions.selectNextCursor(data);
         updateNextCursor(cursor);
-        setHasMore(Boolean(cursor));
+        setHasMore(hasCursor(cursor));
       } else {
         updateNextCursor(null);
         setHasMore(false);
@@ -135,23 +139,24 @@ export const useHistoryFeed = <TData, TCursor = HomeHistoryCursor>({
       return;
     }
 
-    if (!nextCursorRef.current || isLoadingMoreRef.current) {
+    if (!hasCursor(nextCursorRef.current) || isLoadingMoreRef.current) {
       return;
     }
 
+    const currentCursor = nextCursorRef.current;
     updateLoadingMore(true);
 
     try {
       const data = await fetchDataRef.current({
         limit: paginationOptions.pageSize ?? 50,
-        cursor: nextCursorRef.current,
+        cursor: currentCursor,
       });
       const nextEntries = selectEntriesRef.current(data);
       setEntries((currentEntries) => [...currentEntries, ...nextEntries]);
 
       const cursor = paginationOptions.selectNextCursor(data);
       updateNextCursor(cursor);
-      setHasMore(Boolean(cursor));
+      setHasMore(hasCursor(cursor));
       onDataLoadedRef.current?.(data, "append");
       setError(null);
     } catch (loadError) {

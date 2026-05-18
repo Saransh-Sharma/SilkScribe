@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 
@@ -52,8 +46,9 @@ export const Dropdown: React.FC<DropdownProps> = ({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const listboxId = useId();
-  const [menuPosition, setMenuPosition] =
-    useState<DropdownMenuPosition | null>(null);
+  const [menuPosition, setMenuPosition] = useState<DropdownMenuPosition | null>(
+    null,
+  );
 
   const updateMenuPosition = useCallback(() => {
     if (!triggerRef.current) return;
@@ -128,6 +123,12 @@ export const Dropdown: React.FC<DropdownProps> = ({
   }, [isOpen]);
 
   useEffect(() => {
+    if (disabled && isOpen) {
+      setIsOpen(false);
+      setMenuPosition(null);
+      return;
+    }
+
     if (!isOpen || disabled) return;
 
     updateMenuPosition();
