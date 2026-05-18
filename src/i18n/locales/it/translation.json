@@ -550,6 +550,15 @@
         "add": "Aggiungi",
         "remove": "Rimuovi {{word}}",
         "duplicate": "\"{{word}}\" esiste già"
+      },
+      "acceleration": {
+        "labels": {
+          "auto": "Auto",
+          "cpu": "CPU",
+          "cuda": "CUDA",
+          "directml": "DirectML",
+          "rocm": "ROCm"
+        }
       }
     },
     "postProcessing": {
@@ -685,7 +694,11 @@
       "keyboardImplementation": {
         "title": "Keyboard Implementation",
         "description": "Choose the keyboard shortcut backend.",
-        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults"
+        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
+        "backends": {
+          "tauri": "Tauri Global Shortcut",
+          "nativeKeys": "Native Keys"
+        }
       },
       "paths": {
         "appData": "Dati App:",

@@ -528,6 +528,15 @@
         "add": "إضافة",
         "remove": "إزالة {{word}}",
         "duplicate": "\"{{word}}\" موجود بالفعل"
+      },
+      "acceleration": {
+        "labels": {
+          "auto": "Auto",
+          "cpu": "CPU",
+          "cuda": "CUDA",
+          "directml": "DirectML",
+          "rocm": "ROCm"
+        }
       }
     },
     "postProcessing": {
@@ -663,7 +672,11 @@
       "keyboardImplementation": {
         "title": "تنفيذ لوحة المفاتيح",
         "description": ".اختر الواجهة الخلفية لاختصارات لوحة المفاتيح",
-        "bindingsReset": "كانت اختصارات لوحة المفاتيح غير متوافقة وتمت إعادة تعيينها إلى القيم الافتراضية"
+        "bindingsReset": "كانت اختصارات لوحة المفاتيح غير متوافقة وتمت إعادة تعيينها إلى القيم الافتراضية",
+        "backends": {
+          "tauri": "Tauri Global Shortcut",
+          "nativeKeys": "Native Keys"
+        }
       },
       "paths": {
         "appData": "بيانات التطبيق:",

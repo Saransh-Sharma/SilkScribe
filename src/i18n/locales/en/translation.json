@@ -513,6 +513,13 @@
           "title": "GPU device",
           "description": "Select which GPU SilkScribe should use for Whisper inference.",
           "auto": "Auto"
+        },
+        "labels": {
+          "auto": "Auto",
+          "cpu": "CPU",
+          "cuda": "CUDA",
+          "directml": "DirectML",
+          "rocm": "ROCm"
         }
       },
       "startHidden": {
@@ -745,7 +752,11 @@
       "keyboardImplementation": {
         "title": "Keyboard Implementation",
         "description": "Choose the keyboard shortcut backend.",
-        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults"
+        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
+        "backends": {
+          "tauri": "Tauri Global Shortcut",
+          "nativeKeys": "Native Keys"
+        }
       },
       "paths": {
         "appData": "App Data:",
