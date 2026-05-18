@@ -9,14 +9,6 @@ import { useSettings } from "../../hooks/useSettings";
 import { Dropdown, type DropdownOption } from "../ui/Dropdown";
 import { SettingContainer } from "../ui/SettingContainer";
 
-const ORT_LABELS: Record<OrtAcceleratorSetting, string> = {
-  auto: "Auto",
-  cpu: "CPU",
-  cuda: "CUDA",
-  directml: "DirectML",
-  rocm: "ROCm",
-};
-
 interface AccelerationSelectorProps {
   descriptionMode?: "tooltip" | "inline";
   grouped?: boolean;
@@ -43,7 +35,10 @@ function decodeWhisperValue(value: string): {
     return { accelerator: "cpu", gpuDevice: -1 };
   }
   if (value.startsWith("gpu:")) {
-    return { accelerator: "gpu", gpuDevice: Number.parseInt(value.slice(4), 10) };
+    return {
+      accelerator: "gpu",
+      gpuDevice: Number.parseInt(value.slice(4), 10),
+    };
   }
   return { accelerator: "auto", gpuDevice: -1 };
 }
@@ -62,10 +57,23 @@ export const AccelerationSelector: FC<AccelerationSelectorProps> = ({
 
     commands
       .getAvailableAccelerators()
-      .then((available) => {
+      .then((result) => {
         if (cancelled) {
           return;
         }
+
+        if (result.status === "error") {
+          throw new Error(String(result.error));
+        }
+
+        const available = result.data;
+        const ortLabels: Record<OrtAcceleratorSetting, string> = {
+          auto: t("settings.advanced.acceleration.labels.auto"),
+          cpu: t("settings.advanced.acceleration.labels.cpu"),
+          cuda: t("settings.advanced.acceleration.labels.cuda"),
+          directml: t("settings.advanced.acceleration.labels.directml"),
+          rocm: t("settings.advanced.acceleration.labels.rocm"),
+        };
 
         const nextWhisperOptions: DropdownOption[] = [
           {
@@ -86,7 +94,10 @@ export const AccelerationSelector: FC<AccelerationSelectorProps> = ({
           });
         }
 
-        nextWhisperOptions.push({ value: "cpu", label: "CPU" });
+        nextWhisperOptions.push({
+          value: "cpu",
+          label: t("settings.advanced.acceleration.labels.cpu"),
+        });
         setWhisperOptions(nextWhisperOptions);
 
         const ortAccelerators = available.ort.includes("auto")
@@ -96,7 +107,7 @@ export const AccelerationSelector: FC<AccelerationSelectorProps> = ({
         setOrtOptions(
           ortAccelerators.map((value) => ({
             value,
-            label: ORT_LABELS[value as OrtAcceleratorSetting] ?? value,
+            label: ortLabels[value as OrtAcceleratorSetting] ?? value,
           })),
         );
       })
@@ -117,8 +128,13 @@ export const AccelerationSelector: FC<AccelerationSelectorProps> = ({
 
   const handleWhisperChange = async (value: string) => {
     const { accelerator, gpuDevice } = decodeWhisperValue(value);
-    await updateSetting("whisper_accelerator", accelerator);
-    await updateSetting("whisper_gpu_device", gpuDevice);
+    if (accelerator === "gpu") {
+      await updateSetting("whisper_gpu_device", gpuDevice);
+      await updateSetting("whisper_accelerator", accelerator);
+    } else {
+      await updateSetting("whisper_accelerator", accelerator);
+      await updateSetting("whisper_gpu_device", gpuDevice);
+    }
   };
 
   return (
