@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import i18next from "i18next";
-import { I18nextProvider, initReactI18next } from "react-i18next";
-import { DisclosureSection } from "../components/ui/DisclosureSection";
-import { Dropdown } from "../components/ui/Dropdown";
-import { SettingContainer } from "../components/ui/SettingContainer";
-import "../theme.css";
+import {
+  I18nextProvider,
+  initReactI18next,
+  useTranslation,
+} from "react-i18next";
+import { DisclosureSection } from "@/components/ui/DisclosureSection";
+import { Dropdown } from "@/components/ui/Dropdown";
+import { SettingContainer } from "@/components/ui/SettingContainer";
+import "@/theme.css";
 
 const i18n = i18next.createInstance();
 
@@ -23,6 +27,36 @@ void i18n.use(initReactI18next).init({
       translation: {
         common: {
           noOptionsFound: "No options found",
+          enabled: "Enabled",
+        },
+        settings: {
+          advanced: {
+            sections: {
+              experimental: "Experimental",
+            },
+            sectionDescriptions: {
+              experimental: "Features that are still evolving and may change.",
+            },
+            experimentalToggle: {
+              label: "Experimental Features",
+              description: "Turn on features that are still being tested.",
+            },
+          },
+          debug: {
+            postProcessingToggle: {
+              label: "Post Processing",
+              description:
+                "Enable AI-powered text refinement after transcription",
+            },
+            keyboardImplementation: {
+              title: "Keyboard Implementation",
+              description: "Choose the keyboard shortcut backend.",
+              backends: {
+                tauri: "Tauri Global Shortcut",
+                nativeKeys: "Native Keys",
+              },
+            },
+          },
         },
       },
     },
@@ -30,6 +64,7 @@ void i18n.use(initReactI18next).init({
 });
 
 const FixtureApp = () => {
+  const { t } = useTranslation();
   const [selectedValue, setSelectedValue] = useState("native_keys");
 
   return (
@@ -38,30 +73,42 @@ const FixtureApp = () => {
         <div className="flex-1 overflow-hidden rounded-[24px] border border-ss-border-subtle bg-ss-bg-surface-alt/40 p-4">
           <div className="flex h-full flex-col justify-end">
             <DisclosureSection
-              title="Experimental"
-              description="Features that are still evolving and may change."
+              title={t("settings.advanced.sections.experimental")}
+              description={t(
+                "settings.advanced.sectionDescriptions.experimental",
+              )}
               defaultOpen
               tone="caution"
             >
               <SettingContainer
-                title="Experimental Features"
-                description="Turn on features that are still being tested."
+                title={t("settings.advanced.experimentalToggle.label")}
+                description={t(
+                  "settings.advanced.experimentalToggle.description",
+                )}
                 descriptionMode="inline"
                 grouped
               >
-                <div className="text-sm text-ss-text-secondary">Enabled</div>
+                <div className="text-sm text-ss-text-secondary">
+                  {t("common.enabled")}
+                </div>
               </SettingContainer>
               <SettingContainer
-                title="Post Processing"
-                description="Enable AI-powered text refinement after transcription."
+                title={t("settings.debug.postProcessingToggle.label")}
+                description={t(
+                  "settings.debug.postProcessingToggle.description",
+                )}
                 descriptionMode="inline"
                 grouped
               >
-                <div className="text-sm text-ss-text-secondary">Enabled</div>
+                <div className="text-sm text-ss-text-secondary">
+                  {t("common.enabled")}
+                </div>
               </SettingContainer>
               <SettingContainer
-                title="Keyboard Implementation"
-                description="Choose the keyboard shortcut backend."
+                title={t("settings.debug.keyboardImplementation.title")}
+                description={t(
+                  "settings.debug.keyboardImplementation.description",
+                )}
                 descriptionMode="inline"
                 grouped
               >
@@ -69,11 +116,15 @@ const FixtureApp = () => {
                   options={[
                     {
                       value: "tauri",
-                      label: "Tauri Global Shortcut",
+                      label: t(
+                        "settings.debug.keyboardImplementation.backends.tauri",
+                      ),
                     },
                     {
                       value: "native_keys",
-                      label: "Native Keys",
+                      label: t(
+                        "settings.debug.keyboardImplementation.backends.nativeKeys",
+                      ),
                     },
                   ]}
                   selectedValue={selectedValue}
