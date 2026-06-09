@@ -5,12 +5,17 @@ import { relaunch } from "@tauri-apps/plugin-process";
 import { listen } from "@tauri-apps/api/event";
 import { ProgressBar } from "../shared";
 import { useSettings } from "../../hooks/useSettings";
+import { isMacAppStoreBuild } from "../../lib/buildFlags";
 
 interface UpdateCheckerProps {
   className?: string;
 }
 
 const UpdateChecker: React.FC<UpdateCheckerProps> = ({ className = "" }) => {
+  if (isMacAppStoreBuild) {
+    return null;
+  }
+
   const { t } = useTranslation();
   // Update checking state
   const [isChecking, setIsChecking] = useState(false);

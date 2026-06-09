@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { ToggleSwitch } from "../ui/ToggleSwitch";
 import { useSettings } from "../../hooks/useSettings";
+import { isMacAppStoreBuild } from "../../lib/buildFlags";
 
 interface UpdateChecksToggleProps {
   descriptionMode?: "inline" | "tooltip";
@@ -12,6 +13,10 @@ export const UpdateChecksToggle: React.FC<UpdateChecksToggleProps> = ({
   descriptionMode = "tooltip",
   grouped = false,
 }) => {
+  if (isMacAppStoreBuild) {
+    return null;
+  }
+
   const { t } = useTranslation();
   const { getSetting, updateSetting, isUpdating } = useSettings();
   const updateChecksEnabled = getSetting("update_checks_enabled") ?? true;
