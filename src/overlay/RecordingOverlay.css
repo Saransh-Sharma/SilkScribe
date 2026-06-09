@@ -52,9 +52,6 @@ body {
     ),
     linear-gradient(180deg, #1e2d12 0%, #131e08 55%, #0d1604 100%);
   border: 1px solid rgba(254, 191, 43, 0.13);
-  box-shadow:
-    0 20px 50px rgba(10, 16, 4, 0.55),
-    0 6px 16px rgba(158, 95, 10, 0.08);
 
   opacity: 0;
   transform: scale(0.94) scaleY(0.42);
@@ -63,7 +60,6 @@ body {
     opacity 180ms ease,
     transform 180ms ease,
     width 280ms cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 220ms ease,
     border-color 220ms ease;
 }
 
@@ -74,7 +70,6 @@ body {
     opacity 200ms ease,
     transform 240ms cubic-bezier(0.34, 1.4, 0.64, 1),
     width 280ms cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 220ms ease,
     border-color 220ms ease;
 }
 
@@ -135,13 +130,8 @@ body {
   transition: box-shadow 240ms ease, opacity 240ms ease;
 }
 
-/* Recording: energy-reactive gold glow + slow rim breath. */
+/* Recording: energy-reactive border + slow rim breath. */
 .overlay-pill[data-state="recording"] {
-  box-shadow:
-    0 20px 50px rgba(10, 16, 4, 0.55),
-    0 6px 16px rgba(158, 95, 10, 0.08),
-    0 0 calc(8px + 30px * var(--overlay-energy))
-      rgba(254, 191, 43, calc(0.18 + 0.32 * var(--overlay-energy)));
   border-color: rgba(
     254,
     191,
