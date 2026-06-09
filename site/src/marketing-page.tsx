@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type KeyboardEvent } from "react";
 import { Check, Github, LockKeyhole } from "lucide-react";
 import {
   appBadges,
@@ -88,7 +88,37 @@ const WorkflowSequence = () => (
 
 const ExampleSwitcher = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const activeExample = beforeAfterExamples[activeIndex];
+
+  const activateTab = (
+    event: KeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) => {
+    let nextIndex: number;
+
+    switch (event.key) {
+      case "ArrowLeft":
+        nextIndex =
+          (index - 1 + beforeAfterExamples.length) % beforeAfterExamples.length;
+        break;
+      case "ArrowRight":
+        nextIndex = (index + 1) % beforeAfterExamples.length;
+        break;
+      case "Home":
+        nextIndex = 0;
+        break;
+      case "End":
+        nextIndex = beforeAfterExamples.length - 1;
+        break;
+      default:
+        return;
+    }
+
+    event.preventDefault();
+    setActiveIndex(nextIndex);
+    event.currentTarget.parentElement
+      ?.querySelectorAll<HTMLButtonElement>('[role="tab"]')
+      [nextIndex]?.focus();
+  };
 
   return (
     <div className="example-switcher" data-reveal>
@@ -99,24 +129,38 @@ const ExampleSwitcher = () => {
             key={example.label}
             type="button"
             role="tab"
+            id={`example-tab-${index}`}
+            aria-controls={`example-tabpanel-${index}`}
             aria-selected={index === activeIndex}
+            tabIndex={index === activeIndex ? 0 : -1}
             onClick={() => setActiveIndex(index)}
+            onKeyDown={(event) => activateTab(event, index)}
           >
             <span>0{index + 1}</span>
             {example.label}
           </button>
         ))}
       </div>
-      <div className="example-switcher__stage">
-        <div className="example-pane example-pane--spoken">
-          <span>You say</span>
-          <p>"{activeExample.spoken}"</p>
+      {beforeAfterExamples.map((example, index) => (
+        <div
+          className="example-switcher__stage"
+          key={example.label}
+          role="tabpanel"
+          id={`example-tabpanel-${index}`}
+          aria-labelledby={`example-tab-${index}`}
+          aria-hidden={index !== activeIndex}
+          hidden={index !== activeIndex}
+        >
+          <div className="example-pane example-pane--spoken">
+            <span>You say</span>
+            <p>"{example.spoken}"</p>
+          </div>
+          <div className="example-pane example-pane--written">
+            <span>SilkScribe writes</span>
+            <p>{example.written}</p>
+          </div>
         </div>
-        <div className="example-pane example-pane--written">
-          <span>SilkScribe writes</span>
-          <p>{activeExample.written}</p>
-        </div>
-      </div>
+      ))}
     </div>
   );
 };
@@ -146,7 +190,9 @@ const ProductBento = () => (
       <h3>Clean text, not raw transcript.</h3>
       <div className="output-preview">
         <span>Rough speech</span>
-        <p>yeah this looks good but lets reduce the top padding before we ship</p>
+        <p>
+          yeah this looks good but lets reduce the top padding before we ship
+        </p>
         <span>Clean text</span>
         <strong>
           Yeah, this looks good. Let's reduce the top padding before we ship.
