@@ -10,6 +10,8 @@ import {
 import {
   externalLinks,
   marketingNav,
+  primaryDownloadHref,
+  primaryDownloadLabel,
   supportNav,
   type NavLink,
 } from "./content";
@@ -129,17 +131,8 @@ export const SiteFrame = ({
           <a className="site-header__utility" href={supportHref}>
             Support
           </a>
-          <ActionButton
-            href={externalLinks.appStore}
-            caption={
-              externalLinks.appStore
-                ? undefined
-                : "Configure VITE_SITE_APP_STORE_URL when the listing is live."
-            }
-          >
-            {externalLinks.appStore
-              ? "Open on the Mac App Store"
-              : "Mac App Store soon"}
+          <ActionButton href={primaryDownloadHref}>
+            {primaryDownloadLabel}
           </ActionButton>
         </div>
       </header>
@@ -147,10 +140,10 @@ export const SiteFrame = ({
       <footer className="site-footer" data-reveal>
         <div className="site-footer__intro">
           <span className="eyebrow">SilkScribe</span>
-          <h2>Privacy-first speech-to-text for focused desktop work.</h2>
+          <h2>Private voice typing for Mac.</h2>
           <p>
-            Built for people who want dictation to disappear into the workflow
-            instead of becoming another dashboard.
+            Speak naturally. Get clean text. Stay inside the apps you already
+            use.
           </p>
         </div>
         <div className="site-footer__links">
@@ -168,7 +161,7 @@ export const SiteFrame = ({
           </a>
         </div>
         <p className="site-footer__fine-print">
-          Mac-first site for the App Store listing. iOS companion coming soon.
+          Private by default. Shortcut-driven. Open source.
         </p>
       </footer>
     </div>

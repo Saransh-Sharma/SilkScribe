@@ -1,70 +1,198 @@
+import { useState } from "react";
+import { Check, Github, LockKeyhole } from "lucide-react";
 import {
-  CheckCircle2,
-  CircleHelp,
-  LockKeyhole,
-  Mic2,
-  Sparkles,
-  Waves,
-} from "lucide-react";
-import {
+  appBadges,
+  audienceCards,
+  beforeAfterExamples,
   externalLinks,
-  featureStories,
-  heroProofPoints,
+  finalTrustStrip,
+  heroDemo,
   howItWorksSteps,
   marketingScreenshots,
+  outputCards,
+  primaryDownloadHref,
+  primaryDownloadLabel,
+  privacyCards,
+  setupCards,
 } from "./content";
 import { ActionButton, InlinePill, SectionIntro, SiteFrame } from "./shared";
 
 const heroScreenshot = marketingScreenshots.hero;
 
-const HeroVisual = () => (
-  <div className="hero-stage" data-hero>
-    <div
-      className="hero-stage__ribbon hero-stage__ribbon--one"
-      aria-hidden="true"
-    />
-    <div
-      className="hero-stage__ribbon hero-stage__ribbon--two"
-      aria-hidden="true"
-    />
-    <div
-      className="hero-stage__ribbon hero-stage__ribbon--three"
-      aria-hidden="true"
-    />
+const TrustRail = () => (
+  <div className="trust-rail" data-hero aria-label="SilkScribe benefits">
+    {[
+      "Private by default",
+      "Works in any app",
+      "Runs locally",
+      "Open source",
+    ].map((item) => (
+      <span key={item}>
+        <Check aria-hidden="true" />
+        {item}
+      </span>
+    ))}
+  </div>
+);
 
-    <figure className="product-shot product-shot--hero">
-      <img
-        src={heroScreenshot.src}
-        alt={heroScreenshot.alt}
-        width={heroScreenshot.width}
-        height={heroScreenshot.height}
-        loading="eager"
-        decoding="async"
-      />
-      <figcaption>{heroScreenshot.caption}</figcaption>
-    </figure>
+const HeroShowcase = () => (
+  <div className="hero-showcase" data-hero>
+    <div className="hero-showcase__inner">
+      <figure className="hero-showcase__product">
+        <img
+          src={heroScreenshot.src}
+          alt={heroScreenshot.alt}
+          width={heroScreenshot.width}
+          height={heroScreenshot.height}
+          loading="eager"
+          decoding="async"
+        />
+        <figcaption>{heroScreenshot.caption}</figcaption>
+      </figure>
 
-    <article className="floating-console floating-console--recorder">
-      <span className="floating-console__eyebrow">Live overlay</span>
-      <div className="floating-console__wave">
-        <span />
-        <span />
+      <article className="hero-showcase__demo">
+        <div className="demo-block demo-block--spoken">
+          <span>Spoken thought</span>
+          <p>"{heroDemo.spoken}"</p>
+        </div>
+        <div className="demo-flow" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
+        </div>
+        <div className="demo-block demo-block--written">
+          <span>SilkScribe writes</span>
+          <p>{heroDemo.written}</p>
+        </div>
+        <small>Hold shortcut → speak → release</small>
+      </article>
+    </div>
+  </div>
+);
+
+const WorkflowSequence = () => (
+  <div className="workflow-sequence">
+    {howItWorksSteps.map((step, index) => (
+      <article className="workflow-step" key={step.title} data-reveal>
+        <span className="workflow-step__number">0{index + 1}</span>
+        <div>
+          <h3>{step.title}</h3>
+          <p>{step.description}</p>
+        </div>
+      </article>
+    ))}
+  </div>
+);
+
+const ExampleSwitcher = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeExample = beforeAfterExamples[activeIndex];
+
+  return (
+    <div className="example-switcher" data-reveal>
+      <div className="example-switcher__tabs" role="tablist">
+        {beforeAfterExamples.map((example, index) => (
+          <button
+            className={index === activeIndex ? "is-active" : undefined}
+            key={example.label}
+            type="button"
+            role="tab"
+            aria-selected={index === activeIndex}
+            onClick={() => setActiveIndex(index)}
+          >
+            <span>0{index + 1}</span>
+            {example.label}
+          </button>
+        ))}
+      </div>
+      <div className="example-switcher__stage">
+        <div className="example-pane example-pane--spoken">
+          <span>You say</span>
+          <p>"{activeExample.spoken}"</p>
+        </div>
+        <div className="example-pane example-pane--written">
+          <span>SilkScribe writes</span>
+          <p>{activeExample.written}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ProductBento = () => (
+  <div className="product-bento">
+    <article className="bento-panel bento-panel--privacy" data-reveal>
+      <div className="bento-panel__icon">
+        <LockKeyhole aria-hidden="true" />
+      </div>
+      <span className="eyebrow">Privacy</span>
+      <h3>Your voice should not have to leave your Mac.</h3>
+      <p>
+        Voice contains unfinished thoughts, private notes, and work before it is
+        ready. SilkScribe is built around local-first transcription and clear
+        permissions.
+      </p>
+      <ul>
+        {privacyCards.map((card) => (
+          <li key={card.title}>{card.title}</li>
+        ))}
+      </ul>
+    </article>
+
+    <article className="bento-panel bento-panel--output" data-reveal>
+      <span className="eyebrow">Output quality</span>
+      <h3>Clean text, not raw transcript.</h3>
+      <div className="output-preview">
+        <span>Rough speech</span>
+        <p>yeah this looks good but lets reduce the top padding before we ship</p>
+        <span>Clean text</span>
+        <strong>
+          Yeah, this looks good. Let's reduce the top padding before we ship.
+        </strong>
+      </div>
+    </article>
+
+    <article className="bento-panel bento-panel--compact" data-reveal>
+      <span className="eyebrow">Vocabulary</span>
+      <h3>{outputCards[2].title}</h3>
+      <p>{outputCards[2].body}</p>
+      <div className="term-list" aria-label="Example custom terms">
+        <span>SilkScribe</span>
+        <span>Parakeet V3</span>
+        <span>Linear</span>
+      </div>
+    </article>
+
+    <article className="bento-panel bento-panel--compact" data-reveal>
+      <span className="eyebrow">Control</span>
+      <h3>History and paste modes</h3>
+      <p>
+        Recover recent dictations and choose how text is inserted into the
+        active app.
+      </p>
+      <div className="control-lines" aria-hidden="true">
         <span />
         <span />
         <span />
       </div>
-      <p>
-        Hold, speak, release. SilkScribe keeps the dictation rhythm compact.
-      </p>
     </article>
+  </div>
+);
 
-    <article className="floating-console floating-console--support">
-      <span className="floating-console__eyebrow">Support-ready</span>
-      <p>
-        Mic, permissions, and paste flow are explained the same way the app
-        explains them.
-      </p>
-    </article>
+const AudienceRows = () => (
+  <div className="audience-rows">
+    {audienceCards.map((card, index) => (
+      <article className="audience-row" key={card.title} data-reveal>
+        <span className="audience-row__index">0{index + 1}</span>
+        <div className="audience-row__copy">
+          <h3>{card.title}</h3>
+          <p>{card.body}</p>
+        </div>
+        <blockquote>"{card.example}"</blockquote>
+      </article>
+    ))}
   </div>
 );
 
@@ -72,75 +200,49 @@ export const MarketingPage = () => (
   <SiteFrame page="marketing">
     <section className="hero">
       <div className="hero__copy">
-        <InlinePill>Mac dictation designed for focused work</InlinePill>
+        <InlinePill>A quiet utility for people who write all day</InlinePill>
         <p className="hero__eyebrow" data-hero>
-          Speech-to-text for people who would rather keep typing flow than open
-          another AI workspace.
+          Private voice typing for Mac
         </p>
-        <h1 data-hero>
-          Hold a shortcut. Speak naturally. Let SilkScribe finish the sentence
-          in the app you are already using.
-        </h1>
+        <h1 data-hero>Don't open another AI app. Just speak.</h1>
         <p className="hero__body" data-hero>
-          SilkScribe gives Mac professionals a faster dictation rhythm without
-          forcing the cloud, locking away models, or hiding setup behind
-          confusing system dialogs. It feels premium, but the core stays local,
-          open, and practical.
+          Hold a shortcut, say what you mean, and SilkScribe writes polished
+          text inside the app you are already using.
+        </p>
+        <p className="hero__supporting" data-hero>
+          Mail, Notes, Slack, Cursor, Notion, Safari, Linear — wherever your
+          cursor is.
         </p>
         <div className="hero__actions" data-hero>
-          <ActionButton
-            href={externalLinks.appStore}
-            caption={
-              externalLinks.appStore
-                ? undefined
-                : "Primary App Store CTA becomes live as soon as the listing URL exists."
-            }
-          >
-            {externalLinks.appStore
-              ? "Get SilkScribe for Mac"
-              : "Mac App Store in review"}
+          <ActionButton href={primaryDownloadHref}>
+            {primaryDownloadLabel}
           </ActionButton>
           <ActionButton href={externalLinks.github} tone="secondary" external>
-            Explore the open-source project
+            View on GitHub
           </ActionButton>
         </div>
-        <div className="hero__proof" data-hero>
-          {heroProofPoints.map((item) => (
-            <div className="proof-chip" key={item.label}>
-              <strong>{item.label}</strong>
-              <span>{item.value}</span>
-            </div>
-          ))}
-        </div>
+        <TrustRail />
       </div>
-      <HeroVisual />
+      <HeroShowcase />
     </section>
 
-    <section className="trust-band" data-reveal>
-      <div className="trust-band__intro">
-        <span className="eyebrow">Why it feels different</span>
+    <section className="problem-section" data-reveal>
+      <div className="problem-section__intro">
+        <span className="eyebrow">The friction</span>
+        <h2>Typing is where good thoughts slow down.</h2>
         <p>
-          SilkScribe is opinionated about staying close to the desktop. The
-          product earns trust through setup clarity, local processing, and
-          output that lands where the work is.
+          You already know what you want to say. The slow part is turning it
+          into a clean message, note, prompt, update, or reply.
         </p>
       </div>
-      <div className="trust-band__items">
-        <div>
-          <LockKeyhole aria-hidden="true" />
-          <span>Privacy-first by default</span>
+      <div className="workflow-compare">
+        <div className="workflow-compare__row">
+          <span>Without SilkScribe</span>
+          <p>Think → type slowly → edit → copy → paste → continue</p>
         </div>
-        <div>
-          <Mic2 aria-hidden="true" />
-          <span>Mac permissions explained clearly</span>
-        </div>
-        <div>
-          <Sparkles aria-hidden="true" />
-          <span>Optional post-processing on supported Macs</span>
-        </div>
-        <div>
-          <Waves aria-hidden="true" />
-          <span>Built around a desktop shortcut habit</span>
+        <div className="workflow-compare__row workflow-compare__row--active">
+          <span>With SilkScribe</span>
+          <p>Think → speak → continue</p>
         </div>
       </div>
     </section>
@@ -148,107 +250,122 @@ export const MarketingPage = () => (
     <section className="section-block" id="how-it-works">
       <SectionIntro
         eyebrow="How it works"
-        title="The rhythm is simple on purpose."
-        body="SilkScribe removes the ceremony around dictation so the interaction becomes muscle memory instead of a new workspace to manage."
+        title="One shortcut. No new workspace."
+        body="SilkScribe works like a natural extension of your keyboard."
       />
-      <div className="steps-grid">
-        {howItWorksSteps.map((step, index) => (
-          <article className="step-card" key={step.title} data-reveal>
-            <span className="step-card__index">0{index + 1}</span>
-            <h3>{step.title}</h3>
-            <p>{step.description}</p>
-          </article>
-        ))}
-      </div>
+      <WorkflowSequence />
+      <p className="section-closing" data-reveal>
+        It feels less like opening an app and more like adding a voice key to
+        your Mac.
+      </p>
     </section>
 
-    <section className="section-block" id="features">
+    <section className="section-block">
       <SectionIntro
-        eyebrow="Feature narrative"
-        title="A product site with just enough polish, backed by real product behavior."
-        body="These sections mirror how SilkScribe already behaves in the app today: permission guidance, local engines, custom model control, and output that respects the active text field."
+        eyebrow="Before and after"
+        title="Say the messy version. Use the polished version."
+        body="SilkScribe is designed for real speech, not perfect dictation."
       />
-      <div className="feature-stack">
-        {featureStories.map((story) => (
-          <article
-            className={`feature-story feature-story--${story.accent}`}
-            key={story.title}
-            data-reveal
-          >
-            <div className="feature-story__copy">
-              <span className="eyebrow">{story.eyebrow}</span>
-              <h3>{story.title}</h3>
-              <p>{story.description}</p>
-              <ul className="feature-story__list">
-                {story.bullets.map((bullet) => (
-                  <li key={bullet}>
-                    <CheckCircle2 aria-hidden="true" />
-                    {bullet}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="feature-story__visual" aria-hidden="true">
-              <div className="feature-visual-card">
-                <span className="feature-visual-card__line" />
-                <span className="feature-visual-card__line feature-visual-card__line--strong" />
-                <span className="feature-visual-card__line" />
-              </div>
-              <div className="feature-visual-pill">{story.eyebrow}</div>
-            </div>
-          </article>
+      <ExampleSwitcher />
+    </section>
+
+    <section className="apps-section" data-reveal>
+      <div>
+        <span className="eyebrow">Works where you work</span>
+        <h2>Dictate into the apps you already use.</h2>
+      </div>
+      <div className="app-rail" aria-label="Supported app examples">
+        {appBadges.map((app) => (
+          <span key={app}>{app}</span>
         ))}
       </div>
     </section>
 
-    <section className="platform-panel" data-reveal>
-      <div className="platform-panel__copy">
-        <span className="eyebrow">Mac now, more surfaces next</span>
-        <h2>
-          Designed for Mac workflows today. An iOS companion is on the roadmap,
-          not in the critical path.
-        </h2>
-        <p>
-          The App Store-facing experience stays firmly Mac-first: shortcuts,
-          desktop permissions, and native typing flow. iOS is mentioned as a
-          future extension, not a distraction from the product that exists right
-          now.
-        </p>
+    <section className="section-block" id="privacy">
+      <SectionIntro
+        eyebrow="Private and practical"
+        title="Your voice stays close. Your output stays useful."
+        body="Local-first transcription and thoughtful cleanup belong in the same product."
+      />
+      <ProductBento />
+    </section>
+
+    <section className="section-block" id="use-cases">
+      <SectionIntro
+        eyebrow="Use cases"
+        title="For people who live in text fields."
+        body="Builders, managers, writers, and operators can use SilkScribe whenever a thought needs to become usable text."
+      />
+      <AudienceRows />
+    </section>
+
+    <section className="product-section">
+      <div className="product-section__media" data-reveal>
+        <div className="product-section__bezel">
+          <img
+            src={heroScreenshot.src}
+            alt="SilkScribe setup screen with guided Mac permissions."
+            width={heroScreenshot.width}
+            height={heroScreenshot.height}
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
       </div>
-      <div className="platform-panel__meta">
-        <div className="meta-card">
-          <span className="meta-card__label">Current surface</span>
-          <strong>macOS desktop app</strong>
-        </div>
-        <div className="meta-card meta-card--accent">
-          <span className="meta-card__label">Coming soon</span>
-          <strong>iOS companion</strong>
-        </div>
+      <div className="product-section__copy">
+        <span className="eyebrow">Mac utility</span>
+        <h2>Setup that feels clear from the first launch.</h2>
+        <p>
+          SilkScribe guides you through the permissions it needs and lets you
+          test the full speak-and-write flow before you rely on it.
+        </p>
+        <ol className="setup-list">
+          {setupCards.map((card, index) => (
+            <li key={card.title} data-reveal>
+              <span>0{index + 1}</span>
+              <div>
+                <strong>{card.title}</strong>
+                <p>{card.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
 
-    <section className="cta-band" data-reveal>
-      <div className="cta-band__copy">
-        <span className="eyebrow">Need setup clarity before listing day?</span>
-        <h2>The support page is ready for App Store review and real users.</h2>
+    <section className="open-source-section" id="open-source" data-reveal>
+      <span className="eyebrow">Open source</span>
+      <div>
+        <h2>Trust should be inspectable.</h2>
         <p>
-          Permissions help, shortcut troubleshooting, model setup notes, and
-          direct support channels all live in one place without requiring a
-          login.
+          Review the code, understand how SilkScribe handles meaningful access,
+          report issues, and help shape the roadmap.
         </p>
       </div>
-      <div className="cta-band__actions">
-        <ActionButton href="support/" tone="secondary">
-          Open support
+      <ActionButton href={externalLinks.github} tone="secondary" external>
+        <Github aria-hidden="true" />
+        View on GitHub
+      </ActionButton>
+    </section>
+
+    <section className="final-cta" data-reveal>
+      <div>
+        <span className="eyebrow">Start speaking</span>
+        <h2>Stop typing every thought.</h2>
+        <p>
+          SilkScribe gives your Mac a private voice layer, so you can speak
+          naturally and keep working.
+        </p>
+      </div>
+      <div className="final-cta__actions">
+        <ActionButton href={primaryDownloadHref}>
+          {primaryDownloadLabel}
         </ActionButton>
-        <ActionButton href={externalLinks.githubIssues} tone="ghost" external>
-          Review known issues
+        <ActionButton href={externalLinks.github} tone="secondary" external>
+          View on GitHub
         </ActionButton>
       </div>
-      <a className="cta-band__inline-link" href="support/#faq">
-        See the troubleshooting FAQ
-        <CircleHelp aria-hidden="true" />
-      </a>
+      <p className="final-cta__trust">{finalTrustStrip.join(" · ")}</p>
     </section>
   </SiteFrame>
 );
