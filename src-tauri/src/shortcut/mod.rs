@@ -693,7 +693,16 @@ pub fn change_paste_method_setting(app: AppHandle, method: String) -> Result<(),
         "none" => PasteMethod::None,
         "shift_insert" => PasteMethod::ShiftInsert,
         "ctrl_shift_v" => PasteMethod::CtrlShiftV,
-        "external_script" => PasteMethod::ExternalScript,
+        "external_script" => {
+            #[cfg(feature = "mac-app-store")]
+            {
+                return Err("External scripts are disabled in the Mac App Store build".into());
+            }
+            #[cfg(not(feature = "mac-app-store"))]
+            {
+                PasteMethod::ExternalScript
+            }
+        }
         other => {
             warn!("Invalid paste method '{}', defaulting to ctrl_v", other);
             PasteMethod::CtrlV

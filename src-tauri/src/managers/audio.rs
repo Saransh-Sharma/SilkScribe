@@ -12,6 +12,9 @@ use tauri::Manager;
 const STREAM_IDLE_TIMEOUT: Duration = Duration::from_secs(30);
 
 fn set_mute(mute: bool) {
+    #[cfg(all(target_os = "macos", feature = "mac-app-store"))]
+    let _ = mute;
+
     // Expected behavior:
     // - Windows: works on most systems using standard audio drivers.
     // - Linux: works on many systems (PipeWire, PulseAudio, ALSA),
@@ -89,7 +92,7 @@ fn set_mute(mute: bool) {
             .output();
     }
 
-    #[cfg(target_os = "macos")]
+    #[cfg(all(target_os = "macos", not(feature = "mac-app-store")))]
     {
         use std::process::Command;
         let script = format!(

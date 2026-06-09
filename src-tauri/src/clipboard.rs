@@ -4,6 +4,7 @@ use crate::settings::TypingTool;
 use crate::settings::{get_settings, AutoSubmitKey, ClipboardHandling, PasteMethod};
 use enigo::{Direction, Enigo, Key, Keyboard};
 use log::info;
+#[cfg(any(target_os = "linux", not(feature = "mac-app-store")))]
 use std::process::Command;
 use std::time::Duration;
 use tauri::{AppHandle, Manager};
@@ -17,6 +18,7 @@ enum EffectivePasteStrategy {
     None,
     Direct,
     ClipboardHotkey,
+    #[cfg(not(feature = "mac-app-store"))]
     ExternalScript,
 }
 
@@ -27,6 +29,9 @@ fn resolve_paste_strategy(
     match paste_method {
         PasteMethod::None => EffectivePasteStrategy::None,
         PasteMethod::Direct => EffectivePasteStrategy::Direct,
+        #[cfg(feature = "mac-app-store")]
+        PasteMethod::ExternalScript => EffectivePasteStrategy::None,
+        #[cfg(not(feature = "mac-app-store"))]
         PasteMethod::ExternalScript => EffectivePasteStrategy::ExternalScript,
         PasteMethod::CtrlV | PasteMethod::CtrlShiftV | PasteMethod::ShiftInsert => {
             if clipboard_handling == ClipboardHandling::DontModify {
@@ -512,6 +517,7 @@ fn send_key_combo_via_xdotool(paste_method: &PasteMethod) -> Result<(), String> 
 
 /// Pastes text by invoking an external script.
 /// The script receives the text to paste as a single argument.
+#[cfg(not(feature = "mac-app-store"))]
 fn paste_via_external_script(text: &str, script_path: &str) -> Result<(), String> {
     info!("Pasting via external script: {}", script_path);
 
@@ -659,6 +665,7 @@ pub fn paste(text: String, app_handle: AppHandle) -> Result<(), String> {
             &paste_method,
             paste_delay_ms,
         )?,
+        #[cfg(not(feature = "mac-app-store"))]
         EffectivePasteStrategy::ExternalScript => {
             let script_path = settings
                 .external_script_path
