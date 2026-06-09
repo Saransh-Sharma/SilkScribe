@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { ToggleSwitch } from "../ui/ToggleSwitch";
 import { useSettings } from "../../hooks/useSettings";
-import { isMacAppStoreBuild } from "../../lib/buildFlags";
+import { isMacAppStoreBuild } from "@/lib/buildFlags";
 
 interface UpdateChecksToggleProps {
   descriptionMode?: "inline" | "tooltip";

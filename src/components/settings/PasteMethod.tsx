@@ -6,7 +6,7 @@ import { Input } from "../ui/Input";
 import { useSettings } from "../../hooks/useSettings";
 import { useOsType } from "../../hooks/useOsType";
 import type { PasteMethod } from "@/bindings";
-import { isMacAppStoreBuild } from "../../lib/buildFlags";
+import { isMacAppStoreBuild } from "@/lib/buildFlags";
 
 interface PasteMethodProps {
   descriptionMode?: "inline" | "tooltip";
