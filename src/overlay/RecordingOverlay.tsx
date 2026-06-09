@@ -1,8 +1,6 @@
 import { listen } from "@tauri-apps/api/event";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AlertCircle, CheckCircle2, LoaderCircle } from "lucide-react";
-import { TranscriptionIcon } from "../components/icons";
 import "./RecordingOverlay.css";
 import GpuWaveformStage from "./GpuWaveformStage";
 import { WAVEFORM_BUCKET_COUNT } from "./waveformConfig";
@@ -30,6 +28,9 @@ const isOverlayState = (value: unknown): value is OverlayState =>
     value,
   );
 
+const ENERGY_ATTACK = 0.5;
+const ENERGY_RELEASE = 0.12;
+
 const RecordingOverlay: React.FC = () => {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
@@ -41,35 +42,26 @@ const RecordingOverlay: React.FC = () => {
   const waveformSinkRef = useRef<((levels: number[]) => void) | null>(null);
   const isVisibleRef = useRef(false);
   const overlayStateRef = useRef<OverlayState>("recording");
+  const pillRef = useRef<HTMLDivElement | null>(null);
+  const energyRef = useRef(0);
   const direction = getLanguageDirection(i18n.language);
 
-  const getDefaultCopy = (state: OverlayState) => {
-    switch (state) {
+  const state = overlay.state;
+  const isRecording = state === "recording";
+  const shouldRenderGpuWaveform = isVisible && isRecording;
+
+  const ariaForState = (value: OverlayState) => {
+    switch (value) {
       case "recording":
-        return {
-          title: t("overlay.listening"),
-          detail: t("overlay.listeningDetail"),
-        };
+        return t("overlay.listening");
       case "transcribing":
-        return {
-          title: t("overlay.transcribing"),
-          detail: t("overlay.transcribingDetail"),
-        };
+        return t("overlay.transcribing");
       case "processing":
-        return {
-          title: t("overlay.processing"),
-          detail: t("overlay.processingDetail"),
-        };
+        return t("overlay.processing");
       case "success":
-        return {
-          title: t("overlay.success"),
-          detail: t("overlay.successDetail"),
-        };
+        return t("overlay.success");
       case "error":
-        return {
-          title: t("overlay.error"),
-          detail: t("overlay.errorDetail"),
-        };
+        return t("overlay.failed");
     }
   };
 
@@ -83,13 +75,15 @@ const RecordingOverlay: React.FC = () => {
 
     if (payload && typeof payload === "object") {
       const candidate = payload as Partial<OverlayEventPayload>;
-      const state = isOverlayState(candidate.state) ? candidate.state : "recording";
+      const next = isOverlayState(candidate.state)
+        ? candidate.state
+        : "recording";
       return {
-        state,
+        state: next,
         title: candidate.title,
         detail: candidate.detail,
         previewText: candidate.previewText,
-        canCancel: candidate.canCancel ?? state === "recording",
+        canCancel: candidate.canCancel ?? next === "recording",
       };
     }
 
@@ -107,6 +101,10 @@ const RecordingOverlay: React.FC = () => {
           const nextOverlay = resolvePayload(event.payload);
           overlayStateRef.current = nextOverlay.state;
           isVisibleRef.current = true;
+          if (nextOverlay.state !== "recording") {
+            energyRef.current = 0;
+            pillRef.current?.style.setProperty("--overlay-energy", "0");
+          }
           setOverlay(nextOverlay);
           setIsVisible(true);
         }),
@@ -117,8 +115,11 @@ const RecordingOverlay: React.FC = () => {
         listen<number[]>("mic-level", (event) => {
           const newLevels = event.payload as number[];
           const nextLevels = levelsRef.current;
+          let sum = 0;
           for (let index = 0; index < WAVEFORM_BUCKET_COUNT; index += 1) {
-            nextLevels[index] = newLevels[index] ?? 0;
+            const value = newLevels[index] ?? 0;
+            nextLevels[index] = value;
+            sum += value;
           }
 
           if (
@@ -127,6 +128,16 @@ const RecordingOverlay: React.FC = () => {
             waveformSinkRef.current
           ) {
             waveformSinkRef.current(nextLevels);
+
+            const average = sum / WAVEFORM_BUCKET_COUNT;
+            const shaped = Math.min(1, Math.pow(average, 0.55) * 1.5);
+            const smoothing =
+              shaped > energyRef.current ? ENERGY_ATTACK : ENERGY_RELEASE;
+            energyRef.current += (shaped - energyRef.current) * smoothing;
+            pillRef.current?.style.setProperty(
+              "--overlay-energy",
+              energyRef.current.toFixed(3),
+            );
           }
         }),
       ]);
@@ -147,112 +158,42 @@ const RecordingOverlay: React.FC = () => {
     };
   }, [t]);
 
-  const overlayCopy = getDefaultCopy(overlay.state);
-  const title = overlay.title || overlayCopy.title;
-  const detail = overlay.previewText || overlay.detail || overlayCopy.detail;
-  const isRecording = overlay.state === "recording";
-  const isTranscribing = overlay.state === "transcribing";
-  const isCompactOverlay = isRecording || isTranscribing;
-  const isLegacyStatusOverlay =
-    overlay.state === "processing" ||
-    overlay.state === "success" ||
-    overlay.state === "error";
-  const shouldRenderGpuWaveform = isVisible && isRecording;
-  const isProgressState = overlay.state === "processing";
-
-  const getIcon = () => {
-    switch (overlay.state) {
-      case "success":
-        return <CheckCircle2 className="overlay-lucide" />;
-      case "error":
-        return <AlertCircle className="overlay-lucide" />;
-      case "processing":
-      default:
-        return <TranscriptionIcon />;
-    }
-  };
-
   return (
-    <div
-      dir={direction}
-      className={`recording-overlay ${isVisible ? "is-visible" : ""} state-${overlay.state}`}
-    >
-      {isCompactOverlay ? (
-        <div
-          className={`overlay-compact ${
-            isRecording
-              ? "overlay-compact-recording"
-              : "overlay-compact-transcribing"
-          }`}
-        >
-          {isRecording ? (
-            shouldRenderGpuWaveform ? (
-              <GpuWaveformStage
-                initialLevels={levelsRef.current}
-                isActive={shouldRenderGpuWaveform}
-                onReady={(pushLevels) => {
-                  waveformSinkRef.current = pushLevels;
-                  pushLevels(levelsRef.current);
-                }}
-                onTeardown={() => {
-                  waveformSinkRef.current = null;
-                }}
-              />
-            ) : (
-              <div className="gpu-waveform-host is-dormant" aria-hidden="true" />
-            )
+    <div className="overlay-stage" dir={direction}>
+      <div
+        ref={pillRef}
+        className={`overlay-pill ${isVisible ? "is-visible" : ""}`}
+        data-state={state}
+        role="status"
+      >
+        <div className="overlay-grain" aria-hidden="true" />
+
+        <div className="overlay-waveform-bay" aria-hidden="true">
+          {shouldRenderGpuWaveform ? (
+            <GpuWaveformStage
+              initialLevels={levelsRef.current}
+              isActive={shouldRenderGpuWaveform}
+              onReady={(pushLevels) => {
+                waveformSinkRef.current = pushLevels;
+                pushLevels(levelsRef.current);
+              }}
+              onTeardown={() => {
+                waveformSinkRef.current = null;
+              }}
+            />
           ) : (
-            <>
-              <div className="overlay-compact-title">{title}</div>
-              <div className="overlay-compact-progress" aria-hidden="true">
-                <div className="overlay-compact-progress-indicator" />
-              </div>
-            </>
+            <div className="gpu-waveform-host is-dormant" aria-hidden="true" />
           )}
         </div>
-      ) : null}
 
-      {isLegacyStatusOverlay ? (
-        <>
-          <div className="overlay-header">
-            <div className="overlay-left">
-              <div className="overlay-icon-shell">{getIcon()}</div>
-            </div>
+        <div className="overlay-spine" aria-hidden="true">
+          <div className="overlay-node overlay-node-echo" />
+          <div className="overlay-node overlay-node-lead" />
+          <div className="overlay-ring" />
+        </div>
 
-            <div className="overlay-copy">
-              <div className="overlay-title">{title}</div>
-            </div>
-          </div>
-
-          <div className="overlay-footer">
-            <div className="overlay-statusblock">
-              {detail && <div className="overlay-inline-detail">{detail}</div>}
-              <div className="overlay-statusline">
-                {isProgressState && (
-                  <span className="overlay-spinner" aria-hidden="true">
-                    <LoaderCircle className="overlay-lucide spinning" />
-                  </span>
-                )}
-                {overlay.state === "success" && (
-                  <span className="overlay-pill success">
-                    {t("overlay.successPill")}
-                  </span>
-                )}
-                {overlay.state === "error" && (
-                  <span className="overlay-pill error">
-                    {t("overlay.errorPill")}
-                  </span>
-                )}
-                {isProgressState && (
-                  <div className="overlay-progress-track" aria-hidden="true">
-                    <div className="overlay-progress-indicator" />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </>
-      ) : null}
+        <div className="overlay-label">{ariaForState(state)}</div>
+      </div>
     </div>
   );
 };
