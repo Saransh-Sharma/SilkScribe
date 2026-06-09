@@ -1,0 +1,169 @@
+name: Release macOS
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-macos-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release-macos:
+    name: Build signed universal macOS release
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - name: Validate required secrets
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_PRIVATE_KEY: ${{ secrets.APPLE_API_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+        run: |
+          missing=()
+          for name in APPLE_CERTIFICATE APPLE_CERTIFICATE_PASSWORD KEYCHAIN_PASSWORD APPLE_API_ISSUER APPLE_API_KEY APPLE_API_PRIVATE_KEY TAURI_SIGNING_PRIVATE_KEY; do
+            if [ -z "${!name:-}" ]; then
+              missing+=("$name")
+            fi
+          done
+
+          if [ "${#missing[@]}" -gt 0 ]; then
+            printf 'Missing required GitHub secrets: %s\n' "${missing[*]}"
+            exit 1
+          fi
+
+      - name: Validate release tag version
+        run: |
+          cat > "$RUNNER_TEMP/validate-release-version.mjs" <<'EOF'
+          import fs from "node:fs";
+
+          const tagVersion = process.env.GITHUB_REF_NAME?.replace(/^v/, "");
+          const packageVersion = JSON.parse(fs.readFileSync("package.json", "utf8")).version;
+          const tauriVersion = JSON.parse(
+            fs.readFileSync("src-tauri/tauri.conf.json", "utf8"),
+          ).version;
+          const cargoToml = fs.readFileSync("src-tauri/Cargo.toml", "utf8");
+          const cargoMatch = cargoToml.match(/^\[package\][\s\S]*?^version\s*=\s*"([^"]+)"/m);
+          const cargoVersion = cargoMatch?.[1];
+
+          const versions = {
+            tag: tagVersion,
+            "package.json": packageVersion,
+            "src-tauri/tauri.conf.json": tauriVersion,
+            "src-tauri/Cargo.toml": cargoVersion,
+          };
+
+          const mismatches = Object.entries(versions).filter(([, version]) => version !== tagVersion);
+          if (!tagVersion || mismatches.length > 0) {
+            console.error("Release tag must match all app versions.");
+            console.error(JSON.stringify(versions, null, 2));
+            process.exit(1);
+          }
+
+          console.log(`Release version ${tagVersion} validated.`);
+          EOF
+
+          bun "$RUNNER_TEMP/validate-release-version.mjs"
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Import Developer ID certificate
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          CERTIFICATE_PATH="$RUNNER_TEMP/developer-id-application.p12"
+          KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
+
+          printf '%s' "$APPLE_CERTIFICATE" | base64 -D > "$CERTIFICATE_PATH"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security default-keychain -s "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security import "$CERTIFICATE_PATH" -k "$KEYCHAIN_PATH" -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+          security find-identity -v -p codesigning "$KEYCHAIN_PATH"
+          CERT_ID=$(security find-identity -v -p codesigning "$KEYCHAIN_PATH" | sed -n 's/.*"\(Developer ID Application:.*\)".*/\1/p' | head -n 1)
+          if [ -z "$CERT_ID" ]; then
+            echo "No Developer ID Application signing identity found in imported certificate."
+            exit 1
+          fi
+
+          echo "APPLE_SIGNING_IDENTITY=$CERT_ID" >> "$GITHUB_ENV"
+
+      - name: Prepare App Store Connect API key
+        env:
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_PRIVATE_KEY: ${{ secrets.APPLE_API_PRIVATE_KEY }}
+        run: |
+          API_KEY_PATH="$RUNNER_TEMP/AuthKey_${APPLE_API_KEY}.p8"
+          printf '%s' "$APPLE_API_PRIVATE_KEY" | /usr/bin/perl -pe 's/\\n/\n/g' > "$API_KEY_PATH"
+          chmod 600 "$API_KEY_PATH"
+          echo "APPLE_API_KEY_PATH=$API_KEY_PATH" >> "$GITHUB_ENV"
+
+      - name: Build, notarize, and upload release
+        id: tauri
+        uses: tauri-apps/tauri-action@v0.6.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          owner: Saransh-Sharma
+          repo: SilkScribe
+          tagName: ${{ github.ref_name }}
+          releaseName: SilkScribe ${{ github.ref_name }}
+          releaseDraft: true
+          releaseCommitish: ${{ github.sha }}
+          generateReleaseNotes: true
+          includeUpdaterJson: true
+          updaterJsonKeepUniversal: true
+          retryAttempts: 1
+          tauriScript: bun run tauri
+          args: --target universal-apple-darwin --bundles app,dmg --ci
+
+      - name: Verify signed and stapled artifacts
+        run: |
+          APP_BUNDLE="src-tauri/target/universal-apple-darwin/release/bundle/macos/SilkScribe.app"
+          UPDATE_ARCHIVE=$(find "src-tauri/target/universal-apple-darwin/release/bundle/macos" -maxdepth 1 -type f -name "*.app.tar.gz" -print -quit)
+          DMG_PATH=$(find "src-tauri/target/universal-apple-darwin/release/bundle/dmg" -maxdepth 1 -type f -name "*.dmg" -print -quit)
+
+          test -d "$APP_BUNDLE"
+          test -f "$UPDATE_ARCHIVE"
+          test -f "$UPDATE_ARCHIVE.sig"
+          test -n "$DMG_PATH"
+
+          codesign --verify --deep --strict --verbose=2 "$APP_BUNDLE"
+          codesign -dvvv "$APP_BUNDLE"
+          xcrun stapler validate "$APP_BUNDLE"
+          xcrun stapler validate "$DMG_PATH"
+          spctl --assess --type execute --verbose=4 "$APP_BUNDLE"
+
+          echo "Release artifacts uploaded:"
+          echo '${{ steps.tauri.outputs.artifactPaths }}'
