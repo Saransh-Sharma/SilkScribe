@@ -7,6 +7,12 @@ edition = "2021"
 license = "MIT"
 default-run = "silkscribe"
 
+[features]
+default = ["desktop-private-api", "self-updater"]
+desktop-private-api = ["tauri/macos-private-api"]
+self-updater = []
+mac-app-store = []
+
 [profile.dev]
 incremental = true # Compile your binary in smaller steps.
 
@@ -32,7 +38,6 @@ serde = { version = "1", features = ["derive"] }
 once_cell = "1"
 tauri = { version = "2.11.1", features = [
   "protocol-asset",
-  "macos-private-api",
   "tray-icon",
   'image-png',
 ] }
