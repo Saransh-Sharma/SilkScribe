@@ -683,29 +683,48 @@ pub fn change_word_correction_threshold_setting(
     Ok(())
 }
 
-#[tauri::command]
-#[specta::specta]
-pub fn change_paste_method_setting(app: AppHandle, method: String) -> Result<(), String> {
-    let mut settings = settings::get_settings(&app);
-    let parsed = match method.as_str() {
+fn parse_paste_method(method: &str) -> Result<PasteMethod, String> {
+    let parsed = match method {
         "ctrl_v" => PasteMethod::CtrlV,
         "direct" => PasteMethod::Direct,
         "none" => PasteMethod::None,
         "shift_insert" => PasteMethod::ShiftInsert,
         "ctrl_shift_v" => PasteMethod::CtrlShiftV,
+        "external_script" if cfg!(target_os = "linux") => PasteMethod::ExternalScript,
         "external_script" => {
-            #[cfg(feature = "mac-app-store")]
-            {
-                return Err("External scripts are disabled in the Mac App Store build".into());
-            }
-            #[cfg(not(feature = "mac-app-store"))]
-            {
-                PasteMethod::ExternalScript
-            }
+            return Err("External scripts are only supported on Linux".into());
         }
         other => {
             warn!("Invalid paste method '{}', defaulting to ctrl_v", other);
             PasteMethod::CtrlV
+        }
+    };
+
+    Ok(parsed)
+}
+
+fn normalize_paste_method_for_platform(method: PasteMethod) -> PasteMethod {
+    if method == PasteMethod::ExternalScript && !cfg!(target_os = "linux") {
+        PasteMethod::Direct
+    } else {
+        method
+    }
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_paste_method_setting(app: AppHandle, method: String) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    let normalized_method = normalize_paste_method_for_platform(settings.paste_method);
+
+    let parsed = match parse_paste_method(&method) {
+        Ok(parsed) => parsed,
+        Err(error) => {
+            if settings.paste_method != normalized_method {
+                settings.paste_method = normalized_method;
+                settings::write_settings(&app, settings);
+            }
+            return Err(error);
         }
     };
     settings.paste_method = parsed;
@@ -1100,6 +1119,12 @@ pub fn change_show_tray_icon_setting(app: AppHandle, enabled: bool) -> Result<()
     Ok(())
 }
 
+/// Controls whether an on-demand microphone stream remains open briefly after recording.
+///
+/// When `enabled` is `true`, an idle input stream is kept open for 30 seconds so a
+/// subsequent recording can reuse the device. When `false`, the stream closes as soon
+/// as recording stops or is cancelled. This command currently has no recoverable error
+/// conditions; settings-store initialization failures panic in the settings layer.
 #[tauri::command]
 #[specta::specta]
 pub fn change_lazy_stream_close_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
@@ -1109,6 +1134,12 @@ pub fn change_lazy_stream_close_setting(app: AppHandle, enabled: bool) -> Result
     Ok(())
 }
 
+/// Sets the extra audio captured after a recording stop is requested, in milliseconds.
+///
+/// Values are clamped to the inclusive range `0..=1500`. The buffer delays recorder
+/// shutdown so trailing speech can reach the active input device before capture ends.
+/// This command currently has no recoverable error conditions; settings-store
+/// initialization failures panic in the settings layer.
 #[tauri::command]
 #[specta::specta]
 pub fn change_extra_recording_buffer_setting(app: AppHandle, ms: u64) -> Result<(), String> {
@@ -1170,4 +1201,24 @@ pub async fn get_available_accelerators(
     tauri::async_runtime::spawn_blocking(crate::managers::transcription::get_available_accelerators)
         .await
         .map_err(|e| format!("Failed to get available accelerators: {}", e))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[cfg(not(target_os = "linux"))]
+    fn unsupported_external_script_normalizes_to_direct() {
+        assert_eq!(
+            normalize_paste_method_for_platform(PasteMethod::ExternalScript),
+            PasteMethod::Direct
+        );
+    }
+
+    #[test]
+    #[cfg(not(target_os = "linux"))]
+    fn external_script_selection_is_rejected_off_linux() {
+        assert!(parse_paste_method("external_script").is_err());
+    }
 }
