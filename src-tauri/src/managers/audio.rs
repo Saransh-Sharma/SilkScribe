@@ -500,7 +500,7 @@ impl AudioRecordingManager {
         let mut state = self.state.lock().unwrap();
 
         if let RecordingState::Recording { .. } = *state {
-            *state = RecordingState::Idle;
+            *state = RecordingState::Stopping;
             drop(state);
 
             if let Some(rec) = self.recorder.lock().unwrap().as_ref() {
@@ -517,6 +517,8 @@ impl AudioRecordingManager {
                     self.stop_microphone_stream();
                 }
             }
+
+            *self.state.lock().unwrap() = RecordingState::Idle;
         }
     }
 }
