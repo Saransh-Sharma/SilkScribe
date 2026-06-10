@@ -4,4 +4,5 @@ dist-site/
 playwright-report/
 test-results/
 src-tauri/target/
+artifacts/
 .DS_Store
