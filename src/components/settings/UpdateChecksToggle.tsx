@@ -13,12 +13,13 @@ export const UpdateChecksToggle: React.FC<UpdateChecksToggleProps> = ({
   descriptionMode = "tooltip",
   grouped = false,
 }) => {
+  const { t } = useTranslation();
+  const { getSetting, updateSetting, isUpdating } = useSettings();
+
   if (isMacAppStoreBuild) {
     return null;
   }
 
-  const { t } = useTranslation();
-  const { getSetting, updateSetting, isUpdating } = useSettings();
   const updateChecksEnabled = getSetting("update_checks_enabled") ?? true;
 
   return (
