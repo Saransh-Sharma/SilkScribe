@@ -97,10 +97,12 @@ const ExampleSwitcher = () => {
 
     switch (event.key) {
       case "ArrowLeft":
+      case "ArrowUp":
         nextIndex =
           (index - 1 + beforeAfterExamples.length) % beforeAfterExamples.length;
         break;
       case "ArrowRight":
+      case "ArrowDown":
         nextIndex = (index + 1) % beforeAfterExamples.length;
         break;
       case "Home":
@@ -122,7 +124,12 @@ const ExampleSwitcher = () => {
 
   return (
     <div className="example-switcher" data-reveal>
-      <div className="example-switcher__tabs" role="tablist">
+      <div
+        className="example-switcher__tabs"
+        role="tablist"
+        aria-label="Before and after examples"
+        aria-orientation="vertical"
+      >
         {beforeAfterExamples.map((example, index) => (
           <button
             className={index === activeIndex ? "is-active" : undefined}
@@ -148,7 +155,6 @@ const ExampleSwitcher = () => {
           role="tabpanel"
           id={`example-tabpanel-${index}`}
           aria-labelledby={`example-tab-${index}`}
-          aria-hidden={index !== activeIndex}
           hidden={index !== activeIndex}
         >
           <div className="example-pane example-pane--spoken">

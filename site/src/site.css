@@ -110,6 +110,7 @@ button {
 .site-shell {
   position: relative;
   min-height: 100dvh;
+  overflow-x: hidden;
   overflow-x: clip;
 }
 
@@ -444,6 +445,7 @@ p {
 }
 
 .hero-showcase__product {
+  position: relative;
   display: flex;
   align-items: center;
   min-width: 0;
