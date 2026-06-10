@@ -49,6 +49,20 @@ This guide covers how to set up the development environment and build SilkScribe
 
 ## Setup Instructions
 
+## Interactive Build CLI
+
+After installing the prerequisites and dependencies, use the native build CLI:
+
+```bash
+bun run app:build
+bun run app:build -- doctor
+bun run app:build -- rebuild --mode adhoc --yes
+```
+
+The CLI supports signed/notarized macOS builds, Azure-signed Windows builds,
+Linux packages, dry runs, guarded cleanup, verification, and artifact
+collection. See [docs/build-cli.md](docs/build-cli.md) for the full reference.
+
 ### 1. Clone the Repository
 
 ```bash

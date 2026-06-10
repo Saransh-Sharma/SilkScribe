@@ -1,6 +1,5 @@
 # SilkScribe
 
-
 **A free, open source, and extensible speech-to-text application that works completely offline.**
 
 SilkScribe is a cross-platform desktop application that provides simple, privacy-focused speech transcription. Press a shortcut, speak, and have your words appear in any text field. This happens on your own computer without sending any information to the cloud.
@@ -45,6 +44,14 @@ The process is entirely local:
 ### Development Setup
 
 For detailed build instructions including platform-specific requirements, see [BUILD.md](BUILD.md).
+
+For interactive native builds, cleaning, signing, notarization, diagnostics, and
+artifact collection, use the [SilkScribe Build CLI](docs/build-cli.md):
+
+```bash
+bun run app:build
+bun run app:build -- doctor
+```
 
 For signed and notarized macOS direct-download releases, see [docs/direct-download-release.md](docs/direct-download-release.md).
 
@@ -186,8 +193,8 @@ Without these tools, SilkScribe falls back to enigo which may have limited compa
 
 - You can also manage global shortcuts outside of SilkScribe via Unix signals, which lets Wayland window managers or other hotkey daemons keep ownership of keybindings:
 
-  | Signal    | Action                                    | Example                |
-  | --------- | ----------------------------------------- | ---------------------- |
+  | Signal    | Action                                    | Example                     |
+  | --------- | ----------------------------------------- | --------------------------- |
   | `SIGUSR2` | Toggle transcription                      | `pkill -USR2 -n silkscribe` |
   | `SIGUSR1` | Toggle transcription with post-processing | `pkill -USR1 -n silkscribe` |
 
