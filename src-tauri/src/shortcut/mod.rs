@@ -704,11 +704,7 @@ fn parse_paste_method(method: &str) -> Result<PasteMethod, String> {
 }
 
 fn normalize_paste_method_for_platform(method: PasteMethod) -> PasteMethod {
-    if method == PasteMethod::ExternalScript && !cfg!(target_os = "linux") {
-        PasteMethod::Direct
-    } else {
-        method
-    }
+    settings::normalize_paste_method_for_platform(method)
 }
 
 #[tauri::command]

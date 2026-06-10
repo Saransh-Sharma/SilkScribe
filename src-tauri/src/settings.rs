@@ -137,6 +137,14 @@ pub enum PasteMethod {
     ExternalScript,
 }
 
+pub fn normalize_paste_method_for_platform(method: PasteMethod) -> PasteMethod {
+    if method == PasteMethod::ExternalScript && !cfg!(target_os = "linux") {
+        PasteMethod::Direct
+    } else {
+        method
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Type)]
 #[serde(rename_all = "snake_case")]
 pub enum ClipboardHandling {
@@ -695,6 +703,12 @@ fn apply_settings_migrations(
     }
 
     if ensure_post_process_defaults(settings) {
+        updated = true;
+    }
+
+    let normalized_paste_method = normalize_paste_method_for_platform(settings.paste_method);
+    if settings.paste_method != normalized_paste_method {
+        settings.paste_method = normalized_paste_method;
         updated = true;
     }
 
