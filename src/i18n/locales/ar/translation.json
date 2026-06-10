@@ -531,12 +531,29 @@
       },
       "acceleration": {
         "labels": {
-          "auto": "Auto",
+          "auto": "تلقائي",
           "cpu": "CPU",
           "cuda": "CUDA",
           "directml": "DirectML",
           "rocm": "ROCm"
+        },
+        "whisper": {
+          "title": "تسريع Whisper",
+          "description": "اختر تسريع الأجهزة لنماذج Whisper. يستخدم تلقائيًا GPU عند توفره."
+        },
+        "ort": {
+          "title": "تسريع ONNX",
+          "description": "اختر تسريع الأجهزة لنماذج ONNX. بعض الواجهات تجريبية."
+        },
+        "gpuDevice": {
+          "title": "جهاز GPU",
+          "description": "اختر GPU الذي يستخدمه SilkScribe للاستنتاج.",
+          "auto": "تلقائي"
         }
+      },
+      "lazyStreamClose": {
+        "label": "إبقاء الميكروفون مفتوحًا بين عمليات النسخ",
+        "description": "إبقاء تدفق الميكروفون مفتوحًا لفترة قصيرة بعد التوقف لتقليل التأخير بين عمليات النسخ المتتالية."
       }
     },
     "postProcessing": {
@@ -609,8 +626,13 @@
       "unsave": "إزالة من المحفوظات",
       "delete": "حذف الإدخال",
       "deleteError": ".فشل حذف الإدخال. يرجى المحاولة مرة أخرى",
-      "loadError": "تعذّر تحميل السجل الآن. يرجى المحاولة مرة أخرى.",
-      "retry": "أعد المحاولة"
+      "loadError": "تعذر تحميل السجل الآن. يرجى المحاولة مرة أخرى.",
+      "retry": "إعادة المحاولة",
+      "loadMore": "تحميل المزيد",
+      "loadingMore": "جارٍ تحميل المزيد...",
+      "retryableEmpty": "فشلت النسخ. التسجيل متاح لإعادة المحاولة.",
+      "retryTranscription": "إعادة محاولة النسخ",
+      "retryTranscriptionError": "فشلت إعادة محاولة النسخ. يرجى المحاولة مرة أخرى."
     },
     "debug": {
       "title": "تصحيح الأخطاء",
@@ -674,8 +696,8 @@
         "description": ".اختر الواجهة الخلفية لاختصارات لوحة المفاتيح",
         "bindingsReset": "كانت اختصارات لوحة المفاتيح غير متوافقة وتمت إعادة تعيينها إلى القيم الافتراضية",
         "backends": {
-          "tauri": "Tauri Global Shortcut",
-          "nativeKeys": "Native Keys"
+          "tauri": "اختصار Tauri العام",
+          "nativeKeys": "المفاتيح الأصلية"
         }
       },
       "paths": {
@@ -686,6 +708,10 @@
       "pasteDelay": {
         "title": "تأخير اللصق",
         "description": "التأخير قبل إرسال ضغطة مفتاح اللصق (بالمللي ثانية). قم بزيادتها إذا تم لصق نص خاطئ."
+      },
+      "recordingBuffer": {
+        "title": "مخزن تسجيل إضافي",
+        "description": "مواصلة التسجيل لفترة قصيرة بعد تحرير المفتاح."
       }
     },
     "about": {
@@ -771,5 +797,16 @@
   "appLanguage": {
     "title": "لغة التطبيق",
     "description": "تغيير لغة واجهة SilkScribe"
+  },
+  "overlay": {
+    "listening": "جارٍ التسجيل",
+    "transcribing": "جارٍ النسخ",
+    "processing": "جارٍ المعالجة",
+    "success": "تم",
+    "failed": "فشل"
+  },
+  "home": {
+    "loadingMore": "جارٍ تحميل المزيد...",
+    "loadMore": "تحميل المزيد"
   }
 }

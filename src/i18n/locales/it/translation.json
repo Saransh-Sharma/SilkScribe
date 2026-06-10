@@ -553,12 +553,29 @@
       },
       "acceleration": {
         "labels": {
-          "auto": "Auto",
+          "auto": "Automatico",
           "cpu": "CPU",
           "cuda": "CUDA",
           "directml": "DirectML",
           "rocm": "ROCm"
+        },
+        "whisper": {
+          "title": "Accelerazione Whisper",
+          "description": "Scegli l'accelerazione hardware per i modelli Whisper."
+        },
+        "ort": {
+          "title": "Accelerazione ONNX",
+          "description": "Scegli l'accelerazione hardware per i modelli ONNX."
+        },
+        "gpuDevice": {
+          "title": "Dispositivo GPU",
+          "description": "Seleziona la GPU per l'inferenza Whisper.",
+          "auto": "Automatico"
         }
+      },
+      "lazyStreamClose": {
+        "label": "Mantieni microfono aperto tra le trascrizioni",
+        "description": "Mantieni lo stream del microfono aperto brevemente dopo l'arresto."
       }
     },
     "postProcessing": {
@@ -631,8 +648,13 @@
       "unsave": "Rimuovi dai salvataggi",
       "delete": "Elimina elemento",
       "deleteError": "Errore nell'eliminazione dell'elemento. Per favore, prova di nuovo.",
-      "loadError": "Impossibile caricare la cronologia in questo momento. Riprova.",
-      "retry": "Riprova"
+      "loadError": "Impossibile caricare la cronologia. Riprova.",
+      "retry": "Riprova",
+      "loadMore": "Carica altro",
+      "loadingMore": "Caricamento...",
+      "retryableEmpty": "Trascrizione non riuscita. La registrazione è disponibile per un nuovo tentativo.",
+      "retryTranscription": "Riprova trascrizione",
+      "retryTranscriptionError": "Nuovo tentativo di trascrizione non riuscito. Riprova."
     },
     "debug": {
       "title": "Debug",
@@ -696,8 +718,8 @@
         "description": "Choose the keyboard shortcut backend.",
         "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
         "backends": {
-          "tauri": "Tauri Global Shortcut",
-          "nativeKeys": "Native Keys"
+          "tauri": "Scorciatoia globale Tauri",
+          "nativeKeys": "Tasti nativi"
         }
       },
       "paths": {
@@ -708,6 +730,10 @@
       "pasteDelay": {
         "title": "Ritardo incolla",
         "description": "Ritardo prima dell'invio del tasto incolla (in millisecondi). Aumentare se viene incollato il testo sbagliato."
+      },
+      "recordingBuffer": {
+        "title": "Buffer di registrazione extra",
+        "description": "Continua a registrare brevemente dopo il rilascio del tasto."
       }
     },
     "about": {
@@ -771,5 +797,16 @@
   "appLanguage": {
     "title": "Lingua Applicazione",
     "description": "Cambia la lingua dell'interfaccia di SilkScribe"
+  },
+  "overlay": {
+    "listening": "Registrazione",
+    "transcribing": "Trascrizione",
+    "processing": "Elaborazione",
+    "success": "Fatto",
+    "failed": "Non riuscito"
+  },
+  "home": {
+    "loadingMore": "Caricamento...",
+    "loadMore": "Carica altro"
   }
 }

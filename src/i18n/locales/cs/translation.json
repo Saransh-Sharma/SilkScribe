@@ -550,12 +550,29 @@
       },
       "acceleration": {
         "labels": {
-          "auto": "Auto",
+          "auto": "Automaticky",
           "cpu": "CPU",
           "cuda": "CUDA",
           "directml": "DirectML",
           "rocm": "ROCm"
+        },
+        "whisper": {
+          "title": "Akcelerace Whisper",
+          "description": "Vyberte hardwarovou akceleraci pro modely Whisper."
+        },
+        "ort": {
+          "title": "Akcelerace ONNX",
+          "description": "Vyberte hardwarovou akceleraci pro modely ONNX."
+        },
+        "gpuDevice": {
+          "title": "GPU zařízení",
+          "description": "Vyberte GPU pro inferenci Whisper.",
+          "auto": "Automaticky"
         }
+      },
+      "lazyStreamClose": {
+        "label": "Ponechat mikrofon otevřený mezi přepisy",
+        "description": "Ponechat stream mikrofonu krátce otevřený po zastavení nahrávání."
       }
     },
     "postProcessing": {
@@ -628,8 +645,13 @@
       "unsave": "Odebrat z uložených",
       "delete": "Smazat záznam",
       "deleteError": "Nepodařilo se smazat záznam. Zkuste to prosím znovu.",
-      "loadError": "Unable to load history right now. Please try again.",
-      "retry": "Retry"
+      "loadError": "Historii se nyní nepodařilo načíst. Zkuste to znovu.",
+      "retry": "Opakovat",
+      "loadMore": "Načíst další",
+      "loadingMore": "Načítání dalších...",
+      "retryableEmpty": "Přepis se nezdařil. Nahrávka je k dispozici pro opakování.",
+      "retryTranscription": "Opakovat přepis",
+      "retryTranscriptionError": "Opakování přepisu se nezdařilo. Zkuste to znovu."
     },
     "debug": {
       "title": "Ladění",
@@ -693,8 +715,8 @@
         "description": "Choose the keyboard shortcut backend.",
         "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
         "backends": {
-          "tauri": "Tauri Global Shortcut",
-          "nativeKeys": "Native Keys"
+          "tauri": "Globální zkratka Tauri",
+          "nativeKeys": "Nativní klávesy"
         }
       },
       "paths": {
@@ -705,6 +727,10 @@
       "pasteDelay": {
         "title": "Zpoždění vložení",
         "description": "Zpoždění před odesláním klávesy pro vložení (v milisekundách). Zvyšte, pokud se vkládá špatný text."
+      },
+      "recordingBuffer": {
+        "title": "Extra buffer nahrávání",
+        "description": "Pokračovat v nahrávání krátce po uvolnění klávesy."
       }
     },
     "about": {
@@ -768,5 +794,16 @@
   "appLanguage": {
     "title": "Jazyk aplikace",
     "description": "Změňte jazyk rozhraní SilkScribe"
+  },
+  "overlay": {
+    "listening": "Nahrávání",
+    "transcribing": "Přepis",
+    "processing": "Zpracování",
+    "success": "Hotovo",
+    "failed": "Selhalo"
+  },
+  "home": {
+    "loadingMore": "Načítání dalších...",
+    "loadMore": "Načíst další"
   }
 }

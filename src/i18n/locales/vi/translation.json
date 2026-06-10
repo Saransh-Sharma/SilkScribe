@@ -550,12 +550,29 @@
       },
       "acceleration": {
         "labels": {
-          "auto": "Auto",
+          "auto": "Tự động",
           "cpu": "CPU",
           "cuda": "CUDA",
           "directml": "DirectML",
           "rocm": "ROCm"
+        },
+        "whisper": {
+          "title": "Tăng tốc Whisper",
+          "description": "Chọn tăng tốc phần cứng cho mô hình Whisper."
+        },
+        "ort": {
+          "title": "Tăng tốc ONNX",
+          "description": "Chọn tăng tốc phần cứng cho mô hình ONNX."
+        },
+        "gpuDevice": {
+          "title": "Thiết bị GPU",
+          "description": "Chọn GPU cho suy luận Whisper.",
+          "auto": "Tự động"
         }
+      },
+      "lazyStreamClose": {
+        "label": "Giữ mic mở giữa các lần phiên âm",
+        "description": "Giữ luồng mic mở ngắn sau khi dừng ghi để giảm độ trễ."
       }
     },
     "postProcessing": {
@@ -628,8 +645,13 @@
       "unsave": "Xóa khỏi đã lưu",
       "delete": "Xóa mục",
       "deleteError": "Không thể xóa mục. Vui lòng thử lại.",
-      "loadError": "Unable to load history right now. Please try again.",
-      "retry": "Retry"
+      "loadError": "Không thể tải lịch sử lúc này. Vui lòng thử lại.",
+      "retry": "Thử lại",
+      "loadMore": "Tải thêm",
+      "loadingMore": "Đang tải...",
+      "retryableEmpty": "Phiên âm thất bại. Bản ghi có thể thử lại.",
+      "retryTranscription": "Thử lại phiên âm",
+      "retryTranscriptionError": "Thử lại phiên âm thất bại. Vui lòng thử lại."
     },
     "debug": {
       "title": "Gỡ lỗi",
@@ -693,8 +715,8 @@
         "description": "Choose the keyboard shortcut backend.",
         "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
         "backends": {
-          "tauri": "Tauri Global Shortcut",
-          "nativeKeys": "Native Keys"
+          "tauri": "Phím tắt toàn cục Tauri",
+          "nativeKeys": "Phím gốc"
         }
       },
       "paths": {
@@ -705,6 +727,10 @@
       "pasteDelay": {
         "title": "Độ trễ dán",
         "description": "Độ trễ trước khi gửi phím dán (tính bằng mili giây). Tăng nếu văn bản sai đang được dán."
+      },
+      "recordingBuffer": {
+        "title": "Bộ đệm ghi thêm",
+        "description": "Tiếp tục ghi một chút sau khi thả phím."
       }
     },
     "about": {
@@ -768,5 +794,16 @@
   "appLanguage": {
     "title": "Ngôn ngữ ứng dụng",
     "description": "Thay đổi ngôn ngữ giao diện của SilkScribe"
+  },
+  "overlay": {
+    "listening": "Đang ghi",
+    "transcribing": "Đang phiên âm",
+    "processing": "Đang xử lý",
+    "success": "Xong",
+    "failed": "Thất bại"
+  },
+  "home": {
+    "loadingMore": "Đang tải...",
+    "loadMore": "Tải thêm"
   }
 }

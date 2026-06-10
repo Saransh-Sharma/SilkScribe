@@ -553,12 +553,29 @@
       },
       "acceleration": {
         "labels": {
-          "auto": "Auto",
+          "auto": "Otomatik",
           "cpu": "CPU",
           "cuda": "CUDA",
           "directml": "DirectML",
           "rocm": "ROCm"
+        },
+        "whisper": {
+          "title": "Whisper hızlandırma",
+          "description": "Whisper modelleri için donanım hızlandırması seçin."
+        },
+        "ort": {
+          "title": "ONNX hızlandırma",
+          "description": "ONNX modelleri için donanım hızlandırması seçin."
+        },
+        "gpuDevice": {
+          "title": "GPU cihazı",
+          "description": "Whisper çıkarımı için GPU seçin.",
+          "auto": "Otomatik"
         }
+      },
+      "lazyStreamClose": {
+        "label": "Transkripsiyonlar arasında mikrofonu açık tut",
+        "description": "Kayıt durduktan sonra gecikmeyi azaltmak için mikrofon akışını kısa süre açık tut."
       }
     },
     "postProcessing": {
@@ -631,8 +648,13 @@
       "unsave": "Kaydedilenlerden kaldır",
       "delete": "Kaydı sil",
       "deleteError": "Kayıt silinemedi. Lütfen tekrar deneyin.",
-      "loadError": "Geçmiş şu anda yüklenemiyor. Lütfen tekrar dene.",
-      "retry": "Tekrar dene"
+      "loadError": "Geçmiş şu anda yüklenemedi. Lütfen tekrar deneyin.",
+      "retry": "Yeniden dene",
+      "loadMore": "Daha fazla yükle",
+      "loadingMore": "Yükleniyor...",
+      "retryableEmpty": "Transkripsiyon başarısız. Kayıt yeniden denenebilir.",
+      "retryTranscription": "Transkripsiyonu yeniden dene",
+      "retryTranscriptionError": "Transkripsiyon yeniden denemesi başarısız. Lütfen tekrar deneyin."
     },
     "debug": {
       "title": "Hata Ayıklama",
@@ -696,8 +718,8 @@
         "description": "Choose the keyboard shortcut backend.",
         "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
         "backends": {
-          "tauri": "Tauri Global Shortcut",
-          "nativeKeys": "Native Keys"
+          "tauri": "Tauri genel kısayol",
+          "nativeKeys": "Yerel tuşlar"
         }
       },
       "paths": {
@@ -708,6 +730,10 @@
       "pasteDelay": {
         "title": "Yapıştırma gecikmesi",
         "description": "Yapıştırma tuşu göndermeden önce gecikme (milisaniye cinsinden). Yanlış metin yapıştırılıyorsa artırın."
+      },
+      "recordingBuffer": {
+        "title": "Ek kayıt tamponu",
+        "description": "Tuşu bıraktıktan sonra kısa süre daha kaydet."
       }
     },
     "about": {
@@ -771,5 +797,16 @@
   "appLanguage": {
     "title": "Uygulama Dili",
     "description": "SilkScribe arayüzünün dilini değiştirin"
+  },
+  "overlay": {
+    "listening": "Kayıt",
+    "transcribing": "Transkripsiyon",
+    "processing": "İşleniyor",
+    "success": "Tamam",
+    "failed": "Başarısız"
+  },
+  "home": {
+    "loadingMore": "Yükleniyor...",
+    "loadMore": "Daha fazla yükle"
   }
 }

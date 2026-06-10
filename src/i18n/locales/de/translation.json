@@ -553,12 +553,29 @@
       },
       "acceleration": {
         "labels": {
-          "auto": "Auto",
+          "auto": "Automatisch",
           "cpu": "CPU",
           "cuda": "CUDA",
           "directml": "DirectML",
           "rocm": "ROCm"
+        },
+        "whisper": {
+          "title": "Whisper-Beschleunigung",
+          "description": "Hardwarebeschleunigung für Whisper-Modelle wählen."
+        },
+        "ort": {
+          "title": "ONNX-Beschleunigung",
+          "description": "Hardwarebesleunigung für ONNX-Modelle wählen."
+        },
+        "gpuDevice": {
+          "title": "GPU-Gerät",
+          "description": "GPU für Whisper-Inferenz auswählen.",
+          "auto": "Automatisch"
         }
+      },
+      "lazyStreamClose": {
+        "label": "Mikrofon zwischen Transkriptionen offen halten",
+        "description": "Mikrofonstream kurz nach dem Stoppen offen halten, um Latenz zu reduzieren."
       }
     },
     "postProcessing": {
@@ -631,8 +648,13 @@
       "unsave": "Aus Gespeicherten entfernen",
       "delete": "Eintrag löschen",
       "deleteError": "Eintrag konnte nicht gelöscht werden. Bitte versuche es erneut.",
-      "loadError": "Der Verlauf kann gerade nicht geladen werden. Bitte versuche es erneut.",
-      "retry": "Erneut versuchen"
+      "loadError": "Verlauf konnte gerade nicht geladen werden. Bitte erneut versuchen.",
+      "retry": "Erneut versuchen",
+      "loadMore": "Mehr laden",
+      "loadingMore": "Weitere werden geladen...",
+      "retryableEmpty": "Transkription fehlgeschlagen. Die Aufnahme kann erneut versucht werden.",
+      "retryTranscription": "Transkription wiederholen",
+      "retryTranscriptionError": "Wiederholung der Transkription fehlgeschlagen. Bitte erneut versuchen."
     },
     "debug": {
       "title": "Debug",
@@ -696,8 +718,8 @@
         "description": "Choose the keyboard shortcut backend.",
         "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
         "backends": {
-          "tauri": "Tauri Global Shortcut",
-          "nativeKeys": "Native Keys"
+          "tauri": "Tauri-Globalshortcut",
+          "nativeKeys": "Native Tasten"
         }
       },
       "paths": {
@@ -708,6 +730,10 @@
       "pasteDelay": {
         "title": "Einfügeverzögerung",
         "description": "Verzögerung vor dem Senden des Einfüge-Tastendrucks (in Millisekunden). Erhöhen Sie den Wert, wenn falscher Text eingefügt wird."
+      },
+      "recordingBuffer": {
+        "title": "Extra-Aufnahmepuffer",
+        "description": "Kurz nach Loslassen der Taste weiter aufnehmen."
       }
     },
     "about": {
@@ -771,5 +797,16 @@
   "appLanguage": {
     "title": "Anwendungssprache",
     "description": "Sprache der SilkScribe-Oberfläche ändern"
+  },
+  "overlay": {
+    "listening": "Aufnahme",
+    "transcribing": "Transkribieren",
+    "processing": "Verarbeitung",
+    "success": "Fertig",
+    "failed": "Fehlgeschlagen"
+  },
+  "home": {
+    "loadingMore": "Weitere werden geladen...",
+    "loadMore": "Mehr laden"
   }
 }

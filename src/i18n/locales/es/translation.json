@@ -550,12 +550,29 @@
       },
       "acceleration": {
         "labels": {
-          "auto": "Auto",
+          "auto": "Automático",
           "cpu": "CPU",
           "cuda": "CUDA",
           "directml": "DirectML",
           "rocm": "ROCm"
+        },
+        "whisper": {
+          "title": "Aceleración Whisper",
+          "description": "Elige aceleración de hardware para modelos Whisper."
+        },
+        "ort": {
+          "title": "Aceleración ONNX",
+          "description": "Elige aceleración de hardware para modelos ONNX."
+        },
+        "gpuDevice": {
+          "title": "Dispositivo GPU",
+          "description": "Selecciona qué GPU usa SilkScribe para inferencia.",
+          "auto": "Automático"
         }
+      },
+      "lazyStreamClose": {
+        "label": "Mantener micrófono abierto entre transcripciones",
+        "description": "Mantener el flujo del micrófono abierto brevemente tras detener la grabación."
       }
     },
     "postProcessing": {
@@ -628,8 +645,13 @@
       "unsave": "Eliminar de guardados",
       "delete": "Eliminar entrada",
       "deleteError": "Error al eliminar la entrada. Por favor, intenta de nuevo.",
-      "loadError": "Unable to load history right now. Please try again.",
-      "retry": "Retry"
+      "loadError": "No se pudo cargar el historial ahora. Inténtalo de nuevo.",
+      "retry": "Reintentar",
+      "loadMore": "Cargar más",
+      "loadingMore": "Cargando más...",
+      "retryableEmpty": "La transcripción falló. La grabación está disponible para reintentar.",
+      "retryTranscription": "Reintentar transcripción",
+      "retryTranscriptionError": "Error al reintentar la transcripción. Inténtalo de nuevo."
     },
     "debug": {
       "title": "Depuración",
@@ -693,8 +715,8 @@
         "description": "Choose the keyboard shortcut backend.",
         "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
         "backends": {
-          "tauri": "Tauri Global Shortcut",
-          "nativeKeys": "Native Keys"
+          "tauri": "Atajo global de Tauri",
+          "nativeKeys": "Teclas nativas"
         }
       },
       "paths": {
@@ -705,6 +727,10 @@
       "pasteDelay": {
         "title": "Retraso de pegado",
         "description": "Retraso antes de enviar la pulsación de tecla de pegar (en milisegundos). Aumente si se está pegando texto incorrecto."
+      },
+      "recordingBuffer": {
+        "title": "Búfer de grabación extra",
+        "description": "Seguir grabando un momento tras soltar la tecla."
       }
     },
     "about": {
@@ -768,5 +794,16 @@
   "appLanguage": {
     "title": "Idioma de la aplicación",
     "description": "Cambia el idioma de la interfaz de SilkScribe"
+  },
+  "overlay": {
+    "listening": "Grabando",
+    "transcribing": "Transcribiendo",
+    "processing": "Procesando",
+    "success": "Listo",
+    "failed": "Fallido"
+  },
+  "home": {
+    "loadingMore": "Cargando más...",
+    "loadMore": "Cargar más"
   }
 }
