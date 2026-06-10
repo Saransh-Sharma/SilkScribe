@@ -4,11 +4,12 @@ use flate2::read::GzDecoder;
 use futures_util::StreamExt;
 use log::{debug, info, warn};
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 use specta::Type;
 use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::fs::File;
-use std::io::Write;
+use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
@@ -23,6 +24,9 @@ pub enum EngineType {
     Moonshine,
     MoonshineStreaming,
     SenseVoice,
+    GigaAM,
+    Canary,
+    Cohere,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
@@ -32,6 +36,7 @@ pub struct ModelInfo {
     pub description: String,
     pub filename: String,
     pub url: Option<String>,
+    pub sha256: Option<String>,
     pub size_mb: u64,
     pub is_downloaded: bool,
     pub is_downloading: bool,
@@ -43,6 +48,7 @@ pub struct ModelInfo {
     pub supports_translation: bool, // Whether the model supports translating to English
     pub is_recommended: bool,       // Whether this is the recommended model for new users
     pub supported_languages: Vec<String>, // Languages this model can transcribe
+    pub supports_language_selection: bool, // Whether the user can explicitly pick a language
     pub is_custom: bool,            // Whether this is a user-provided custom model
 }
 
@@ -64,6 +70,7 @@ struct DownloadBrokerResponse {
     authorization_token: String,
     expires_at_unix: u64,
     model_id: String,
+    sha256: Option<String>,
 }
 
 pub struct ModelManager {
@@ -105,9 +112,7 @@ impl Drop for DownloadStateGuard<'_> {
 impl ModelManager {
     pub fn new(app_handle: &AppHandle) -> Result<Self> {
         // Create models directory in app data
-        let models_dir = app_handle
-            .path()
-            .app_data_dir()
+        let models_dir = crate::portable::app_data_dir(app_handle)
             .map_err(|e| anyhow::anyhow!("Failed to get app data dir: {}", e))?
             .join("models");
 
@@ -142,6 +147,7 @@ impl ModelManager {
                 description: "Fast and fairly accurate.".to_string(),
                 filename: "ggml-small.bin".to_string(),
                 url: Some(format!("{}?model_id=small", DEFAULT_MODEL_BROKER_URL)),
+                sha256: None,
                 size_mb: 487,
                 is_downloaded: false,
                 is_downloading: false,
@@ -153,6 +159,7 @@ impl ModelManager {
                 supports_translation: true,
                 is_recommended: false,
                 supported_languages: whisper_languages.clone(),
+                supports_language_selection: true,
                 is_custom: false,
             },
         );
@@ -166,6 +173,7 @@ impl ModelManager {
                 description: "Good accuracy, medium speed".to_string(),
                 filename: "whisper-medium-q4_1.bin".to_string(),
                 url: Some(format!("{}?model_id=medium", DEFAULT_MODEL_BROKER_URL)),
+                sha256: None,
                 size_mb: 492, // Approximate size
                 is_downloaded: false,
                 is_downloading: false,
@@ -177,6 +185,7 @@ impl ModelManager {
                 supports_translation: true,
                 is_recommended: false,
                 supported_languages: whisper_languages.clone(),
+                supports_language_selection: true,
                 is_custom: false,
             },
         );
@@ -189,6 +198,7 @@ impl ModelManager {
                 description: "Balanced accuracy and speed.".to_string(),
                 filename: "ggml-large-v3-turbo.bin".to_string(),
                 url: Some(format!("{}?model_id=turbo", DEFAULT_MODEL_BROKER_URL)),
+                sha256: None,
                 size_mb: 1600, // Approximate size
                 is_downloaded: false,
                 is_downloading: false,
@@ -200,6 +210,7 @@ impl ModelManager {
                 supports_translation: false, // Turbo doesn't support translation
                 is_recommended: false,
                 supported_languages: whisper_languages.clone(),
+                supports_language_selection: true,
                 is_custom: false,
             },
         );
@@ -212,6 +223,7 @@ impl ModelManager {
                 description: "Good accuracy, but slow.".to_string(),
                 filename: "ggml-large-v3-q5_0.bin".to_string(),
                 url: Some(format!("{}?model_id=large", DEFAULT_MODEL_BROKER_URL)),
+                sha256: None,
                 size_mb: 1100, // Approximate size
                 is_downloaded: false,
                 is_downloading: false,
@@ -223,6 +235,7 @@ impl ModelManager {
                 supports_translation: true,
                 is_recommended: false,
                 supported_languages: whisper_languages.clone(),
+                supports_language_selection: true,
                 is_custom: false,
             },
         );
@@ -236,6 +249,7 @@ impl ModelManager {
                     .to_string(),
                 filename: "breeze-asr-q5_k.bin".to_string(),
                 url: Some(format!("{}?model_id=breeze-asr", DEFAULT_MODEL_BROKER_URL)),
+                sha256: None,
                 size_mb: 1080,
                 is_downloaded: false,
                 is_downloading: false,
@@ -247,6 +261,7 @@ impl ModelManager {
                 supports_translation: false,
                 is_recommended: false,
                 supported_languages: whisper_languages,
+                supports_language_selection: true,
                 is_custom: false,
             },
         );
@@ -263,6 +278,7 @@ impl ModelManager {
                     "{}?model_id=parakeet-tdt-0.6b-v2",
                     DEFAULT_MODEL_BROKER_URL
                 )),
+                sha256: None,
                 size_mb: 473, // Approximate size for int8 quantized model
                 is_downloaded: false,
                 is_downloading: false,
@@ -274,6 +290,7 @@ impl ModelManager {
                 supports_translation: false,
                 is_recommended: false,
                 supported_languages: vec!["en".to_string()],
+                supports_language_selection: false,
                 is_custom: false,
             },
         );
@@ -299,6 +316,7 @@ impl ModelManager {
                     "{}?model_id=parakeet-tdt-0.6b-v3",
                     DEFAULT_MODEL_BROKER_URL
                 )),
+                sha256: None,
                 size_mb: 478, // Approximate size for int8 quantized model
                 is_downloaded: false,
                 is_downloading: false,
@@ -310,6 +328,7 @@ impl ModelManager {
                 supports_translation: false,
                 is_recommended: true,
                 supported_languages: parakeet_v3_languages,
+                supports_language_selection: false,
                 is_custom: false,
             },
         );
@@ -325,6 +344,7 @@ impl ModelManager {
                     "{}?model_id=moonshine-base",
                     DEFAULT_MODEL_BROKER_URL
                 )),
+                sha256: None,
                 size_mb: 58,
                 is_downloaded: false,
                 is_downloading: false,
@@ -336,6 +356,7 @@ impl ModelManager {
                 supports_translation: false,
                 is_recommended: false,
                 supported_languages: vec!["en".to_string()],
+                supports_language_selection: false,
                 is_custom: false,
             },
         );
@@ -351,6 +372,7 @@ impl ModelManager {
                     "{}?model_id=moonshine-tiny-streaming-en",
                     DEFAULT_MODEL_BROKER_URL
                 )),
+                sha256: None,
                 size_mb: 31,
                 is_downloaded: false,
                 is_downloading: false,
@@ -362,6 +384,7 @@ impl ModelManager {
                 supports_translation: false,
                 is_recommended: false,
                 supported_languages: vec!["en".to_string()],
+                supports_language_selection: false,
                 is_custom: false,
             },
         );
@@ -377,6 +400,7 @@ impl ModelManager {
                     "{}?model_id=moonshine-small-streaming-en",
                     DEFAULT_MODEL_BROKER_URL
                 )),
+                sha256: None,
                 size_mb: 100,
                 is_downloaded: false,
                 is_downloading: false,
@@ -388,6 +412,7 @@ impl ModelManager {
                 supports_translation: false,
                 is_recommended: false,
                 supported_languages: vec!["en".to_string()],
+                supports_language_selection: false,
                 is_custom: false,
             },
         );
@@ -403,6 +428,7 @@ impl ModelManager {
                     "{}?model_id=moonshine-medium-streaming-en",
                     DEFAULT_MODEL_BROKER_URL
                 )),
+                sha256: None,
                 size_mb: 192,
                 is_downloaded: false,
                 is_downloading: false,
@@ -414,6 +440,7 @@ impl ModelManager {
                 supports_translation: false,
                 is_recommended: false,
                 supported_languages: vec!["en".to_string()],
+                supports_language_selection: false,
                 is_custom: false,
             },
         );
@@ -437,6 +464,7 @@ impl ModelManager {
                     "{}?model_id=sense-voice-int8",
                     DEFAULT_MODEL_BROKER_URL
                 )),
+                sha256: None,
                 size_mb: 160,
                 is_downloaded: false,
                 is_downloading: false,
@@ -448,6 +476,7 @@ impl ModelManager {
                 supports_translation: false,
                 is_recommended: false,
                 supported_languages: sense_voice_languages,
+                supports_language_selection: true,
                 is_custom: false,
             },
         );
@@ -707,7 +736,8 @@ impl ModelManager {
                     name: display_name,
                     description: "Not officially supported".to_string(),
                     filename,
-                    url: None, // Custom models have no download URL
+                    url: None,    // Custom models have no download URL
+                    sha256: None, // Custom models skip verification
                     size_mb,
                     is_downloaded: true, // Already present on disk
                     is_downloading: false,
@@ -719,12 +749,61 @@ impl ModelManager {
                     supports_translation: false,
                     is_recommended: false,
                     supported_languages: vec![],
+                    supports_language_selection: true,
                     is_custom: true,
                 },
             );
         }
 
         Ok(())
+    }
+
+    fn verify_sha256(path: &Path, expected_sha256: Option<&str>, model_id: &str) -> Result<()> {
+        let Some(expected) = expected_sha256 else {
+            return Ok(());
+        };
+
+        match Self::compute_sha256(path) {
+            Ok(actual) if actual == expected => {
+                info!("SHA256 verified for model {}", model_id);
+                Ok(())
+            }
+            Ok(actual) => {
+                warn!(
+                    "SHA256 mismatch for model {}: expected {}, got {}",
+                    model_id, expected, actual
+                );
+                let _ = fs::remove_file(path);
+                Err(anyhow::anyhow!(
+                    "Download verification failed for model {}: file is corrupt. Please retry.",
+                    model_id
+                ))
+            }
+            Err(e) => {
+                let _ = fs::remove_file(path);
+                Err(anyhow::anyhow!(
+                    "Failed to verify download for model {}: {}. Please retry.",
+                    model_id,
+                    e
+                ))
+            }
+        }
+    }
+
+    fn compute_sha256(path: &Path) -> Result<String> {
+        let mut file = File::open(path)?;
+        let mut hasher = Sha256::new();
+        let mut buffer = [0u8; 65536];
+
+        loop {
+            let n = file.read(&mut buffer)?;
+            if n == 0 {
+                break;
+            }
+            hasher.update(&buffer[..n]);
+        }
+
+        Ok(format!("{:x}", hasher.finalize()))
     }
 
     fn model_broker_url(&self) -> String {
@@ -1099,6 +1178,19 @@ impl ModelManager {
             }
         }
 
+        let expected_sha256 = broker_response
+            .sha256
+            .as_deref()
+            .or(model_info.sha256.as_deref());
+        let verify_path = partial_path.clone();
+        let verify_model_id = model_id.to_string();
+        let verify_expected = expected_sha256.map(ToOwned::to_owned);
+        tokio::task::spawn_blocking(move || {
+            Self::verify_sha256(&verify_path, verify_expected.as_deref(), &verify_model_id)
+        })
+        .await
+        .map_err(|e| anyhow::anyhow!("Download verification task failed: {}", e))??;
+
         // Handle directory-based models (extract tar.gz) vs file-based models
         if model_info.is_directory {
             // Track that this model is being extracted
@@ -1400,6 +1492,7 @@ mod tests {
                 description: "Test".to_string(),
                 filename: "ggml-small.bin".to_string(),
                 url: Some("https://example.com".to_string()),
+                sha256: None,
                 size_mb: 100,
                 is_downloaded: false,
                 is_downloading: false,
@@ -1411,6 +1504,7 @@ mod tests {
                 supports_translation: true,
                 is_recommended: false,
                 supported_languages: vec!["en".to_string()],
+                supports_language_selection: true,
                 is_custom: false,
             },
         );

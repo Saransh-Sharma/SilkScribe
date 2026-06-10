@@ -547,6 +547,32 @@
         "add": "添加",
         "remove": "删除 {{word}}",
         "duplicate": "\"{{word}}\" 已存在"
+      },
+      "acceleration": {
+        "labels": {
+          "auto": "自动",
+          "cpu": "CPU",
+          "cuda": "CUDA",
+          "directml": "DirectML",
+          "rocm": "ROCm"
+        },
+        "whisper": {
+          "title": "Whisper 加速",
+          "description": "为 Whisper 模型选择硬件加速。"
+        },
+        "ort": {
+          "title": "ONNX 加速",
+          "description": "为 ONNX 模型选择硬件加速。"
+        },
+        "gpuDevice": {
+          "title": "GPU 设备",
+          "description": "选择 Whisper 推理使用的 GPU。",
+          "auto": "自动"
+        }
+      },
+      "lazyStreamClose": {
+        "label": "转写之间保持麦克风开启",
+        "description": "停止录音后短暂保持麦克风流开启，以减少连续转写的延迟。"
       }
     },
     "postProcessing": {
@@ -619,8 +645,13 @@
       "unsave": "从已保存中移除",
       "delete": "删除条目",
       "deleteError": "删除条目失败，请重试。",
-      "loadError": "Unable to load history right now. Please try again.",
-      "retry": "Retry"
+      "loadError": "暂时无法加载历史记录。请再试一次。",
+      "retry": "重试",
+      "loadMore": "加载更多",
+      "loadingMore": "加载中...",
+      "retryableEmpty": "转写失败。录音可重试。",
+      "retryTranscription": "重试转写",
+      "retryTranscriptionError": "重试转写失败。请再试一次。"
     },
     "debug": {
       "title": "调试",
@@ -682,7 +713,11 @@
       "keyboardImplementation": {
         "title": "Keyboard Implementation",
         "description": "Choose the keyboard shortcut backend.",
-        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults"
+        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
+        "backends": {
+          "tauri": "Tauri 全局快捷键",
+          "nativeKeys": "原生按键"
+        }
       },
       "paths": {
         "appData": "应用数据:",
@@ -692,6 +727,10 @@
       "pasteDelay": {
         "title": "粘贴延迟",
         "description": "发送粘贴按键前的延迟（毫秒）。如果粘贴了错误的文本，请增加此值。"
+      },
+      "recordingBuffer": {
+        "title": "额外录音缓冲",
+        "description": "松开按键后继续短暂录音。"
       }
     },
     "about": {
@@ -755,5 +794,16 @@
   "appLanguage": {
     "title": "应用语言",
     "description": "更改 SilkScribe 界面的语言"
+  },
+  "overlay": {
+    "listening": "录音中",
+    "transcribing": "转写中",
+    "processing": "处理中",
+    "success": "完成",
+    "failed": "失败"
+  },
+  "home": {
+    "loadingMore": "加载中...",
+    "loadMore": "加载更多"
   }
 }

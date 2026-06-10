@@ -550,6 +550,32 @@
         "add": "Dodaj",
         "remove": "Usuń {{word}}",
         "duplicate": "\"{{word}}\" już istnieje"
+      },
+      "acceleration": {
+        "labels": {
+          "auto": "Automatycznie",
+          "cpu": "CPU",
+          "cuda": "CUDA",
+          "directml": "DirectML",
+          "rocm": "ROCm"
+        },
+        "whisper": {
+          "title": "Przyspieszenie Whisper",
+          "description": "Wybierz przyspieszenie sprzętowe dla modeli Whisper."
+        },
+        "ort": {
+          "title": "Przyspieszenie ONNX",
+          "description": "Wybierz przyspieszenie sprzętowe dla modeli ONNX."
+        },
+        "gpuDevice": {
+          "title": "Urządzenie GPU",
+          "description": "Wybierz GPU do inferencji Whisper.",
+          "auto": "Automatycznie"
+        }
+      },
+      "lazyStreamClose": {
+        "label": "Utrzymuj mikrofon między transkrypcjami",
+        "description": "Krótko utrzymuj strumień mikrofonu po zatrzymaniu nagrywania."
       }
     },
     "postProcessing": {
@@ -623,7 +649,12 @@
       "delete": "Usuń wpis",
       "deleteError": "Nie udało się usunąć wpisu. Spróbuj ponownie.",
       "loadError": "Nie można teraz załadować historii. Spróbuj ponownie.",
-      "retry": "Spróbuj ponownie"
+      "retry": "Ponów",
+      "loadMore": "Załaduj więcej",
+      "loadingMore": "Ładowanie...",
+      "retryableEmpty": "Transkrypcja nie powiodła się. Nagranie jest dostępne do ponowienia.",
+      "retryTranscription": "Ponów transkrypcję",
+      "retryTranscriptionError": "Nie udało się ponowić transkrypcji. Spróbuj ponownie."
     },
     "debug": {
       "title": "Debugowanie",
@@ -685,7 +716,11 @@
       "keyboardImplementation": {
         "title": "Keyboard Implementation",
         "description": "Choose the keyboard shortcut backend.",
-        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults"
+        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
+        "backends": {
+          "tauri": "Globalny skrót Tauri",
+          "nativeKeys": "Natywne klawisze"
+        }
       },
       "paths": {
         "appData": "Dane aplikacji:",
@@ -695,6 +730,10 @@
       "pasteDelay": {
         "title": "Opóźnienie wklejania",
         "description": "Opóźnienie przed wysłaniem klawisza wklejania (w milisekundach). Zwiększ, jeśli wklejany jest nieprawidłowy tekst."
+      },
+      "recordingBuffer": {
+        "title": "Dodatkowy bufor nagrywania",
+        "description": "Kontynuuj nagrywanie chwilę po zwolnieniu klawisza."
       }
     },
     "about": {
@@ -758,5 +797,16 @@
   "appLanguage": {
     "title": "Język aplikacji",
     "description": "Zmień język interfejsu SilkScribe"
+  },
+  "overlay": {
+    "listening": "Nagrywanie",
+    "transcribing": "Transkrypcja",
+    "processing": "Przetwarzanie",
+    "success": "Gotowe",
+    "failed": "Niepowodzenie"
+  },
+  "home": {
+    "loadingMore": "Ładowanie...",
+    "loadMore": "Załaduj więcej"
   }
 }

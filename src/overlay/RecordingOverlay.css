@@ -11,177 +11,338 @@ body {
   overflow: hidden;
 }
 
-.recording-overlay {
-  /* Scoped token overrides for dark container */
-  --ss-text-primary: #fff3e6;
-  --ss-text-tertiary: rgba(255, 243, 230, 0.5);
-  --ss-bg-elevated: rgba(25, 40, 14, 0.55);
-  --ss-bg-surface-alt: rgba(34, 49, 20, 0.45);
-  --ss-border-subtle: rgba(254, 191, 43, 0.06);
-  --ss-border-default: rgba(254, 191, 43, 0.12);
-  --ss-shadow-lift:
-    0 20px 50px rgba(10, 16, 4, 0.55),
-    0 6px 16px rgba(158, 95, 10, 0.08);
-
-  width: 300px;
-  min-height: 84px;
+/* ----------------------------------------------------------------------------
+   Stage: the fixed, transparent native window. It only centers the pill so the
+   visible surface can morph its width freely without touching the Rust window.
+---------------------------------------------------------------------------- */
+.overlay-stage {
+  width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 10px 12px;
-  border-radius: 18px;
-  color: #fff3e6;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ----------------------------------------------------------------------------
+   Pill: one tactile object for every state. Width morphs per state; the spine,
+   waveform and label live inside it permanently and transform between states.
+---------------------------------------------------------------------------- */
+.overlay-pill {
+  /* Scoped, theme-independent palette (overlay is always the dark instrument). */
+  --gold: #febf2b;
+  --berry: #b1205f;
+  --crimson: #c11317;
+  --sand: #9e5f0a;
+  --parchment: #fff3e6;
+  --overlay-energy: 0;
+
+  position: relative;
+  box-sizing: border-box;
+  width: 212px;
+  height: 60px;
+  border-radius: 30px;
+  overflow: hidden;
+  color: var(--parchment);
   background:
     radial-gradient(
-      ellipse 90% 120% at 50% 85%,
-      rgba(158, 95, 10, 0.06) 0%,
-      transparent 60%
+      ellipse 90% 130% at 50% 88%,
+      rgba(158, 95, 10, 0.08) 0%,
+      transparent 62%
     ),
-    linear-gradient(
-      180deg,
-      #1e2d12 0%,
-      #131e08 55%,
-      #0d1604 100%
-    );
+    linear-gradient(180deg, #1e2d12 0%, #131e08 55%, #0d1604 100%);
   border: 1px solid rgba(254, 191, 43, 0.13);
-  box-shadow: var(--ss-shadow-lift);
+
   opacity: 0;
-  transform: scale(0.96) translateY(6px);
+  transform: scale(0.94) scaleY(0.42);
+  transform-origin: center;
   transition:
-    opacity var(--ss-duration-overlay-in) ease,
-    transform var(--ss-duration-overlay-in) ease;
-  box-sizing: border-box;
+    opacity 180ms ease,
+    transform 180ms ease,
+    width 280ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 220ms ease;
 }
 
-.recording-overlay.is-visible {
+.overlay-pill.is-visible {
   opacity: 1;
-  transform: scale(1) translateY(0);
+  transform: scale(1) scaleY(1);
+  transition:
+    opacity 200ms ease,
+    transform 240ms cubic-bezier(0.34, 1.4, 0.64, 1),
+    width 280ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 220ms ease;
 }
 
-.recording-overlay.state-recording {
-  gap: 0;
-  padding: 8px 10px;
+/* Per-state silhouette --------------------------------------------------- */
+.overlay-pill[data-state="recording"] {
+  width: 288px;
 }
 
-.recording-overlay.state-transcribing {
-  gap: 0;
-  padding: 10px 12px;
+.overlay-pill[data-state="transcribing"],
+.overlay-pill[data-state="processing"] {
+  width: 212px;
 }
 
-.overlay-header {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 8px;
-  align-items: center;
+.overlay-pill[data-state="success"] {
+  width: 116px;
 }
 
-.state-recording .overlay-header {
-  min-height: 20px;
+.overlay-pill[data-state="error"] {
+  width: 200px;
+  background:
+    radial-gradient(
+      ellipse 90% 130% at 50% 88%,
+      rgba(193, 19, 23, 0.1) 0%,
+      transparent 62%
+    ),
+    linear-gradient(180deg, #251410 0%, #18100a 55%, #120a06 100%);
+  border-color: rgba(193, 19, 23, 0.28);
 }
 
-.overlay-left,
-.overlay-right {
-  display: flex;
-  align-items: center;
-}
-
-.overlay-copy {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  min-height: 24px;
-}
-
-.overlay-title {
-  font-size: 12px;
-  line-height: 1.2;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-}
-
-.overlay-icon-shell {
-  width: 24px;
-  height: 24px;
-  border-radius: 12px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ss-brand-highlight);
-  background: color-mix(in srgb, var(--ss-brand-highlight) 14%, transparent);
-}
-
-.overlay-icon-shell svg {
-  width: 14px;
-  height: 14px;
-}
-
-.overlay-lucide {
-  width: 14px;
-  height: 14px;
-}
-
-.overlay-compact {
-  display: flex;
-  width: 100%;
-  min-height: 100%;
-}
-
-.overlay-compact-recording {
-  align-items: center;
-}
-
-.overlay-compact-recording .gpu-waveform-host {
-  height: 50px;
-}
-
-.overlay-compact-transcribing {
-  flex-direction: column;
-  justify-content: center;
-  gap: 10px;
-  padding: 2px 4px;
-}
-
-.overlay-compact-title {
-  text-align: center;
-  font-size: 12px;
-  line-height: 1.2;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  color: var(--ss-text-primary);
-}
-
-.overlay-compact-progress {
-  position: relative;
-  width: 100%;
-  height: 6px;
-  border-radius: 999px;
-  overflow: hidden;
-  background: color-mix(in srgb, var(--ss-bg-elevated) 92%, transparent);
-}
-
-.overlay-compact-progress-indicator {
+/* Glass edge: top light catch + inner bottom shade for physical depth. */
+.overlay-pill::before {
+  content: "";
   position: absolute;
   inset: 0;
-  width: 42%;
+  z-index: 4;
   border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 243, 230, 0.1) 0%,
+    transparent 24%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 243, 230, 0.13),
+    inset 0 -12px 22px rgba(0, 0, 0, 0.34);
+}
+
+/* Rim: resting hairline; breathes while recording, recolors per state. */
+.overlay-pill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(254, 191, 43, 0.1);
+  opacity: 0.6;
+  transition: box-shadow 240ms ease, opacity 240ms ease;
+}
+
+/* Recording: energy-reactive border + slow rim breath. */
+.overlay-pill[data-state="recording"] {
+  border-color: rgba(
+    254,
+    191,
+    43,
+    calc(0.13 + 0.32 * var(--overlay-energy))
+  );
+}
+
+.overlay-pill[data-state="recording"]::after {
+  box-shadow: inset 0 0 0 1px rgba(254, 191, 43, 0.2);
+  animation: overlay-breath 2.4s ease-in-out infinite;
+}
+
+.overlay-pill[data-state="transcribing"]::after,
+.overlay-pill[data-state="processing"]::after {
+  box-shadow: inset 0 0 0 1px rgba(177, 32, 95, 0.26);
+}
+
+.overlay-pill[data-state="error"]::after {
+  box-shadow: inset 0 0 0 1px rgba(193, 19, 23, 0.34);
+}
+
+/* Grain: faint tactile noise, only surfaced during processing. */
+.overlay-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 250ms ease;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.5'/></svg>");
+  background-size: 120px 120px;
+  mix-blend-mode: overlay;
+}
+
+.overlay-pill[data-state="processing"] .overlay-grain {
+  opacity: 0.04;
+}
+
+/* ----------------------------------------------------------------------------
+   Waveform bay: full interior during recording, fades to nothing afterwards.
+---------------------------------------------------------------------------- */
+.overlay-waveform-bay {
+  position: absolute;
+  inset: 8px 14px;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.overlay-pill[data-state="recording"] .overlay-waveform-bay {
+  opacity: 1;
+}
+
+/* ----------------------------------------------------------------------------
+   Spine: the persistent luminous line. Hidden under the waveform while
+   recording; the through-line for every other state.
+---------------------------------------------------------------------------- */
+.overlay-spine {
+  position: absolute;
+  top: 50%;
+  inset-inline: 26px;
+  height: 2px;
+  z-index: 2;
+  border-radius: 999px;
+  transform: translateY(-50%);
   background: linear-gradient(
     90deg,
-    var(--ss-brand-highlight) 0%,
-    var(--ss-brand-secondary) 100%
+    transparent 0%,
+    rgba(254, 191, 43, 0.32) 18%,
+    rgba(254, 191, 43, 0.5) 50%,
+    rgba(177, 32, 95, 0.42) 82%,
+    transparent 100%
   );
-  animation: overlay-progress 1.1s ease-in-out infinite;
+  opacity: 0;
+  transition: opacity 240ms ease, transform 240ms ease;
 }
 
-.overlay-footer {
-  min-height: 32px;
+.overlay-pill[data-state="transcribing"] .overlay-spine,
+.overlay-pill[data-state="processing"] .overlay-spine {
+  opacity: 1;
+}
+
+.overlay-pill[data-state="error"] .overlay-spine {
+  opacity: 0.5;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(193, 19, 23, 0.34) 30%,
+    rgba(193, 19, 23, 0.5) 50%,
+    rgba(193, 19, 23, 0.34) 70%,
+    transparent 100%
+  );
+}
+
+.overlay-pill[data-state="success"] .overlay-spine {
+  opacity: 0;
+}
+
+/* Node: the luminous point that reads, resolves, or faults. */
+.overlay-node {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle at 50% 50%,
+    var(--gold) 0%,
+    var(--berry) 100%
+  );
+  box-shadow: 0 0 10px rgba(254, 191, 43, 0.55);
+  opacity: 0;
+}
+
+.overlay-pill[data-state="transcribing"] .overlay-node-lead,
+.overlay-pill[data-state="processing"] .overlay-node-lead {
+  opacity: 1;
+  animation: overlay-node-travel 1.6s ease-in-out infinite;
+}
+
+.overlay-pill[data-state="processing"] .overlay-node-lead {
+  animation-duration: 2s;
+}
+
+.overlay-pill[data-state="processing"] .overlay-node-echo {
+  opacity: 0.4;
+  animation: overlay-node-travel 2s ease-in-out infinite;
+  animation-delay: -0.22s;
+  filter: blur(1px);
+}
+
+/* Success: lead node snaps to center, flares gold, then fades. */
+.overlay-pill[data-state="success"] .overlay-node-lead {
+  opacity: 1;
+  background: radial-gradient(circle at 50% 50%, #fff3e6 0%, var(--gold) 70%);
+  animation: overlay-success-flare 600ms ease-out forwards;
+}
+
+/* Error: lead node becomes a static crimson fault mark to the start side. */
+.overlay-pill[data-state="error"] .overlay-node-lead {
+  opacity: 1;
+  left: 30px;
+  width: 3px;
+  height: 16px;
+  border-radius: 2px;
+  background: var(--crimson);
+  box-shadow: 0 0 8px rgba(193, 19, 23, 0.55);
+}
+
+/* Ring: success release pulse and the frozen error ping. */
+.overlay-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.overlay-pill[data-state="success"] .overlay-ring {
+  border: 1.5px solid rgba(254, 191, 43, 0.7);
+  animation: overlay-ring-release 600ms ease-out forwards;
+}
+
+.overlay-pill[data-state="error"] .overlay-ring {
+  left: 30px;
+  width: 20px;
+  height: 20px;
+  opacity: 0.6;
+  border: 1.5px solid rgba(193, 19, 23, 0.5);
+}
+
+/* ----------------------------------------------------------------------------
+   Label: the only visible word lives here ("Failed"). Other states keep the
+   text present but invisible so screen readers still announce the change.
+---------------------------------------------------------------------------- */
+.overlay-label {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
   display: flex;
-  align-items: stretch;
+  align-items: center;
+  justify-content: center;
+  padding-inline-start: 26px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--parchment);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
 }
 
-.state-recording .overlay-footer {
-  min-height: 44px;
+.overlay-pill[data-state="error"] .overlay-label {
+  opacity: 0.92;
 }
 
+/* ----------------------------------------------------------------------------
+   Waveform internals (PixiJS canvas + CSS fallback). Preserved from the
+   original renderer; the bay simply scales/positions them now.
+---------------------------------------------------------------------------- */
 .gpu-waveform-host {
   position: relative;
   width: 100%;
@@ -196,13 +357,13 @@ body {
       rgba(254, 191, 43, 0.04) 0%,
       transparent 65%
     ),
-    linear-gradient(
-      180deg,
-      #192810 0%,
-      #0b1204 100%
-    );
+    linear-gradient(180deg, #192810 0%, #0b1204 100%);
   border: 1px solid rgba(158, 95, 10, 0.1);
   box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.gpu-waveform-host.is-dormant {
+  opacity: 0.85;
 }
 
 .gpu-waveform-mount {
@@ -225,14 +386,14 @@ body {
   background:
     radial-gradient(
       circle at 50% 50%,
-      color-mix(in srgb, var(--ss-brand-secondary) 16%, transparent) 0%,
+      color-mix(in srgb, var(--berry) 16%, transparent) 0%,
       transparent 48%
     ),
     linear-gradient(
       90deg,
-      color-mix(in srgb, var(--ss-state-info) 28%, transparent) 0%,
-      color-mix(in srgb, var(--ss-brand-highlight) 34%, transparent) 42%,
-      color-mix(in srgb, var(--ss-brand-secondary) 30%, transparent) 100%
+      color-mix(in srgb, var(--sand) 28%, transparent) 0%,
+      color-mix(in srgb, var(--gold) 34%, transparent) 42%,
+      color-mix(in srgb, var(--berry) 30%, transparent) 100%
     );
 }
 
@@ -242,9 +403,9 @@ body {
   border-radius: 999px;
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--ss-state-info) 42%, transparent) 0%,
-    color-mix(in srgb, var(--ss-brand-highlight) 58%, transparent) 45%,
-    color-mix(in srgb, var(--ss-brand-secondary) 56%, transparent) 100%
+    color-mix(in srgb, var(--sand) 42%, transparent) 0%,
+    color-mix(in srgb, var(--gold) 58%, transparent) 45%,
+    color-mix(in srgb, var(--berry) 56%, transparent) 100%
   );
   filter: blur(10px);
   opacity: 0.34;
@@ -283,148 +444,122 @@ body {
 .gpu-waveform-fallback-bar.tone-ochre {
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--ss-brand-highlight) 68%, white 32%) 0%,
-    var(--ss-state-info) 100%
+    color-mix(in srgb, var(--gold) 68%, white 32%) 0%,
+    var(--sand) 100%
   );
 }
 
 .gpu-waveform-fallback-bar.tone-gold {
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--ss-brand-highlight) 88%, white 12%) 0%,
-    color-mix(in srgb, var(--ss-brand-highlight) 66%, var(--ss-state-info) 34%)
-      100%
+    color-mix(in srgb, var(--gold) 88%, white 12%) 0%,
+    color-mix(in srgb, var(--gold) 66%, var(--sand) 34%) 100%
   );
 }
 
 .gpu-waveform-fallback-bar.tone-pink {
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--ss-brand-secondary) 68%, white 32%) 0%,
-    color-mix(in srgb, var(--ss-brand-secondary) 76%, var(--ss-brand-highlight) 24%)
-      100%
+    color-mix(in srgb, var(--berry) 68%, white 32%) 0%,
+    color-mix(in srgb, var(--berry) 76%, var(--gold) 24%) 100%
   );
 }
 
-.overlay-statusblock {
-  display: flex;
-  width: 100%;
-  min-width: 0;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.overlay-inline-detail {
-  overflow: hidden;
-  color: var(--ss-text-tertiary);
-  font-size: 11px;
-  line-height: 1.25;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.overlay-statusline {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-}
-
-.overlay-spinner {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ss-brand-secondary);
-}
-
-.spinning {
-  animation: overlay-spin 1s linear infinite;
-}
-
-.overlay-progress-track {
-  position: relative;
-  flex: 1;
-  height: 5px;
-  border-radius: 999px;
-  overflow: hidden;
-  background: color-mix(in srgb, var(--ss-bg-elevated) 94%, transparent);
-}
-
-.overlay-progress-indicator {
-  position: absolute;
-  inset: 0;
-  width: 45%;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    var(--ss-brand-highlight) 0%,
-    var(--ss-brand-secondary) 100%
-  );
-  animation: overlay-progress 1.1s ease-in-out infinite;
-}
-
-.overlay-pill {
-  display: inline-flex;
-  align-items: center;
-  min-height: 20px;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  padding: 0 8px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.overlay-pill.success {
-  color: var(--ss-brand-highlight);
-  border-color: color-mix(in srgb, var(--ss-brand-highlight) 28%, transparent);
-  background: color-mix(in srgb, var(--ss-brand-highlight) 14%, transparent);
-}
-
-.overlay-pill.error {
-  color: var(--ss-state-danger);
-  border-color: color-mix(in srgb, var(--ss-state-danger) 28%, transparent);
-  background: color-mix(in srgb, var(--ss-state-danger) 12%, transparent);
-}
-
-.state-success .overlay-icon-shell {
-  color: var(--ss-brand-highlight);
-}
-
-.state-error .overlay-icon-shell {
-  color: var(--ss-state-danger);
-  background: color-mix(in srgb, var(--ss-state-danger) 12%, transparent);
-}
-
-@keyframes overlay-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes overlay-progress {
-  0% {
-    transform: translateX(-100%);
+/* ----------------------------------------------------------------------------
+   Keyframes
+---------------------------------------------------------------------------- */
+@keyframes overlay-breath {
+  0%,
+  100% {
+    opacity: 0.45;
   }
   50% {
-    transform: translateX(75%);
-  }
-  100% {
-    transform: translateX(180%);
+    opacity: 0.85;
   }
 }
 
+@keyframes overlay-node-travel {
+  0% {
+    transform: translate(calc(-50% - 62px), -50%) scale(0.85);
+  }
+  50% {
+    transform: translate(calc(-50% + 62px), -50%) scale(1.05);
+  }
+  100% {
+    transform: translate(calc(-50% - 62px), -50%) scale(0.85);
+  }
+}
+
+@keyframes overlay-success-flare {
+  0% {
+    transform: translate(-50%, -50%) scale(0.6);
+    opacity: 1;
+  }
+  35% {
+    transform: translate(-50%, -50%) scale(2.6);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.6);
+    opacity: 0;
+  }
+}
+
+@keyframes overlay-ring-release {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3.2);
+    opacity: 0;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Reduced motion: keep state legible, drop the travel/flare/breath motion.
+---------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  .recording-overlay {
+  .overlay-pill,
+  .overlay-pill.is-visible {
     transition:
       opacity 120ms ease,
-      transform 120ms ease;
+      width 120ms ease;
+    transform: none;
   }
 
-  .spinning,
-  .overlay-progress-indicator,
-  .overlay-compact-progress-indicator {
-    animation: none;
+  .overlay-pill::after,
+  .overlay-node-lead,
+  .overlay-node-echo {
+    animation: none !important;
   }
+
+  .overlay-pill[data-state="transcribing"] .overlay-node-lead,
+  .overlay-pill[data-state="processing"] .overlay-node-lead {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+
+  .overlay-pill[data-state="processing"] .overlay-node-echo {
+    opacity: 0;
+  }
+
+  .overlay-pill[data-state="success"] .overlay-node-lead {
+    animation: none !important;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.6);
+    transition: opacity 200ms ease;
+  }
+
+  .overlay-pill[data-state="success"] .overlay-ring {
+    animation: none !important;
+    opacity: 0;
+  }
+}
+
+/* RTL: mirror the start-anchored error fault and its ping. */
+[dir="rtl"] .overlay-pill[data-state="error"] .overlay-node-lead,
+[dir="rtl"] .overlay-pill[data-state="error"] .overlay-ring {
+  left: auto;
+  right: 30px;
 }

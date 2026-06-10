@@ -558,6 +558,90 @@ export const commands = {
       else return { status: "error", error: e as any };
     }
   },
+  async changeLazyStreamCloseSetting(
+    enabled: boolean,
+  ): Promise<Result<null, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("change_lazy_stream_close_setting", {
+          enabled,
+        }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async changeExtraRecordingBufferSetting(
+    ms: number,
+  ): Promise<Result<null, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("change_extra_recording_buffer_setting", {
+          ms,
+        }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async changeWhisperAcceleratorSetting(
+    accelerator: WhisperAcceleratorSetting,
+  ): Promise<Result<null, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("change_whisper_accelerator_setting", {
+          accelerator,
+        }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async changeOrtAcceleratorSetting(
+    accelerator: OrtAcceleratorSetting,
+  ): Promise<Result<null, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("change_ort_accelerator_setting", {
+          accelerator,
+        }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async changeWhisperGpuDevice(device: number): Promise<Result<null, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("change_whisper_gpu_device", { device }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async getAvailableAccelerators(): Promise<
+    Result<AvailableAccelerators, string>
+  > {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("get_available_accelerators"),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
   /**
    * Start key recording mode
    */
@@ -598,6 +682,9 @@ export const commands = {
   },
   async cancelOperation(): Promise<void> {
     await TAURI_INVOKE("cancel_operation");
+  },
+  async isPortable(): Promise<boolean> {
+    return await TAURI_INVOKE("is_portable");
   },
   async getAppDirPath(): Promise<Result<string, string>> {
     try {
@@ -918,6 +1005,20 @@ export const commands = {
   async checkCustomSounds(): Promise<CustomSounds> {
     return await TAURI_INVOKE("check_custom_sounds");
   },
+  async getWindowsMicrophonePermissionStatus(): Promise<WindowsMicrophonePermissionStatus> {
+    return await TAURI_INVOKE("get_windows_microphone_permission_status");
+  },
+  async openMicrophonePrivacySettings(): Promise<Result<null, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("open_microphone_privacy_settings"),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
   async setClamshellMicrophone(
     deviceName: string,
   ): Promise<Result<null, string>> {
@@ -984,9 +1085,15 @@ export const commands = {
       else return { status: "error", error: e as any };
     }
   },
-  async getHistoryEntries(): Promise<Result<HistoryEntry[], string>> {
+  async getHistoryEntries(
+    cursor: number | null,
+    limit: number | null,
+  ): Promise<Result<PaginatedHistory, string>> {
     try {
-      return { status: "ok", data: await TAURI_INVOKE("get_history_entries") };
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("get_history_entries", { cursor, limit }),
+      };
     } catch (e) {
       if (e instanceof Error) throw e;
       else return { status: "error", error: e as any };
@@ -1019,6 +1126,19 @@ export const commands = {
       return {
         status: "ok",
         data: await TAURI_INVOKE("delete_history_entry", { id }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async retryHistoryEntryTranscription(
+    id: number,
+  ): Promise<Result<null, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("retry_history_entry_transcription", { id }),
       };
     } catch (e) {
       if (e instanceof Error) throw e;
@@ -1113,13 +1233,24 @@ export type AppSettings = {
   append_trailing_space?: boolean;
   app_language?: string;
   experimental_enabled?: boolean;
+  lazy_stream_close?: boolean;
   keyboard_implementation?: KeyboardImplementation;
   show_tray_icon?: boolean;
   paste_delay_ms?: number;
   typing_tool?: TypingTool;
   external_script_path: string | null;
+  custom_filler_words?: string[] | null;
+  whisper_accelerator?: WhisperAcceleratorSetting;
+  ort_accelerator?: OrtAcceleratorSetting;
+  whisper_gpu_device?: number;
+  extra_recording_buffer_ms?: number;
 };
 export type AudioDevice = { index: string; name: string; is_default: boolean };
+export type AvailableAccelerators = {
+  whisper: string[];
+  ort: string[];
+  gpu_devices: GpuDeviceOption[];
+};
 export type AutoSubmitKey = "enter" | "ctrl_enter" | "cmd_enter";
 export type BindingResponse = {
   success: boolean;
@@ -1133,7 +1264,15 @@ export type EngineType =
   | "Parakeet"
   | "Moonshine"
   | "MoonshineStreaming"
-  | "SenseVoice";
+  | "SenseVoice"
+  | "GigaAM"
+  | "Canary"
+  | "Cohere";
+export type GpuDeviceOption = {
+  id: number;
+  name: string;
+  total_vram_mb: number;
+};
 export type HistoryEntry = {
   id: number;
   file_name: string;
@@ -1143,7 +1282,13 @@ export type HistoryEntry = {
   transcription_text: string;
   post_processed_text: string | null;
   post_process_prompt: string | null;
+  post_process_requested: boolean;
 };
+export type HistoryUpdatePayload =
+  | { action: "added"; entry: HistoryEntry }
+  | { action: "updated"; entry: HistoryEntry }
+  | { action: "deleted"; id: number }
+  | { action: "toggled"; id: number };
 export type HomeDashboardPageData = {
   summary: UsageSummary;
   entries: HistoryEntry[];
@@ -1170,6 +1315,7 @@ export type ModelInfo = {
   description: string;
   filename: string;
   url: string | null;
+  sha256: string | null;
   size_mb: number;
   is_downloaded: boolean;
   is_downloading: boolean;
@@ -1181,6 +1327,7 @@ export type ModelInfo = {
   supports_translation: boolean;
   is_recommended: boolean;
   supported_languages: string[];
+  supports_language_selection: boolean;
   is_custom: boolean;
 };
 export type ModelLoadStatus = {
@@ -1196,7 +1343,17 @@ export type ModelUnloadTimeout =
   | "min_15"
   | "hour_1"
   | "sec_5";
+export type OrtAcceleratorSetting =
+  | "auto"
+  | "cpu"
+  | "cuda"
+  | "directml"
+  | "rocm";
 export type OverlayPosition = "none" | "top" | "bottom";
+export type PaginatedHistory = {
+  entries: HistoryEntry[];
+  has_more: boolean;
+};
 export type PasteMethod =
   | "ctrl_v"
   | "direct"
@@ -1204,6 +1361,7 @@ export type PasteMethod =
   | "shift_insert"
   | "ctrl_shift_v"
   | "external_script";
+export type PermissionAccess = "allowed" | "denied" | "unknown";
 export type PostProcessProvider = {
   id: string;
   label: string;
@@ -1233,6 +1391,14 @@ export type TypingTool =
   | "dotool"
   | "ydotool"
   | "xdotool";
+export type WhisperAcceleratorSetting = "auto" | "cpu" | "gpu";
+export type WindowsMicrophonePermissionStatus = {
+  supported: boolean;
+  overall_access: PermissionAccess;
+  device_access: PermissionAccess;
+  app_access: PermissionAccess;
+  desktop_app_access: PermissionAccess;
+};
 export type UsageSummary = {
   current_streak_days: number;
   total_words: number;

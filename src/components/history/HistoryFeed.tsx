@@ -17,10 +17,12 @@ interface HistoryFeedProps {
   hasMore?: boolean;
   isLoadingMore?: boolean;
   loadMoreLabel?: string;
+  loadingMoreLabel?: string;
   onLoadMore?: () => void;
   onToggleSaved: (id: number) => void;
   onCopyText: (text: string) => void;
   onDelete: (id: number) => void;
+  onRetryTranscription?: (id: number) => void;
   getAudioUrl: (fileName: string) => Promise<string | null>;
 }
 
@@ -62,10 +64,12 @@ export const HistoryFeed = ({
   hasMore = false,
   isLoadingMore = false,
   loadMoreLabel,
+  loadingMoreLabel,
   onLoadMore,
   onToggleSaved,
   onCopyText,
   onDelete,
+  onRetryTranscription,
   getAudioUrl,
 }: HistoryFeedProps) => {
   const { t, i18n } = useTranslation();
@@ -181,6 +185,7 @@ export const HistoryFeed = ({
           onToggleSaved={onToggleSaved}
           onCopyText={onCopyText}
           onDelete={onDelete}
+          onRetryTranscription={onRetryTranscription}
           getAudioUrl={getAudioUrl}
           animationDelayMs={120 + index * 40}
         />
@@ -194,7 +199,9 @@ export const HistoryFeed = ({
             disabled={isLoadingMore}
             onClick={onLoadMore}
           >
-            {isLoadingMore ? retryLabel : (loadMoreLabel ?? retryLabel)}
+            {isLoadingMore
+              ? (loadingMoreLabel ?? loadMoreLabel ?? retryLabel)
+              : (loadMoreLabel ?? retryLabel)}
           </Button>
         </div>
       ) : null}

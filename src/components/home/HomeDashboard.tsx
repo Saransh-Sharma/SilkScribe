@@ -438,6 +438,7 @@ const HomeDashboard = ({ onNavigate }: HomeDashboardProps) => {
           hasMore={hasMore}
           isLoadingMore={isLoadingMore}
           loadMoreLabel={t("home.loadMore")}
+          loadingMoreLabel={t("home.loadingMore")}
           onLoadMore={() => {
             void loadMore();
           }}

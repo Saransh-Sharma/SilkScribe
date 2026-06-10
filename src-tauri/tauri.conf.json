@@ -10,20 +10,8 @@
     "frontendDist": "../dist"
   },
   "app": {
-    "macOSPrivateApi": true,
-    "windows": [
-      {
-        "label": "main",
-        "title": "SilkScribe",
-        "width": 1360,
-        "height": 920,
-        "minWidth": 1180,
-        "minHeight": 820,
-        "resizable": true,
-        "maximizable": false,
-        "visible": false
-      }
-    ],
+    "macOSPrivateApi": false,
+    "windows": [],
     "security": {
       "csp": null,
       "assetProtocol": {
@@ -51,8 +39,7 @@
     "macOS": {
       "files": {},
       "hardenedRuntime": true,
-      "minimumSystemVersion": "10.13",
-      "signingIdentity": "-",
+      "minimumSystemVersion": "10.15",
       "entitlements": "Entitlements.plist"
     },
     "linux": {
@@ -68,16 +55,13 @@
         "bundleMediaFramework": true,
         "files": {}
       }
-    },
-    "windows": {
-      "signCommand": "trusted-signing-cli -e https://eus.codesigning.azure.net/ -a CJ-Signing -c cjpais-dev -d SilkScribe %1"
     }
   },
   "plugins": {
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEJBQjcyMDk1MjA2NjAxRjkKUldUNUFXWWdsU0MzdXRRZi8zYzhqV2FaNUVDbDd2Rk5VM1IvWWowVXdmRFNKQ1BrMXF5RFFsLy8K",
       "endpoints": [
-        "https://github.com/SilkScribe/SilkScribe/releases/latest/download/latest.json"
+        "https://github.com/Saransh-Sharma/SilkScribe/releases/latest/download/latest.json"
       ]
     }
   }

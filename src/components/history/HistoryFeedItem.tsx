@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Check, Copy, Star, Trash2 } from "lucide-react";
+import { Check, Copy, RotateCcw, Star, Trash2 } from "lucide-react";
 import { type HistoryEntry } from "@/bindings";
 import { AudioPlayer } from "@/components/ui/AudioPlayer";
 import { formatTime } from "@/utils/dateFormat";
@@ -10,6 +10,7 @@ interface HistoryFeedItemProps {
   onToggleSaved: (id: number) => void;
   onCopyText: (text: string) => void;
   onDelete: (id: number) => void;
+  onRetryTranscription?: (id: number) => void;
   getAudioUrl: (fileName: string) => Promise<string | null>;
 }
 
@@ -18,18 +19,36 @@ export const HistoryFeedItem = ({
   onToggleSaved,
   onCopyText,
   onDelete,
+  onRetryTranscription,
   getAudioUrl,
 }: HistoryFeedItemProps) => {
   const { t, i18n } = useTranslation();
   const [showCopied, setShowCopied] = useState(false);
+  const [retrying, setRetrying] = useState(false);
 
-  const transcriptText = entry.post_processed_text ?? entry.transcription_text;
+  const transcriptText =
+    entry.post_processed_text?.trim() || entry.transcription_text;
+  const hasTranscriptText = transcriptText.trim().length > 0;
   const timestampLabel = formatTime(String(entry.timestamp), i18n.language);
+  const isRetryable = !hasTranscriptText && Boolean(onRetryTranscription);
 
   const handleCopy = () => {
     onCopyText(transcriptText);
     setShowCopied(true);
     window.setTimeout(() => setShowCopied(false), 2000);
+  };
+
+  const handleRetry = async () => {
+    if (!onRetryTranscription || retrying) {
+      return;
+    }
+
+    setRetrying(true);
+    try {
+      await onRetryTranscription(entry.id);
+    } finally {
+      setRetrying(false);
+    }
   };
 
   return (
@@ -39,7 +58,9 @@ export const HistoryFeedItem = ({
       </p>
       <div className="min-w-0 space-y-3">
         <p className="max-w-[72ch] text-sm leading-relaxed text-ss-text-primary select-text cursor-text">
-          {transcriptText}
+          {hasTranscriptText
+            ? transcriptText
+            : t("settings.history.retryableEmpty")}
         </p>
         <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
           <AudioPlayer
@@ -51,6 +72,7 @@ export const HistoryFeedItem = ({
             <button
               type="button"
               onClick={handleCopy}
+              disabled={!hasTranscriptText}
               className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-transparent text-ss-text-tertiary transition-[background-color,border-color,color,transform] duration-150 hover:-translate-y-0.5 hover:border-ss-brand-secondary/25 hover:bg-ss-brand-secondary/10 hover:text-ss-brand-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35"
               title={t("settings.history.copyToClipboard")}
               aria-label={t("settings.history.copyToClipboard")}
@@ -61,6 +83,24 @@ export const HistoryFeedItem = ({
                 <Copy width={18} height={18} />
               )}
             </button>
+            {isRetryable ? (
+              <button
+                type="button"
+                onClick={() => {
+                  void handleRetry();
+                }}
+                disabled={retrying}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-transparent text-ss-text-tertiary transition-[background-color,border-color,color,transform] duration-150 hover:-translate-y-0.5 hover:border-ss-brand-secondary/25 hover:bg-ss-brand-secondary/10 hover:text-ss-brand-secondary disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35"
+                title={t("settings.history.retryTranscription")}
+                aria-label={t("settings.history.retryTranscription")}
+              >
+                <RotateCcw
+                  width={18}
+                  height={18}
+                  className={retrying ? "animate-spin" : undefined}
+                />
+              </button>
+            ) : null}
             <button
               type="button"
               onClick={() => onToggleSaved(entry.id)}

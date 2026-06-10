@@ -1,6 +1,5 @@
 # SilkScribe
 
-
 **A free, open source, and extensible speech-to-text application that works completely offline.**
 
 SilkScribe is a cross-platform desktop application that provides simple, privacy-focused speech transcription. Press a shortcut, speak, and have your words appear in any text field. This happens on your own computer without sending any information to the cloud.
@@ -35,7 +34,7 @@ The process is entirely local:
 
 ### Installation
 
-1. Download the latest release from the [releases page](https://github.com/SilkScribe/SilkScribe/releases) or the [website](https://silkscribe.app)
+1. Download the latest release from the [releases page](https://github.com/Saransh-Sharma/SilkScribe/releases) or the [website](https://silkscribe.app)
    - **macOS**: Also available via [Homebrew cask](https://formulae.brew.sh/cask/silkscribe): `brew install --cask silkscribe`
 2. Install the application
 3. Launch SilkScribe and grant necessary system permissions (microphone, accessibility)
@@ -45,6 +44,16 @@ The process is entirely local:
 ### Development Setup
 
 For detailed build instructions including platform-specific requirements, see [BUILD.md](BUILD.md).
+
+For interactive native builds, cleaning, signing, notarization, diagnostics, and
+artifact collection, use the [SilkScribe Build CLI](docs/build-cli.md):
+
+```bash
+bun run app:build
+bun run app:build -- doctor
+```
+
+For signed and notarized macOS direct-download releases, see [docs/direct-download-release.md](docs/direct-download-release.md).
 
 ## Architecture
 
@@ -102,7 +111,7 @@ silkscribe --start-hidden --no-tray
 
 ## Known Issues & Current Limitations
 
-This project is actively being developed and has some [known issues](https://github.com/SilkScribe/SilkScribe/issues). We believe in transparency about the current state:
+This project is actively being developed and has some [known issues](https://github.com/Saransh-Sharma/SilkScribe/issues). We believe in transparency about the current state:
 
 ### Major Issues (Help Wanted)
 
@@ -184,8 +193,8 @@ Without these tools, SilkScribe falls back to enigo which may have limited compa
 
 - You can also manage global shortcuts outside of SilkScribe via Unix signals, which lets Wayland window managers or other hotkey daemons keep ownership of keybindings:
 
-  | Signal    | Action                                    | Example                |
-  | --------- | ----------------------------------------- | ---------------------- |
+  | Signal    | Action                                    | Example                     |
+  | --------- | ----------------------------------------- | --------------------------- |
   | `SIGUSR2` | Toggle transcription                      | `pkill -USR2 -n silkscribe` |
   | `SIGUSR1` | Toggle transcription with post-processing | `pkill -USR1 -n silkscribe` |
 
@@ -366,7 +375,7 @@ SilkScribe can auto-discover custom Whisper GGML models placed in the `models` d
 
 ### How to Contribute
 
-1. **Check existing issues** at [github.com/SilkScribe/SilkScribe/issues](https://github.com/SilkScribe/SilkScribe/issues)
+1. **Check existing issues** at [github.com/Saransh-Sharma/SilkScribe/issues](https://github.com/Saransh-Sharma/SilkScribe/issues)
 2. **Fork the repository** and create a feature branch
 3. **Test thoroughly** on your target platform
 4. **Submit a pull request** with clear description of changes

@@ -106,6 +106,10 @@ const selectStyles: StylesConfig<SelectOption, false> = {
     border: "1px solid var(--ss-border-default)",
     boxShadow: "var(--ss-shadow-lift)",
   }),
+  menuPortal: (provided) => ({
+    ...provided,
+    zIndex: 9999,
+  }),
   option: (base, state) => ({
     ...base,
     backgroundColor: state.isSelected
@@ -138,6 +142,8 @@ export const Select: React.FC<SelectProps> = React.memo(
     formatCreateLabel,
     onCreateOption,
   }) => {
+    const menuPortalTarget =
+      typeof document !== "undefined" ? document.body : undefined;
     const selectValue = React.useMemo(() => {
       if (!value) return null;
       const existing = options.find((option) => option.value === value);
@@ -164,6 +170,10 @@ export const Select: React.FC<SelectProps> = React.memo(
       onBlur,
       isClearable,
       styles: selectStyles,
+      menuPortalTarget,
+      menuPlacement: "auto",
+      menuPosition: "fixed",
+      menuShouldScrollIntoView: false,
     };
 
     if (isCreatable) {

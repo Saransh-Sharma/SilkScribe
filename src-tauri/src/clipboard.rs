@@ -4,6 +4,7 @@ use crate::settings::TypingTool;
 use crate::settings::{get_settings, AutoSubmitKey, ClipboardHandling, PasteMethod};
 use enigo::{Direction, Enigo, Key, Keyboard};
 use log::info;
+#[cfg(any(target_os = "linux", not(feature = "mac-app-store")))]
 use std::process::Command;
 use std::time::Duration;
 use tauri::{AppHandle, Manager};
@@ -17,6 +18,7 @@ enum EffectivePasteStrategy {
     None,
     Direct,
     ClipboardHotkey,
+    #[cfg(not(feature = "mac-app-store"))]
     ExternalScript,
 }
 
@@ -27,6 +29,9 @@ fn resolve_paste_strategy(
     match paste_method {
         PasteMethod::None => EffectivePasteStrategy::None,
         PasteMethod::Direct => EffectivePasteStrategy::Direct,
+        #[cfg(feature = "mac-app-store")]
+        PasteMethod::ExternalScript => EffectivePasteStrategy::None,
+        #[cfg(not(feature = "mac-app-store"))]
         PasteMethod::ExternalScript => EffectivePasteStrategy::ExternalScript,
         PasteMethod::CtrlV | PasteMethod::CtrlShiftV | PasteMethod::ShiftInsert => {
             if clipboard_handling == ClipboardHandling::DontModify {
@@ -512,6 +517,7 @@ fn send_key_combo_via_xdotool(paste_method: &PasteMethod) -> Result<(), String> 
 
 /// Pastes text by invoking an external script.
 /// The script receives the text to paste as a single argument.
+#[cfg(not(feature = "mac-app-store"))]
 fn paste_via_external_script(text: &str, script_path: &str) -> Result<(), String> {
     info!("Pasting via external script: {}", script_path);
 
@@ -595,8 +601,8 @@ fn send_return_key(enigo: &mut Enigo, key_type: AutoSubmitKey) -> Result<(), Str
     Ok(())
 }
 
-fn should_send_auto_submit(auto_submit: bool, paste_method: PasteMethod) -> bool {
-    auto_submit && paste_method != PasteMethod::None
+fn should_send_auto_submit(auto_submit: bool, effective_strategy: EffectivePasteStrategy) -> bool {
+    auto_submit && effective_strategy != EffectivePasteStrategy::None
 }
 
 pub fn paste(text: String, app_handle: AppHandle) -> Result<(), String> {
@@ -659,6 +665,7 @@ pub fn paste(text: String, app_handle: AppHandle) -> Result<(), String> {
             &paste_method,
             paste_delay_ms,
         )?,
+        #[cfg(not(feature = "mac-app-store"))]
         EffectivePasteStrategy::ExternalScript => {
             let script_path = settings
                 .external_script_path
@@ -669,7 +676,7 @@ pub fn paste(text: String, app_handle: AppHandle) -> Result<(), String> {
         }
     }
 
-    if should_send_auto_submit(settings.auto_submit, paste_method) {
+    if should_send_auto_submit(settings.auto_submit, effective_strategy) {
         std::thread::sleep(Duration::from_millis(50));
         send_return_key(&mut enigo, settings.auto_submit_key)?;
     }
@@ -731,6 +738,12 @@ mod tests {
             resolve_paste_strategy(PasteMethod::None, ClipboardHandling::DontModify),
             EffectivePasteStrategy::None
         );
+        #[cfg(feature = "mac-app-store")]
+        assert_eq!(
+            resolve_paste_strategy(PasteMethod::ExternalScript, ClipboardHandling::DontModify),
+            EffectivePasteStrategy::None
+        );
+        #[cfg(not(feature = "mac-app-store"))]
         assert_eq!(
             resolve_paste_strategy(PasteMethod::ExternalScript, ClipboardHandling::DontModify),
             EffectivePasteStrategy::ExternalScript
@@ -739,20 +752,35 @@ mod tests {
 
     #[test]
     fn auto_submit_requires_setting_enabled() {
-        assert!(!should_send_auto_submit(false, PasteMethod::CtrlV));
-        assert!(!should_send_auto_submit(false, PasteMethod::Direct));
+        assert!(!should_send_auto_submit(
+            false,
+            EffectivePasteStrategy::ClipboardHotkey
+        ));
+        assert!(!should_send_auto_submit(
+            false,
+            EffectivePasteStrategy::Direct
+        ));
     }
 
     #[test]
-    fn auto_submit_skips_none_paste_method() {
-        assert!(!should_send_auto_submit(true, PasteMethod::None));
+    fn auto_submit_skips_none_strategy() {
+        assert!(!should_send_auto_submit(true, EffectivePasteStrategy::None));
     }
 
     #[test]
-    fn auto_submit_runs_for_active_paste_methods() {
-        assert!(should_send_auto_submit(true, PasteMethod::CtrlV));
-        assert!(should_send_auto_submit(true, PasteMethod::Direct));
-        assert!(should_send_auto_submit(true, PasteMethod::CtrlShiftV));
-        assert!(should_send_auto_submit(true, PasteMethod::ShiftInsert));
+    fn auto_submit_runs_for_active_strategies() {
+        assert!(should_send_auto_submit(
+            true,
+            EffectivePasteStrategy::ClipboardHotkey
+        ));
+        assert!(should_send_auto_submit(
+            true,
+            EffectivePasteStrategy::Direct
+        ));
+        #[cfg(not(feature = "mac-app-store"))]
+        assert!(should_send_auto_submit(
+            true,
+            EffectivePasteStrategy::ExternalScript
+        ));
     }
 }

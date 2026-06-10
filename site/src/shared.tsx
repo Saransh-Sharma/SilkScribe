@@ -10,6 +10,7 @@ import {
 import {
   externalLinks,
   marketingNav,
+  primaryDownloadHref,
   supportNav,
   type NavLink,
 } from "./content";
@@ -53,8 +54,12 @@ export const ActionButton = ({
   const className = `button button--${tone}${href ? "" : " button--disabled"}`;
   const content = (
     <>
-      <span>{children}</span>
-      {href ? <ArrowRight className="button__icon" aria-hidden="true" /> : null}
+      <span className="button__label">{children}</span>
+      {href ? (
+        <span className="button__arrow" aria-hidden="true">
+          <ArrowRight className="button__icon" />
+        </span>
+      ) : null}
       {caption ? <small className="button__caption">{caption}</small> : null}
     </>
   );
@@ -88,11 +93,13 @@ export const SiteFrame = ({
   }, []);
 
   const navLinks = page === "marketing" ? marketingNav : supportNav;
-  const supportHref = page === "marketing" ? "support/" : "#support-channels";
   const homeHref = page === "marketing" ? "#top" : "../";
   const logoMark =
     page === "marketing" ? "./menu-bar-icon.png" : "../menu-bar-icon.png";
   const wordmark = page === "marketing" ? "./banner.png" : "../banner.png";
+  const headerDownloadLabel = externalLinks.appStore
+    ? "Get SilkScribe"
+    : "Download";
 
   return (
     <div className={`site-shell site-shell--${page}`}>
@@ -100,57 +107,47 @@ export const SiteFrame = ({
         Skip to content
       </a>
       <header className="site-header" id="top">
-        <a
-          className="brand-lockup"
-          href={homeHref}
-          aria-label="SilkScribe home"
-        >
-          <img
-            src={logoMark}
-            alt=""
-            className="brand-lockup__mark"
-            width="48"
-            height="48"
-            loading="eager"
-            decoding="async"
-          />
-          <img
-            src={wordmark}
-            alt="SilkScribe"
-            className="brand-lockup__wordmark"
-            width="202"
-            height="84"
-            loading="eager"
-            decoding="async"
-          />
-        </a>
-        <LinkList links={navLinks} />
-        <div className="site-header__actions">
-          <a className="site-header__utility" href={supportHref}>
-            Support
-          </a>
-          <ActionButton
-            href={externalLinks.appStore}
-            caption={
-              externalLinks.appStore
-                ? undefined
-                : "Configure VITE_SITE_APP_STORE_URL when the listing is live."
-            }
+        <div className="site-header__island">
+          <a
+            className="brand-lockup"
+            href={homeHref}
+            aria-label="SilkScribe home"
           >
-            {externalLinks.appStore
-              ? "Open on the Mac App Store"
-              : "Mac App Store soon"}
-          </ActionButton>
+            <img
+              src={logoMark}
+              alt=""
+              className="brand-lockup__mark"
+              width="48"
+              height="48"
+              loading="eager"
+              decoding="async"
+            />
+            <img
+              src={wordmark}
+              alt="SilkScribe"
+              className="brand-lockup__wordmark"
+              width="202"
+              height="84"
+              loading="eager"
+              decoding="async"
+            />
+          </a>
+          <LinkList links={navLinks} />
+          <div className="site-header__actions">
+            <ActionButton href={primaryDownloadHref}>
+              {headerDownloadLabel}
+            </ActionButton>
+          </div>
         </div>
       </header>
       <main id="main-content">{children}</main>
       <footer className="site-footer" data-reveal>
         <div className="site-footer__intro">
           <span className="eyebrow">SilkScribe</span>
-          <h2>Privacy-first speech-to-text for focused desktop work.</h2>
+          <h2>Private voice typing for Mac.</h2>
           <p>
-            Built for people who want dictation to disappear into the workflow
-            instead of becoming another dashboard.
+            Speak naturally. Get clean text. Stay inside the apps you already
+            use.
           </p>
         </div>
         <div className="site-footer__links">
@@ -168,7 +165,7 @@ export const SiteFrame = ({
           </a>
         </div>
         <p className="site-footer__fine-print">
-          Mac-first site for the App Store listing. iOS companion coming soon.
+          Private by default. Shortcut-driven. Open source.
         </p>
       </footer>
     </div>

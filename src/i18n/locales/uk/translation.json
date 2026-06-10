@@ -550,6 +550,32 @@
         "add": "Додати",
         "remove": "Видалити {{word}}",
         "duplicate": "\"{{word}}\" вже існує"
+      },
+      "acceleration": {
+        "labels": {
+          "auto": "Авто",
+          "cpu": "CPU",
+          "cuda": "CUDA",
+          "directml": "DirectML",
+          "rocm": "ROCm"
+        },
+        "whisper": {
+          "title": "Прискорення Whisper",
+          "description": "Оберіть апаратне прискорення для моделей Whisper."
+        },
+        "ort": {
+          "title": "Прискорення ONNX",
+          "description": "Оберіть апаратне прискорення для моделей ONNX."
+        },
+        "gpuDevice": {
+          "title": "Пристрій GPU",
+          "description": "Оберіть GPU для інференсу Whisper.",
+          "auto": "Авто"
+        }
+      },
+      "lazyStreamClose": {
+        "label": "Тримати мікрофон відкритим між транскрипціями",
+        "description": "Коротко тримати потік мікрофона відкритим після зупинки запису."
       }
     },
     "postProcessing": {
@@ -622,8 +648,13 @@
       "unsave": "Видалити зі збережених",
       "delete": "Видалити запис",
       "deleteError": "Не вдалося видалити запис. Спробуйте ще раз.",
-      "loadError": "Не вдалося завантажити історію просто зараз. Спробуйте ще раз.",
-      "retry": "Спробувати ще раз"
+      "loadError": "Зараз не вдалося завантажити історію. Спробуйте ще раз.",
+      "retry": "Повторити",
+      "loadMore": "Завантажити ще",
+      "loadingMore": "Завантаження...",
+      "retryableEmpty": "Транскрипцію не вдалося виконати. Запис доступний для повтору.",
+      "retryTranscription": "Повторити транскрипцію",
+      "retryTranscriptionError": "Не вдалося повторити транскрипцію. Спробуйте ще раз."
     },
     "debug": {
       "title": "Дебаг",
@@ -685,7 +716,11 @@
       "keyboardImplementation": {
         "title": "Keyboard Implementation",
         "description": "Choose the keyboard shortcut backend.",
-        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults"
+        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
+        "backends": {
+          "tauri": "Глобальне поєднання Tauri",
+          "nativeKeys": "Нативні клавіші"
+        }
       },
       "paths": {
         "appData": "Дані програми:",
@@ -695,6 +730,10 @@
       "pasteDelay": {
         "title": "Затримка вставки",
         "description": "Затримка перед надсиланням натискання клавіші вставки (у мілісекундах). Збільшіть, якщо вставляється неправильний текст."
+      },
+      "recordingBuffer": {
+        "title": "Додатковий буфер запису",
+        "description": "Продовжувати запис ненадовго після відпускання клавіші."
       }
     },
     "about": {
@@ -758,5 +797,16 @@
   "appLanguage": {
     "title": "Мова інтерфейсу",
     "description": "Змінити мову інтерфейсу SilkScribe"
+  },
+  "overlay": {
+    "listening": "Запис",
+    "transcribing": "Транскрипція",
+    "processing": "Обробка",
+    "success": "Готово",
+    "failed": "Помилка"
+  },
+  "home": {
+    "loadingMore": "Завантаження...",
+    "loadMore": "Завантажити ще"
   }
 }

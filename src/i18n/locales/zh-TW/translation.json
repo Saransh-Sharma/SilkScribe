@@ -550,6 +550,32 @@
         "add": "新增",
         "remove": "刪除 {{word}}",
         "duplicate": "「{{word}}」已存在"
+      },
+      "acceleration": {
+        "labels": {
+          "auto": "自動",
+          "cpu": "CPU",
+          "cuda": "CUDA",
+          "directml": "DirectML",
+          "rocm": "ROCm"
+        },
+        "whisper": {
+          "title": "Whisper 加速",
+          "description": "為 Whisper 模型選擇硬體加速。"
+        },
+        "ort": {
+          "title": "ONNX 加速",
+          "description": "為 ONNX 模型選擇硬體加速。"
+        },
+        "gpuDevice": {
+          "title": "GPU 裝置",
+          "description": "選擇 Whisper 推論使用的 GPU。",
+          "auto": "自動"
+        }
+      },
+      "lazyStreamClose": {
+        "label": "轉寫之間保持麥克風開啟",
+        "description": "停止錄音後短暫保持麥克風串流開啟，以減少連續轉寫的延遲。"
       }
     },
     "postProcessing": {
@@ -622,8 +648,13 @@
       "unsave": "從已儲存中移除",
       "delete": "刪除條目",
       "deleteError": "刪除條目失敗，請重試",
-      "loadError": "目前無法載入歷史記錄。請再試一次。",
-      "retry": "重試"
+      "loadError": "暫時無法載入歷史記錄。請再試一次。",
+      "retry": "重試",
+      "loadMore": "載入更多",
+      "loadingMore": "載入中...",
+      "retryableEmpty": "轉寫失敗。錄音可重試。",
+      "retryTranscription": "重試轉寫",
+      "retryTranscriptionError": "重試轉寫失敗。請再試一次。"
     },
     "debug": {
       "title": "偵錯",
@@ -685,7 +716,11 @@
       "keyboardImplementation": {
         "title": "鍵盤實作",
         "description": "選擇鍵盤快捷鍵的後端",
-        "bindingsReset": "鍵盤快捷鍵不相容，已重設為預設值"
+        "bindingsReset": "鍵盤快捷鍵不相容，已重設為預設值",
+        "backends": {
+          "tauri": "Tauri 全域快捷鍵",
+          "nativeKeys": "原生按鍵"
+        }
       },
       "paths": {
         "appData": "應用程式資料:",
@@ -695,6 +730,10 @@
       "pasteDelay": {
         "title": "貼上延遲",
         "description": "發送貼上按鍵前的延遲（毫秒）。如果貼上了錯誤的文字，請增加此值"
+      },
+      "recordingBuffer": {
+        "title": "額外錄音緩衝",
+        "description": "放開按鍵後繼續短暫錄音。"
       }
     },
     "about": {
@@ -758,5 +797,16 @@
   "appLanguage": {
     "title": "應用程式語言",
     "description": "變更 SilkScribe 介面的語言"
+  },
+  "overlay": {
+    "listening": "錄音中",
+    "transcribing": "轉寫中",
+    "processing": "處理中",
+    "success": "完成",
+    "failed": "失敗"
+  },
+  "home": {
+    "loadingMore": "載入中...",
+    "loadMore": "載入更多"
   }
 }

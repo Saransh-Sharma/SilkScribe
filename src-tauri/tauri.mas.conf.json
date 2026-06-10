@@ -1,0 +1,54 @@
+{
+  "build": {
+    "beforeBuildCommand": "VITE_MAC_APP_STORE=1 bun run build"
+  },
+  "app": {
+    "macOSPrivateApi": false,
+    "security": {
+      "capabilities": [
+        {
+          "identifier": "mac-app-store-default",
+          "description": "Capabilities for the Mac App Store build",
+          "windows": ["main", "recording_overlay"],
+          "permissions": [
+            "core:default",
+            "opener:default",
+            "store:default",
+            "process:default",
+            "dialog:default",
+            "global-shortcut:allow-is-registered",
+            "global-shortcut:allow-register",
+            "global-shortcut:allow-unregister",
+            "global-shortcut:allow-unregister-all",
+            "macos-permissions:default",
+            "fs:read-files",
+            "fs:allow-resource-read-recursive",
+            {
+              "identifier": "fs:scope",
+              "allow": [{ "path": "$APPDATA" }, { "path": "$APPDATA/**/*" }]
+            }
+          ]
+        },
+        {
+          "identifier": "mac-app-store-desktop",
+          "platforms": ["macOS"],
+          "windows": ["main"],
+          "permissions": ["autostart:default", "global-shortcut:default"]
+        }
+      ]
+    }
+  },
+  "bundle": {
+    "createUpdaterArtifacts": false,
+    "macOS": {
+      "entitlements": "Entitlements.mas.plist",
+      "signingIdentity": null
+    }
+  },
+  "plugins": {
+    "updater": {
+      "active": false,
+      "endpoints": []
+    }
+  }
+}

@@ -550,6 +550,32 @@
         "add": "追加",
         "remove": "{{word}}を削除",
         "duplicate": "「{{word}}」は既に存在します"
+      },
+      "acceleration": {
+        "labels": {
+          "auto": "自動",
+          "cpu": "CPU",
+          "cuda": "CUDA",
+          "directml": "DirectML",
+          "rocm": "ROCm"
+        },
+        "whisper": {
+          "title": "Whisper アクセラレーション",
+          "description": "Whisper モデルのハードウェアアクセラレーションを選択します。"
+        },
+        "ort": {
+          "title": "ONNX アクセラレーション",
+          "description": "ONNX モデルのハードウェアアクセラレーションを選択します。"
+        },
+        "gpuDevice": {
+          "title": "GPU デバイス",
+          "description": "Whisper 推論に使用する GPU を選択します。",
+          "auto": "自動"
+        }
+      },
+      "lazyStreamClose": {
+        "label": "文字起こしの間もマイクを開いたままにする",
+        "description": "録音停止後も短時間マイクストリームを開いたままにして待ち時間を減らします。"
       }
     },
     "postProcessing": {
@@ -622,8 +648,13 @@
       "unsave": "保存から削除",
       "delete": "エントリーを削除",
       "deleteError": "エントリーの削除に失敗しました。もう一度お試しください。",
-      "loadError": "現在履歴を読み込めません。もう一度お試しください。",
-      "retry": "再試行"
+      "loadError": "履歴を読み込めませんでした。もう一度お試しください。",
+      "retry": "再試行",
+      "loadMore": "さらに読み込む",
+      "loadingMore": "読み込み中...",
+      "retryableEmpty": "文字起こしに失敗しました。録音は再試行できます。",
+      "retryTranscription": "文字起こしを再試行",
+      "retryTranscriptionError": "文字起こしの再試行に失敗しました。もう一度お試しください。"
     },
     "debug": {
       "title": "デバッグ",
@@ -685,7 +716,11 @@
       "keyboardImplementation": {
         "title": "Keyboard Implementation",
         "description": "Choose the keyboard shortcut backend.",
-        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults"
+        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
+        "backends": {
+          "tauri": "Tauri グローバルショートカット",
+          "nativeKeys": "ネイティブキー"
+        }
       },
       "paths": {
         "appData": "アプリデータ:",
@@ -695,6 +730,10 @@
       "pasteDelay": {
         "title": "貼り付け遅延",
         "description": "貼り付けキー送信前の遅延（ミリ秒）。間違ったテキストが貼り付けられる場合は増やしてください。"
+      },
+      "recordingBuffer": {
+        "title": "追加録音バッファ",
+        "description": "キーを離した後も短時間録音を続けます。"
       }
     },
     "about": {
@@ -758,5 +797,16 @@
   "appLanguage": {
     "title": "アプリケーション言語",
     "description": "SilkScribeインターフェースの言語を変更"
+  },
+  "overlay": {
+    "listening": "録音中",
+    "transcribing": "文字起こし中",
+    "processing": "処理中",
+    "success": "完了",
+    "failed": "失敗"
+  },
+  "home": {
+    "loadingMore": "読み込み中...",
+    "loadMore": "さらに読み込む"
   }
 }

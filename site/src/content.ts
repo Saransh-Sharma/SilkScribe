@@ -4,22 +4,26 @@ export interface NavLink {
   external?: boolean;
 }
 
-export interface ProofPoint {
-  label: string;
-  value: string;
-}
-
 export interface Step {
   title: string;
   description: string;
 }
 
-export interface FeatureStory {
-  eyebrow: string;
+export interface MarketingCard {
   title: string;
-  description: string;
-  bullets: string[];
-  accent: "blue" | "amber" | "berry";
+  body: string;
+}
+
+export interface BeforeAfterExample {
+  label: string;
+  spoken: string;
+  written: string;
+}
+
+export interface AudienceCard {
+  title: string;
+  body: string;
+  example: string;
 }
 
 export interface SupportChannel {
@@ -55,9 +59,9 @@ const normalizedSiteUrl =
   import.meta.env.VITE_SITE_URL?.trim().replace(/\/$/, "") || null;
 
 export const externalLinks = {
-  github: "https://github.com/SilkScribe/SilkScribe",
-  githubIssues: "https://github.com/SilkScribe/SilkScribe/issues",
-  githubReleases: "https://github.com/SilkScribe/SilkScribe/releases",
+  github: "https://github.com/Saransh-Sharma/SilkScribe",
+  githubIssues: "https://github.com/Saransh-Sharma/SilkScribe/issues",
+  githubReleases: "https://github.com/Saransh-Sharma/SilkScribe/releases",
   email: "mailto:contact@silkscribe.app",
   appStore: import.meta.env.VITE_SITE_APP_STORE_URL?.trim() || null,
   siteUrl: normalizedSiteUrl,
@@ -65,6 +69,13 @@ export const externalLinks = {
     ? `${normalizedSiteUrl}/og-image.webp`
     : null,
 };
+
+export const primaryDownloadHref =
+  externalLinks.appStore ?? externalLinks.githubReleases;
+
+export const primaryDownloadLabel = externalLinks.appStore
+  ? "Get SilkScribe for Mac"
+  : "Download from GitHub Releases";
 
 export const marketingScreenshots: Record<"hero", ScreenshotAsset> = {
   hero: {
@@ -76,72 +87,173 @@ export const marketingScreenshots: Record<"hero", ScreenshotAsset> = {
   },
 };
 
-export const heroProofPoints: ProofPoint[] = [
-  { label: "Offline-first", value: "Runs on your Mac" },
-  { label: "Privacy-first", value: "No forced cloud hop" },
-  { label: "Open source", value: "Built in public" },
-  { label: "Custom models", value: "Whisper + Parakeet" },
-  {
-    label: "Optional post-processing",
-    value: "Apple Intelligence on supported Macs",
-  },
-];
-
 export const howItWorksSteps: Step[] = [
   {
     title: "Hold your shortcut",
     description:
-      "SilkScribe is built around one quick rhythm instead of menus, floating toolbars, and extra ceremony.",
+      "Start dictation from anywhere on your Mac. No dashboard, meeting bot, or extra writing workspace.",
   },
   {
-    title: "Speak naturally",
+    title: "Say it naturally",
     description:
-      "Local speech engines listen for the part that matters, with support for offline transcription and cleaner short bursts.",
+      "Speak the rough version. Pause, correct yourself, and use your own words while SilkScribe captures the thought.",
   },
   {
-    title: "Release to paste",
+    title: "Release to write",
     description:
-      "SilkScribe places the text back into the active app, so the result lands where you were already working.",
+      "Clean text appears where your cursor already is, ready to use without a copy-paste ritual.",
   },
 ];
 
-export const featureStories: FeatureStory[] = [
+export const heroDemo = {
+  spoken:
+    "hey can you send the update to the team and say i finished the onboarding copy and i'll share screenshots later today also mention setup should be less than a minute",
+  written:
+    "Hey team - I finished the onboarding copy and will share screenshots later today. Setup should take less than a minute.",
+};
+
+export const beforeAfterExamples: BeforeAfterExample[] = [
   {
-    eyebrow: "Native setup",
-    title: "Mac permissions are explained like product UX, not like a wiki.",
-    description:
-      "The onboarding flow mirrors how the app actually works: microphone access, accessibility access, and one real test so people know the setup is finished.",
-    bullets: [
-      "Clear permission language",
-      "One-minute first run",
-      "Mac-first troubleshooting",
-    ],
-    accent: "blue",
+    label: "Team update",
+    spoken:
+      "quick update i finished the onboarding copy and i'll share the screenshots later today can you review the first run setup flow once",
+    written:
+      "Quick update: I finished the onboarding copy and will share the screenshots later today. Can you review the first-run setup flow once?",
   },
   {
-    eyebrow: "Local engines",
-    title: "Speech stays close to the work.",
-    description:
-      "SilkScribe prioritizes on-device transcription. Use Whisper variants, Parakeet V3, and optional post-processing without turning the product into a black box.",
-    bullets: [
-      "Offline transcription",
-      "GPU acceleration where available",
-      "Optional Apple Intelligence post-processing on Apple Silicon + macOS Tahoe 26+",
-    ],
-    accent: "amber",
+    label: "Slack reply",
+    spoken:
+      "yeah this looks good to me but let's make the empty state a little warmer and reduce the top padding before we ship",
+    written:
+      "Yeah, this looks good to me. Let's make the empty state a little warmer and reduce the top padding before we ship.",
   },
   {
-    eyebrow: "Focused output",
-    title: "Built for typing into the apps you already live in.",
-    description:
-      "This is not another dashboard-first AI workspace. SilkScribe is tuned for focused desktop flow, from shortcuts to paste modes to history and custom word correction.",
-    bullets: [
-      "Push to talk or tap once",
-      "Clipboard-safe paste modes",
-      "History and custom words",
-    ],
-    accent: "berry",
+    label: "AI prompt",
+    spoken:
+      "act like a senior product designer and review this onboarding screen for clarity friction hierarchy and emotional tone",
+    written:
+      "Act like a senior product designer and review this onboarding screen for clarity, friction, hierarchy, and emotional tone.",
   },
+  {
+    label: "Email",
+    spoken:
+      "hi priya thanks for sending this over i'll review it by evening and send comments if anything needs to change",
+    written:
+      "Hi Priya, thanks for sending this over. I'll review it by evening and send comments if anything needs to change.",
+  },
+];
+
+export const appBadges = [
+  "Mail",
+  "Notes",
+  "Slack",
+  "Teams",
+  "Notion",
+  "Cursor",
+  "Linear",
+  "Safari",
+  "Messages",
+  "Docs",
+  "ChatGPT",
+  "Any text field",
+];
+
+export const privacyCards: MarketingCard[] = [
+  {
+    title: "Local-first transcription",
+    body: "Use local speech models so dictation can happen on your Mac.",
+  },
+  {
+    title: "No forced cloud workspace",
+    body: "SilkScribe is not designed around uploading every thought to a web dashboard.",
+  },
+  {
+    title: "Clear permissions",
+    body: "Microphone and accessibility permissions are explained during setup.",
+  },
+  {
+    title: "Open source",
+    body: "Review the code, understand the product, and verify how it works.",
+  },
+];
+
+export const outputCards: MarketingCard[] = [
+  {
+    title: "Natural cleanup",
+    body: "Turns rough speech into readable sentences.",
+  },
+  {
+    title: "Smart punctuation",
+    body: "Adds punctuation and casing so the result feels written, not dumped.",
+  },
+  {
+    title: "Custom vocabulary",
+    body: "Teach SilkScribe names, acronyms, product terms, and phrases you use often.",
+  },
+  {
+    title: "Optional polish",
+    body: "Use supported Apple Intelligence post-processing where available for cleaner formatting and clarity.",
+  },
+  {
+    title: "Recent history",
+    body: "Recover recent dictations when you need to reuse or restore something.",
+  },
+  {
+    title: "Flexible paste modes",
+    body: "Choose how SilkScribe inserts text into the active app.",
+  },
+];
+
+export const audienceCards: AudienceCard[] = [
+  {
+    title: "For builders",
+    body: "Dictate bug reports, PR notes, code comments, technical prompts, and implementation thoughts without breaking focus.",
+    example: "Explain why this API should be idempotent and mention retry behavior.",
+  },
+  {
+    title: "For managers",
+    body: "Turn spoken thoughts into clear updates, review comments, feedback notes, planning docs, and follow-ups.",
+    example:
+      "Summarize the decision and mention that we need owner, timeline, and risk tracking.",
+  },
+  {
+    title: "For writers",
+    body: "Capture ideas, rough paragraphs, outlines, and edits without waiting for the perfect first sentence.",
+    example:
+      "Draft a paragraph about why privacy-first tools feel calmer to use.",
+  },
+  {
+    title: "For operators",
+    body: "Move through support replies, internal notes, checklists, and repeated messages faster.",
+    example:
+      "Tell the customer we are checking this and will share an update by tomorrow.",
+  },
+];
+
+export const setupCards: MarketingCard[] = [
+  {
+    title: "Microphone access",
+    body: "Needed to capture your speech when you trigger dictation.",
+  },
+  {
+    title: "Accessibility access",
+    body: "Needed to place text into the active app.",
+  },
+  {
+    title: "Shortcut setup",
+    body: "Choose the key combination that feels natural.",
+  },
+  {
+    title: "Test dictation",
+    body: "Confirm the full speak-and-write flow before you rely on it.",
+  },
+];
+
+export const finalTrustStrip = [
+  "Private by default",
+  "Mac-native",
+  "Works anywhere",
+  "Open source",
 ];
 
 export const supportChannels: SupportChannel[] = [
@@ -149,7 +261,7 @@ export const supportChannels: SupportChannel[] = [
     title: "Email support",
     href: externalLinks.email,
     label: "Email contact@silkscribe.app",
-    body: "Use this for App Store review questions, account-free support, or anything you would rather not post publicly.",
+    body: "Use this for account-free support, setup questions, or anything you would rather not post publicly.",
   },
   {
     title: "GitHub issues",
@@ -230,13 +342,13 @@ export const faqItems: FaqItem[] = [
     id: "faq-offline",
     question: "Does SilkScribe require the cloud to transcribe?",
     answer:
-      "No. SilkScribe is designed around local transcription on your own machine. Optional post-processing can use external providers, but the product is usable without shipping your voice to a remote service.",
+      "No. SilkScribe is designed around local transcription on your own Mac. Optional post-processing can use external providers, but the core voice typing flow is built for local-first use.",
   },
   {
     id: "faq-mac",
-    question: "Is the App Store version Mac-only?",
+    question: "Is SilkScribe built for Mac workflows?",
     answer:
-      "The pages here are intentionally Mac-first because the App Store listing is for the macOS desktop app. SilkScribe also has a broader desktop story, and an iOS companion is planned separately.",
+      "Yes. The site is intentionally Mac-first because SilkScribe is built around desktop shortcuts, macOS permissions, and writing into the app where your cursor already is.",
   },
   {
     id: "faq-permissions",
@@ -248,7 +360,7 @@ export const faqItems: FaqItem[] = [
     id: "faq-models",
     question: "Which models does SilkScribe support?",
     answer:
-      "SilkScribe supports multiple Whisper variants and Parakeet V3, with room for additional and community-provided models. Exact availability can vary by build and platform capabilities.",
+      "SilkScribe supports local transcription models, including Whisper variants and Parakeet V3 in supported builds. Exact availability can vary by release and Mac capabilities.",
   },
   {
     id: "faq-apple-intelligence",
@@ -266,7 +378,9 @@ export const faqItems: FaqItem[] = [
 
 export const marketingNav: NavLink[] = [
   { label: "How it works", href: "#how-it-works" },
-  { label: "Features", href: "#features" },
+  { label: "Privacy", href: "#privacy" },
+  { label: "Use cases", href: "#use-cases" },
+  { label: "Open source", href: "#open-source" },
   { label: "Support", href: "support/" },
   { label: "GitHub", href: externalLinks.github, external: true },
 ];

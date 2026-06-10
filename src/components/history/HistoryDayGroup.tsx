@@ -7,6 +7,7 @@ interface HistoryDayGroupProps {
   onToggleSaved: (id: number) => void;
   onCopyText: (text: string) => void;
   onDelete: (id: number) => void;
+  onRetryTranscription?: (id: number) => void;
   getAudioUrl: (fileName: string) => Promise<string | null>;
   animationDelayMs?: number;
 }
@@ -17,6 +18,7 @@ export const HistoryDayGroup = ({
   onToggleSaved,
   onCopyText,
   onDelete,
+  onRetryTranscription,
   getAudioUrl,
   animationDelayMs = 0,
 }: HistoryDayGroupProps) => (
@@ -38,6 +40,7 @@ export const HistoryDayGroup = ({
             onToggleSaved={onToggleSaved}
             onCopyText={onCopyText}
             onDelete={onDelete}
+            onRetryTranscription={onRetryTranscription}
             getAudioUrl={getAudioUrl}
           />
         ))}

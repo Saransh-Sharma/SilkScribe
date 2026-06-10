@@ -13,39 +13,43 @@ import { useOsType } from "./useOsType";
 
 type FeedLoadMode = "replace" | "append";
 
-interface HistoryFetchParams {
+const hasCursor = <TCursor>(
+  cursor: TCursor | null | undefined,
+): cursor is TCursor => cursor !== null && cursor !== undefined;
+
+interface HistoryFetchParams<TCursor = HomeHistoryCursor> {
   limit?: number;
-  cursor?: HomeHistoryCursor | null;
+  cursor?: TCursor | null;
 }
 
-interface HistoryFeedPaginationOptions<TData> {
+interface HistoryFeedPaginationOptions<TData, TCursor = HomeHistoryCursor> {
   pageSize?: number;
-  selectNextCursor: (data: TData) => HomeHistoryCursor | null;
+  selectNextCursor: (data: TData) => TCursor | null;
 }
 
-interface UseHistoryFeedOptions<TData> {
-  fetchData: (params?: HistoryFetchParams) => Promise<TData>;
+interface UseHistoryFeedOptions<TData, TCursor = HomeHistoryCursor> {
+  fetchData: (params?: HistoryFetchParams<TCursor>) => Promise<TData>;
   selectEntries: (data: TData) => HistoryEntry[];
   onDataLoaded?: (data: TData, mode: FeedLoadMode) => void;
   onDataError?: () => void;
   refreshEvents?: string[];
-  pagination?: HistoryFeedPaginationOptions<TData>;
+  pagination?: HistoryFeedPaginationOptions<TData, TCursor>;
 }
 
-export const useHistoryFeed = <TData>({
+export const useHistoryFeed = <TData, TCursor = HomeHistoryCursor>({
   fetchData,
   selectEntries,
   onDataLoaded,
   onDataError,
   refreshEvents = ["history-updated"],
   pagination,
-}: UseHistoryFeedOptions<TData>) => {
+}: UseHistoryFeedOptions<TData, TCursor>) => {
   const osType = useOsType();
   const { t } = useTranslation();
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [nextCursor, setNextCursor] = useState<HomeHistoryCursor | null>(null);
+  const [nextCursor, setNextCursor] = useState<TCursor | null>(null);
   const [hasMore, setHasMore] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
@@ -55,7 +59,7 @@ export const useHistoryFeed = <TData>({
   const onDataErrorRef = useRef(onDataError);
   const refreshEventsRef = useRef(refreshEvents);
   const paginationRef = useRef(pagination);
-  const nextCursorRef = useRef<HomeHistoryCursor | null>(null);
+  const nextCursorRef = useRef<TCursor | null>(null);
   const isLoadingMoreRef = useRef(false);
 
   useEffect(() => {
@@ -74,7 +78,7 @@ export const useHistoryFeed = <TData>({
     pagination,
   ]);
 
-  const updateNextCursor = (cursor: HomeHistoryCursor | null) => {
+  const updateNextCursor = (cursor: TCursor | null) => {
     nextCursorRef.current = cursor;
     setNextCursor(cursor);
   };
@@ -105,7 +109,7 @@ export const useHistoryFeed = <TData>({
       if (paginationOptions) {
         const cursor = paginationOptions.selectNextCursor(data);
         updateNextCursor(cursor);
-        setHasMore(Boolean(cursor));
+        setHasMore(hasCursor(cursor));
       } else {
         updateNextCursor(null);
         setHasMore(false);
@@ -135,23 +139,24 @@ export const useHistoryFeed = <TData>({
       return;
     }
 
-    if (!nextCursorRef.current || isLoadingMoreRef.current) {
+    if (!hasCursor(nextCursorRef.current) || isLoadingMoreRef.current) {
       return;
     }
 
+    const currentCursor = nextCursorRef.current;
     updateLoadingMore(true);
 
     try {
       const data = await fetchDataRef.current({
         limit: paginationOptions.pageSize ?? 50,
-        cursor: nextCursorRef.current,
+        cursor: currentCursor,
       });
       const nextEntries = selectEntriesRef.current(data);
       setEntries((currentEntries) => [...currentEntries, ...nextEntries]);
 
       const cursor = paginationOptions.selectNextCursor(data);
       updateNextCursor(cursor);
-      setHasMore(Boolean(cursor));
+      setHasMore(hasCursor(cursor));
       onDataLoadedRef.current?.(data, "append");
       setError(null);
     } catch (loadError) {
@@ -238,6 +243,18 @@ export const useHistoryFeed = <TData>({
     }
   };
 
+  const retryEntryTranscription = async (id: number) => {
+    try {
+      const result = await commands.retryHistoryEntryTranscription(id);
+      if (result.status !== "ok") {
+        throw new Error(result.error);
+      }
+    } catch (retryError) {
+      console.error("Failed to retry history entry transcription:", retryError);
+      toast.error(t("settings.history.retryTranscriptionError"));
+    }
+  };
+
   const reload = async (showLoadingState = true) => {
     await load(showLoadingState);
   };
@@ -254,5 +271,6 @@ export const useHistoryFeed = <TData>({
     copyToClipboard,
     getAudioUrl,
     deleteEntry,
+    retryEntryTranscription,
   };
 };

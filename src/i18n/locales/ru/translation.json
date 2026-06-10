@@ -550,6 +550,32 @@
         "add": "Добавлять",
         "remove": "Удалить {{word}}",
         "duplicate": "\"{{word}}\" уже существует"
+      },
+      "acceleration": {
+        "labels": {
+          "auto": "Авто",
+          "cpu": "CPU",
+          "cuda": "CUDA",
+          "directml": "DirectML",
+          "rocm": "ROCm"
+        },
+        "whisper": {
+          "title": "Ускорение Whisper",
+          "description": "Выберите аппаратное ускорение для моделей Whisper."
+        },
+        "ort": {
+          "title": "Ускорение ONNX",
+          "description": "Выберите аппаратное ускорение для моделей ONNX."
+        },
+        "gpuDevice": {
+          "title": "GPU-устройство",
+          "description": "Выберите GPU для инференса Whisper.",
+          "auto": "Авто"
+        }
+      },
+      "lazyStreamClose": {
+        "label": "Держать микрофон открытым между транскрипциями",
+        "description": "Кратко держать поток микрофона открытым после остановки записи."
       }
     },
     "postProcessing": {
@@ -622,8 +648,13 @@
       "unsave": "Удалить из сохраненных",
       "delete": "Удалить запись",
       "deleteError": "Не удалось удалить запись. Пожалуйста, попробуйте еще раз.",
-      "loadError": "Не удалось загрузить историю прямо сейчас. Попробуйте еще раз.",
-      "retry": "Повторить"
+      "loadError": "Не удалось загрузить историю. Попробуйте снова.",
+      "retry": "Повторить",
+      "loadMore": "Загрузить ещё",
+      "loadingMore": "Загрузка...",
+      "retryableEmpty": "Транскрипция не удалась. Запись доступна для повтора.",
+      "retryTranscription": "Повторить транскрипцию",
+      "retryTranscriptionError": "Не удалось повторить транскрипцию. Попробуйте снова."
     },
     "debug": {
       "title": "Отлаживать",
@@ -685,7 +716,11 @@
       "keyboardImplementation": {
         "title": "Keyboard Implementation",
         "description": "Choose the keyboard shortcut backend.",
-        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults"
+        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
+        "backends": {
+          "tauri": "Глобальное сочетание Tauri",
+          "nativeKeys": "Нативные клавиши"
+        }
       },
       "paths": {
         "appData": "Данные приложения:",
@@ -695,6 +730,10 @@
       "pasteDelay": {
         "title": "Задержка вставки",
         "description": "Задержка перед отправкой нажатия клавиши вставки (в миллисекундах). Увеличьте, если вставляется неправильный текст."
+      },
+      "recordingBuffer": {
+        "title": "Дополнительный буфер записи",
+        "description": "Продолжать запись ненадолго после отпускания клавиши."
       }
     },
     "about": {
@@ -758,5 +797,16 @@
   "appLanguage": {
     "title": "Язык приложения",
     "description": "Изменить языка интерфейса SilkScribe"
+  },
+  "overlay": {
+    "listening": "Запись",
+    "transcribing": "Транскрипция",
+    "processing": "Обработка",
+    "success": "Готово",
+    "failed": "Ошибка"
+  },
+  "home": {
+    "loadingMore": "Загрузка...",
+    "loadMore": "Загрузить ещё"
   }
 }

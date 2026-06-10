@@ -19,11 +19,11 @@ export const SupportPage = () => (
     <section className="support-hero">
       <div className="support-hero__copy" data-hero>
         <span className="eyebrow">SilkScribe support</span>
-        <h1>Support that stays close to the real Mac setup flow.</h1>
+        <h1>Help for clear Mac setup and everyday voice typing.</h1>
         <p>
-          This page is designed for App Store reviewers and real users alike:
-          direct contact paths, Mac-first troubleshooting, and permission
-          guidance written in product language instead of scattered docs.
+          Find the fastest path through permissions, shortcuts, model setup,
+          text insertion, and direct support without leaving the product story
+          behind.
         </p>
       </div>
       <div className="support-hero__channels" id="support-channels">
@@ -84,8 +84,8 @@ export const SupportPage = () => (
     <section className="section-block" id="troubleshooting">
       <SectionIntro
         eyebrow="Before you contact us"
-        title="Use the same troubleshooting path the product expects."
-        body="Each card below maps to the setup and settings language already used inside SilkScribe, so users do not need to translate between a support doc and the app."
+        title="Start with the parts macOS needs SilkScribe to use."
+        body="Most issues come down to microphone access, accessibility access, shortcut conflicts, model readiness, or where the text is being inserted."
       />
       <div className="troubleshooting-grid">
         {troubleshootingCards.map((card) => (
@@ -121,8 +121,8 @@ export const SupportPage = () => (
     <section className="section-block" id="faq">
       <SectionIntro
         eyebrow="FAQ"
-        title="Answers for the questions App Store users ask first."
-        body="The accordion uses semantic details/summary markup, so it stays accessible and readable even without JavaScript."
+        title="Answers for people setting up private Mac voice typing."
+        body="These answers stay focused on what SilkScribe needs to hear your voice, turn it into text, and write into the app you are already using."
       />
       <div className="faq-list">
         {faqItems.map((item) => (
@@ -140,7 +140,7 @@ export const SupportPage = () => (
     <section className="section-block">
       <SectionIntro
         eyebrow="Known limitations"
-        title="Transparent about where support is strongest and where the edges still are."
+        title="Transparent about where support is strongest."
         body="SilkScribe is open source and actively evolving. If you hit something repeatable, prefer GitHub issues so the report stays public, searchable, and useful to the next person."
       />
       <div className="limit-grid">
