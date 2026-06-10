@@ -40,7 +40,6 @@
       "files": {},
       "hardenedRuntime": true,
       "minimumSystemVersion": "10.15",
-      "signingIdentity": "-",
       "entitlements": "Entitlements.plist"
     },
     "linux": {
@@ -56,9 +55,6 @@
         "bundleMediaFramework": true,
         "files": {}
       }
-    },
-    "windows": {
-      "signCommand": "trusted-signing-cli -e https://eus.codesigning.azure.net/ -a CJ-Signing -c cjpais-dev -d SilkScribe %1"
     }
   },
   "plugins": {
