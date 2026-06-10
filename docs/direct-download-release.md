@@ -15,7 +15,26 @@ SilkScribe direct-download releases use the normal Tauri configuration, not the 
 
 The updater public key in `src-tauri/tauri.conf.json` must match `TAURI_SIGNING_PRIVATE_KEY`. If the private key for the current public key is unavailable, generate a new Tauri signing key pair and update the public key before publishing the first release from this repository.
 
-## Release Command
+## Local Distribution Build
+
+Use the build CLI to validate credentials, create a universal build, notarize
+and staple it, verify it with Gatekeeper, and collect the result:
+
+```bash
+bun run app:build -- doctor --mode distribution --arch universal
+bun run app:build -- rebuild --mode distribution --arch universal --bundles app,dmg
+```
+
+Local artifacts are written to:
+
+```text
+artifacts/<version>/macos/universal/distribution/
+```
+
+See [build-cli.md](build-cli.md) for credential setup, built-in help topics,
+dry-run behavior, and troubleshooting.
+
+## GitHub Release Command
 
 Set the same semantic version in `package.json`, `src-tauri/tauri.conf.json`, and `src-tauri/Cargo.toml`, then push a matching tag:
 
