@@ -26,7 +26,8 @@ export const HistoryFeedItem = ({
   const [showCopied, setShowCopied] = useState(false);
   const [retrying, setRetrying] = useState(false);
 
-  const transcriptText = entry.post_processed_text ?? entry.transcription_text;
+  const transcriptText =
+    entry.post_processed_text?.trim() || entry.transcription_text;
   const hasTranscriptText = transcriptText.trim().length > 0;
   const timestampLabel = formatTime(String(entry.timestamp), i18n.language);
   const isRetryable = !hasTranscriptText && Boolean(onRetryTranscription);

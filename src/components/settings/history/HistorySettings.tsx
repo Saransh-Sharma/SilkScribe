@@ -106,6 +106,7 @@ export const HistorySettings = () => {
         hasMore={hasMore}
         isLoadingMore={isLoadingMore}
         loadMoreLabel={t("settings.history.loadMore")}
+        loadingMoreLabel={t("settings.history.loadingMore")}
         onLoadMore={() => {
           void loadMore();
         }}

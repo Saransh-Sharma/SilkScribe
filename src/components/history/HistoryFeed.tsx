@@ -17,6 +17,7 @@ interface HistoryFeedProps {
   hasMore?: boolean;
   isLoadingMore?: boolean;
   loadMoreLabel?: string;
+  loadingMoreLabel?: string;
   onLoadMore?: () => void;
   onToggleSaved: (id: number) => void;
   onCopyText: (text: string) => void;
@@ -63,6 +64,7 @@ export const HistoryFeed = ({
   hasMore = false,
   isLoadingMore = false,
   loadMoreLabel,
+  loadingMoreLabel,
   onLoadMore,
   onToggleSaved,
   onCopyText,
@@ -197,7 +199,9 @@ export const HistoryFeed = ({
             disabled={isLoadingMore}
             onClick={onLoadMore}
           >
-            {isLoadingMore ? retryLabel : (loadMoreLabel ?? retryLabel)}
+            {isLoadingMore
+              ? (loadingMoreLabel ?? loadMoreLabel ?? retryLabel)
+              : (loadMoreLabel ?? retryLabel)}
           </Button>
         </div>
       ) : null}

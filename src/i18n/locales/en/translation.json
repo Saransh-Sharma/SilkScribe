@@ -687,6 +687,7 @@
       "deleteError": "Failed to delete entry. Please try again.",
       "loadError": "Unable to load history right now. Please try again.",
       "loadMore": "Load more",
+      "loadingMore": "Loading more...",
       "retryableEmpty": "Transcription failed. The recording is available to retry.",
       "retryTranscription": "Retry transcription",
       "retryTranscriptionError": "Failed to retry transcription. Please try again.",
@@ -895,6 +896,7 @@
     },
     "activityTitle": "Recent activity",
     "loadMore": "Load more",
+    "loadingMore": "Loading more...",
     "stats": {
       "streak": "Current streak",
       "words": "Words transcribed",
