@@ -4,11 +4,6 @@ export interface NavLink {
   external?: boolean;
 }
 
-export interface ProofPoint {
-  label: string;
-  value: string;
-}
-
 export interface Step {
   title: string;
   description: string;
@@ -17,14 +12,6 @@ export interface Step {
 export interface MarketingCard {
   title: string;
   body: string;
-}
-
-export interface FeatureStory {
-  eyebrow: string;
-  title: string;
-  description: string;
-  bullets: string[];
-  accent: "blue" | "amber" | "berry";
 }
 
 export interface BeforeAfterExample {
@@ -100,14 +87,6 @@ export const marketingScreenshots: Record<"hero", ScreenshotAsset> = {
   },
 };
 
-export const heroProofPoints: ProofPoint[] = [
-  { label: "Private by default", value: "Voice typing built around local use" },
-  { label: "Works in any app", value: "Text lands where your cursor is" },
-  { label: "Runs on your Mac", value: "No required cloud workspace" },
-  { label: "Custom vocabulary", value: "Names, acronyms, and product terms" },
-  { label: "Open source", value: "Inspect the product and roadmap" },
-];
-
 export const howItWorksSteps: Step[] = [
   {
     title: "Hold your shortcut",
@@ -123,45 +102,6 @@ export const howItWorksSteps: Step[] = [
     title: "Release to write",
     description:
       "Clean text appears where your cursor already is, ready to use without a copy-paste ritual.",
-  },
-];
-
-export const featureStories: FeatureStory[] = [
-  {
-    eyebrow: "Workflow",
-    title: "A Mac utility, not another destination.",
-    description:
-      "The best tools on your Mac wait quietly, respond instantly, and disappear when the job is done. SilkScribe follows that pattern.",
-    bullets: [
-      "Shortcut-first interaction",
-      "Menu bar-friendly utility feel",
-      "Works across apps",
-    ],
-    accent: "blue",
-  },
-  {
-    eyebrow: "Privacy",
-    title: "Your voice should not have to leave your Mac.",
-    description:
-      "Voice contains unfinished thoughts, private notes, and work before it is ready. SilkScribe treats that seriously.",
-    bullets: [
-      "Local-first transcription",
-      "Clear macOS permissions",
-      "Open-source transparency",
-    ],
-    accent: "amber",
-  },
-  {
-    eyebrow: "Output",
-    title: "Clean text, not raw transcript.",
-    description:
-      "Real speech is messy. SilkScribe is designed to turn pauses, restarts, and rough thoughts into text you can actually use.",
-    bullets: [
-      "Readable sentences",
-      "Punctuation and casing",
-      "Custom vocabulary and history",
-    ],
-    accent: "berry",
   },
 ];
 
@@ -261,33 +201,6 @@ export const outputCards: MarketingCard[] = [
   {
     title: "Flexible paste modes",
     body: "Choose how SilkScribe inserts text into the active app.",
-  },
-];
-
-export const useCaseCards: MarketingCard[] = [
-  {
-    title: "Reply faster",
-    body: "Dictate Slack messages, emails, comments, and quick responses.",
-  },
-  {
-    title: "Capture thoughts",
-    body: "Turn ideas into notes before they disappear.",
-  },
-  {
-    title: "Prompt better",
-    body: "Speak longer, clearer AI prompts without fighting the keyboard.",
-  },
-  {
-    title: "Manage work",
-    body: "Dictate status updates, meeting follow-ups, tickets, and planning notes.",
-  },
-  {
-    title: "Write personally",
-    body: "Use it for journals, reflections, reminders, and personal notes.",
-  },
-  {
-    title: "Think out loud",
-    body: "Let messy thoughts become structured text.",
   },
 ];
 
