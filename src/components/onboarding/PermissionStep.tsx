@@ -107,8 +107,8 @@ const PermissionValuePanel = ({
       </div>
 
       <div className="mt-auto pt-5">
-        <div className="rounded-[22px] border border-ss-brand-highlight/22 bg-[linear-gradient(135deg,rgba(254,191,43,0.16),rgba(255,248,239,0.78))] p-4">
-          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-ss-text-tertiary">
+        <div className="rounded-[22px] border border-ss-border-default bg-ss-bg-elevated/95 p-4 shadow-[var(--ss-shadow-card)]">
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-ss-brand-primary">
             {t("onboarding.permissions.shared.privateLabel")}
           </p>
           <p className="mt-2 text-sm leading-relaxed text-ss-text-secondary">
@@ -266,27 +266,7 @@ const AccessibilityPreview = ({ status }: { status: PermissionStatus }) => {
 
   return (
     <div className="grid gap-4">
-      <div className="grid gap-2">
-        {[
-          t("onboarding.permissions.accessibility.guide.exampleApp1"),
-          t("onboarding.permissions.accessibility.guide.exampleApp2"),
-        ].map((appName) => (
-          <div
-            key={appName}
-            className="flex items-center justify-between gap-3 rounded-[16px] border border-ss-border-subtle bg-ss-bg-surface-alt/82 px-3.5 py-3"
-          >
-            <div className="flex min-w-0 items-center gap-3">
-              <span className="h-8 w-8 shrink-0 rounded-[12px] bg-ss-bg-surface shadow-[var(--ss-shadow-card)]" />
-              <span className="truncate text-sm font-semibold text-ss-text-tertiary">
-                {appName}
-              </span>
-            </div>
-            <span className="h-6 w-10 shrink-0 rounded-full border border-ss-border-subtle bg-ss-bg-surface" />
-          </div>
-        ))}
-      </div>
-
-      <div className="relative flex items-center justify-between gap-3 rounded-[18px] border border-ss-brand-highlight/35 bg-[linear-gradient(135deg,rgba(254,191,43,0.18),rgba(255,248,239,0.86))] px-3.5 py-3.5 shadow-[var(--ss-shadow-card)]">
+      <div className="relative flex items-center justify-between gap-3 rounded-[18px] border border-ss-brand-highlight/35 bg-ss-bg-elevated/95 px-3.5 py-3.5 shadow-[var(--ss-shadow-card)]">
         <div className="flex min-w-0 items-center gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[13px] bg-ss-brand-primary text-ss-brand-primary-ink">
             <Keyboard className="h-4 w-4" />
