@@ -40,17 +40,17 @@ const EMPTY_SUMMARY: UsageSummary = {
 const HOME_PAGE_SIZE = 50;
 const MIDNIGHT_REFRESH_BUFFER_MS = 5_000;
 
+type HomeNavigationSection =
+  | "home"
+  | "general"
+  | "models"
+  | "advanced"
+  | "postprocessing"
+  | "history"
+  | "debug";
+
 interface HomeDashboardProps {
-  onNavigate?: (
-    section:
-      | "home"
-      | "general"
-      | "models"
-      | "advanced"
-      | "postprocessing"
-      | "history"
-      | "debug",
-  ) => void;
+  onNavigate?: (section: HomeNavigationSection) => void;
   onStartPermissionRepair?: () => void | Promise<void>;
 }
 
@@ -248,6 +248,15 @@ const HomeDashboard = ({
     }
   };
 
+  const navigateWithPermissionGate = (destination: HomeNavigationSection) => {
+    if (permissionsReady) {
+      onNavigate?.(destination);
+      return;
+    }
+
+    void startPermissionRepairOnce();
+  };
+
   const readinessItems = [
     {
       key: "shortcut",
@@ -284,10 +293,7 @@ const HomeDashboard = ({
         ? t("home.readiness.permissions.ready")
         : t("home.readiness.permissions.needsAttention"),
       status: permissionsReady,
-      action: () =>
-        permissionsReady
-          ? onNavigate?.("general")
-          : void startPermissionRepairOnce(),
+      action: () => navigateWithPermissionGate("general"),
       actionLabel: t("home.readiness.permissions.action"),
       disabled: !permissionsReady && isStartingPermissionRepair,
     },
@@ -319,15 +325,13 @@ const HomeDashboard = ({
                 size="md"
                 disabled={!permissionsReady && isStartingPermissionRepair}
                 onClick={() =>
-                  !permissionsReady
-                    ? void startPermissionRepairOnce()
-                    : onNavigate?.(
-                        setupReady
-                          ? "general"
-                          : currentModelInfo
-                            ? "general"
-                            : "models",
-                      )
+                  navigateWithPermissionGate(
+                    setupReady
+                      ? "general"
+                      : currentModelInfo
+                        ? "general"
+                        : "models",
+                  )
                 }
               >
                 {setupActionLabel}
@@ -367,11 +371,7 @@ const HomeDashboard = ({
                     variant="secondary"
                     size="sm"
                     disabled={!permissionsReady && isStartingPermissionRepair}
-                    onClick={() =>
-                      !permissionsReady
-                        ? void startPermissionRepairOnce()
-                        : onNavigate?.("general")
-                    }
+                    onClick={() => navigateWithPermissionGate("general")}
                   >
                     {t("home.setup.generalAction")}
                   </Button>

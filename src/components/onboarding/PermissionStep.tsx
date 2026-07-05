@@ -54,7 +54,7 @@ const isActiveGuidanceState = (status: PermissionStatus) =>
   status === "requesting" ||
   status === "waiting_for_user";
 
-const getErrorMessage = (error: unknown) =>
+export const getErrorMessage = (error: unknown) =>
   error instanceof Error ? error.message : String(error);
 
 interface PermissionVisualProps {

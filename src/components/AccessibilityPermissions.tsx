@@ -3,13 +3,14 @@ import { useTranslation } from "react-i18next";
 import { type } from "@tauri-apps/plugin-os";
 import { checkAccessibilityPermission } from "tauri-plugin-macos-permissions-api";
 import {
+  getErrorMessage,
   PermissionStatusCard,
   type PermissionStatus,
 } from "./onboarding/PermissionStep";
 import { Button } from "./ui/Button";
 
 interface AccessibilityPermissionsProps {
-  onStartRepair?: () => void;
+  onStartRepair: () => void;
 }
 
 const AccessibilityPermissions: React.FC<AccessibilityPermissionsProps> = ({
@@ -35,11 +36,7 @@ const AccessibilityPermissions: React.FC<AccessibilityPermissionsProps> = ({
         "Error checking accessibility permissions:",
         permissionError,
       );
-      setError(
-        permissionError instanceof Error
-          ? permissionError.message
-          : String(permissionError),
-      );
+      setError(getErrorMessage(permissionError));
       setStatus("error");
     }
   };
