@@ -74,6 +74,7 @@ pub struct ModelDownloadPreflight {
 const DEFAULT_MODEL_BROKER_URL: &str =
     "https://silkscribebackend.vercel.app/api/model-download-token";
 const MODEL_BROKER_URL_ENV: &str = "SILKSCRIBE_MODEL_BROKER_URL";
+const RECOMMENDED_DOWNLOAD_HEADROOM_BYTES: u64 = 512 * 1024 * 1024;
 
 #[derive(Debug, Deserialize)]
 struct DownloadBrokerResponse {
@@ -1336,7 +1337,7 @@ impl ModelManager {
             .join(format!("{}.partial", &model_info.filename));
         let partial_bytes = partial_path.metadata().map(|m| m.len()).unwrap_or(0);
         let remaining_download_bytes = model_size_bytes.saturating_sub(partial_bytes);
-        let recommended_headroom_bytes = 512 * 1024 * 1024;
+        let recommended_headroom_bytes = RECOMMENDED_DOWNLOAD_HEADROOM_BYTES;
         let extraction_bytes = if model_info.is_directory {
             model_size_bytes
         } else {
@@ -1345,7 +1346,7 @@ impl ModelManager {
         let required_bytes = remaining_download_bytes
             .saturating_add(extraction_bytes)
             .saturating_add(recommended_headroom_bytes);
-        let free_bytes = fs2::available_space(&self.models_dir)
+        let free_bytes = fs4::available_space(&self.models_dir)
             .map_err(|e| anyhow::anyhow!("Failed to check free disk space: {}", e))?;
 
         Ok(ModelDownloadPreflight {

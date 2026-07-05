@@ -48,7 +48,6 @@ pub(crate) struct ProcessedTranscription {
 struct PasteFailedPayload {
     code: PasteFailureCode,
     copied_to_clipboard: bool,
-    detail: Option<String>,
 }
 
 #[derive(Clone, serde::Serialize)]
@@ -575,36 +574,32 @@ impl ShortcutAction for TranscribeAction {
                                     }
                                     Err(e) => {
                                         error!("Failed to paste transcription: {}", e);
-                                        let (copied_to_clipboard, copy_error_detail) = match ah_clone
+                                        let copied_to_clipboard = match ah_clone
                                             .clipboard()
                                             .write_text(&paste_text)
                                         {
-                                            Ok(()) => (true, None),
+                                            Ok(()) => true,
                                             Err(copy_error) => {
                                                 error!(
                                                     "Failed to copy transcription fallback to clipboard: {}",
                                                     copy_error
                                                 );
-                                                (false, Some(copy_error.to_string()))
+                                                false
                                             }
                                         };
-                                        let (code, detail) = if copied_to_clipboard {
-                                            (PasteFailureCode::Copied, None)
+                                        let code = if copied_to_clipboard {
+                                            PasteFailureCode::Copied
                                         } else {
-                                            (PasteFailureCode::CopyFailed, copy_error_detail)
+                                            PasteFailureCode::CopyFailed
                                         };
                                         let _ = ah_clone.emit(
                                             "transcription-paste-failed",
                                             PasteFailedPayload {
                                                 code,
                                                 copied_to_clipboard,
-                                                detail,
                                             },
                                         );
-                                        utils::show_error_overlay_with_detail(
-                                            &ah_clone,
-                                            "Paste failed",
-                                        );
+                                        show_error_overlay(&ah_clone);
                                         utils::hide_recording_overlay_after(&ah_clone, 1500);
                                     }
                                 }

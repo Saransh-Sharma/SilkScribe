@@ -1162,6 +1162,12 @@ impl HistoryManager {
         Ok(PaginatedHistory { entries, has_more })
     }
 
+    /// Searches history entries by optional text query and status filter.
+    ///
+    /// `query` matches entry titles and visible transcript text when present.
+    /// `filter` narrows results to all, saved, or failed entries. `cursor` is
+    /// the last entry id from the previous page and `limit` caps the page size;
+    /// the returned [`PaginatedHistory`] reports whether another page exists.
     pub async fn search_history_entries(
         &self,
         query: Option<String>,
