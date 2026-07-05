@@ -36,7 +36,9 @@ export const DisclosureSection = ({
         onClick={() => setIsOpen((open) => !open)}
       >
         <div className="min-w-0">
-          <h2 className="text-sm font-semibold text-ss-text-primary">{title}</h2>
+          <h2 className="text-sm font-semibold text-ss-text-primary">
+            {title}
+          </h2>
           {description ? (
             <p className="mt-1 text-sm leading-relaxed text-ss-text-secondary">
               {description}

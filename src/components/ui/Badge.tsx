@@ -30,7 +30,8 @@ const Badge: React.FC<BadgeProps> = ({
 
   const variantClasses = {
     primary: "",
-    success: "text-ss-brand-highlight border-ss-brand-highlight/25 bg-ss-brand-highlight/12",
+    success:
+      "text-ss-brand-highlight border-ss-brand-highlight/25 bg-ss-brand-highlight/12",
     secondary: "",
   };
 

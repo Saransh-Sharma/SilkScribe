@@ -39,8 +39,7 @@ type NonCreatableProps = {
 
 export type SelectProps = BaseProps & (CreatableProps | NonCreatableProps);
 
-const baseBackground =
-  "var(--ss-bg-elevated)";
+const baseBackground = "var(--ss-bg-elevated)";
 const hoverBackground =
   "color-mix(in srgb, var(--ss-brand-secondary) 10%, var(--ss-bg-surface))";
 const focusBackground =
@@ -62,7 +61,8 @@ const selectStyles: StylesConfig<SelectOption, false> = {
     transition: "all 150ms ease",
     cursor: state.isDisabled ? "not-allowed" : "pointer",
     ":hover": {
-      borderColor: "color-mix(in srgb, var(--ss-brand-secondary) 35%, var(--ss-border-default))",
+      borderColor:
+        "color-mix(in srgb, var(--ss-brand-secondary) 35%, var(--ss-border-default))",
       backgroundColor: hoverBackground,
     },
   }),
@@ -97,7 +97,7 @@ const selectStyles: StylesConfig<SelectOption, false> = {
   }),
   menu: (provided) => ({
     ...provided,
-    zIndex: 30,
+    zIndex: "var(--ss-layer-dropdown)",
     marginTop: 8,
     borderRadius: 16,
     overflow: "hidden",
@@ -108,7 +108,7 @@ const selectStyles: StylesConfig<SelectOption, false> = {
   }),
   menuPortal: (provided) => ({
     ...provided,
-    zIndex: 9999,
+    zIndex: "var(--ss-layer-dropdown)",
   }),
   option: (base, state) => ({
     ...base,
@@ -117,7 +117,9 @@ const selectStyles: StylesConfig<SelectOption, false> = {
       : state.isFocused
         ? hoverBackground
         : "transparent",
-    color: state.isSelected ? "var(--ss-brand-secondary)" : "var(--ss-text-primary)",
+    color: state.isSelected
+      ? "var(--ss-brand-secondary)"
+      : "var(--ss-text-primary)",
     cursor: state.isDisabled ? "not-allowed" : base.cursor,
     opacity: state.isDisabled ? 0.5 : 1,
   }),
