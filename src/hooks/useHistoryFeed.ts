@@ -61,6 +61,9 @@ export const useHistoryFeed = <TData, TCursor = HomeHistoryCursor>({
   const paginationRef = useRef(pagination);
   const nextCursorRef = useRef<TCursor | null>(null);
   const isLoadingMoreRef = useRef(false);
+  const entriesRef = useRef<HistoryEntry[]>([]);
+  const pendingDeleteTimersRef = useRef<Map<number, number>>(new Map());
+  const pendingDeleteEntriesRef = useRef<Map<number, HistoryEntry>>(new Map());
 
   useEffect(() => {
     fetchDataRef.current = fetchData;
@@ -88,6 +91,19 @@ export const useHistoryFeed = <TData, TCursor = HomeHistoryCursor>({
     setIsLoadingMore(loadingMore);
   };
 
+  const filterPendingDeletes = (nextEntries: HistoryEntry[]) =>
+    nextEntries.filter(
+      (entry) => !pendingDeleteEntriesRef.current.has(entry.id),
+    );
+
+  const sortEntries = (nextEntries: HistoryEntry[]) =>
+    [...nextEntries].sort((left, right) => {
+      if (right.timestamp !== left.timestamp) {
+        return right.timestamp - left.timestamp;
+      }
+      return right.id - left.id;
+    });
+
   const load = async (showLoadingState = false) => {
     if (showLoadingState) {
       setLoading(true);
@@ -103,7 +119,7 @@ export const useHistoryFeed = <TData, TCursor = HomeHistoryCursor>({
             }
           : undefined,
       );
-      const nextEntries = selectEntriesRef.current(data);
+      const nextEntries = filterPendingDeletes(selectEntriesRef.current(data));
       setEntries(nextEntries);
 
       if (paginationOptions) {
@@ -151,7 +167,7 @@ export const useHistoryFeed = <TData, TCursor = HomeHistoryCursor>({
         limit: paginationOptions.pageSize ?? 50,
         cursor: currentCursor,
       });
-      const nextEntries = selectEntriesRef.current(data);
+      const nextEntries = filterPendingDeletes(selectEntriesRef.current(data));
       setEntries((currentEntries) => [...currentEntries, ...nextEntries]);
 
       const cursor = paginationOptions.selectNextCursor(data);
@@ -191,6 +207,21 @@ export const useHistoryFeed = <TData, TCursor = HomeHistoryCursor>({
     };
   }, []);
 
+  useEffect(() => {
+    entriesRef.current = entries;
+  }, [entries]);
+
+  useEffect(
+    () => () => {
+      pendingDeleteTimersRef.current.forEach((timerId) => {
+        window.clearTimeout(timerId);
+      });
+      pendingDeleteTimersRef.current.clear();
+      pendingDeleteEntriesRef.current.clear();
+    },
+    [],
+  );
+
   const toggleSaved = async (id: number) => {
     try {
       const result = await commands.toggleHistoryEntrySaved(id);
@@ -205,8 +236,10 @@ export const useHistoryFeed = <TData, TCursor = HomeHistoryCursor>({
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
+      toast.success(t("settings.history.copySuccess"));
     } catch (clipboardError) {
       console.error("Failed to copy to clipboard:", clipboardError);
+      toast.error(t("settings.history.copyError"));
     }
   };
 
@@ -232,15 +265,72 @@ export const useHistoryFeed = <TData, TCursor = HomeHistoryCursor>({
   };
 
   const deleteEntry = async (id: number) => {
-    try {
-      const result = await commands.deleteHistoryEntry(id);
-      if (result.status !== "ok") {
-        throw new Error(result.error);
-      }
-    } catch (deleteError) {
-      console.error("Failed to delete history entry:", deleteError);
-      toast.error(t("settings.history.deleteError"));
+    const entry = entriesRef.current.find((candidate) => candidate.id === id);
+    if (!entry || pendingDeleteEntriesRef.current.has(id)) {
+      return;
     }
+
+    pendingDeleteEntriesRef.current.set(id, entry);
+    setEntries((currentEntries) =>
+      currentEntries.filter((candidate) => candidate.id !== id),
+    );
+
+    const undoDelete = () => {
+      const timerId = pendingDeleteTimersRef.current.get(id);
+      if (timerId !== undefined) {
+        window.clearTimeout(timerId);
+      }
+      pendingDeleteTimersRef.current.delete(id);
+      const pendingEntry = pendingDeleteEntriesRef.current.get(id);
+      pendingDeleteEntriesRef.current.delete(id);
+
+      if (pendingEntry) {
+        setEntries((currentEntries) =>
+          currentEntries.some((candidate) => candidate.id === id)
+            ? currentEntries
+            : sortEntries([pendingEntry, ...currentEntries]),
+        );
+      }
+    };
+
+    const commitDelete = async () => {
+      pendingDeleteTimersRef.current.delete(id);
+      const pendingEntry = pendingDeleteEntriesRef.current.get(id);
+      pendingDeleteEntriesRef.current.delete(id);
+
+      if (!pendingEntry) {
+        return;
+      }
+
+      try {
+        const result = await commands.deleteHistoryEntry(id);
+        if (result.status !== "ok") {
+          throw new Error(result.error);
+        }
+      } catch (deleteError) {
+        console.error("Failed to delete history entry:", deleteError);
+        setEntries((currentEntries) =>
+          currentEntries.some((candidate) => candidate.id === id)
+            ? currentEntries
+            : sortEntries([pendingEntry, ...currentEntries]),
+        );
+        toast.error(t("settings.history.deleteError"));
+      }
+    };
+
+    const timerId = window.setTimeout(() => {
+      void commitDelete();
+    }, 5000);
+    pendingDeleteTimersRef.current.set(id, timerId);
+
+    toast(t("settings.history.deleteQueued"), {
+      description: t("settings.history.deleteUndoDescription"),
+      duration: 5000,
+      action: {
+        label: t("settings.history.undoDelete"),
+        onClick: undoDelete,
+      },
+    });
   };
 
   const retryEntryTranscription = async (id: number) => {

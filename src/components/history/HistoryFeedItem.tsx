@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Check, Copy, RotateCcw, Star, Trash2 } from "lucide-react";
+import { Check, Copy, FileText, RotateCcw, Star, Trash2 } from "lucide-react";
 import { type HistoryEntry } from "@/bindings";
 import { AudioPlayer } from "@/components/ui/AudioPlayer";
 import { formatTime } from "@/utils/dateFormat";
@@ -36,6 +36,17 @@ export const HistoryFeedItem = ({
     onCopyText(transcriptText);
     setShowCopied(true);
     window.setTimeout(() => setShowCopied(false), 2000);
+  };
+
+  const handleCopyMarkdown = () => {
+    const markdown = [
+      `# ${entry.title}`,
+      "",
+      `**${timestampLabel}**`,
+      "",
+      transcriptText,
+    ].join("\n");
+    onCopyText(markdown);
   };
 
   const handleRetry = async () => {
@@ -101,6 +112,16 @@ export const HistoryFeedItem = ({
                 />
               </button>
             ) : null}
+            <button
+              type="button"
+              onClick={handleCopyMarkdown}
+              disabled={!hasTranscriptText}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-transparent text-ss-text-tertiary transition-[background-color,border-color,color,transform] duration-150 hover:-translate-y-0.5 hover:border-ss-brand-secondary/25 hover:bg-ss-brand-secondary/10 hover:text-ss-brand-secondary disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35"
+              title={t("settings.history.copyAsMarkdown")}
+              aria-label={t("settings.history.copyAsMarkdown")}
+            >
+              <FileText width={18} height={18} />
+            </button>
             <button
               type="button"
               onClick={() => onToggleSaved(entry.id)}

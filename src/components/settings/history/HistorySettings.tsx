@@ -1,6 +1,15 @@
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FolderOpen } from "lucide-react";
-import { commands, type PaginatedHistory } from "@/bindings";
+import { save } from "@tauri-apps/plugin-dialog";
+import { writeTextFile } from "@tauri-apps/plugin-fs";
+import { FileJson, FileText, FolderOpen, Search } from "lucide-react";
+import { toast } from "sonner";
+import {
+  commands,
+  type HistoryFilter,
+  type PaginatedHistory,
+} from "@/bindings";
+import type { HistoryEntry } from "@/bindings";
 import { HistoryFeed } from "@/components/history/HistoryFeed";
 import { Button } from "@/components/ui/Button";
 import { AppPage } from "@/components/ui";
@@ -8,25 +17,59 @@ import { useHistoryFeed } from "@/hooks/useHistoryFeed";
 
 const PAGE_SIZE = 50;
 
-const fetchHistoryEntries = async (params?: {
-  limit?: number;
-  cursor?: number | null;
-}): Promise<PaginatedHistory> => {
-  const result = await commands.getHistoryEntries(
-    typeof params?.cursor === "number" ? params.cursor : null,
-    params?.limit ?? PAGE_SIZE,
-  );
-  if (result.status !== "ok") {
-    throw new Error(result.error);
-  }
-
-  return result.data;
-};
-
 const selectHistoryEntries = (data: PaginatedHistory) => data.entries;
+
+const entryVisibleText = (entry: HistoryEntry) =>
+  entry.post_processed_text?.trim() || entry.transcription_text;
+
+const toMarkdown = (entries: HistoryEntry[]) =>
+  entries
+    .map((entry) =>
+      [
+        `## ${entry.title}`,
+        "",
+        `- Timestamp: ${new Date(entry.timestamp * 1000).toISOString()}`,
+        `- Saved: ${entry.saved ? "yes" : "no"}`,
+        "",
+        entryVisibleText(entry) || "_No transcript text._",
+      ].join("\n"),
+    )
+    .join("\n\n---\n\n");
 
 export const HistorySettings = () => {
   const { t } = useTranslation();
+  const [searchInput, setSearchInput] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [historyFilter, setHistoryFilter] = useState<HistoryFilter>("all");
+  const isFiltered =
+    debouncedSearch.trim().length > 0 || historyFilter !== "all";
+
+  const fetchHistoryEntries = useCallback(
+    async (params?: {
+      limit?: number;
+      cursor?: number | null;
+    }): Promise<PaginatedHistory> => {
+      const cursor = typeof params?.cursor === "number" ? params.cursor : null;
+      const limit = params?.limit ?? PAGE_SIZE;
+      const query = debouncedSearch.trim();
+      const result = isFiltered
+        ? await commands.searchHistoryEntries(
+            query.length > 0 ? query : null,
+            historyFilter,
+            cursor,
+            limit,
+          )
+        : await commands.getHistoryEntries(cursor, limit);
+
+      if (result.status !== "ok") {
+        throw new Error(result.error);
+      }
+
+      return result.data;
+    },
+    [debouncedSearch, historyFilter, isFiltered],
+  );
+
   const {
     entries,
     loading,
@@ -52,11 +95,80 @@ export const HistorySettings = () => {
     },
   });
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedSearch(searchInput);
+    }, 220);
+
+    return () => window.clearTimeout(timer);
+  }, [searchInput]);
+
+  useEffect(() => {
+    void reload(true);
+  }, [debouncedSearch, historyFilter]);
+
   const openRecordingsFolder = async () => {
     try {
       await commands.openRecordingsFolder();
     } catch (openError) {
       console.error("Failed to open recordings folder:", openError);
+    }
+  };
+
+  const fetchAllMatchingEntries = async () => {
+    let cursor: number | null = null;
+    const allEntries: HistoryEntry[] = [];
+    let hasMoreEntries = true;
+
+    while (hasMoreEntries) {
+      const page = await fetchHistoryEntries({
+        cursor,
+        limit: 100,
+      });
+      allEntries.push(...page.entries);
+      hasMoreEntries = page.has_more;
+      cursor = page.entries[page.entries.length - 1]?.id ?? null;
+
+      if (!cursor) {
+        break;
+      }
+    }
+
+    return allEntries;
+  };
+
+  const exportHistory = async (format: "markdown" | "json") => {
+    try {
+      const allEntries = await fetchAllMatchingEntries();
+      if (allEntries.length === 0) {
+        toast.warning(t("settings.history.exportEmpty"));
+        return;
+      }
+
+      const path = await save({
+        title: t("settings.history.exportTitle"),
+        defaultPath:
+          format === "markdown"
+            ? "silkscribe-history.md"
+            : "silkscribe-history.json",
+        filters: [
+          format === "markdown"
+            ? { name: "Markdown", extensions: ["md"] }
+            : { name: "JSON", extensions: ["json"] },
+        ],
+      });
+
+      if (!path) return;
+
+      const contents =
+        format === "markdown"
+          ? toMarkdown(allEntries)
+          : JSON.stringify(allEntries, null, 2);
+      await writeTextFile(path, contents);
+      toast.success(t("settings.history.exportSuccess"));
+    } catch (exportError) {
+      console.error("Failed to export history:", exportError);
+      toast.error(t("settings.history.exportError"));
     }
   };
 
@@ -66,26 +178,89 @@ export const HistorySettings = () => {
       title={t("settings.history.pageTitle")}
       description={t("settings.history.pageDescription")}
       actions={
-        <Button
-          type="button"
-          variant="secondary"
-          size="sm"
-          className="flex items-center gap-2"
-          onClick={() => {
-            void openRecordingsFolder();
-          }}
-        >
-          <FolderOpen className="h-4 w-4" />
-          <span>{t("settings.history.openFolder")}</span>
-        </Button>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <div className="relative">
+            <Search
+              className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ss-text-tertiary"
+              aria-hidden="true"
+            />
+            <input
+              type="search"
+              value={searchInput}
+              onChange={(event) => setSearchInput(event.target.value)}
+              placeholder={t("settings.history.searchPlaceholder")}
+              className="min-h-10 w-56 rounded-[var(--ss-radius-pill)] border border-ss-border-subtle bg-ss-bg-surface-alt py-2 pe-3 ps-9 text-sm text-ss-text-primary outline-none transition-[border-color,background-color,box-shadow] placeholder:text-ss-text-tertiary focus:border-ss-brand-secondary/40 focus:bg-ss-bg-surface focus:ring-2 focus:ring-ss-action-focus/25"
+            />
+          </div>
+          <div className="flex rounded-[var(--ss-radius-pill)] border border-ss-border-subtle bg-ss-bg-surface-alt p-1">
+            {(["all", "saved", "failed"] as HistoryFilter[]).map((filter) => (
+              <button
+                key={filter}
+                type="button"
+                onClick={() => setHistoryFilter(filter)}
+                className={`min-h-8 rounded-[var(--ss-radius-pill)] px-3 text-xs font-semibold transition-colors ${
+                  historyFilter === filter
+                    ? "bg-ss-bg-elevated text-ss-brand-secondary shadow-[var(--ss-shadow-card)]"
+                    : "text-ss-text-tertiary hover:text-ss-text-primary"
+                }`}
+              >
+                {t(`settings.history.filters.${filter}`)}
+              </button>
+            ))}
+          </div>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            className="flex items-center gap-2"
+            onClick={() => {
+              void openRecordingsFolder();
+            }}
+          >
+            <FolderOpen className="h-4 w-4" />
+            <span>{t("settings.history.openFolder")}</span>
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            className="flex items-center gap-2"
+            onClick={() => {
+              void exportHistory("markdown");
+            }}
+          >
+            <FileText className="h-4 w-4" />
+            <span>{t("settings.history.exportMarkdown")}</span>
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            className="flex items-center gap-2"
+            onClick={() => {
+              void exportHistory("json");
+            }}
+          >
+            <FileJson className="h-4 w-4" />
+            <span>{t("settings.history.exportJson")}</span>
+          </Button>
+        </div>
       }
     >
       <HistoryFeed
         entries={entries}
         loading={loading}
         error={error}
-        emptyTitle={t("settings.history.empty")}
-        emptyDescription={t("settings.history.emptyDescription")}
+        emptyTitle={
+          isFiltered
+            ? t("settings.history.emptyFiltered")
+            : t("settings.history.empty")
+        }
+        emptyDescription={
+          isFiltered
+            ? t("settings.history.emptyFilteredDescription")
+            : t("settings.history.emptyDescription")
+        }
         errorTitle={t("settings.history.loadError")}
         errorDescription={t("settings.history.loadError")}
         retryLabel={t("settings.history.retry")}
