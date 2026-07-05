@@ -89,21 +89,25 @@
         "iEnabledIt": "Etkinleştirdim",
         "checkAgain": "Tekrar kontrol et",
         "continue": "Devam et",
+        "appName": "SilkScribe",
+        "guidedHelper": "Rehberli yardım",
+        "privateLabel": "Tasarımı gereği gizli",
         "statuses": {
           "checking": "Kontrol ediliyor",
           "needed": "Hâlâ gerekli",
-          "error": "İlgilenmek gerekiyor",
+          "error": "İlgilenilmesi gerekiyor",
           "requesting": "macOS açılıyor",
           "waiting_for_user": "Seni bekliyor",
           "granted": "İzin verildi"
         }
       },
       "microphone": {
-        "title": "Mikrofon erişimine izin ver",
-        "description": "SilkScribe konuşmayı metne dönüştürmek için mikrofonuna ihtiyaç duyar.",
+        "title": "Kayıt sırasında SilkScribe'ın sizi duymasına izin verin.",
+        "description": "Sesiniz böylece metne dönüşür. SilkScribe yalnızca bir dikte başlattığınızda dinler.",
+        "primaryAction": "Mikrofon istemini aç",
         "needLabel": "Dinlemek için gerekli",
-        "whyItMattersTitle": "Neden önemli",
-        "whyItMattersBody": "SilkScribe yalnızca kayıt yaparken dinler. Mikrofon erişimi olmadan yazıya dökecek bir şey olmaz.",
+        "whyItMattersTitle": "İlk dikteniz burada başlıyor",
+        "whyItMattersBody": "Mikrofon erişimi, seçtiğiniz kısayolla SilkScribe'ın sesinizi yakalamasını sağlar. O olmadan yazıya dökülecek bir şey yoktur.",
         "breaksWithoutTitle": "Bu olmadan",
         "breaksWithoutBody": "Kayıt başlayabilir ama SilkScribe sesini duyamaz.",
         "afterGrantTitle": "İzin verdikten sonra",
@@ -114,22 +118,35 @@
           "step3": "Pencere çıkmazsa Sistem Ayarları > Gizlilik ve Güvenlik > Mikrofon bölümünü aç.",
           "step4": "SilkScribe’ı aç, sonra buraya dönüp tekrar kontrol et."
         },
-        "manualHint": "“İzin Verme”yi seçtiysen Sistem Ayarları > Gizlilik ve Güvenlik > Mikrofon bölümünden SilkScribe’ı aç.",
+        "manualHint": "Elle yol: Sistem Ayarları > Gizlilik ve Güvenlik > Mikrofon, ardından SilkScribe'ı açın.",
+        "privateNote": "Sesiniz bu Mac'te işlenir. SilkScribe'ın dinlemek ya da yazıya dökmek için buluta ihtiyacı yoktur.",
+        "guide": {
+          "windowLabel": "macOS istemi",
+          "title": "macOS sorduğunda İzin Ver'i seçin.",
+          "body": "Gerçek istem SilkScribe'ın dışında açılır. Bu önizleme, kuruluma devam etmek için doğru seçimi gösterir.",
+          "cue": "“İzin Ver”i arayın",
+          "promptTitle": "“SilkScribe” mikrofona erişmek istiyor",
+          "promptBody": "macOS bunu bir kez sorar; böylece SilkScribe kayıt sırasında diktenizi duyabilir.",
+          "deny": "İzin Verme",
+          "allow": "İzin Ver",
+          "allowed": "İzin verildi"
+        },
         "statusHelp": {
           "checking": "Mikrofon erişiminin açık olup olmadığı kontrol ediliyor.",
           "needed": "Mikrofon erişimi hâlâ kapalı.",
-          "error": "SilkScribe mikrofon erişimini doğrulayamadı.",
+          "error": "SilkScribe bunu henüz denetleyemedi. Yeniden deneyin ya da aşağıdaki elle yolu kullanın.",
           "requesting": "macOS izin penceresi şimdi görünmelidir.",
-          "waiting_for_user": "İzni ver, sonra geri gelip tekrar kontrol et.",
-          "granted": "Mikrofon erişimi açık."
+          "waiting_for_user": "Bunu macOS'te tamamlayın, sonra buraya dönün.",
+          "granted": "Tamam. SilkScribe devam edebilir."
         }
       },
       "accessibility": {
-        "title": "SilkScribe’ın senin için yazmasına izin ver",
-        "description": "SilkScribe’ın uygulamalarına metin yerleştirebilmesi için Erişilebilirlik erişimine ihtiyacı var.",
+        "title": "SilkScribe'ın metni imlecinizin olduğu yere yerleştirmesine izin verin.",
+        "description": "macOS metin eklemeyi korur. Bu izin, SilkScribe'ın bitmiş dikteyi kullandığınız uygulamaya yapıştırmasını sağlar.",
+        "primaryAction": "Erişilebilirlik ayarlarını aç",
         "needLabel": "Metin eklemek için gerekli",
-        "whyItMattersTitle": "Neden önemli",
-        "whyItMattersBody": "SilkScribe tamamlanan metni kullandığın alana yerleştirir. macOS bunu Erişilebilirlik erişimiyle korur.",
+        "whyItMattersTitle": "Bu, dikteyi uygulamalarınıza bağlar",
+        "whyItMattersBody": "Yazıya döktükten sonra SilkScribe'ın metni notlara, belgelere, tarayıcılara ve diğer metin alanlarına yerleştirmek için izne ihtiyacı vardır.",
         "breaksWithoutTitle": "Bu olmadan",
         "breaksWithoutBody": "SilkScribe yazıya dökebilir ama sonucu uygulamalarına güvenilir şekilde yazamaz.",
         "afterGrantTitle": "İzin verdikten sonra",
@@ -140,14 +157,25 @@
           "step3": "Gizlilik ve Güvenlik > Erişilebilirlik bölümünü aç ve SilkScribe’ı bul.",
           "step4": "SilkScribe’ı aç, sonra buraya dönüp tekrar kontrol et."
         },
-        "manualHint": "SilkScribe hâlâ devre dışı görünüyorsa etkinleştirdikten sonra uygulamayı yeniden aç ve tekrar kontrol et.",
+        "manualHint": "Elle yol: Sistem Ayarları > Gizlilik ve Güvenlik > Erişilebilirlik, ardından SilkScribe'ı açın.",
+        "privateNote": "Metin erişimi, transkriptinizi etkin alana yerleştirmek için kullanılır. Sesiniz ve metniniz yerel kalır.",
+        "guide": {
+          "windowLabel": "Sistem Ayarları",
+          "title": "Erişilebilirlik'te SilkScribe'ı açın.",
+          "body": "macOS sizi Gizlilik ve Güvenlik'e götürebilir. Listede SilkScribe'ı bulun, açın ve buraya dönün.",
+          "cue": "SilkScribe'ı açın",
+          "rowHelp": "Metin eklemeye izin ver",
+          "promptTitle": "Erişilebilirlik",
+          "exampleApp1": "Finder",
+          "exampleApp2": "Mail"
+        },
         "statusHelp": {
           "checking": "Erişilebilirlik erişiminin açık olup olmadığı kontrol ediliyor.",
           "needed": "Erişilebilirlik erişimi hâlâ kapalı.",
-          "error": "SilkScribe Erişilebilirlik erişimini doğrulayamadı.",
+          "error": "SilkScribe bunu henüz denetleyemedi. Yeniden deneyin ya da aşağıdaki elle yolu kullanın.",
           "requesting": "macOS onay akışı şimdi açılmalıdır.",
-          "waiting_for_user": "Sistem Ayarları > Gizlilik ve Güvenlik > Erişilebilirlik bölümünde SilkScribe’ı açıp tekrar kontrol et.",
-          "granted": "Erişilebilirlik erişimi açık."
+          "waiting_for_user": "Bunu macOS'te tamamlayın, sonra buraya dönün.",
+          "granted": "Tamam. SilkScribe devam edebilir."
         }
       }
     },
@@ -784,12 +812,6 @@
     "no": "Hayır",
     "noOptionsFound": "Seçenek bulunamadı",
     "versionLabel": "v{{version}}"
-  },
-  "accessibility": {
-    "permissionsRequired": "Erişilebilirlik İzinleri Gerekli",
-    "permissionsDescription": "SilkScribe, transkribe edilen metni yazabilmek için erişilebilirlik izinlerine ihtiyaç duyar.",
-    "openSettings": "Sistem Ayarlarını Aç",
-    "dismiss": "Yoksay"
   },
   "errors": {
     "loadDirectory": "Dizin yüklenirken hata oluştu: {{error}}"

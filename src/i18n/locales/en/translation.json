@@ -90,6 +90,9 @@
         "iEnabledIt": "I turned it on",
         "checkAgain": "Check again",
         "continue": "Continue",
+        "appName": "SilkScribe",
+        "guidedHelper": "Guided helper",
+        "privateLabel": "Private by design",
         "statuses": {
           "checking": "Checking",
           "needed": "Still needed",
@@ -100,11 +103,12 @@
         }
       },
       "microphone": {
-        "title": "Allow microphone access",
-        "description": "SilkScribe needs your mic to turn speech into text.",
+        "title": "Let SilkScribe hear you while you record.",
+        "description": "This turns your voice into text. SilkScribe listens only when you start a dictation.",
+        "primaryAction": "Open microphone prompt",
         "needLabel": "Needed to listen",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe only listens while you record. Without mic access, it has nothing to transcribe.",
+        "whyItMattersTitle": "Your first dictation starts here",
+        "whyItMattersBody": "Microphone access lets SilkScribe capture your voice for the shortcut you choose. Without it, there is nothing to transcribe.",
         "breaksWithoutTitle": "Without it",
         "breaksWithoutBody": "Recording can start, but SilkScribe cannot hear your voice.",
         "afterGrantTitle": "After you allow it",
@@ -115,22 +119,35 @@
           "step3": "If no prompt appears, open System Settings > Privacy & Security > Microphone.",
           "step4": "Turn on SilkScribe, then return here and check again."
         },
-        "manualHint": "If you chose “Don’t Allow,” turn SilkScribe on in System Settings > Privacy & Security > Microphone.",
+        "manualHint": "Manual path: System Settings > Privacy & Security > Microphone, then turn on SilkScribe.",
+        "privateNote": "Your audio is processed on this Mac. SilkScribe does not need cloud access to listen or transcribe.",
+        "guide": {
+          "windowLabel": "macOS prompt",
+          "title": "Choose Allow when macOS asks.",
+          "body": "The real prompt opens outside SilkScribe. This preview shows the safe choice to continue setup.",
+          "cue": "Look for Allow",
+          "promptTitle": "“SilkScribe” would like to access the microphone",
+          "promptBody": "macOS asks this once so SilkScribe can hear your dictation while recording.",
+          "deny": "Don’t Allow",
+          "allow": "Allow",
+          "allowed": "Allowed"
+        },
         "statusHelp": {
           "checking": "Checking whether microphone access is already on.",
           "needed": "Microphone access is still off.",
-          "error": "SilkScribe could not verify microphone access.",
+          "error": "SilkScribe could not check this yet. Try again or use the manual path below.",
           "requesting": "The macOS permission prompt should appear now.",
-          "waiting_for_user": "Allow the permission, then come back and check again.",
-          "granted": "Microphone access is on."
+          "waiting_for_user": "Finish this in macOS, then come back here.",
+          "granted": "That’s on. SilkScribe can continue."
         }
       },
       "accessibility": {
-        "title": "Allow SilkScribe to type for you",
-        "description": "SilkScribe needs Accessibility access to place text into your apps.",
+        "title": "Let SilkScribe place text where your cursor is.",
+        "description": "macOS protects text insertion. This permission lets SilkScribe paste finished dictation into the app you are using.",
+        "primaryAction": "Open Text Access settings",
         "needLabel": "Needed to insert text",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe puts finished text into the field you’re using. macOS protects that with Accessibility access.",
+        "whyItMattersTitle": "This connects dictation to your apps",
+        "whyItMattersBody": "After transcription, SilkScribe needs permission to place the text into notes, docs, browsers, and other text fields.",
         "breaksWithoutTitle": "Without it",
         "breaksWithoutBody": "SilkScribe may transcribe, but it cannot reliably type the result into your apps.",
         "afterGrantTitle": "After you allow it",
@@ -141,14 +158,25 @@
           "step3": "Open Privacy & Security > Accessibility and find SilkScribe.",
           "step4": "Turn on SilkScribe, then return here and check again."
         },
-        "manualHint": "If SilkScribe still looks disabled, reopen the app after turning it on, then check again.",
+        "manualHint": "Manual path: System Settings > Privacy & Security > Accessibility, then turn on SilkScribe.",
+        "privateNote": "Text access is used to place your transcript into the active field. Your voice and text stay local.",
+        "guide": {
+          "windowLabel": "System Settings",
+          "title": "Turn on SilkScribe in Accessibility.",
+          "body": "macOS may take you to Privacy & Security. Find SilkScribe in the list, turn it on, then return here.",
+          "cue": "Turn on SilkScribe",
+          "rowHelp": "Allow text insertion",
+          "promptTitle": "Accessibility",
+          "exampleApp1": "Finder",
+          "exampleApp2": "Mail"
+        },
         "statusHelp": {
           "checking": "Checking whether Accessibility access is already on.",
           "needed": "Accessibility access is still off.",
-          "error": "SilkScribe could not verify Accessibility access.",
+          "error": "SilkScribe could not check this yet. Try again or use the manual path below.",
           "requesting": "The macOS approval flow should open now.",
-          "waiting_for_user": "Turn SilkScribe on in System Settings > Privacy & Security > Accessibility, then check again.",
-          "granted": "Accessibility access is on."
+          "waiting_for_user": "Finish this in macOS, then come back here.",
+          "granted": "That’s on. SilkScribe can continue."
         }
       }
     },
@@ -826,12 +854,6 @@
     "yes": "Yes",
     "no": "No",
     "noOptionsFound": "No options found"
-  },
-  "accessibility": {
-    "permissionsRequired": "Accessibility Permissions Required",
-    "permissionsDescription": "SilkScribe needs accessibility permissions to type transcribed text.",
-    "openSettings": "Open System Settings",
-    "dismiss": "Dismiss"
   },
   "errors": {
     "loadDirectory": "Error loading directory: {{error}}"

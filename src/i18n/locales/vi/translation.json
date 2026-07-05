@@ -80,71 +80,102 @@
     },
     "permissions": {
       "shared": {
-        "eyebrow": "Permissions",
-        "repairEyebrow": "Permission needed",
-        "stepByStep": "What to do",
-        "statusLabel": "Status",
-        "openPrompt": "Open macOS prompt",
-        "openingPrompt": "Opening macOS prompt…",
-        "iEnabledIt": "I turned it on",
-        "checkAgain": "Check again",
-        "continue": "Continue",
+        "eyebrow": "Quyền truy cập",
+        "repairEyebrow": "Cần cấp quyền",
+        "stepByStep": "Cần làm gì",
+        "statusLabel": "Trạng thái",
+        "openPrompt": "Mở lời nhắc macOS",
+        "openingPrompt": "Đang mở lời nhắc macOS…",
+        "iEnabledIt": "Tôi đã bật rồi",
+        "checkAgain": "Kiểm tra lại",
+        "continue": "Tiếp tục",
+        "appName": "SilkScribe",
+        "guidedHelper": "Trợ giúp từng bước",
+        "privateLabel": "Riêng tư từ thiết kế",
         "statuses": {
-          "checking": "Checking",
-          "needed": "Still needed",
-          "requesting": "Opening macOS",
-          "waiting_for_user": "Waiting for you",
-          "granted": "Allowed"
+          "checking": "Đang kiểm tra",
+          "needed": "Vẫn còn thiếu",
+          "error": "Cần chú ý",
+          "requesting": "Đang mở macOS",
+          "waiting_for_user": "Đang chờ bạn",
+          "granted": "Đã cho phép"
         }
       },
       "microphone": {
-        "title": "Allow microphone access",
-        "description": "SilkScribe needs your mic to turn speech into text.",
-        "needLabel": "Needed to listen",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe only listens while you record. Without mic access, it has nothing to transcribe.",
-        "breaksWithoutTitle": "Without it",
-        "breaksWithoutBody": "Recording can start, but SilkScribe cannot hear your voice.",
-        "afterGrantTitle": "After you allow it",
-        "afterGrantBody": "SilkScribe can record your voice and continue setup.",
+        "title": "Cho phép SilkScribe nghe bạn khi ghi âm.",
+        "description": "Đây là cách giọng nói của bạn trở thành văn bản. SilkScribe chỉ nghe khi bạn bắt đầu đọc chính tả.",
+        "primaryAction": "Mở lời nhắc micrô",
+        "needLabel": "Cần để nghe",
+        "whyItMattersTitle": "Lần đọc chính tả đầu tiên bắt đầu từ đây",
+        "whyItMattersBody": "Quyền micrô cho phép SilkScribe thu giọng nói của bạn bằng phím tắt bạn chọn. Không có nó thì không có gì để phiên âm.",
+        "breaksWithoutTitle": "Nếu thiếu quyền này",
+        "breaksWithoutBody": "Việc ghi âm có thể bắt đầu, nhưng SilkScribe không thể nghe thấy giọng bạn.",
+        "afterGrantTitle": "Sau khi cho phép",
+        "afterGrantBody": "SilkScribe có thể ghi lại giọng nói của bạn và tiếp tục thiết lập.",
         "steps": {
-          "step1": "Click “Open macOS prompt.”",
-          "step2": "When macOS asks, choose “Allow.”",
-          "step3": "If no prompt appears, open System Settings > Privacy & Security > Microphone.",
-          "step4": "Turn on SilkScribe, then return here and check again."
+          "step1": "Nhấp vào “Mở lời nhắc macOS”.",
+          "step2": "Khi macOS hỏi, hãy chọn “Cho phép”.",
+          "step3": "Nếu không thấy lời nhắc, mở Cài đặt Hệ thống > Quyền riêng tư & Bảo mật > Micrô.",
+          "step4": "Bật SilkScribe, sau đó quay lại đây và kiểm tra lại."
         },
-        "manualHint": "If you chose “Don’t Allow,” turn SilkScribe on in System Settings > Privacy & Security > Microphone.",
+        "manualHint": "Cách thủ công: Cài đặt Hệ thống > Quyền riêng tư & Bảo mật > Micrô, rồi bật SilkScribe.",
+        "privateNote": "Âm thanh được xử lý ngay trên máy Mac này. SilkScribe không cần đám mây để nghe hay phiên âm.",
+        "guide": {
+          "windowLabel": "Lời nhắc macOS",
+          "title": "Chọn Cho phép khi macOS hỏi.",
+          "body": "Lời nhắc thật sẽ mở bên ngoài SilkScribe. Bản xem trước này cho thấy lựa chọn đúng để tiếp tục thiết lập.",
+          "cue": "Tìm nút “Cho phép”",
+          "promptTitle": "“SilkScribe” muốn truy cập micrô",
+          "promptBody": "macOS chỉ hỏi một lần để SilkScribe có thể nghe bạn đọc chính tả khi ghi âm.",
+          "deny": "Không cho phép",
+          "allow": "Cho phép",
+          "allowed": "Đã cho phép"
+        },
         "statusHelp": {
-          "checking": "Checking whether microphone access is already on.",
-          "needed": "Microphone access is still off.",
-          "requesting": "The macOS permission prompt should appear now.",
-          "waiting_for_user": "Allow the permission, then come back and check again.",
-          "granted": "Microphone access is on."
+          "checking": "Đang kiểm tra xem quyền micrô đã được bật chưa.",
+          "needed": "Quyền micrô vẫn đang tắt.",
+          "error": "SilkScribe chưa thể kiểm tra. Hãy thử lại hoặc dùng cách thủ công bên dưới.",
+          "requesting": "Lời nhắc cấp quyền của macOS sẽ xuất hiện ngay bây giờ.",
+          "waiting_for_user": "Hoàn tất trong macOS rồi quay lại đây.",
+          "granted": "Xong rồi. SilkScribe có thể tiếp tục."
         }
       },
       "accessibility": {
-        "title": "Allow SilkScribe to type for you",
-        "description": "SilkScribe needs Accessibility access to place text into your apps.",
-        "needLabel": "Needed to insert text",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe puts finished text into the field you’re using. macOS protects that with Accessibility access.",
-        "breaksWithoutTitle": "Without it",
-        "breaksWithoutBody": "SilkScribe may transcribe, but it cannot reliably type the result into your apps.",
-        "afterGrantTitle": "After you allow it",
-        "afterGrantBody": "SilkScribe can type into apps and finish setup normally.",
+        "title": "Cho phép SilkScribe đặt văn bản ngay tại con trỏ của bạn.",
+        "description": "macOS bảo vệ việc chèn văn bản. Quyền này cho phép SilkScribe dán bản đọc chính tả hoàn chỉnh vào ứng dụng bạn đang dùng.",
+        "primaryAction": "Mở cài đặt Trợ năng",
+        "needLabel": "Cần để chèn văn bản",
+        "whyItMattersTitle": "Quyền này kết nối chính tả với ứng dụng của bạn",
+        "whyItMattersBody": "Sau khi phiên âm, SilkScribe cần quyền để đặt văn bản vào ghi chú, tài liệu, trình duyệt và các ô văn bản khác.",
+        "breaksWithoutTitle": "Nếu thiếu quyền này",
+        "breaksWithoutBody": "SilkScribe có thể phiên âm nhưng không thể gõ kết quả vào ứng dụng một cách ổn định.",
+        "afterGrantTitle": "Sau khi cho phép",
+        "afterGrantBody": "SilkScribe có thể gõ vào ứng dụng và hoàn tất thiết lập bình thường.",
         "steps": {
-          "step1": "Click “Open macOS prompt.”",
-          "step2": "If macOS sends you to System Settings, continue there.",
-          "step3": "Open Privacy & Security > Accessibility and find SilkScribe.",
-          "step4": "Turn on SilkScribe, then return here and check again."
+          "step1": "Nhấp vào “Mở lời nhắc macOS”.",
+          "step2": "Nếu macOS đưa bạn tới Cài đặt Hệ thống, hãy tiếp tục ở đó.",
+          "step3": "Mở Quyền riêng tư & Bảo mật > Trợ năng và tìm SilkScribe.",
+          "step4": "Bật SilkScribe, sau đó quay lại đây và kiểm tra lại."
         },
-        "manualHint": "If SilkScribe still looks disabled, reopen the app after turning it on, then check again.",
+        "manualHint": "Cách thủ công: Cài đặt Hệ thống > Quyền riêng tư & Bảo mật > Trợ năng, rồi bật SilkScribe.",
+        "privateNote": "Quyền văn bản chỉ dùng để đặt bản phiên âm vào ô đang hoạt động. Giọng nói và văn bản của bạn vẫn ở trên máy.",
+        "guide": {
+          "windowLabel": "Cài đặt Hệ thống",
+          "title": "Bật SilkScribe trong Trợ năng.",
+          "body": "macOS có thể đưa bạn tới Quyền riêng tư & Bảo mật. Tìm SilkScribe trong danh sách, bật lên rồi quay lại đây.",
+          "cue": "Bật SilkScribe",
+          "rowHelp": "Cho phép chèn văn bản",
+          "promptTitle": "Trợ năng",
+          "exampleApp1": "Finder",
+          "exampleApp2": "Mail"
+        },
         "statusHelp": {
-          "checking": "Checking whether Accessibility access is already on.",
-          "needed": "Accessibility access is still off.",
-          "requesting": "The macOS approval flow should open now.",
-          "waiting_for_user": "Turn SilkScribe on in System Settings > Privacy & Security > Accessibility, then check again.",
-          "granted": "Accessibility access is on."
+          "checking": "Đang kiểm tra xem quyền Trợ năng đã được bật chưa.",
+          "needed": "Quyền Trợ năng vẫn đang tắt.",
+          "error": "SilkScribe chưa thể kiểm tra. Hãy thử lại hoặc dùng cách thủ công bên dưới.",
+          "requesting": "Quy trình phê duyệt của macOS sẽ mở ngay bây giờ.",
+          "waiting_for_user": "Hoàn tất trong macOS rồi quay lại đây.",
+          "granted": "Xong rồi. SilkScribe có thể tiếp tục."
         }
       }
     },
@@ -781,12 +812,6 @@
     "no": "Không",
     "noOptionsFound": "Không tìm thấy tùy chọn",
     "versionLabel": "v{{version}}"
-  },
-  "accessibility": {
-    "permissionsRequired": "Cần quyền truy cập",
-    "permissionsDescription": "SilkScribe cần quyền truy cập để gõ văn bản đã chuyển đổi.",
-    "openSettings": "Mở Cài đặt Hệ thống",
-    "dismiss": "Bỏ qua"
   },
   "errors": {
     "loadDirectory": "Lỗi khi tải thư mục: {{error}}"

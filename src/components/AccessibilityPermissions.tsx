@@ -27,21 +27,20 @@ const AccessibilityPermissions: React.FC = () => {
     return hasPermissions;
   };
 
-  // Handle the unified button action based on current state
-  const handleButtonClick = async (): Promise<void> => {
-    if (permissionState === "request") {
-      try {
-        await requestAccessibilityPermission();
-        // After system prompt, transition to verification state
-        setPermissionState("verify");
-      } catch (error) {
-        console.error("Error requesting permissions:", error);
-        setPermissionState("verify");
-      }
-    } else if (permissionState === "verify") {
-      // State is "verify" - check if permission was granted
-      await checkPermissions();
+  // Open the macOS approval flow, then wait for the user to come back
+  const requestPermission = async (): Promise<void> => {
+    try {
+      await requestAccessibilityPermission();
+      setPermissionState("verify");
+    } catch (error) {
+      console.error("Error requesting permissions:", error);
+      setPermissionState("verify");
     }
+  };
+
+  // Re-check whether the permission was granted in System Settings
+  const handleButtonClick = async (): Promise<void> => {
+    await checkPermissions();
   };
 
   // On app boot - check permissions (only on macOS)
@@ -62,44 +61,32 @@ const AccessibilityPermissions: React.FC = () => {
     return null;
   }
 
-  // Configure button text and style based on state
-  const buttonConfig: Record<
-    PermissionState,
-    | {
-        text: string;
-        variant: "primary-soft" | "secondary";
-      }
-    | null
-  > = {
-    request: {
-      text: t("accessibility.openSettings"),
-      variant: "primary-soft",
-    },
-    verify: {
-      text: t("accessibility.openSettings"),
-      variant: "secondary",
-    },
-    granted: null,
-  };
-
-  const config = buttonConfig[permissionState];
-
   return (
     <div className="w-full rounded-[18px] border border-ss-border-subtle bg-ss-bg-surface px-4 py-4 shadow-[var(--ss-shadow-card)]">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="min-w-0">
           <p className="text-sm font-medium leading-relaxed text-ss-text-primary">
-            {t("accessibility.permissionsDescription")}
+            {t("onboarding.permissions.accessibility.description")}
           </p>
         </div>
-        <Button
-          onClick={handleButtonClick}
-          variant={config?.variant}
-          size="sm"
-          className="min-w-[11rem] md:shrink-0"
-        >
-          {config?.text}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2 md:shrink-0 md:justify-end">
+          {permissionState === "verify" ? (
+            <Button
+              onClick={() => void handleButtonClick()}
+              variant="secondary"
+              size="sm"
+            >
+              {t("onboarding.permissions.shared.checkAgain")}
+            </Button>
+          ) : null}
+          <Button
+            onClick={() => void requestPermission()}
+            variant="primary-soft"
+            size="sm"
+          >
+            {t("onboarding.permissions.accessibility.primaryAction")}
+          </Button>
+        </div>
       </div>
     </div>
   );

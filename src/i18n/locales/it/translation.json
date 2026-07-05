@@ -89,21 +89,25 @@
         "iEnabledIt": "L’ho attivato",
         "checkAgain": "Controlla di nuovo",
         "continue": "Continua",
+        "appName": "SilkScribe",
+        "guidedHelper": "Aiuto guidato",
+        "privateLabel": "Privato fin dal design",
         "statuses": {
           "checking": "Controllo in corso",
           "needed": "Ancora necessario",
-          "error": "Serve attenzione",
+          "error": "Richiede attenzione",
           "requesting": "Apertura di macOS",
           "waiting_for_user": "In attesa di te",
           "granted": "Consentito"
         }
       },
       "microphone": {
-        "title": "Consenti l’accesso al microfono",
-        "description": "SilkScribe ha bisogno del tuo microfono per trasformare la voce in testo.",
+        "title": "Lascia che SilkScribe ti ascolti mentre registri.",
+        "description": "Così la tua voce diventa testo. SilkScribe ascolta solo quando avvii una dettatura.",
+        "primaryAction": "Apri la richiesta del microfono",
         "needLabel": "Necessario per ascoltare",
-        "whyItMattersTitle": "Perché è importante",
-        "whyItMattersBody": "SilkScribe ascolta solo mentre registri. Senza accesso al microfono non ha nulla da trascrivere.",
+        "whyItMattersTitle": "La tua prima dettatura inizia qui",
+        "whyItMattersBody": "L'accesso al microfono permette a SilkScribe di catturare la tua voce con la scorciatoia che scegli. Senza, non c'è nulla da trascrivere.",
         "breaksWithoutTitle": "Senza questo permesso",
         "breaksWithoutBody": "La registrazione può iniziare, ma SilkScribe non può sentire la tua voce.",
         "afterGrantTitle": "Dopo averlo consentito",
@@ -114,22 +118,35 @@
           "step3": "Se non compare alcuna finestra, apri Impostazioni di Sistema > Privacy e sicurezza > Microfono.",
           "step4": "Attiva SilkScribe, poi torna qui e ricontrolla."
         },
-        "manualHint": "Se hai scelto “Non consentire”, attiva SilkScribe in Impostazioni di Sistema > Privacy e sicurezza > Microfono.",
+        "manualHint": "Percorso manuale: Impostazioni di Sistema > Privacy e sicurezza > Microfono, poi attiva SilkScribe.",
+        "privateNote": "L'audio viene elaborato su questo Mac. SilkScribe non ha bisogno del cloud per ascoltare o trascrivere.",
+        "guide": {
+          "windowLabel": "Richiesta macOS",
+          "title": "Scegli Consenti quando macOS lo chiede.",
+          "body": "La richiesta vera appare fuori da SilkScribe. Questa anteprima mostra la scelta giusta per continuare la configurazione.",
+          "cue": "Cerca “Consenti”",
+          "promptTitle": "“SilkScribe” vorrebbe accedere al microfono",
+          "promptBody": "macOS lo chiede una sola volta, così SilkScribe può sentire la tua dettatura durante la registrazione.",
+          "deny": "Non consentire",
+          "allow": "Consenti",
+          "allowed": "Consentito"
+        },
         "statusHelp": {
           "checking": "Controllo se l’accesso al microfono è già attivo.",
           "needed": "L’accesso al microfono è ancora disattivato.",
-          "error": "SilkScribe non ha potuto verificare l’accesso al microfono.",
+          "error": "SilkScribe non è ancora riuscito a verificarlo. Riprova o usa il percorso manuale qui sotto.",
           "requesting": "La finestra di autorizzazione di macOS dovrebbe apparire ora.",
-          "waiting_for_user": "Consenti il permesso, poi torna qui e ricontrolla.",
-          "granted": "L’accesso al microfono è attivo."
+          "waiting_for_user": "Completa il passaggio in macOS, poi torna qui.",
+          "granted": "Fatto. SilkScribe può continuare."
         }
       },
       "accessibility": {
-        "title": "Consenti a SilkScribe di scrivere per te",
-        "description": "SilkScribe ha bisogno dell’accesso Accessibilità per inserire testo nelle tue app.",
+        "title": "Lascia che SilkScribe inserisca il testo dove si trova il cursore.",
+        "description": "macOS protegge l'inserimento del testo. Questo permesso consente a SilkScribe di incollare la dettatura nell'app che stai usando.",
+        "primaryAction": "Apri impostazioni Accessibilità",
         "needLabel": "Necessario per inserire testo",
-        "whyItMattersTitle": "Perché è importante",
-        "whyItMattersBody": "SilkScribe inserisce il testo finale nel campo che stai usando. macOS protegge questa funzione con l’accesso Accessibilità.",
+        "whyItMattersTitle": "Collega la dettatura alle tue app",
+        "whyItMattersBody": "Dopo la trascrizione, SilkScribe ha bisogno del permesso per inserire il testo in note, documenti, browser e altri campi di testo.",
         "breaksWithoutTitle": "Senza questo permesso",
         "breaksWithoutBody": "SilkScribe può trascrivere, ma non può inserire in modo affidabile il risultato nelle tue app.",
         "afterGrantTitle": "Dopo averlo consentito",
@@ -140,14 +157,25 @@
           "step3": "Apri Privacy e sicurezza > Accessibilità e trova SilkScribe.",
           "step4": "Attiva SilkScribe, poi torna qui e ricontrolla."
         },
-        "manualHint": "Se SilkScribe risulta ancora disattivato, riapri l’app dopo averlo attivato e poi ricontrolla.",
+        "manualHint": "Percorso manuale: Impostazioni di Sistema > Privacy e sicurezza > Accessibilità, poi attiva SilkScribe.",
+        "privateNote": "L'accesso al testo serve a inserire la trascrizione nel campo attivo. Voce e testo restano in locale.",
+        "guide": {
+          "windowLabel": "Impostazioni di Sistema",
+          "title": "Attiva SilkScribe in Accessibilità.",
+          "body": "macOS potrebbe portarti in Privacy e sicurezza. Trova SilkScribe nell'elenco, attivalo e poi torna qui.",
+          "cue": "Attiva SilkScribe",
+          "rowHelp": "Consenti l'inserimento del testo",
+          "promptTitle": "Accessibilità",
+          "exampleApp1": "Finder",
+          "exampleApp2": "Mail"
+        },
         "statusHelp": {
           "checking": "Controllo se l’accesso Accessibilità è già attivo.",
           "needed": "L’accesso Accessibilità è ancora disattivato.",
-          "error": "SilkScribe non ha potuto verificare l’accesso Accessibilità.",
+          "error": "SilkScribe non è ancora riuscito a verificarlo. Riprova o usa il percorso manuale qui sotto.",
           "requesting": "Il flusso di approvazione di macOS dovrebbe aprirsi ora.",
-          "waiting_for_user": "Attiva SilkScribe in Impostazioni di Sistema > Privacy e sicurezza > Accessibilità, poi ricontrolla.",
-          "granted": "L’accesso Accessibilità è attivo."
+          "waiting_for_user": "Completa il passaggio in macOS, poi torna qui.",
+          "granted": "Fatto. SilkScribe può continuare."
         }
       }
     },
@@ -784,12 +812,6 @@
     "no": "No",
     "noOptionsFound": "Nessuna opzione trovata",
     "versionLabel": "v{{version}}"
-  },
-  "accessibility": {
-    "permissionsRequired": "Richiesti Permessi di Accessibilità",
-    "permissionsDescription": "SilkScribe ha bisogno dei permessi di accessibilità per digitare il testo trascritto.",
-    "openSettings": "Apri Impostazioni di Sistema",
-    "dismiss": "Ignora"
   },
   "errors": {
     "loadDirectory": "Errore di caricamento cartella: {{error}}"

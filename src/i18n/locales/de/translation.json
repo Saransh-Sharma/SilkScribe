@@ -89,21 +89,25 @@
         "iEnabledIt": "Ich habe es aktiviert",
         "checkAgain": "Erneut prüfen",
         "continue": "Weiter",
+        "appName": "SilkScribe",
+        "guidedHelper": "Geführte Hilfe",
+        "privateLabel": "Von Grund auf privat",
         "statuses": {
           "checking": "Wird geprüft",
           "needed": "Noch erforderlich",
-          "error": "Aufmerksamkeit nötig",
+          "error": "Braucht Aufmerksamkeit",
           "requesting": "macOS wird geöffnet",
           "waiting_for_user": "Warte auf dich",
           "granted": "Erlaubt"
         }
       },
       "microphone": {
-        "title": "Mikrofonzugriff erlauben",
-        "description": "SilkScribe braucht dein Mikrofon, um Sprache in Text umzuwandeln.",
+        "title": "Lass SilkScribe dich beim Aufnehmen hören.",
+        "description": "So wird deine Stimme zu Text. SilkScribe hört nur zu, wenn du ein Diktat startest.",
+        "primaryAction": "Mikrofon-Abfrage öffnen",
         "needLabel": "Zum Zuhören erforderlich",
-        "whyItMattersTitle": "Warum das wichtig ist",
-        "whyItMattersBody": "SilkScribe hört nur zu, während du aufnimmst. Ohne Mikrofonzugriff gibt es nichts zu transkribieren.",
+        "whyItMattersTitle": "Dein erstes Diktat beginnt hier",
+        "whyItMattersBody": "Der Mikrofonzugriff lässt SilkScribe deine Stimme aufnehmen, sobald du dein Tastenkürzel drückst. Ohne ihn gibt es nichts zu transkribieren.",
         "breaksWithoutTitle": "Ohne diese Berechtigung",
         "breaksWithoutBody": "Die Aufnahme kann starten, aber SilkScribe kann deine Stimme nicht hören.",
         "afterGrantTitle": "Nachdem du sie erlaubst",
@@ -114,22 +118,35 @@
           "step3": "Wenn kein Dialog erscheint, öffne Systemeinstellungen > Datenschutz & Sicherheit > Mikrofon.",
           "step4": "Aktiviere SilkScribe, kehre dann hierher zurück und prüfe erneut."
         },
-        "manualHint": "Wenn du „Nicht erlauben“ gewählt hast, aktiviere SilkScribe in Systemeinstellungen > Datenschutz & Sicherheit > Mikrofon.",
+        "manualHint": "Manueller Weg: Systemeinstellungen > Datenschutz & Sicherheit > Mikrofon, dann SilkScribe aktivieren.",
+        "privateNote": "Dein Audio wird auf diesem Mac verarbeitet. SilkScribe braucht keine Cloud, um zuzuhören oder zu transkribieren.",
+        "guide": {
+          "windowLabel": "macOS-Abfrage",
+          "title": "Wähle „Erlauben“, wenn macOS fragt.",
+          "body": "Die echte Abfrage erscheint außerhalb von SilkScribe. Diese Vorschau zeigt die richtige Wahl, um die Einrichtung fortzusetzen.",
+          "cue": "Achte auf „Erlauben“",
+          "promptTitle": "„SilkScribe“ möchte auf das Mikrofon zugreifen",
+          "promptBody": "macOS fragt das einmalig, damit SilkScribe dein Diktat während der Aufnahme hören kann.",
+          "deny": "Nicht erlauben",
+          "allow": "Erlauben",
+          "allowed": "Erlaubt"
+        },
         "statusHelp": {
           "checking": "Es wird geprüft, ob der Mikrofonzugriff bereits aktiviert ist.",
           "needed": "Der Mikrofonzugriff ist noch deaktiviert.",
-          "error": "SilkScribe konnte den Mikrofonzugriff nicht prüfen.",
+          "error": "SilkScribe konnte das noch nicht prüfen. Versuch es erneut oder nutze den manuellen Weg unten.",
           "requesting": "Der macOS-Berechtigungsdialog sollte jetzt erscheinen.",
-          "waiting_for_user": "Erlaube die Berechtigung und komm dann zurück, um erneut zu prüfen.",
-          "granted": "Der Mikrofonzugriff ist aktiviert."
+          "waiting_for_user": "Schließe das in macOS ab und komm dann hierher zurück.",
+          "granted": "Erledigt. SilkScribe kann weitermachen."
         }
       },
       "accessibility": {
-        "title": "Erlaube SilkScribe, für dich zu tippen",
-        "description": "SilkScribe benötigt Bedienungshilfen-Zugriff, um Text in deine Apps einzufügen.",
+        "title": "Lass SilkScribe Text an deinem Cursor einfügen.",
+        "description": "macOS schützt das Einfügen von Text. Diese Berechtigung lässt SilkScribe fertige Diktate in die App einsetzen, die du gerade nutzt.",
+        "primaryAction": "Bedienungshilfen öffnen",
         "needLabel": "Zum Einfügen von Text erforderlich",
-        "whyItMattersTitle": "Warum das wichtig ist",
-        "whyItMattersBody": "SilkScribe fügt fertigen Text in das Feld ein, das du gerade verwendest. macOS schützt das mit Bedienungshilfen-Zugriff.",
+        "whyItMattersTitle": "So kommt dein Diktat in deine Apps",
+        "whyItMattersBody": "Nach der Transkription braucht SilkScribe die Berechtigung, den Text in Notizen, Dokumente, Browser und andere Textfelder einzusetzen.",
         "breaksWithoutTitle": "Ohne diese Berechtigung",
         "breaksWithoutBody": "SilkScribe kann zwar transkribieren, aber das Ergebnis nicht zuverlässig in deine Apps eingeben.",
         "afterGrantTitle": "Nachdem du sie erlaubst",
@@ -140,14 +157,25 @@
           "step3": "Öffne Datenschutz & Sicherheit > Bedienungshilfen und suche SilkScribe.",
           "step4": "Aktiviere SilkScribe, kehre dann hierher zurück und prüfe erneut."
         },
-        "manualHint": "Wenn SilkScribe weiterhin deaktiviert aussieht, öffne die App nach dem Aktivieren erneut und prüfe dann noch einmal.",
+        "manualHint": "Manueller Weg: Systemeinstellungen > Datenschutz & Sicherheit > Bedienungshilfen, dann SilkScribe aktivieren.",
+        "privateNote": "Der Textzugriff dient nur dazu, dein Transkript ins aktive Feld einzusetzen. Stimme und Text bleiben lokal.",
+        "guide": {
+          "windowLabel": "Systemeinstellungen",
+          "title": "Aktiviere SilkScribe unter „Bedienungshilfen“.",
+          "body": "macOS führt dich eventuell zu „Datenschutz & Sicherheit“. Finde SilkScribe in der Liste, aktiviere es und komm dann zurück.",
+          "cue": "SilkScribe aktivieren",
+          "rowHelp": "Texteinfügen erlauben",
+          "promptTitle": "Bedienungshilfen",
+          "exampleApp1": "Finder",
+          "exampleApp2": "Mail"
+        },
         "statusHelp": {
           "checking": "Es wird geprüft, ob der Bedienungshilfen-Zugriff bereits aktiviert ist.",
           "needed": "Der Bedienungshilfen-Zugriff ist noch deaktiviert.",
-          "error": "SilkScribe konnte den Bedienungshilfen-Zugriff nicht prüfen.",
+          "error": "SilkScribe konnte das noch nicht prüfen. Versuch es erneut oder nutze den manuellen Weg unten.",
           "requesting": "Der macOS-Freigabeablauf sollte jetzt geöffnet werden.",
-          "waiting_for_user": "Aktiviere SilkScribe in Systemeinstellungen > Datenschutz & Sicherheit > Bedienungshilfen und prüfe dann erneut.",
-          "granted": "Der Bedienungshilfen-Zugriff ist aktiviert."
+          "waiting_for_user": "Schließe das in macOS ab und komm dann hierher zurück.",
+          "granted": "Erledigt. SilkScribe kann weitermachen."
         }
       }
     },
@@ -784,12 +812,6 @@
     "no": "Nein",
     "noOptionsFound": "Keine Optionen gefunden",
     "versionLabel": "v{{version}}"
-  },
-  "accessibility": {
-    "permissionsRequired": "Bedienungshilfen-Berechtigungen erforderlich",
-    "permissionsDescription": "SilkScribe benötigt Bedienungshilfen-Berechtigungen, um transkribierten Text einzugeben.",
-    "openSettings": "Systemeinstellungen öffnen",
-    "dismiss": "Schließen"
   },
   "errors": {
     "loadDirectory": "Fehler beim Laden des Verzeichnisses: {{error}}"

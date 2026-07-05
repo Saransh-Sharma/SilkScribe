@@ -89,6 +89,9 @@
         "iEnabledIt": "我已經開啟了",
         "checkAgain": "再檢查一次",
         "continue": "繼續",
+        "appName": "SilkScribe",
+        "guidedHelper": "引導式協助",
+        "privateLabel": "隱私優先設計",
         "statuses": {
           "checking": "檢查中",
           "needed": "仍然需要",
@@ -99,11 +102,12 @@
         }
       },
       "microphone": {
-        "title": "允許麥克風存取",
-        "description": "SilkScribe 需要使用你的麥克風，才能把語音轉成文字。",
+        "title": "讓 SilkScribe 在錄音時聽見你。",
+        "description": "這會把你的聲音轉成文字。只有在你開始聽寫時,SilkScribe 才會聆聽。",
+        "primaryAction": "開啟麥克風權限提示",
         "needLabel": "需要用來聆聽",
-        "whyItMattersTitle": "為什麼重要",
-        "whyItMattersBody": "SilkScribe 只會在你錄音時聆聽。若沒有麥克風權限，就沒有可轉寫的內容。",
+        "whyItMattersTitle": "你的第一次聽寫從這裡開始",
+        "whyItMattersBody": "麥克風權限讓 SilkScribe 能透過你選擇的快速鍵擷取你的聲音。沒有它,就沒有內容可以轉錄。",
         "breaksWithoutTitle": "沒有這個權限",
         "breaksWithoutBody": "錄音可以開始，但 SilkScribe 無法聽見你的聲音。",
         "afterGrantTitle": "允許之後",
@@ -114,22 +118,35 @@
           "step3": "如果沒有出現提示視窗，請開啟「系統設定 > 隱私權與安全性 > 麥克風」。",
           "step4": "打開 SilkScribe，然後回到這裡再檢查一次。"
         },
-        "manualHint": "如果你選了「不允許」，請到「系統設定 > 隱私權與安全性 > 麥克風」開啟 SilkScribe。",
+        "manualHint": "手動路徑:系統設定 > 隱私權與安全性 > 麥克風,然後開啟 SilkScribe。",
+        "privateNote": "你的音訊會在這部 Mac 上處理。SilkScribe 不需要雲端就能聆聽或轉錄。",
+        "guide": {
+          "windowLabel": "macOS 提示",
+          "title": "當 macOS 詢問時,請選擇「允許」。",
+          "body": "真正的提示會出現在 SilkScribe 之外。這個預覽顯示了繼續設定的正確選擇。",
+          "cue": "尋找「允許」",
+          "promptTitle": "「SilkScribe」想要取用麥克風",
+          "promptBody": "macOS 只會詢問一次,讓 SilkScribe 能在錄音時聽見你的聽寫。",
+          "deny": "不允許",
+          "allow": "允許",
+          "allowed": "已允許"
+        },
         "statusHelp": {
           "checking": "正在檢查麥克風存取是否已經開啟。",
           "needed": "麥克風存取仍然是關閉的。",
-          "error": "SilkScribe 無法檢查麥克風存取。",
+          "error": "SilkScribe 尚未能確認。請再試一次,或使用下方的手動路徑。",
           "requesting": "現在應該會出現 macOS 權限提示視窗。",
-          "waiting_for_user": "允許權限後，回來再檢查一次。",
-          "granted": "麥克風存取已開啟。"
+          "waiting_for_user": "請在 macOS 完成後回到這裡。",
+          "granted": "已開啟。SilkScribe 可以繼續。"
         }
       },
       "accessibility": {
-        "title": "允許 SilkScribe 替你輸入文字",
-        "description": "SilkScribe 需要「輔助使用」權限，才能把文字放進你的應用程式。",
+        "title": "讓 SilkScribe 在游標所在位置輸入文字。",
+        "description": "macOS 會保護文字插入。這個權限讓 SilkScribe 能把完成的聽寫貼到你正在使用的 App。",
+        "primaryAction": "開啟「輔助使用」設定",
         "needLabel": "需要用來插入文字",
-        "whyItMattersTitle": "為什麼重要",
-        "whyItMattersBody": "SilkScribe 會把完成的文字放進你正在使用的欄位。macOS 會用「輔助使用」權限保護這項操作。",
+        "whyItMattersTitle": "這會把聽寫連接到你的 App",
+        "whyItMattersBody": "轉錄完成後,SilkScribe 需要權限才能把文字放入備忘錄、文件、瀏覽器和其他文字欄位。",
         "breaksWithoutTitle": "沒有這個權限",
         "breaksWithoutBody": "SilkScribe 可能可以轉寫，但無法可靠地把結果輸入到你的應用程式。",
         "afterGrantTitle": "允許之後",
@@ -140,14 +157,25 @@
           "step3": "開啟「隱私權與安全性 > 輔助使用」，然後找到 SilkScribe。",
           "step4": "打開 SilkScribe，然後回到這裡再檢查一次。"
         },
-        "manualHint": "如果 SilkScribe 看起來仍然是停用狀態，請在開啟後重新打開應用程式，再檢查一次。",
+        "manualHint": "手動路徑:系統設定 > 隱私權與安全性 > 輔助使用,然後開啟 SilkScribe。",
+        "privateNote": "文字取用只用來把轉錄結果放入使用中的欄位。你的語音和文字都保留在本機。",
+        "guide": {
+          "windowLabel": "系統設定",
+          "title": "在「輔助使用」中開啟 SilkScribe。",
+          "body": "macOS 可能會帶你前往「隱私權與安全性」。在列表中找到 SilkScribe,開啟後回到這裡。",
+          "cue": "開啟 SilkScribe",
+          "rowHelp": "允許文字插入",
+          "promptTitle": "輔助使用",
+          "exampleApp1": "Finder",
+          "exampleApp2": "郵件"
+        },
         "statusHelp": {
           "checking": "正在檢查輔助使用權限是否已經開啟。",
           "needed": "輔助使用權限仍然是關閉的。",
-          "error": "SilkScribe 無法檢查輔助使用權限。",
+          "error": "SilkScribe 尚未能確認。請再試一次,或使用下方的手動路徑。",
           "requesting": "現在應該會開啟 macOS 的核准流程。",
-          "waiting_for_user": "請到「系統設定 > 隱私權與安全性 > 輔助使用」開啟 SilkScribe，然後再檢查一次。",
-          "granted": "輔助使用權限已開啟。"
+          "waiting_for_user": "請在 macOS 完成後回到這裡。",
+          "granted": "已開啟。SilkScribe 可以繼續。"
         }
       }
     },
@@ -784,12 +812,6 @@
     "no": "否",
     "noOptionsFound": "未找到選項",
     "versionLabel": "v{{version}}"
-  },
-  "accessibility": {
-    "permissionsRequired": "需要輔助使用權限",
-    "permissionsDescription": "SilkScribe 需要輔助使用權限才能輸入轉錄的文字",
-    "openSettings": "開啟系統設定",
-    "dismiss": "關閉"
   },
   "errors": {
     "loadDirectory": "載入目錄時發生錯誤: {{error}}"

@@ -89,21 +89,25 @@
         "iEnabledIt": "有効にしました",
         "checkAgain": "もう一度確認",
         "continue": "続ける",
+        "appName": "SilkScribe",
+        "guidedHelper": "ガイド付きヘルパー",
+        "privateLabel": "設計段階からプライベート",
         "statuses": {
           "checking": "確認中",
           "needed": "まだ必要です",
-          "error": "対応が必要です",
+          "error": "要確認",
           "requesting": "macOS を開いています",
           "waiting_for_user": "あなたの操作を待っています",
           "granted": "許可済み"
         }
       },
       "microphone": {
-        "title": "マイクへのアクセスを許可する",
-        "description": "SilkScribe が音声をテキストに変換するにはマイクが必要です。",
+        "title": "録音中、SilkScribe に声を聞かせましょう。",
+        "description": "声がテキストに変わります。SilkScribe が聞くのは、あなたが口述を始めたときだけです。",
+        "primaryAction": "マイクの確認を開く",
         "needLabel": "聞き取るために必要",
-        "whyItMattersTitle": "これが重要な理由",
-        "whyItMattersBody": "SilkScribe は録音中だけ音声を聞き取ります。マイクへのアクセスがないと文字起こしできません。",
+        "whyItMattersTitle": "最初の口述はここから始まります",
+        "whyItMattersBody": "マイクへのアクセスがあると、選んだショートカットで SilkScribe があなたの声を取り込めます。なければ文字起こしするものがありません。",
         "breaksWithoutTitle": "許可しない場合",
         "breaksWithoutBody": "録音は開始できますが、SilkScribe はあなたの声を聞き取れません。",
         "afterGrantTitle": "許可すると",
@@ -114,22 +118,35 @@
           "step3": "ダイアログが表示されない場合は、システム設定 > プライバシーとセキュリティ > マイクを開きます。",
           "step4": "SilkScribe をオンにしてからここに戻り、もう一度確認します。"
         },
-        "manualHint": "「許可しない」を選んだ場合は、システム設定 > プライバシーとセキュリティ > マイクで SilkScribe をオンにしてください。",
+        "manualHint": "手動の場合: システム設定 > プライバシーとセキュリティ > マイク で SilkScribe をオンにします。",
+        "privateNote": "音声はこの Mac 上で処理されます。SilkScribe が聞き取りや文字起こしにクラウドを必要とすることはありません。",
+        "guide": {
+          "windowLabel": "macOS の確認",
+          "title": "macOS に尋ねられたら「許可」を選択してください。",
+          "body": "実際の確認は SilkScribe の外に表示されます。このプレビューは、セットアップを続けるための正しい選択を示しています。",
+          "cue": "「許可」を探してください",
+          "promptTitle": "“SilkScribe” がマイクへのアクセスを求めています",
+          "promptBody": "macOS がこれを一度だけ尋ねます。許可すると録音中に SilkScribe があなたの口述を聞き取れます。",
+          "deny": "許可しない",
+          "allow": "許可",
+          "allowed": "許可済み"
+        },
         "statusHelp": {
           "checking": "マイクへのアクセスがすでに有効か確認しています。",
           "needed": "マイクへのアクセスはまだオフです。",
-          "error": "SilkScribe はマイクへのアクセスを確認できませんでした。",
+          "error": "SilkScribe はまだ確認できませんでした。もう一度試すか、下の手動の手順をご利用ください。",
           "requesting": "macOS の許可ダイアログが表示されるはずです。",
-          "waiting_for_user": "許可したら戻って、もう一度確認してください。",
-          "granted": "マイクへのアクセスは有効です。"
+          "waiting_for_user": "macOS 側で完了させてから、ここに戻ってきてください。",
+          "granted": "オンになりました。SilkScribe は続行できます。"
         }
       },
       "accessibility": {
-        "title": "SilkScribe が代わりに入力できるようにする",
-        "description": "SilkScribe がアプリにテキストを入力するにはアクセシビリティへのアクセスが必要です。",
+        "title": "カーソルの位置にテキストを入力できるようにしましょう。",
+        "description": "macOS はテキスト挿入を保護しています。この権限により、SilkScribe は完成した口述を使用中のアプリに貼り付けられます。",
+        "primaryAction": "アクセシビリティ設定を開く",
         "needLabel": "テキスト挿入に必要",
-        "whyItMattersTitle": "これが重要な理由",
-        "whyItMattersBody": "SilkScribe は完成したテキストを現在使っている入力欄に入れます。macOS ではその操作がアクセシビリティで保護されています。",
+        "whyItMattersTitle": "口述とアプリをつなぐ設定です",
+        "whyItMattersBody": "文字起こしの後、SilkScribe はメモ、書類、ブラウザなどのテキストフィールドに文字を配置するための権限を必要とします。",
         "breaksWithoutTitle": "許可しない場合",
         "breaksWithoutBody": "SilkScribe は文字起こしできても、結果をアプリに確実に入力できません。",
         "afterGrantTitle": "許可すると",
@@ -140,14 +157,25 @@
           "step3": "プライバシーとセキュリティ > アクセシビリティを開き、SilkScribe を探します。",
           "step4": "SilkScribe をオンにしてからここに戻り、もう一度確認します。"
         },
-        "manualHint": "SilkScribe がまだ無効に見える場合は、オンにしたあとでアプリを再度開いてからもう一度確認してください。",
+        "manualHint": "手動の場合: システム設定 > プライバシーとセキュリティ > アクセシビリティ で SilkScribe をオンにします。",
+        "privateNote": "テキストアクセスは、書き起こしをアクティブなフィールドに配置するためだけに使われます。音声もテキストもローカルに保持されます。",
+        "guide": {
+          "windowLabel": "システム設定",
+          "title": "アクセシビリティで SilkScribe をオンにしてください。",
+          "body": "macOS が「プライバシーとセキュリティ」を開くことがあります。一覧で SilkScribe を見つけてオンにし、ここへ戻ってきてください。",
+          "cue": "SilkScribe をオンに",
+          "rowHelp": "テキスト挿入を許可",
+          "promptTitle": "アクセシビリティ",
+          "exampleApp1": "Finder",
+          "exampleApp2": "メール"
+        },
         "statusHelp": {
           "checking": "アクセシビリティへのアクセスがすでに有効か確認しています。",
           "needed": "アクセシビリティへのアクセスはまだオフです。",
-          "error": "SilkScribe はアクセシビリティへのアクセスを確認できませんでした。",
+          "error": "SilkScribe はまだ確認できませんでした。もう一度試すか、下の手動の手順をご利用ください。",
           "requesting": "macOS の承認フローが開くはずです。",
-          "waiting_for_user": "システム設定 > プライバシーとセキュリティ > アクセシビリティで SilkScribe をオンにしてから、もう一度確認してください。",
-          "granted": "アクセシビリティへのアクセスは有効です。"
+          "waiting_for_user": "macOS 側で完了させてから、ここに戻ってきてください。",
+          "granted": "オンになりました。SilkScribe は続行できます。"
         }
       }
     },
@@ -784,12 +812,6 @@
     "no": "いいえ",
     "noOptionsFound": "オプションが見つかりません",
     "versionLabel": "v{{version}}"
-  },
-  "accessibility": {
-    "permissionsRequired": "アクセシビリティ権限が必要です",
-    "permissionsDescription": "SilkScribeが文字起こしテキストを入力するには、アクセシビリティ権限が必要です。",
-    "openSettings": "システム設定を開く",
-    "dismiss": "閉じる"
   },
   "errors": {
     "loadDirectory": "ディレクトリの読み込みエラー: {{error}}"

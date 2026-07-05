@@ -80,71 +80,102 @@
     },
     "permissions": {
       "shared": {
-        "eyebrow": "Permissions",
-        "repairEyebrow": "Permission needed",
-        "stepByStep": "What to do",
-        "statusLabel": "Status",
-        "openPrompt": "Open macOS prompt",
-        "openingPrompt": "Opening macOS prompt…",
-        "iEnabledIt": "I turned it on",
-        "checkAgain": "Check again",
-        "continue": "Continue",
+        "eyebrow": "Oprávnění",
+        "repairEyebrow": "Vyžadováno oprávnění",
+        "stepByStep": "Co udělat",
+        "statusLabel": "Stav",
+        "openPrompt": "Otevřít výzvu macOS",
+        "openingPrompt": "Otevírá se výzva macOS…",
+        "iEnabledIt": "Zapnuto",
+        "checkAgain": "Zkontrolovat znovu",
+        "continue": "Pokračovat",
+        "appName": "SilkScribe",
+        "guidedHelper": "Průvodce",
+        "privateLabel": "Soukromí už v návrhu",
         "statuses": {
-          "checking": "Checking",
-          "needed": "Still needed",
-          "requesting": "Opening macOS",
-          "waiting_for_user": "Waiting for you",
-          "granted": "Allowed"
+          "checking": "Kontroluje se",
+          "needed": "Stále chybí",
+          "error": "Vyžaduje pozornost",
+          "requesting": "Otevírá se macOS",
+          "waiting_for_user": "Čeká se na vás",
+          "granted": "Povoleno"
         }
       },
       "microphone": {
-        "title": "Allow microphone access",
-        "description": "SilkScribe needs your mic to turn speech into text.",
-        "needLabel": "Needed to listen",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe only listens while you record. Without mic access, it has nothing to transcribe.",
-        "breaksWithoutTitle": "Without it",
-        "breaksWithoutBody": "Recording can start, but SilkScribe cannot hear your voice.",
-        "afterGrantTitle": "After you allow it",
-        "afterGrantBody": "SilkScribe can record your voice and continue setup.",
+        "title": "Nechte SilkScribe, aby vás při nahrávání slyšel.",
+        "description": "Takto se váš hlas mění na text. SilkScribe poslouchá jen tehdy, když spustíte diktování.",
+        "primaryAction": "Otevřít výzvu mikrofonu",
+        "needLabel": "Potřebné k poslechu",
+        "whyItMattersTitle": "Vaše první diktování začíná zde",
+        "whyItMattersBody": "Přístup k mikrofonu umožňuje SilkScribe zachytit váš hlas pomocí zvolené zkratky. Bez něj není co přepisovat.",
+        "breaksWithoutTitle": "Bez něj",
+        "breaksWithoutBody": "Nahrávání se může spustit, ale SilkScribe váš hlas neslyší.",
+        "afterGrantTitle": "Po povolení",
+        "afterGrantBody": "SilkScribe může nahrávat váš hlas a pokračovat v nastavení.",
         "steps": {
-          "step1": "Click “Open macOS prompt.”",
-          "step2": "When macOS asks, choose “Allow.”",
-          "step3": "If no prompt appears, open System Settings > Privacy & Security > Microphone.",
-          "step4": "Turn on SilkScribe, then return here and check again."
+          "step1": "Klikněte na „Otevřít výzvu macOS“.",
+          "step2": "Až se macOS zeptá, zvolte „Povolit“.",
+          "step3": "Pokud se výzva neobjeví, otevřete Nastavení systému > Soukromí a zabezpečení > Mikrofon.",
+          "step4": "Zapněte SilkScribe, vraťte se sem a zkontrolujte znovu."
         },
-        "manualHint": "If you chose “Don’t Allow,” turn SilkScribe on in System Settings > Privacy & Security > Microphone.",
+        "manualHint": "Ruční cesta: Nastavení systému > Soukromí a zabezpečení > Mikrofon, poté zapněte SilkScribe.",
+        "privateNote": "Zvuk se zpracovává na tomto Macu. SilkScribe nepotřebuje cloud, aby poslouchal nebo přepisoval.",
+        "guide": {
+          "windowLabel": "Výzva macOS",
+          "title": "Až se macOS zeptá, zvolte Povolit.",
+          "body": "Skutečná výzva se otevře mimo SilkScribe. Tento náhled ukazuje správnou volbu pro pokračování v nastavení.",
+          "cue": "Hledejte „Povolit“",
+          "promptTitle": "„SilkScribe“ žádá o přístup k mikrofonu",
+          "promptBody": "macOS se ptá jen jednou, aby SilkScribe mohl při nahrávání slyšet vaše diktování.",
+          "deny": "Nepovolit",
+          "allow": "Povolit",
+          "allowed": "Povoleno"
+        },
         "statusHelp": {
-          "checking": "Checking whether microphone access is already on.",
-          "needed": "Microphone access is still off.",
-          "requesting": "The macOS permission prompt should appear now.",
-          "waiting_for_user": "Allow the permission, then come back and check again.",
-          "granted": "Microphone access is on."
+          "checking": "Kontroluje se, zda je přístup k mikrofonu už zapnutý.",
+          "needed": "Přístup k mikrofonu je stále vypnutý.",
+          "error": "SilkScribe to zatím nedokázal ověřit. Zkuste to znovu nebo použijte ruční cestu níže.",
+          "requesting": "Výzva macOS by se měla objevit právě teď.",
+          "waiting_for_user": "Dokončete to v macOS a pak se vraťte sem.",
+          "granted": "Hotovo. SilkScribe může pokračovat."
         }
       },
       "accessibility": {
-        "title": "Allow SilkScribe to type for you",
-        "description": "SilkScribe needs Accessibility access to place text into your apps.",
-        "needLabel": "Needed to insert text",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe puts finished text into the field you’re using. macOS protects that with Accessibility access.",
-        "breaksWithoutTitle": "Without it",
-        "breaksWithoutBody": "SilkScribe may transcribe, but it cannot reliably type the result into your apps.",
-        "afterGrantTitle": "After you allow it",
-        "afterGrantBody": "SilkScribe can type into apps and finish setup normally.",
+        "title": "Nechte SilkScribe vkládat text tam, kde je váš kurzor.",
+        "description": "macOS chrání vkládání textu. Toto oprávnění umožňuje SilkScribe vložit hotové diktování do aplikace, kterou používáte.",
+        "primaryAction": "Otevřít nastavení Zpřístupnění",
+        "needLabel": "Potřebné k vkládání textu",
+        "whyItMattersTitle": "Tohle propojí diktování s vašimi aplikacemi",
+        "whyItMattersBody": "Po přepisu potřebuje SilkScribe oprávnění, aby text umístil do poznámek, dokumentů, prohlížečů a dalších textových polí.",
+        "breaksWithoutTitle": "Bez něj",
+        "breaksWithoutBody": "SilkScribe může přepisovat, ale výsledek nedokáže spolehlivě zapsat do vašich aplikací.",
+        "afterGrantTitle": "Po povolení",
+        "afterGrantBody": "SilkScribe může psát do aplikací a normálně dokončit nastavení.",
         "steps": {
-          "step1": "Click “Open macOS prompt.”",
-          "step2": "If macOS sends you to System Settings, continue there.",
-          "step3": "Open Privacy & Security > Accessibility and find SilkScribe.",
-          "step4": "Turn on SilkScribe, then return here and check again."
+          "step1": "Klikněte na „Otevřít výzvu macOS“.",
+          "step2": "Pokud vás macOS pošle do Nastavení systému, pokračujte tam.",
+          "step3": "Otevřete Soukromí a zabezpečení > Zpřístupnění a najděte SilkScribe.",
+          "step4": "Zapněte SilkScribe, vraťte se sem a zkontrolujte znovu."
         },
-        "manualHint": "If SilkScribe still looks disabled, reopen the app after turning it on, then check again.",
+        "manualHint": "Ruční cesta: Nastavení systému > Soukromí a zabezpečení > Zpřístupnění, poté zapněte SilkScribe.",
+        "privateNote": "Přístup k textu slouží k vložení přepisu do aktivního pole. Váš hlas i text zůstávají v zařízení.",
+        "guide": {
+          "windowLabel": "Nastavení systému",
+          "title": "Zapněte SilkScribe v sekci Zpřístupnění.",
+          "body": "macOS vás může přesměrovat do Soukromí a zabezpečení. Najděte SilkScribe v seznamu, zapněte ho a vraťte se sem.",
+          "cue": "Zapněte SilkScribe",
+          "rowHelp": "Povolit vkládání textu",
+          "promptTitle": "Zpřístupnění",
+          "exampleApp1": "Finder",
+          "exampleApp2": "Mail"
+        },
         "statusHelp": {
-          "checking": "Checking whether Accessibility access is already on.",
-          "needed": "Accessibility access is still off.",
-          "requesting": "The macOS approval flow should open now.",
-          "waiting_for_user": "Turn SilkScribe on in System Settings > Privacy & Security > Accessibility, then check again.",
-          "granted": "Accessibility access is on."
+          "checking": "Kontroluje se, zda je přístup Zpřístupnění už zapnutý.",
+          "needed": "Přístup Zpřístupnění je stále vypnutý.",
+          "error": "SilkScribe to zatím nedokázal ověřit. Zkuste to znovu nebo použijte ruční cestu níže.",
+          "requesting": "Schvalovací proces macOS by se měl otevřít právě teď.",
+          "waiting_for_user": "Dokončete to v macOS a pak se vraťte sem.",
+          "granted": "Hotovo. SilkScribe může pokračovat."
         }
       }
     },
@@ -781,12 +812,6 @@
     "no": "Ne",
     "noOptionsFound": "Nenalezeny žádné možnosti",
     "versionLabel": "v{{version}}"
-  },
-  "accessibility": {
-    "permissionsRequired": "Vyžadována oprávnění usnadnění přístupu",
-    "permissionsDescription": "SilkScribe potřebuje oprávnění usnadnění přístupu, aby mohlo psát přepsaný text.",
-    "openSettings": "Otevřít Nastavení systému",
-    "dismiss": "Zavřít"
   },
   "errors": {
     "loadDirectory": "Chyba při načítání adresáře: {{error}}"
