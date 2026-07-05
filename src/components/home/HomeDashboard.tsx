@@ -51,7 +51,7 @@ interface HomeDashboardProps {
       | "history"
       | "debug",
   ) => void;
-  onStartPermissionRepair?: () => void;
+  onStartPermissionRepair?: () => void | Promise<void>;
 }
 
 interface PermissionSnapshot {
@@ -99,6 +99,8 @@ const HomeDashboard = ({
     accessibility: true,
     microphone: true,
   });
+  const [isStartingPermissionRepair, setIsStartingPermissionRepair] =
+    useState(false);
   const lastFetchedDayRef = useRef<string>(getLocalDayKey());
 
   const {
@@ -233,6 +235,18 @@ const HomeDashboard = ({
   const setupActionLabel = setupReady
     ? t("home.welcome.primaryReady")
     : t("home.welcome.primarySetup");
+  const startPermissionRepairOnce = async () => {
+    if (isStartingPermissionRepair || !onStartPermissionRepair) {
+      return;
+    }
+
+    setIsStartingPermissionRepair(true);
+    try {
+      await onStartPermissionRepair();
+    } finally {
+      setIsStartingPermissionRepair(false);
+    }
+  };
 
   const readinessItems = [
     {
@@ -273,8 +287,9 @@ const HomeDashboard = ({
       action: () =>
         permissionsReady
           ? onNavigate?.("general")
-          : onStartPermissionRepair?.(),
+          : void startPermissionRepairOnce(),
       actionLabel: t("home.readiness.permissions.action"),
+      disabled: !permissionsReady && isStartingPermissionRepair,
     },
   ];
 
@@ -302,9 +317,10 @@ const HomeDashboard = ({
                 type="button"
                 variant="primary"
                 size="md"
+                disabled={!permissionsReady && isStartingPermissionRepair}
                 onClick={() =>
                   !permissionsReady
-                    ? onStartPermissionRepair?.()
+                    ? void startPermissionRepairOnce()
                     : onNavigate?.(
                         setupReady
                           ? "general"
@@ -350,9 +366,10 @@ const HomeDashboard = ({
                     type="button"
                     variant="secondary"
                     size="sm"
+                    disabled={!permissionsReady && isStartingPermissionRepair}
                     onClick={() =>
                       !permissionsReady
-                        ? onStartPermissionRepair?.()
+                        ? void startPermissionRepairOnce()
                         : onNavigate?.("general")
                     }
                   >
@@ -388,8 +405,9 @@ const HomeDashboard = ({
                     </span>
                     <button
                       type="button"
-                      className="text-xs font-semibold text-ss-text-tertiary transition-colors duration-150 hover:text-ss-brand-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35"
-                      onClick={item.action}
+                      className="text-xs font-semibold text-ss-text-tertiary transition-colors duration-150 hover:text-ss-brand-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:text-ss-text-tertiary"
+                      disabled={item.disabled}
+                      onClick={() => item.action()}
                     >
                       {item.actionLabel}
                     </button>
