@@ -156,7 +156,7 @@
         "afterGrantBody": "SilkScribe가 앱에 입력하고 설정을 정상적으로 마칠 수 있습니다.",
         "steps": {
           "step1": "“macOS 창 열기”를 클릭하세요.",
-          "step2": "macOS가 시스템 설정으로 보낸다면 అక్కడ서 계속 진행하세요.",
+          "step2": "macOS가 시스템 설정으로 보낸다면 거기서 계속 진행하세요.",
           "step3": "개인정보 보호 및 보안 > 손쉬운 사용을 열고 SilkScribe를 찾으세요.",
           "step4": "SilkScribe를 켠 뒤 여기로 돌아와 다시 확인하세요."
         },
