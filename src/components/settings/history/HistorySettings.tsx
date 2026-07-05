@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { save } from "@tauri-apps/plugin-dialog";
 import { writeTextFile } from "@tauri-apps/plugin-fs";
@@ -41,6 +41,7 @@ export const HistorySettings = () => {
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [historyFilter, setHistoryFilter] = useState<HistoryFilter>("all");
+  const hasMountedRef = useRef(false);
   const isFiltered =
     debouncedSearch.trim().length > 0 || historyFilter !== "all";
 
@@ -104,6 +105,10 @@ export const HistorySettings = () => {
   }, [searchInput]);
 
   useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
     void reload(true);
   }, [debouncedSearch, historyFilter]);
 

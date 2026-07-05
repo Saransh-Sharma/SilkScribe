@@ -213,11 +213,29 @@ export const useHistoryFeed = <TData, TCursor = HomeHistoryCursor>({
 
   useEffect(
     () => () => {
+      const pendingDeleteIds = Array.from(
+        pendingDeleteEntriesRef.current.keys(),
+      );
       pendingDeleteTimersRef.current.forEach((timerId) => {
         window.clearTimeout(timerId);
       });
       pendingDeleteTimersRef.current.clear();
       pendingDeleteEntriesRef.current.clear();
+      pendingDeleteIds.forEach((id) => {
+        void commands
+          .deleteHistoryEntry(id)
+          .then((result) => {
+            if (result.status !== "ok") {
+              throw new Error(result.error);
+            }
+          })
+          .catch((deleteError) => {
+            console.error(
+              "Failed to flush pending history delete:",
+              deleteError,
+            );
+          });
+      });
     },
     [],
   );
