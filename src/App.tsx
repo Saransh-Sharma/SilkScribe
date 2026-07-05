@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
-import { Toaster } from "sonner";
+import { toast, Toaster } from "sonner";
 import { useTranslation } from "react-i18next";
+import { listen } from "@tauri-apps/api/event";
 import { platform } from "@tauri-apps/plugin-os";
 import {
   checkAccessibilityPermission,
@@ -15,6 +16,7 @@ import Onboarding, {
   PermissionStep,
 } from "./components/onboarding";
 import { Sidebar, SidebarSection, SECTIONS_CONFIG } from "./components/Sidebar";
+import { ErrorBoundary } from "./components/ui";
 import { useSettings } from "./hooks/useSettings";
 import { useSettingsStore } from "./stores/settingsStore";
 import { commands } from "@/bindings";
@@ -37,17 +39,41 @@ interface PermissionSnapshot {
   microphone: boolean;
 }
 
+interface PasteFailedPayload {
+  detail?: string;
+  copiedToClipboard?: boolean;
+}
+
+type ResolvedTheme = "light" | "dark";
+
+const getSystemTheme = (): ResolvedTheme => {
+  if (
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+  ) {
+    return "dark";
+  }
+
+  return "light";
+};
+
 const renderSettingsContent = (
   section: SidebarSection,
   onNavigate: (section: SidebarSection) => void,
+  onStartPermissionRepair: () => void,
 ) => {
   const ActiveComponent =
     SECTIONS_CONFIG[section]?.component || SECTIONS_CONFIG.general.component;
-  return <ActiveComponent onNavigate={onNavigate} />;
+  return (
+    <ActiveComponent
+      onNavigate={onNavigate}
+      onStartPermissionRepair={onStartPermissionRepair}
+    />
+  );
 };
 
 function App() {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [onboardingStep, setOnboardingStep] = useState<OnboardingStep | null>(
     null,
   );
@@ -58,6 +84,7 @@ function App() {
   });
   const [currentSection, setCurrentSection] = useState<SidebarSection>("home");
   const { settings, updateSetting } = useSettings();
+  const [systemTheme, setSystemTheme] = useState<ResolvedTheme>(getSystemTheme);
   const direction = getLanguageDirection(i18n.language);
   const refreshAudioDevices = useSettingsStore(
     (state) => state.refreshAudioDevices,
@@ -66,6 +93,9 @@ function App() {
     (state) => state.refreshOutputDevices,
   );
   const hasCompletedPostOnboardingInit = useRef(false);
+  const themePreference = settings?.theme ?? "system";
+  const resolvedTheme: ResolvedTheme =
+    themePreference === "system" ? systemTheme : themePreference;
 
   const loadPermissionSnapshot = async (): Promise<PermissionSnapshot> => {
     if (platform() !== "macos") {
@@ -123,7 +153,7 @@ function App() {
 
   const toaster = (
     <Toaster
-      theme="system"
+      theme={resolvedTheme}
       toastOptions={{
         unstyled: true,
         classNames: {
@@ -140,6 +170,50 @@ function App() {
     checkOnboardingStatus();
   }, []);
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleThemeChange = () => {
+      setSystemTheme(mediaQuery.matches ? "dark" : "light");
+    };
+
+    handleThemeChange();
+    mediaQuery.addEventListener("change", handleThemeChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleThemeChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = resolvedTheme;
+  }, [resolvedTheme]);
+
+  useEffect(() => {
+    let unlisten: (() => void) | undefined;
+
+    void listen<PasteFailedPayload>("transcription-paste-failed", (event) => {
+      const copiedToClipboard = event.payload?.copiedToClipboard ?? false;
+
+      toast.warning(
+        copiedToClipboard
+          ? t("feedback.pasteFailed.copiedTitle")
+          : t("feedback.pasteFailed.failedTitle"),
+        {
+          description: copiedToClipboard
+            ? t("feedback.pasteFailed.copiedDescription")
+            : (event.payload?.detail ??
+              t("feedback.pasteFailed.failedDescription")),
+        },
+      );
+    }).then((unsubscribe) => {
+      unlisten = unsubscribe;
+    });
+
+    return () => {
+      unlisten?.();
+    };
+  }, [t]);
+
   // Initialize RTL direction when language changes
   useEffect(() => {
     initializeRTL(i18n.language);
@@ -147,10 +221,7 @@ function App() {
 
   useEffect(() => {
     const syncWindowMode = async () => {
-      if (
-        onboardingStep !== null &&
-        onboardingStep !== "done"
-      ) {
+      if (onboardingStep !== null && onboardingStep !== "done") {
         await enterOnboardingWindowMode();
         return;
       }
@@ -224,7 +295,9 @@ function App() {
         return;
       }
 
-      setOnboardingStep(getFirstMissingPermissionStep(currentPermissions) ?? "done");
+      setOnboardingStep(
+        getFirstMissingPermissionStep(currentPermissions) ?? "done",
+      );
     } catch (error) {
       console.error("Failed to check onboarding status:", error);
       const fallbackPermissions =
@@ -239,7 +312,9 @@ function App() {
   const handleWelcomeContinue = async () => {
     const currentPermissions = await loadPermissionSnapshot();
     setPermissions(currentPermissions);
-    setOnboardingStep(getFirstMissingPermissionStep(currentPermissions) ?? "setup");
+    setOnboardingStep(
+      getFirstMissingPermissionStep(currentPermissions) ?? "setup",
+    );
   };
 
   const handlePermissionContinue = async () => {
@@ -258,6 +333,14 @@ function App() {
   const handlePracticeComplete = () => {
     setHasCompletedOnboarding(true);
     setOnboardingStep("done");
+  };
+
+  const handleStartPermissionRepair = async () => {
+    const currentPermissions = await loadPermissionSnapshot();
+    setPermissions(currentPermissions);
+    setOnboardingStep(
+      getFirstMissingPermissionStep(currentPermissions) ?? "done",
+    );
   };
 
   // Still checking onboarding status
@@ -353,7 +436,8 @@ function App() {
       {toaster}
       <div
         dir={direction}
-        className="relative h-screen overflow-hidden select-none cursor-default bg-transparent text-ss-text-primary"
+        data-theme={resolvedTheme}
+        className="relative h-[100dvh] overflow-hidden select-none cursor-default bg-transparent text-ss-text-primary"
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-ss-brand-highlight/8 via-ss-brand-secondary/4 to-transparent" />
         <div className="pointer-events-none absolute -left-20 top-12 h-48 w-48 rounded-full bg-ss-brand-secondary/10 blur-3xl" />
@@ -368,8 +452,20 @@ function App() {
             <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
               <div className="app-content-scroll flex-1 overflow-y-auto">
                 <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-6 px-5 py-6">
-                  <AccessibilityPermissions />
-                  {renderSettingsContent(currentSection, setCurrentSection)}
+                  <ErrorBoundary>
+                    <AccessibilityPermissions
+                      onStartRepair={() => {
+                        void handleStartPermissionRepair();
+                      }}
+                    />
+                    {renderSettingsContent(
+                      currentSection,
+                      setCurrentSection,
+                      () => {
+                        void handleStartPermissionRepair();
+                      },
+                    )}
+                  </ErrorBoundary>
                 </div>
               </div>
             </div>
