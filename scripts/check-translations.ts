@@ -15,6 +15,7 @@ interface ValidationResult {
   valid: boolean;
   missing: string[][];
   extra: string[][];
+  staleEnglish: string[][];
 }
 
 function getLanguages(): string[] {
@@ -26,6 +27,65 @@ function getLanguages(): string[] {
 }
 
 const LANGUAGES = getLanguages();
+
+const STALE_ENGLISH_KEY_PATHS = new Set(
+  [
+    "onboarding.permissions.shared.repairAction",
+    "modelSelector.statusLabel",
+    "modelSelector.retryDownload",
+    "modelSelector.downloadErrorTitle",
+    "modelSelector.downloadProgress.downloadedOf",
+    "modelSelector.downloadProgress.eta",
+    "modelSelector.downloadProgress.starting",
+    "modelSelector.downloadProgress.extracting",
+    "modelSelector.downloadProgress.almostDone",
+    "modelSelector.downloadProgress.unknownEta",
+    "modelSelector.downloadErrors.preflightFailed",
+    "modelSelector.downloadErrors.insufficientSpace",
+    "modelSelector.downloadErrors.downloadFailed",
+    "modelSelector.downloadErrors.extractionFailed",
+    "modelSelector.downloadErrors.unknown",
+    "settings.general.theme.title",
+    "settings.general.theme.description",
+    "settings.general.theme.options.light",
+    "settings.general.theme.options.dark",
+    "settings.history.exportTitle",
+    "settings.history.exportEmpty",
+    "settings.history.exportSuccess",
+    "settings.history.exportError",
+    "settings.history.emptyFiltered",
+    "settings.history.emptyFilteredDescription",
+    "settings.history.searchPlaceholder",
+    "settings.history.filters.all",
+    "settings.history.filters.saved",
+    "settings.history.filters.failed",
+    "settings.history.copyAsMarkdown",
+    "settings.history.copySuccess",
+    "settings.history.copyError",
+    "settings.history.deleteQueued",
+    "settings.history.deleteUndoDescription",
+    "settings.history.undoDelete",
+    "common.errorBoundary.description",
+    "common.errorBoundary.reload",
+    "common.errorBoundary.openLogs",
+    "overlay.cancelled",
+    "overlay.cancelledDetail",
+    "feedback.pasteFailed.copiedTitle",
+    "feedback.pasteFailed.copiedDescription",
+    "feedback.pasteFailed.copyFailedTitle",
+    "feedback.pasteFailed.copyFailedDescription",
+  ].map((key) => key.split(".").join("\u0000")),
+);
+
+const IDENTICAL_VALUE_ALLOWED_KEY_PATHS = new Set(
+  [
+    "modelSelector.modelMeta",
+    "modelSelector.downloadProgress.speed",
+    "settings.general.theme.options.system",
+    "settings.history.exportMarkdown",
+    "settings.history.exportJson",
+  ].map((key) => key.split(".").join("\u0000")),
+);
 
 const colors: Record<string, string> = {
   reset: "\x1b[0m",
@@ -76,6 +136,25 @@ function hasKeyPath(obj: TranslationData, keyPath: string[]): boolean {
   return true;
 }
 
+function getKeyPathValue(obj: TranslationData, keyPath: string[]): unknown {
+  let current: unknown = obj;
+  for (const key of keyPath) {
+    if (typeof current !== "object" || current === null) {
+      return undefined;
+    }
+    current = (current as Record<string, unknown>)[key];
+  }
+  return current;
+}
+
+function shouldCheckForStaleEnglish(keyPath: string[]): boolean {
+  const key = keyPath.join("\u0000");
+  return (
+    STALE_ENGLISH_KEY_PATHS.has(key) &&
+    !IDENTICAL_VALUE_ALLOWED_KEY_PATHS.has(key)
+  );
+}
+
 function loadTranslationFile(lang: string): TranslationData | null {
   const filePath = path.join(LOCALES_DIR, lang, "translation.json");
 
@@ -115,7 +194,12 @@ function validateTranslations(): void {
 
     if (!langData) {
       hasErrors = true;
-      results[lang] = { valid: false, missing: [], extra: [] };
+      results[lang] = {
+        valid: false,
+        missing: [],
+        extra: [],
+        staleEnglish: [],
+      };
       continue;
     }
 
@@ -126,9 +210,26 @@ function validateTranslations(): void {
     const extra = langKeyPaths.filter(
       (keyPath) => !hasKeyPath(referenceData, keyPath),
     );
+    const staleEnglish = referenceKeyPaths.filter((keyPath) => {
+      if (
+        !shouldCheckForStaleEnglish(keyPath) ||
+        !hasKeyPath(langData, keyPath)
+      ) {
+        return false;
+      }
+
+      const referenceValue = getKeyPathValue(referenceData, keyPath);
+      const localizedValue = getKeyPathValue(langData, keyPath);
+      return (
+        typeof referenceValue === "string" &&
+        typeof localizedValue === "string" &&
+        localizedValue.trim() === referenceValue.trim()
+      );
+    });
 
     const missingIsError = STRICT_MISSING_MODE && missing.length > 0;
-    const hasValidationError = extra.length > 0 || missingIsError;
+    const hasValidationError =
+      extra.length > 0 || missingIsError || staleEnglish.length > 0;
     if (hasValidationError) {
       hasErrors = true;
     }
@@ -140,6 +241,7 @@ function validateTranslations(): void {
       valid: !hasValidationError,
       missing,
       extra,
+      staleEnglish,
     };
   }
 
@@ -151,7 +253,8 @@ function validateTranslations(): void {
     const isWarningOnly =
       !STRICT_MISSING_MODE &&
       result.missing.length > 0 &&
-      result.extra.length === 0;
+      result.extra.length === 0 &&
+      result.staleEnglish.length === 0;
 
     if (result.valid && !isWarningOnly) {
       console.log(
@@ -200,7 +303,31 @@ function validateTranslations(): void {
       }
     }
 
-    if (result.missing.length > 0 || result.extra.length > 0) {
+    if (result.staleEnglish.length > 0) {
+      console.log(
+        colorize(
+          `  English-identical ${result.staleEnglish.length} user-facing values:`,
+          "yellow",
+        ),
+      );
+      result.staleEnglish.slice(0, 10).forEach((keyPath) => {
+        console.log(`    - ${keyPath.join(".")}`);
+      });
+      if (result.staleEnglish.length > 10) {
+        console.log(
+          colorize(
+            `    ... and ${result.staleEnglish.length - 10} more`,
+            "yellow",
+          ),
+        );
+      }
+    }
+
+    if (
+      result.missing.length > 0 ||
+      result.extra.length > 0 ||
+      result.staleEnglish.length > 0
+    ) {
       console.log("");
     }
   }
