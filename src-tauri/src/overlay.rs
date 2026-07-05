@@ -308,7 +308,17 @@ fn create_overlay_payload(state: &str) -> OverlayPayload {
     }
 }
 
-fn show_overlay_state(app_handle: &AppHandle, state: &str) {
+fn create_overlay_payload_with_detail(state: &str, detail: impl Into<String>) -> OverlayPayload {
+    OverlayPayload {
+        state: state.to_string(),
+        title: None,
+        detail: Some(detail.into()),
+        preview_text: None,
+        can_cancel: state == "recording",
+    }
+}
+
+fn show_overlay_payload(app_handle: &AppHandle, payload: OverlayPayload) {
     // Check if overlay should be shown based on position setting
     let settings = settings::get_settings(app_handle);
     if settings.overlay_position == OverlayPosition::None {
@@ -324,9 +334,12 @@ fn show_overlay_state(app_handle: &AppHandle, state: &str) {
         #[cfg(target_os = "windows")]
         force_overlay_topmost(&overlay_window);
 
-        let payload = create_overlay_payload(state);
         let _ = overlay_window.emit("show-overlay", payload);
     }
+}
+
+fn show_overlay_state(app_handle: &AppHandle, state: &str) {
+    show_overlay_payload(app_handle, create_overlay_payload(state));
 }
 
 /// Shows the recording overlay window with fade-in animation
@@ -352,6 +365,19 @@ pub fn show_success_overlay(app_handle: &AppHandle) {
 /// Shows the error overlay window
 pub fn show_error_overlay(app_handle: &AppHandle) {
     show_overlay_state(app_handle, "error");
+}
+
+/// Shows the error overlay with a short detail message.
+pub fn show_error_overlay_with_detail(app_handle: &AppHandle, detail: impl Into<String>) {
+    show_overlay_payload(
+        app_handle,
+        create_overlay_payload_with_detail("error", detail),
+    );
+}
+
+/// Shows the cancelled overlay state.
+pub fn show_cancelled_overlay(app_handle: &AppHandle) {
+    show_overlay_state(app_handle, "cancelled");
 }
 
 /// Updates the overlay window position based on current settings
