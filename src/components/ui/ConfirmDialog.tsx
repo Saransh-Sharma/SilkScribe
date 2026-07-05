@@ -34,6 +34,8 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     if (!open) return;
 
     previouslyFocusedElement.current = document.activeElement;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
     const animationFrame = window.requestAnimationFrame(() => {
       cancelButtonRef.current?.focus();
@@ -41,6 +43,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
     return () => {
       window.cancelAnimationFrame(animationFrame);
+      document.body.style.overflow = previousBodyOverflow;
       if (previouslyFocusedElement.current instanceof HTMLElement) {
         previouslyFocusedElement.current.focus();
       }

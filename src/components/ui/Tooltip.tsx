@@ -102,10 +102,9 @@ export const Tooltip: React.FC<TooltipProps> = ({
         top: coords?.top ?? -9999,
         left: coords?.left ?? -9999,
         width: TOOLTIP_WIDTH,
-        zIndex: "var(--ss-layer-tooltip)",
         opacity: coords ? 1 : 0,
       }}
-      className="whitespace-normal rounded-[var(--ss-radius-md)] border border-ss-border-default bg-ss-bg-surface px-3 py-2 shadow-[var(--ss-shadow-lift)] transition-opacity duration-150"
+      className="z-[var(--ss-layer-tooltip)] whitespace-normal rounded-[var(--ss-radius-md)] border border-ss-border-default bg-ss-bg-surface px-3 py-2 shadow-[var(--ss-shadow-lift)] transition-opacity duration-150"
     >
       {children}
       <div
