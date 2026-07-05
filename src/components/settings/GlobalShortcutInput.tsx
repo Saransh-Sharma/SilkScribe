@@ -124,6 +124,11 @@ export const GlobalShortcutInput: React.FC<GlobalShortcutInputProps> = ({
           try {
             await updateBinding(editingShortcutId, newShortcut);
             toast.success(t("settings.general.shortcut.success.saved"));
+            // Exit editing mode and reset states only after the backend accepts it.
+            setEditingShortcutId(null);
+            setKeyPressed([]);
+            setRecordedKeys([]);
+            setOriginalBinding("");
           } catch (error) {
             console.error("Failed to change binding:", error);
             toast.error(
@@ -141,13 +146,10 @@ export const GlobalShortcutInput: React.FC<GlobalShortcutInputProps> = ({
                 toast.error(t("settings.general.shortcut.errors.reset"));
               }
             }
+            setKeyPressed([]);
+            setRecordedKeys([]);
+            return;
           }
-
-          // Exit editing mode and reset states
-          setEditingShortcutId(null);
-          setKeyPressed([]);
-          setRecordedKeys([]);
-          setOriginalBinding("");
         }
       }
     };

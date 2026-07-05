@@ -116,6 +116,9 @@ export const NativeKeysShortcutInput: React.FC<
                   toast.error(t("settings.general.shortcut.errors.reset"));
                 }
               }
+              setCurrentKeys("");
+              currentKeysRef.current = "";
+              return;
             }
 
             // Stop recording
