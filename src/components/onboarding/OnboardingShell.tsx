@@ -32,7 +32,7 @@ const OnboardingShell: React.FC<OnboardingShellProps> = ({
       <div className="ss-onboarding-orb ss-onboarding-orb-c" />
       <div className="ss-onboarding-grid" />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-1 items-center justify-center">
+      <div className="relative z-10 mx-auto flex w-full max-w-[1520px] flex-1 items-center justify-center">
         <div className="ss-onboarding-card flex h-full max-h-[calc(100vh-2rem)] w-full flex-col overflow-hidden rounded-[36px] border border-ss-border-default bg-ss-bg-surface/90 shadow-[var(--ss-shadow-lift)] backdrop-blur-xl">
           <header
             className={`border-b border-ss-border-subtle px-5 py-4 md:px-6 ${

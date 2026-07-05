@@ -9,7 +9,7 @@ const WINDOW_MARGIN = 32;
 
 const NORMAL_SIZE = { width: 1360, height: 920 };
 const NORMAL_MIN_SIZE = { width: 1180, height: 820 };
-const ONBOARDING_SIZE = { width: 1480, height: 980 };
+const ONBOARDING_SIZE = { width: 1560, height: 1040 };
 const ONBOARDING_MIN_SIZE = { width: 1280, height: 900 };
 
 let isOnboardingWindowModeActive = false;
