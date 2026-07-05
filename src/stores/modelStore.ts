@@ -3,6 +3,7 @@ import { subscribeWithSelector } from "zustand/middleware";
 import { produce } from "immer";
 import { listen } from "@tauri-apps/api/event";
 import { commands, type ModelInfo } from "@/bindings";
+import type { DownloadError } from "@/lib/utils/download";
 
 interface DownloadProgress {
   model_id: string;
@@ -18,21 +19,6 @@ interface DownloadStats {
   speed: number; // MB/s
 }
 
-type DownloadErrorCode =
-  | "preflight_failed"
-  | "insufficient_space"
-  | "download_failed"
-  | "extraction_failed"
-  | "unknown";
-
-interface DownloadError {
-  modelId: string;
-  code: DownloadErrorCode;
-  detail?: string;
-  requiredBytes?: number;
-  freeBytes?: number;
-}
-
 // Using Record instead of Set/Map for Immer compatibility
 interface ModelsStore {
   models: ModelInfo[];
@@ -41,7 +27,7 @@ interface ModelsStore {
   extractingModels: Record<string, true>;
   downloadProgress: Record<string, DownloadProgress>;
   downloadStats: Record<string, DownloadStats>;
-  downloadError: DownloadError | null;
+  downloadErrors: Record<string, DownloadError>;
   loading: boolean;
   error: string | null;
   hasAnyModels: boolean;
@@ -61,6 +47,7 @@ interface ModelsStore {
   isModelDownloading: (modelId: string) => boolean;
   isModelExtracting: (modelId: string) => boolean;
   getDownloadProgress: (modelId: string) => DownloadProgress | undefined;
+  getDownloadError: (modelId: string) => DownloadError | undefined;
 
   // Internal setters
   setModels: (models: ModelInfo[]) => void;
@@ -77,7 +64,7 @@ export const useModelStore = create<ModelsStore>()(
     extractingModels: {},
     downloadProgress: {},
     downloadStats: {},
-    downloadError: null,
+    downloadErrors: {},
     loading: true,
     error: null,
     hasAnyModels: false,
@@ -180,35 +167,44 @@ export const useModelStore = create<ModelsStore>()(
     downloadModel: async (modelId: string) => {
       try {
         set({ error: null });
+        set(
+          produce((state) => {
+            delete state.downloadErrors[modelId];
+          }),
+        );
         const preflight = await commands.getModelDownloadPreflight(modelId);
         if (preflight.status !== "ok") {
-          set({
-            error: preflight.error,
-            downloadError: {
-              modelId,
-              code: "preflight_failed",
-              detail: preflight.error,
-            },
-          });
+          set(
+            produce((state) => {
+              state.error = preflight.error;
+              state.downloadErrors[modelId] = {
+                modelId,
+                code: "preflight_failed",
+                detail: preflight.error,
+              };
+            }),
+          );
           return false;
         }
 
         if (!preflight.data.has_enough_space) {
-          set({
-            error: "insufficient_space",
-            downloadError: {
-              modelId,
-              code: "insufficient_space",
-              requiredBytes: preflight.data.required_bytes,
-              freeBytes: preflight.data.free_bytes,
-            },
-          });
+          set(
+            produce((state) => {
+              state.error = "insufficient_space";
+              state.downloadErrors[modelId] = {
+                modelId,
+                code: "insufficient_space",
+                requiredBytes: preflight.data.required_bytes,
+                freeBytes: preflight.data.free_bytes,
+              };
+            }),
+          );
           return false;
         }
 
-        set({ downloadError: null });
         set(
           produce((state) => {
+            delete state.downloadErrors[modelId];
             state.downloadingModels[modelId] = true;
             state.downloadProgress[modelId] = {
               model_id: modelId,
@@ -222,16 +218,14 @@ export const useModelStore = create<ModelsStore>()(
         if (result.status === "ok") {
           return true;
         } else {
-          set({
-            error: result.error,
-            downloadError: {
-              modelId,
-              code: "download_failed",
-              detail: result.error,
-            },
-          });
           set(
             produce((state) => {
+              state.error = result.error;
+              state.downloadErrors[modelId] = {
+                modelId,
+                code: "download_failed",
+                detail: result.error,
+              };
               delete state.downloadingModels[modelId];
               delete state.downloadProgress[modelId];
               delete state.downloadStats[modelId];
@@ -241,16 +235,14 @@ export const useModelStore = create<ModelsStore>()(
         }
       } catch (err) {
         const detail = String(err);
-        set({
-          error: detail,
-          downloadError: {
-            modelId,
-            code: "download_failed",
-            detail,
-          },
-        });
         set(
           produce((state) => {
+            state.error = detail;
+            state.downloadErrors[modelId] = {
+              modelId,
+              code: "download_failed",
+              detail,
+            };
             delete state.downloadingModels[modelId];
             delete state.downloadProgress[modelId];
             delete state.downloadStats[modelId];
@@ -270,7 +262,7 @@ export const useModelStore = create<ModelsStore>()(
               delete state.downloadingModels[modelId];
               delete state.downloadProgress[modelId];
               delete state.downloadStats[modelId];
-              state.downloadError = null;
+              delete state.downloadErrors[modelId];
             }),
           );
 
@@ -319,6 +311,10 @@ export const useModelStore = create<ModelsStore>()(
 
     getDownloadProgress: (modelId: string) => {
       return get().downloadProgress[modelId];
+    },
+
+    getDownloadError: (modelId: string) => {
+      return get().downloadErrors[modelId];
     },
 
     initialize: async () => {
@@ -382,7 +378,7 @@ export const useModelStore = create<ModelsStore>()(
             delete state.downloadingModels[modelId];
             delete state.downloadProgress[modelId];
             delete state.downloadStats[modelId];
-            state.downloadError = null;
+            delete state.downloadErrors[modelId];
           }),
         );
         get().loadModels();
@@ -393,6 +389,9 @@ export const useModelStore = create<ModelsStore>()(
         set(
           produce((state) => {
             state.extractingModels[modelId] = true;
+            delete state.downloadProgress[modelId];
+            delete state.downloadStats[modelId];
+            delete state.downloadErrors[modelId];
           }),
         );
       });
@@ -415,7 +414,7 @@ export const useModelStore = create<ModelsStore>()(
             produce((state) => {
               delete state.extractingModels[modelId];
               state.error = event.payload.error;
-              state.downloadError = {
+              state.downloadErrors[modelId] = {
                 modelId,
                 code: "extraction_failed",
                 detail: event.payload.error,
@@ -435,7 +434,7 @@ export const useModelStore = create<ModelsStore>()(
               delete state.downloadProgress[modelId];
               delete state.downloadStats[modelId];
               state.error = event.payload.error;
-              state.downloadError = {
+              state.downloadErrors[modelId] = {
                 modelId,
                 code: "download_failed",
                 detail: event.payload.error,
@@ -452,12 +451,18 @@ export const useModelStore = create<ModelsStore>()(
             delete state.downloadingModels[modelId];
             delete state.downloadProgress[modelId];
             delete state.downloadStats[modelId];
-            state.downloadError = null;
+            delete state.downloadErrors[modelId];
           }),
         );
       });
 
-      listen<string>("model-deleted", () => {
+      listen<string>("model-deleted", (event) => {
+        const modelId = event.payload;
+        set(
+          produce((state) => {
+            delete state.downloadErrors[modelId];
+          }),
+        );
         get().loadModels();
         get().loadCurrentModel();
       });

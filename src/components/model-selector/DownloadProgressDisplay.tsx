@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import type { ModelInfo } from "@/bindings";
 import { Button } from "@/components/ui/Button";
 import { getTranslatedModelName } from "@/lib/utils/modelTranslation";
+import { formatBytes, type DownloadError } from "@/lib/utils/download";
 
 interface DownloadProgress {
   model_id: string;
@@ -19,44 +20,16 @@ interface DownloadStats {
   speed: number;
 }
 
-type DownloadErrorCode =
-  | "preflight_failed"
-  | "insufficient_space"
-  | "download_failed"
-  | "extraction_failed"
-  | "unknown";
-
-interface DownloadError {
-  modelId: string;
-  code: DownloadErrorCode;
-  detail?: string;
-  requiredBytes?: number;
-  freeBytes?: number;
-}
-
 interface DownloadProgressDisplayProps {
   models: ModelInfo[];
   downloadProgress: Record<string, DownloadProgress>;
   downloadStats: Record<string, DownloadStats>;
   extractingModels?: Record<string, true>;
-  downloadError?: DownloadError | null;
+  downloadErrors?: Record<string, DownloadError>;
   className?: string;
   onCancel?: (modelId: string) => void;
   onRetry?: (modelId: string) => void;
 }
-
-const formatBytes = (bytes: number): string => {
-  if (bytes <= 0) return "0 MB";
-
-  const units = ["B", "KB", "MB", "GB", "TB"];
-  const exponent = Math.min(
-    Math.floor(Math.log(bytes) / Math.log(1024)),
-    units.length - 1,
-  );
-  const value = bytes / 1024 ** exponent;
-
-  return `${value >= 10 ? value.toFixed(0) : value.toFixed(1)} ${units[exponent]}`;
-};
 
 const formatEta = (seconds: number): string => {
   if (!Number.isFinite(seconds) || seconds <= 0) return "";
@@ -74,7 +47,7 @@ const DownloadProgressDisplay: React.FC<DownloadProgressDisplayProps> = ({
   downloadProgress,
   downloadStats,
   extractingModels = {},
-  downloadError,
+  downloadErrors = {},
   className = "",
   onCancel,
   onRetry,
@@ -82,11 +55,12 @@ const DownloadProgressDisplay: React.FC<DownloadProgressDisplayProps> = ({
   const { t } = useTranslation();
   const progressValues = Object.values(downloadProgress);
   const extractingIds = Object.keys(extractingModels);
+  const errorValues = Object.values(downloadErrors);
 
   if (
     progressValues.length === 0 &&
     extractingIds.length === 0 &&
-    !downloadError
+    errorValues.length === 0
   ) {
     return null;
   }
@@ -214,8 +188,11 @@ const DownloadProgressDisplay: React.FC<DownloadProgressDisplayProps> = ({
         </div>
       ))}
 
-      {downloadError ? (
-        <div className="rounded-[var(--ss-radius-md)] border border-ss-state-danger/20 bg-ss-state-danger/10 px-3 py-2">
+      {errorValues.map((downloadError) => (
+        <div
+          key={downloadError.modelId}
+          className="rounded-[var(--ss-radius-md)] border border-ss-state-danger/20 bg-ss-state-danger/10 px-3 py-2"
+        >
           <div className="flex items-start gap-2">
             <AlertCircle
               className="mt-0.5 h-4 w-4 shrink-0 text-ss-state-danger"
@@ -243,7 +220,7 @@ const DownloadProgressDisplay: React.FC<DownloadProgressDisplayProps> = ({
             </div>
           </div>
         </div>
-      ) : null}
+      ))}
     </div>
   );
 };

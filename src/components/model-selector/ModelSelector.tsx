@@ -36,7 +36,7 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({ onError }) => {
     downloadProgress,
     downloadStats,
     extractingModels,
-    downloadError,
+    downloadErrors,
     downloadModel,
     cancelDownload,
     selectModel,
@@ -277,7 +277,7 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({ onError }) => {
         downloadProgress={downloadProgress}
         downloadStats={downloadStats}
         extractingModels={extractingModels}
-        downloadError={downloadError}
+        downloadErrors={downloadErrors}
         onCancel={(modelId) => {
           void cancelDownload(modelId);
         }}
