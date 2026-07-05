@@ -19,9 +19,19 @@ interface DownloadStats {
   speed: number;
 }
 
+type DownloadErrorCode =
+  | "preflight_failed"
+  | "insufficient_space"
+  | "download_failed"
+  | "extraction_failed"
+  | "unknown";
+
 interface DownloadError {
   modelId: string;
-  message: string;
+  code: DownloadErrorCode;
+  detail?: string;
+  requiredBytes?: number;
+  freeBytes?: number;
 }
 
 interface DownloadProgressDisplayProps {
@@ -84,6 +94,30 @@ const DownloadProgressDisplay: React.FC<DownloadProgressDisplayProps> = ({
   const modelName = (modelId: string) => {
     const model = models.find((candidate) => candidate.id === modelId);
     return model ? getTranslatedModelName(model, t) : modelId;
+  };
+
+  const describeDownloadError = (error: DownloadError) => {
+    switch (error.code) {
+      case "preflight_failed":
+        return t("modelSelector.downloadErrors.preflightFailed", {
+          detail: error.detail ?? t("modelSelector.downloadErrors.unknown"),
+        });
+      case "insufficient_space":
+        return t("modelSelector.downloadErrors.insufficientSpace", {
+          required: formatBytes(error.requiredBytes ?? 0),
+          available: formatBytes(error.freeBytes ?? 0),
+        });
+      case "download_failed":
+        return t("modelSelector.downloadErrors.downloadFailed", {
+          detail: error.detail ?? t("modelSelector.downloadErrors.unknown"),
+        });
+      case "extraction_failed":
+        return t("modelSelector.downloadErrors.extractionFailed", {
+          detail: error.detail ?? t("modelSelector.downloadErrors.unknown"),
+        });
+      default:
+        return t("modelSelector.downloadErrors.unknown");
+    }
   };
 
   return (
@@ -192,7 +226,7 @@ const DownloadProgressDisplay: React.FC<DownloadProgressDisplayProps> = ({
                 {t("modelSelector.downloadErrorTitle")}
               </p>
               <p className="mt-1 text-xs leading-relaxed text-ss-text-tertiary">
-                {downloadError.message}
+                {describeDownloadError(downloadError)}
               </p>
               {onRetry ? (
                 <Button
