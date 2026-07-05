@@ -124,8 +124,7 @@ const updatePointBuffer = (
   const amplitudeCap = Math.max(height * amplitudeFactor, 1);
 
   for (let index = 0; index < points.length; index += 1) {
-    const progress =
-      points.length > 1 ? index / (points.length - 1) : 0;
+    const progress = points.length > 1 ? index / (points.length - 1) : 0;
     const sample = samples[index];
     const amplitude = amplitudeCap * sample;
     const thickness = bodyThickness + sample * 2.2;
@@ -418,11 +417,21 @@ export const createWaveformScene = async (
     });
 
     edgeShadowLeft.clear();
-    edgeShadowLeft.ellipse(width * 0.08, height * 0.5, width * 0.22, height * 0.7);
+    edgeShadowLeft.ellipse(
+      width * 0.08,
+      height * 0.5,
+      width * 0.22,
+      height * 0.7,
+    );
     edgeShadowLeft.fill({ color: COLORS.forest, alpha: 0.26 });
 
     edgeShadowRight.clear();
-    edgeShadowRight.ellipse(width * 0.92, height * 0.5, width * 0.22, height * 0.7);
+    edgeShadowRight.ellipse(
+      width * 0.92,
+      height * 0.5,
+      width * 0.22,
+      height * 0.7,
+    );
     edgeShadowRight.fill({ color: COLORS.forest, alpha: 0.26 });
 
     ambientAura.clear();
@@ -543,7 +552,9 @@ export const createWaveformScene = async (
     }
 
     const targetTexture = usePrimaryTrailTarget ? trailTextureA : trailTextureB;
-    const previousTexture = usePrimaryTrailTarget ? trailTextureB : trailTextureA;
+    const previousTexture = usePrimaryTrailTarget
+      ? trailTextureB
+      : trailTextureA;
 
     trailFadeSprite.texture = previousTexture;
     trailFadeSprite.width = width;
@@ -636,14 +647,7 @@ export const createWaveformScene = async (
     );
 
     if (reducedMotion) {
-      drawRibbon(
-        trailRibbon,
-        trailPoints,
-        trailGradient,
-        0.08,
-        width,
-        height,
-      );
+      drawRibbon(trailRibbon, trailPoints, trailGradient, 0.08, width, height);
     } else {
       trailRibbon.clear();
     }
@@ -666,7 +670,8 @@ export const createWaveformScene = async (
     );
 
     const hottestPoint =
-      frontPoints[hottestIndex] ?? frontPoints[Math.floor(frontPoints.length / 2)];
+      frontPoints[hottestIndex] ??
+      frontPoints[Math.floor(frontPoints.length / 2)];
     const peakCenterY = (hottestPoint.top + hottestPoint.bottom) / 2;
 
     drawPeakHalo(
