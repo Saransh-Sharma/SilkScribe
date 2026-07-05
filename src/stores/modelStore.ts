@@ -18,6 +18,24 @@ interface DownloadStats {
   speed: number; // MB/s
 }
 
+interface DownloadError {
+  modelId: string;
+  message: string;
+}
+
+const formatBytes = (bytes: number): string => {
+  if (bytes <= 0) return "0 MB";
+
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  const exponent = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    units.length - 1,
+  );
+  const value = bytes / 1024 ** exponent;
+
+  return `${value >= 10 ? value.toFixed(0) : value.toFixed(1)} ${units[exponent]}`;
+};
+
 // Using Record instead of Set/Map for Immer compatibility
 interface ModelsStore {
   models: ModelInfo[];
@@ -26,6 +44,7 @@ interface ModelsStore {
   extractingModels: Record<string, true>;
   downloadProgress: Record<string, DownloadProgress>;
   downloadStats: Record<string, DownloadStats>;
+  downloadError: DownloadError | null;
   loading: boolean;
   error: string | null;
   hasAnyModels: boolean;
@@ -61,6 +80,7 @@ export const useModelStore = create<ModelsStore>()(
     extractingModels: {},
     downloadProgress: {},
     downloadStats: {},
+    downloadError: null,
     loading: true,
     error: null,
     hasAnyModels: false,
@@ -163,6 +183,28 @@ export const useModelStore = create<ModelsStore>()(
     downloadModel: async (modelId: string) => {
       try {
         set({ error: null });
+        const preflight = await commands.getModelDownloadPreflight(modelId);
+        if (preflight.status !== "ok") {
+          set({
+            error: `SilkScribe couldn't check disk space before downloading: ${preflight.error}`,
+            downloadError: {
+              modelId,
+              message: `SilkScribe couldn't check disk space before downloading: ${preflight.error}`,
+            },
+          });
+          return false;
+        }
+
+        if (!preflight.data.has_enough_space) {
+          const message = `SilkScribe needs ${formatBytes(preflight.data.required_bytes)} free to download this model. ${formatBytes(preflight.data.free_bytes)} is available.`;
+          set({
+            error: message,
+            downloadError: { modelId, message },
+          });
+          return false;
+        }
+
+        set({ downloadError: null });
         set(
           produce((state) => {
             state.downloadingModels[modelId] = true;
@@ -178,19 +220,31 @@ export const useModelStore = create<ModelsStore>()(
         if (result.status === "ok") {
           return true;
         } else {
-          set({ error: `Failed to download model: ${result.error}` });
+          const message = `Failed to download model: ${result.error}`;
+          set({
+            error: message,
+            downloadError: { modelId, message },
+          });
           set(
             produce((state) => {
               delete state.downloadingModels[modelId];
+              delete state.downloadProgress[modelId];
+              delete state.downloadStats[modelId];
             }),
           );
           return false;
         }
       } catch (err) {
-        set({ error: `Failed to download model: ${err}` });
+        const message = `Failed to download model: ${err}`;
+        set({
+          error: message,
+          downloadError: { modelId, message },
+        });
         set(
           produce((state) => {
             delete state.downloadingModels[modelId];
+            delete state.downloadProgress[modelId];
+            delete state.downloadStats[modelId];
           }),
         );
         return false;
@@ -207,6 +261,7 @@ export const useModelStore = create<ModelsStore>()(
               delete state.downloadingModels[modelId];
               delete state.downloadProgress[modelId];
               delete state.downloadStats[modelId];
+              state.downloadError = null;
             }),
           );
 
@@ -318,6 +373,7 @@ export const useModelStore = create<ModelsStore>()(
             delete state.downloadingModels[modelId];
             delete state.downloadProgress[modelId];
             delete state.downloadStats[modelId];
+            state.downloadError = null;
           }),
         );
         get().loadModels();
@@ -350,6 +406,27 @@ export const useModelStore = create<ModelsStore>()(
             produce((state) => {
               delete state.extractingModels[modelId];
               state.error = `Failed to extract model: ${event.payload.error}`;
+              state.downloadError = {
+                modelId,
+                message: `Failed to extract model: ${event.payload.error}`,
+              };
+            }),
+          );
+        },
+      );
+
+      listen<{ model_id: string; error: string }>(
+        "model-download-failed",
+        (event) => {
+          const modelId = event.payload.model_id;
+          const message = `Failed to download model: ${event.payload.error}`;
+          set(
+            produce((state) => {
+              delete state.downloadingModels[modelId];
+              delete state.downloadProgress[modelId];
+              delete state.downloadStats[modelId];
+              state.error = message;
+              state.downloadError = { modelId, message };
             }),
           );
         },
@@ -362,6 +439,7 @@ export const useModelStore = create<ModelsStore>()(
             delete state.downloadingModels[modelId];
             delete state.downloadProgress[modelId];
             delete state.downloadStats[modelId];
+            state.downloadError = null;
           }),
         );
       });

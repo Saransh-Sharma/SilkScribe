@@ -1,6 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Sparkles } from "lucide-react";
 import type { ModelInfo } from "@/bindings";
+import { EmptyState } from "@/components/ui/EmptyState";
 import {
   getTranslatedModelName,
   getTranslatedModelDescription,
@@ -20,16 +22,29 @@ const ModelDropdown: React.FC<ModelDropdownProps> = ({
   const { t } = useTranslation();
   const downloadedModels = models.filter((m) => m.is_downloaded);
 
+  const formatModelSize = (sizeMb: number) => {
+    if (sizeMb >= 1024) {
+      return `${(sizeMb / 1024).toFixed(sizeMb >= 10_240 ? 0 : 1)} GB`;
+    }
+
+    return `${sizeMb} MB`;
+  };
+
   const handleModelClick = (modelId: string) => {
     onModelSelect(modelId);
   };
 
   return (
-    <div className="absolute bottom-full start-0 z-50 mb-3 w-72 max-h-[60vh] overflow-y-auto rounded-[18px] border border-ss-border-default bg-ss-bg-surface p-2 shadow-[var(--ss-shadow-lift)]">
+    <div
+      className="absolute bottom-full start-0 z-[var(--ss-layer-dropdown)] mb-3 max-h-[60vh] w-80 overflow-y-auto rounded-[18px] border border-ss-border-default bg-ss-bg-surface p-2 shadow-[var(--ss-shadow-lift)]"
+      role="listbox"
+      aria-label={t("modelSelector.active")}
+    >
       {downloadedModels.length > 0 ? (
         <div>
           {downloadedModels.map((model) => (
-            <div
+            <button
+              type="button"
               key={model.id}
               onClick={() => handleModelClick(model.id)}
               onKeyDown={(e) => {
@@ -38,9 +53,9 @@ const ModelDropdown: React.FC<ModelDropdownProps> = ({
                   handleModelClick(model.id);
                 }
               }}
-              tabIndex={0}
-              role="button"
-              className={`w-full cursor-pointer rounded-[14px] px-3 py-2.5 text-start transition-colors focus:outline-none ${
+              role="option"
+              aria-selected={currentModelId === model.id}
+              className={`w-full cursor-pointer rounded-[14px] px-3 py-2.5 text-start transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35 ${
                 currentModelId === model.id
                   ? "bg-ss-brand-secondary/12 text-ss-brand-secondary"
                   : "text-ss-text-secondary hover:bg-ss-bg-surface-alt"
@@ -59,6 +74,12 @@ const ModelDropdown: React.FC<ModelDropdownProps> = ({
                   <div className="pe-4 text-xs italic text-ss-text-tertiary">
                     {getTranslatedModelDescription(model, t)}
                   </div>
+                  <div className="mt-1 text-[11px] font-semibold text-ss-text-tertiary">
+                    {t("modelSelector.modelMeta", {
+                      size: formatModelSize(model.size_mb),
+                      engine: model.engine_type,
+                    })}
+                  </div>
                 </div>
                 {currentModelId === model.id && (
                   <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ss-brand-secondary">
@@ -66,13 +87,15 @@ const ModelDropdown: React.FC<ModelDropdownProps> = ({
                   </div>
                 )}
               </div>
-            </div>
+            </button>
           ))}
         </div>
       ) : (
-        <div className="px-3 py-2 text-sm text-ss-text-tertiary">
-          {t("modelSelector.noModelsAvailable")}
-        </div>
+        <EmptyState
+          icon={Sparkles}
+          title={t("modelSelector.noModelsAvailable")}
+          className="border-0 bg-transparent px-3 py-4 shadow-none"
+        />
       )}
     </div>
   );

@@ -23,7 +23,9 @@ const applyWindowMode = async (
 
   if (!monitor) {
     await appWindow.setMinSize(new LogicalSize(minSize.width, minSize.height));
-    await appWindow.setSize(new LogicalSize(targetSize.width, targetSize.height));
+    await appWindow.setSize(
+      new LogicalSize(targetSize.width, targetSize.height),
+    );
     await appWindow.center();
     return;
   }
@@ -32,7 +34,10 @@ const applyWindowMode = async (
   const workAreaSize = workArea.size.toLogical(scaleFactor);
   const workAreaPosition = workArea.position.toLogical(scaleFactor);
   const availableWidth = Math.max(720, workAreaSize.width - WINDOW_MARGIN * 2);
-  const availableHeight = Math.max(640, workAreaSize.height - WINDOW_MARGIN * 2);
+  const availableHeight = Math.max(
+    640,
+    workAreaSize.height - WINDOW_MARGIN * 2,
+  );
 
   const appliedMinWidth = Math.min(minSize.width, availableWidth);
   const appliedMinHeight = Math.min(minSize.height, availableHeight);
@@ -51,9 +56,11 @@ const applyWindowMode = async (
   await appWindow.setSize(new LogicalSize(appliedWidth, appliedHeight));
 
   const centeredX =
-    workAreaPosition.x + Math.max(WINDOW_MARGIN, (workAreaSize.width - appliedWidth) / 2);
+    workAreaPosition.x +
+    Math.max(WINDOW_MARGIN, (workAreaSize.width - appliedWidth) / 2);
   const centeredY =
-    workAreaPosition.y + Math.max(WINDOW_MARGIN, (workAreaSize.height - appliedHeight) / 2);
+    workAreaPosition.y +
+    Math.max(WINDOW_MARGIN, (workAreaSize.height - appliedHeight) / 2);
 
   await appWindow.setPosition(new LogicalPosition(centeredX, centeredY));
 };
