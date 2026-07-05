@@ -1,6 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { type HistoryEntry } from "@/bindings";
+import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { formatDate } from "@/utils/dateFormat";
 import { HistoryDayGroup } from "./HistoryDayGroup";
 
@@ -76,8 +79,8 @@ export const HistoryFeed = ({
 
   if (loading) {
     return (
-      <div className="space-y-2">
-        <div className="h-3 w-28 rounded-full bg-ss-bg-surface-alt" />
+      <div className="space-y-2" aria-busy="true">
+        <Skeleton className="h-3 w-28" />
         <div className="overflow-hidden rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface shadow-[var(--ss-shadow-card)]">
           <div className="divide-y divide-ss-border-subtle">
             {Array.from({ length: 3 }).map((_, index) => (
@@ -85,18 +88,18 @@ export const HistoryFeed = ({
                 key={index}
                 className="grid gap-3 px-4 py-4 md:grid-cols-[92px_minmax(0,1fr)]"
               >
-                <div className="h-3 w-14 rounded-full bg-ss-bg-surface-alt md:ms-auto" />
+                <Skeleton className="h-3 w-14 md:ms-auto" />
                 <div className="space-y-3">
-                  <div className="h-3 w-full max-w-[64ch] rounded-full bg-ss-bg-surface-alt" />
-                  <div className="h-3 w-3/4 rounded-full bg-ss-bg-surface-alt" />
+                  <Skeleton className="h-3 w-full max-w-[64ch]" />
+                  <Skeleton className="h-3 w-3/4" />
                   <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-                    <div className="h-11 w-full max-w-[320px] rounded-[var(--ss-radius-md)] bg-ss-bg-surface-alt" />
+                    <Skeleton
+                      rounded="md"
+                      className="h-11 w-full max-w-[320px]"
+                    />
                     <div className="flex gap-2">
                       {Array.from({ length: 3 }).map((_, buttonIndex) => (
-                        <div
-                          key={buttonIndex}
-                          className="h-11 w-11 rounded-full bg-ss-bg-surface-alt"
-                        />
+                        <Skeleton key={buttonIndex} className="h-11 w-11" />
                       ))}
                     </div>
                   </div>
@@ -112,12 +115,12 @@ export const HistoryFeed = ({
   if (error) {
     return (
       <div className="rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface px-5 py-5 shadow-[var(--ss-shadow-card)]">
-        <p className="text-sm font-semibold text-ss-text-primary">
-          {errorTitle}
-        </p>
-        <p className="mt-2 max-w-[60ch] text-sm leading-relaxed text-ss-text-tertiary">
-          {errorDescription}
-        </p>
+        <Alert variant="error" contained>
+          <span className="font-semibold text-ss-text-primary">
+            {errorTitle}
+          </span>
+          <span className="mt-1 block">{errorDescription}</span>
+        </Alert>
         <Button
           type="button"
           variant="secondary"
@@ -133,16 +136,7 @@ export const HistoryFeed = ({
 
   if (entries.length === 0) {
     return (
-      <div className="rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-[linear-gradient(180deg,color-mix(in_srgb,var(--ss-bg-surface-alt)_70%,var(--ss-bg-surface))_0%,var(--ss-bg-surface)_100%)] px-5 py-8 shadow-[var(--ss-shadow-card)]">
-        <p className="text-sm font-semibold text-ss-text-primary">
-          {emptyTitle}
-        </p>
-        {emptyDescription ? (
-          <p className="mt-2 max-w-[60ch] text-sm leading-relaxed text-ss-text-tertiary">
-            {emptyDescription}
-          </p>
-        ) : null}
-      </div>
+      <EmptyState title={emptyTitle} description={emptyDescription ?? ""} />
     );
   }
 

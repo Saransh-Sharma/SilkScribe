@@ -4,6 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SilkScribe</title>
+    <script>
+      // Apply the theme before first paint to avoid a light/dark flash.
+      // The Rust store is the source of truth; this reads a localStorage
+      // mirror that App.tsx keeps in sync (see the theme effect there).
+      (function () {
+        try {
+          var pref = localStorage.getItem("ss-theme-preference") || "system";
+          var resolved =
+            pref === "light" || pref === "dark"
+              ? pref
+              : window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+          document.documentElement.dataset.theme = resolved;
+        } catch (e) {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
   </head>
 
   <body>

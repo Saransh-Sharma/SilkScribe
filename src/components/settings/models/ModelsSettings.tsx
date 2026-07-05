@@ -1,13 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ask } from "@tauri-apps/plugin-dialog";
 import { ChevronDown, Globe } from "lucide-react";
 import type { ModelCardStatus } from "@/components/onboarding";
 import { ModelCard } from "@/components/onboarding";
 import { useModelStore } from "@/stores/modelStore";
 import { LANGUAGES } from "@/lib/constants/languages.ts";
 import type { ModelInfo } from "@/bindings";
-import { AppPage } from "@/components/ui";
+import { AppPage, ConfirmDialog, EmptyState, Skeleton } from "@/components/ui";
 import { SettingsGroup } from "@/components/ui/SettingsGroup";
 import { LanguageSelector } from "../LanguageSelector";
 import { TranslateToEnglish } from "../TranslateToEnglish";
@@ -20,6 +19,11 @@ const modelSupportsLanguage = (model: ModelInfo, langCode: string): boolean => {
 export const ModelsSettings: React.FC = () => {
   const { t } = useTranslation();
   const [switchingModelId, setSwitchingModelId] = useState<string | null>(null);
+  const [modelPendingDelete, setModelPendingDelete] = useState<{
+    id: string;
+    name: string;
+    isActive: boolean;
+  } | null>(null);
   const [languageFilter, setLanguageFilter] = useState("all");
   const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
   const [languageSearch, setLanguageSearch] = useState("");
@@ -121,27 +125,23 @@ export const ModelsSettings: React.FC = () => {
     await downloadModel(modelId);
   };
 
-  const handleModelDelete = async (modelId: string) => {
+  const handleModelDelete = (modelId: string) => {
     const model = models.find((m: ModelInfo) => m.id === modelId);
-    const modelName = model?.name || modelId;
-    const isActive = modelId === currentModel;
+    setModelPendingDelete({
+      id: modelId,
+      name: model?.name || modelId,
+      isActive: modelId === currentModel,
+    });
+  };
 
-    const confirmed = await ask(
-      isActive
-        ? t("settings.models.deleteActiveConfirm", { modelName })
-        : t("settings.models.deleteConfirm", { modelName }),
-      {
-        title: t("settings.models.deleteTitle"),
-        kind: "warning",
-      },
-    );
-
-    if (confirmed) {
-      try {
-        await deleteModel(modelId);
-      } catch (err) {
-        console.error(`Failed to delete model ${modelId}:`, err);
-      }
+  const confirmModelDelete = async () => {
+    if (!modelPendingDelete) return;
+    const { id } = modelPendingDelete;
+    setModelPendingDelete(null);
+    try {
+      await deleteModel(id);
+    } catch (err) {
+      console.error(`Failed to delete model ${id}:`, err);
     }
   };
 
@@ -294,10 +294,10 @@ export const ModelsSettings: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="w-full">
-        <div className="flex items-center justify-center py-16">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-ss-brand-secondary border-t-transparent" />
-        </div>
+      <div className="w-full space-y-3">
+        <Skeleton className="h-4 w-32" />
+        <Skeleton rounded="lg" className="h-28 w-full" />
+        <Skeleton rounded="lg" className="h-28 w-full" />
       </div>
     );
   }
@@ -332,7 +332,9 @@ export const ModelsSettings: React.FC = () => {
               {supportsLanguageSelection || supportsTranslation ? (
                 <SettingsGroup
                   title={t("settings.models.currentModelSettings")}
-                  description={t("settings.models.currentModelSettingsDescription")}
+                  description={t(
+                    "settings.models.currentModelSettingsDescription",
+                  )}
                 >
                   {supportsLanguageSelection ? (
                     <LanguageSelector
@@ -342,7 +344,10 @@ export const ModelsSettings: React.FC = () => {
                     />
                   ) : null}
                   {supportsTranslation ? (
-                    <TranslateToEnglish descriptionMode="inline" grouped={true} />
+                    <TranslateToEnglish
+                      descriptionMode="inline"
+                      grouped={true}
+                    />
                   ) : null}
                 </SettingsGroup>
               ) : null}
@@ -419,11 +424,29 @@ export const ModelsSettings: React.FC = () => {
             )}
           </div>
         ) : (
-          <div className="rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface px-5 py-8 text-center text-sm text-ss-text-tertiary shadow-[var(--ss-shadow-card)]">
-            {t("settings.models.noModelsMatch")}
-          </div>
+          <EmptyState title={t("settings.models.noModelsMatch")} />
         )}
       </div>
+      <ConfirmDialog
+        open={modelPendingDelete !== null}
+        title={t("settings.models.deleteTitle")}
+        description={
+          modelPendingDelete
+            ? modelPendingDelete.isActive
+              ? t("settings.models.deleteActiveConfirm", {
+                  modelName: modelPendingDelete.name,
+                })
+              : t("settings.models.deleteConfirm", {
+                  modelName: modelPendingDelete.name,
+                })
+            : ""
+        }
+        confirmLabel={t("settings.models.deleteConfirmAction")}
+        cancelLabel={t("common.cancel")}
+        destructive
+        onConfirm={() => void confirmModelDelete()}
+        onCancel={() => setModelPendingDelete(null)}
+      />
     </AppPage>
   );
 };

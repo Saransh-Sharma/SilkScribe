@@ -90,6 +90,10 @@
         "iEnabledIt": "I turned it on",
         "checkAgain": "Check again",
         "continue": "Continue",
+        "repairAction": "Open guided repair",
+        "appName": "SilkScribe",
+        "guidedHelper": "Guided helper",
+        "privateLabel": "Private by design",
         "statuses": {
           "checking": "Checking",
           "needed": "Still needed",
@@ -100,11 +104,12 @@
         }
       },
       "microphone": {
-        "title": "Allow microphone access",
-        "description": "SilkScribe needs your mic to turn speech into text.",
+        "title": "Let SilkScribe hear you while you record.",
+        "description": "This turns your voice into text. SilkScribe listens only when you start a dictation.",
+        "primaryAction": "Open microphone prompt",
         "needLabel": "Needed to listen",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe only listens while you record. Without mic access, it has nothing to transcribe.",
+        "whyItMattersTitle": "Your first dictation starts here",
+        "whyItMattersBody": "Microphone access lets SilkScribe capture your voice for the shortcut you choose. Without it, there is nothing to transcribe.",
         "breaksWithoutTitle": "Without it",
         "breaksWithoutBody": "Recording can start, but SilkScribe cannot hear your voice.",
         "afterGrantTitle": "After you allow it",
@@ -115,22 +120,36 @@
           "step3": "If no prompt appears, open System Settings > Privacy & Security > Microphone.",
           "step4": "Turn on SilkScribe, then return here and check again."
         },
-        "manualHint": "If you chose “Don’t Allow,” turn SilkScribe on in System Settings > Privacy & Security > Microphone.",
+        "manualHint": "Manual path: System Settings > Privacy & Security > Microphone, then turn on SilkScribe.",
+        "privateNote": "Your audio is processed on this Mac. SilkScribe does not need cloud access to listen or transcribe.",
+        "guide": {
+          "windowLabel": "macOS prompt",
+          "title": "Choose Allow when macOS asks.",
+          "body": "The real prompt opens outside SilkScribe. This preview shows the safe choice to continue setup.",
+          "cue": "Look for Allow",
+          "promptTitle": "“SilkScribe” would like to access the microphone",
+          "promptBody": "macOS asks this once so SilkScribe can hear your dictation while recording.",
+          "deny": "Don’t Allow",
+          "allow": "Allow",
+          "allowed": "Allowed",
+          "previewAlt": "Example of the macOS microphone permission prompt with the Allow button highlighted."
+        },
         "statusHelp": {
           "checking": "Checking whether microphone access is already on.",
           "needed": "Microphone access is still off.",
-          "error": "SilkScribe could not verify microphone access.",
+          "error": "SilkScribe could not check this yet. Try again or use the manual path below.",
           "requesting": "The macOS permission prompt should appear now.",
-          "waiting_for_user": "Allow the permission, then come back and check again.",
-          "granted": "Microphone access is on."
+          "waiting_for_user": "Finish this in macOS, then come back here.",
+          "granted": "That’s on. SilkScribe can continue."
         }
       },
       "accessibility": {
-        "title": "Allow SilkScribe to type for you",
-        "description": "SilkScribe needs Accessibility access to place text into your apps.",
+        "title": "Let SilkScribe place text where your cursor is.",
+        "description": "macOS protects text insertion. This permission lets SilkScribe paste finished dictation into the app you are using.",
+        "primaryAction": "Open Text Access settings",
         "needLabel": "Needed to insert text",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe puts finished text into the field you’re using. macOS protects that with Accessibility access.",
+        "whyItMattersTitle": "This connects dictation to your apps",
+        "whyItMattersBody": "After transcription, SilkScribe needs permission to place the text into notes, docs, browsers, and other text fields.",
         "breaksWithoutTitle": "Without it",
         "breaksWithoutBody": "SilkScribe may transcribe, but it cannot reliably type the result into your apps.",
         "afterGrantTitle": "After you allow it",
@@ -141,14 +160,26 @@
           "step3": "Open Privacy & Security > Accessibility and find SilkScribe.",
           "step4": "Turn on SilkScribe, then return here and check again."
         },
-        "manualHint": "If SilkScribe still looks disabled, reopen the app after turning it on, then check again.",
+        "manualHint": "Manual path: System Settings > Privacy & Security > Accessibility, then turn on SilkScribe.",
+        "privateNote": "Text access is used to place your transcript into the active field. Your voice and text stay local.",
+        "guide": {
+          "windowLabel": "System Settings",
+          "title": "Turn on SilkScribe in Accessibility.",
+          "body": "macOS may take you to Privacy & Security. Find SilkScribe in the list, turn it on, then return here.",
+          "cue": "Turn on SilkScribe",
+          "rowHelp": "Allow text insertion",
+          "promptTitle": "Accessibility",
+          "exampleApp1": "Finder",
+          "exampleApp2": "Mail",
+          "previewAlt": "Example of the macOS Accessibility settings list with SilkScribe turned on."
+        },
         "statusHelp": {
           "checking": "Checking whether Accessibility access is already on.",
           "needed": "Accessibility access is still off.",
-          "error": "SilkScribe could not verify Accessibility access.",
+          "error": "SilkScribe could not check this yet. Try again or use the manual path below.",
           "requesting": "The macOS approval flow should open now.",
-          "waiting_for_user": "Turn SilkScribe on in System Settings > Privacy & Security > Accessibility, then check again.",
-          "granted": "Accessibility access is on."
+          "waiting_for_user": "Finish this in macOS, then come back here.",
+          "granted": "That’s on. SilkScribe can continue."
         }
       }
     },
@@ -337,6 +368,7 @@
   "modelSelector": {
     "custom": "Custom",
     "active": "Active",
+    "statusLabel": "Model status: {{status}}",
     "switching": "Switching...",
     "noModelsAvailable": "No models available",
     "extracting": "Extracting {{modelName}}...",
@@ -350,10 +382,22 @@
     "modelError": "Model Error",
     "modelUnloaded": "Model Unloaded",
     "noModelDownloadRequired": "No Model - Download Required",
+    "modelMeta": "{{size}} · {{engine}}",
     "deleteModel": "Delete {{modelName}}",
     "downloadSpeed": "{{speed}} MB/s",
     "cancel": "Cancel",
     "cancelDownload": "Cancel download",
+    "retryDownload": "Retry download",
+    "downloadErrorTitle": "Download could not finish",
+    "downloadProgress": {
+      "downloadedOf": "{{downloaded}} of {{total}}",
+      "speed": "{{speed}}/s",
+      "eta": "{{eta}} left",
+      "starting": "Starting download",
+      "extracting": "Extracting model",
+      "almostDone": "Almost done",
+      "unknownEta": "Calculating time"
+    },
     "capabilities": {
       "languageSelection": "Supports multiple input languages",
       "singleLanguage": "Supports this language only",
@@ -361,6 +405,17 @@
       "languageOnly": "{{language}} Only",
       "translation": "Can translate to English",
       "translate": "Translate to English"
+    },
+    "diskSpaceCheckError": "SilkScribe couldn't check disk space before downloading: {{error}}",
+    "insufficientSpace": "SilkScribe needs {{required}} free to download this model. {{available}} is available.",
+    "downloadFailed": "SilkScribe couldn't download the model: {{error}}",
+    "extractionFailed": "SilkScribe couldn't extract the model: {{error}}",
+    "downloadErrors": {
+      "preflightFailed": "SilkScribe couldn't check disk space before downloading: {{detail}}",
+      "insufficientSpace": "SilkScribe needs {{required}} free to download this model. {{available}} is available.",
+      "downloadFailed": "SilkScribe couldn't download the model: {{detail}}",
+      "extractionFailed": "SilkScribe couldn't extract the model: {{detail}}",
+      "unknown": "SilkScribe couldn't finish the download."
     }
   },
   "settings": {
@@ -388,6 +443,7 @@
         "none": "No shortcuts configured",
         "notFound": "Shortcut not found",
         "pressKeys": "Press keys...",
+        "reset": "Reset shortcut",
         "bindings": {
           "transcribe": {
             "name": "Transcribe Shortcut",
@@ -406,6 +462,10 @@
           "restore": "Failed to restore original shortcut",
           "set": "Failed to set shortcut: {{error}}",
           "reset": "Failed to reset shortcut to original value"
+        },
+        "success": {
+          "saved": "Shortcut saved",
+          "reset": "Shortcut reset"
         }
       },
       "language": {
@@ -419,6 +479,15 @@
       "pushToTalk": {
         "label": "Hold to record",
         "description": "Press and hold your shortcut while you speak, then release to finish."
+      },
+      "theme": {
+        "title": "Appearance",
+        "description": "Follow macOS or choose a fixed light or dark interface.",
+        "options": {
+          "system": "System",
+          "light": "Light",
+          "dark": "Dark"
+        }
       }
     },
     "models": {
@@ -446,7 +515,8 @@
         "translation": "Translation",
         "allLanguages": "All Languages"
       },
-      "noModelsMatch": "No models match this filter."
+      "noModelsMatch": "No models match this filter.",
+      "deleteConfirmAction": "Delete model"
     },
     "sound": {
       "title": "Sound",
@@ -469,6 +539,14 @@
       "volume": {
         "title": "Volume",
         "description": "Adjust the volume of audio feedback sounds"
+      },
+      "soundTheme": {
+        "options": {
+          "marimba": "Marimba",
+          "pop": "Pop",
+          "custom": "Custom"
+        },
+        "preview": "Preview sound theme (plays start then stop)"
       }
     },
     "advanced": {
@@ -677,14 +755,34 @@
       "pageDescription": "Browse what SilkScribe captured, replay audio, and save anything you want to keep close.",
       "title": "History",
       "openFolder": "Open Recordings Folder",
+      "exportMarkdown": "Export Markdown",
+      "exportJson": "Export JSON",
+      "exportTitle": "Export history",
+      "exportEmpty": "There is no history to export.",
+      "exportSuccess": "History exported",
+      "exportError": "SilkScribe could not export history.",
       "loading": "Loading history...",
       "empty": "No transcriptions yet. Start recording to build your history!",
       "emptyDescription": "Your saved transcripts and recordings will appear here after your first dictation.",
+      "emptyFiltered": "No matching transcripts.",
+      "emptyFilteredDescription": "Try a different search or switch back to All.",
+      "searchPlaceholder": "Search history",
+      "filters": {
+        "all": "All",
+        "saved": "Saved",
+        "failed": "Failed"
+      },
       "copyToClipboard": "Copy transcription to clipboard",
+      "copyAsMarkdown": "Copy transcription as Markdown",
+      "copySuccess": "Copied to clipboard",
+      "copyError": "SilkScribe could not copy this transcript.",
       "save": "Save transcription",
       "unsave": "Remove from saved",
       "delete": "Delete entry",
       "deleteError": "Failed to delete entry. Please try again.",
+      "deleteQueued": "Entry deleted",
+      "deleteUndoDescription": "You can undo this for a few seconds.",
+      "undoDelete": "Undo",
       "loadError": "Unable to load history right now. Please try again.",
       "loadMore": "Load more",
       "loadingMore": "Loading more...",
@@ -825,13 +923,13 @@
     "off": "Off",
     "yes": "Yes",
     "no": "No",
-    "noOptionsFound": "No options found"
-  },
-  "accessibility": {
-    "permissionsRequired": "Accessibility Permissions Required",
-    "permissionsDescription": "SilkScribe needs accessibility permissions to type transcribed text.",
-    "openSettings": "Open System Settings",
-    "dismiss": "Dismiss"
+    "noOptionsFound": "No options found",
+    "moreInformation": "More information",
+    "errorBoundary": {
+      "description": "SilkScribe could not render this view. Your settings and recordings are still stored locally.",
+      "reload": "Reload",
+      "openLogs": "Open logs"
+    }
   },
   "errors": {
     "loadDirectory": "Error loading directory: {{error}}"
@@ -845,7 +943,19 @@
     "transcribing": "Transcribing",
     "processing": "Processing",
     "success": "Done",
-    "failed": "Failed"
+    "failed": "Failed",
+    "cancelled": "Cancelled",
+    "cancelledDetail": "Stopped by you"
+  },
+  "feedback": {
+    "pasteFailed": {
+      "copiedTitle": "Copied to clipboard",
+      "copiedDescription": "SilkScribe could not paste into the active app.",
+      "failedTitle": "SilkScribe could not paste",
+      "failedDescription": "The text could not be pasted or copied.",
+      "copyFailedTitle": "SilkScribe could not copy the text",
+      "copyFailedDescription": "Paste failed, and the fallback copy did not finish."
+    }
   },
   "home": {
     "title": "Welcome back",

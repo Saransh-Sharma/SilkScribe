@@ -202,7 +202,11 @@ const GpuWaveformStage: React.FC<GpuWaveformStageProps> = ({
   }, [rendererMode, retryToken]);
 
   useEffect(() => {
-    if (rendererMode === "fallback" && isActive && retryAttemptsRef.current === 0) {
+    if (
+      rendererMode === "fallback" &&
+      isActive &&
+      retryAttemptsRef.current === 0
+    ) {
       setFallbackLevels([...latestLevelsRef.current]);
     }
   }, [rendererMode, isActive]);
@@ -243,9 +247,7 @@ const GpuWaveformStage: React.FC<GpuWaveformStageProps> = ({
   return (
     <div className="gpu-waveform-host" aria-hidden="true">
       {rendererMode === "fallback" ? (
-        <div
-          className={`gpu-waveform-fallback ${isActive ? "is-active" : ""}`}
-        >
+        <div className={`gpu-waveform-fallback ${isActive ? "is-active" : ""}`}>
           <div className="gpu-waveform-fallback-glow" />
           <div className="gpu-waveform-fallback-bars">
             {fallbackBars.map((bar, index) => (

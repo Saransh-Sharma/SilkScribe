@@ -18,8 +18,8 @@ use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Instant;
-use tauri::AppHandle;
-use tauri::Manager;
+use tauri::{AppHandle, Emitter, Manager};
+use tauri_plugin_clipboard_manager::ClipboardExt;
 
 /// Drop guard that notifies the [`TranscriptionCoordinator`] when the
 /// transcription pipeline finishes — whether it completes normally or panics.
@@ -41,6 +41,20 @@ fn handle_recording_start_failure(app: &AppHandle) {
 pub(crate) struct ProcessedTranscription {
     pub post_processed_text: Option<String>,
     pub post_process_prompt: Option<String>,
+}
+
+#[derive(Clone, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct PasteFailedPayload {
+    code: PasteFailureCode,
+    copied_to_clipboard: bool,
+}
+
+#[derive(Clone, serde::Serialize)]
+#[serde(rename_all = "snake_case")]
+enum PasteFailureCode {
+    Copied,
+    CopyFailed,
 }
 
 // Shortcut Action Trait
@@ -546,6 +560,7 @@ impl ShortcutAction for TranscribeAction {
 
                             // Paste the final text (either processed or original)
                             let ah_clone = ah.clone();
+                            let paste_text = final_text.clone();
                             let paste_time = Instant::now();
                             ah.run_on_main_thread(move || {
                                 match utils::paste(final_text, ah_clone.clone()) {
@@ -559,6 +574,31 @@ impl ShortcutAction for TranscribeAction {
                                     }
                                     Err(e) => {
                                         error!("Failed to paste transcription: {}", e);
+                                        let copied_to_clipboard = match ah_clone
+                                            .clipboard()
+                                            .write_text(&paste_text)
+                                        {
+                                            Ok(()) => true,
+                                            Err(copy_error) => {
+                                                error!(
+                                                    "Failed to copy transcription fallback to clipboard: {}",
+                                                    copy_error
+                                                );
+                                                false
+                                            }
+                                        };
+                                        let code = if copied_to_clipboard {
+                                            PasteFailureCode::Copied
+                                        } else {
+                                            PasteFailureCode::CopyFailed
+                                        };
+                                        let _ = ah_clone.emit(
+                                            "transcription-paste-failed",
+                                            PasteFailedPayload {
+                                                code,
+                                                copied_to_clipboard,
+                                            },
+                                        );
                                         show_error_overlay(&ah_clone);
                                         utils::hide_recording_overlay_after(&ah_clone, 1500);
                                     }

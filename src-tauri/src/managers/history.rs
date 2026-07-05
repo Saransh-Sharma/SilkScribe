@@ -2,7 +2,9 @@ use anyhow::{anyhow, Result};
 use chrono::{DateTime, Local, NaiveDate, Utc};
 use hound::WavReader;
 use log::{debug, error, info};
-use rusqlite::{params, Connection, OptionalExtension, TransactionBehavior};
+use rusqlite::{
+    params, params_from_iter, Connection, OptionalExtension, ToSql, TransactionBehavior,
+};
 use rusqlite_migration::{Migrations, M};
 use serde::{Deserialize, Serialize};
 use specta::Type;
@@ -55,6 +57,14 @@ static MIGRATIONS: &[M] = &[
 pub struct PaginatedHistory {
     pub entries: Vec<HistoryEntry>,
     pub has_more: bool,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, Type)]
+#[serde(rename_all = "snake_case")]
+pub enum HistoryFilter {
+    All,
+    Saved,
+    Failed,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, Type, tauri_specta::Event)]
@@ -1145,6 +1155,95 @@ impl HistoryManager {
         };
 
         let has_more = limit.is_some_and(|lim| entries.len() > lim);
+        if has_more {
+            entries.pop();
+        }
+
+        Ok(PaginatedHistory { entries, has_more })
+    }
+
+    /// Searches history entries by optional text query and status filter.
+    ///
+    /// `query` matches entry titles and visible transcript text when present.
+    /// `filter` narrows results to all, saved, or failed entries. `cursor` is
+    /// the last entry id from the previous page and `limit` caps the page size;
+    /// the returned [`PaginatedHistory`] reports whether another page exists.
+    pub async fn search_history_entries(
+        &self,
+        query: Option<String>,
+        filter: HistoryFilter,
+        cursor: Option<i64>,
+        limit: Option<usize>,
+    ) -> Result<PaginatedHistory> {
+        let conn = self.get_connection()?;
+        let limit = limit.unwrap_or(50).min(100);
+        let fetch_count = (limit + 1) as i64;
+        let visible_text = "COALESCE(NULLIF(TRIM(post_processed_text), ''), transcription_text)";
+        let mut conditions = Vec::new();
+        let mut values: Vec<Box<dyn ToSql>> = Vec::new();
+
+        if let Some(cursor_id) = cursor {
+            let cursor_timestamp: Option<i64> = conn
+                .query_row(
+                    "SELECT timestamp FROM transcription_history WHERE id = ?1",
+                    params![cursor_id],
+                    |row| row.get(0),
+                )
+                .optional()?;
+
+            if let Some(timestamp) = cursor_timestamp {
+                conditions.push("(timestamp < ? OR (timestamp = ? AND id < ?))".to_string());
+                values.push(Box::new(timestamp));
+                values.push(Box::new(timestamp));
+                values.push(Box::new(cursor_id));
+            } else {
+                conditions.push("id < ?".to_string());
+                values.push(Box::new(cursor_id));
+            }
+        }
+
+        match filter {
+            HistoryFilter::All => {}
+            HistoryFilter::Saved => {
+                conditions.push("saved = 1".to_string());
+            }
+            HistoryFilter::Failed => {
+                conditions.push(format!("TRIM({}) = ''", visible_text));
+            }
+        }
+
+        if let Some(query) = query
+            .map(|value| value.trim().to_string())
+            .filter(|value| !value.is_empty())
+        {
+            let pattern = format!("%{}%", query);
+            conditions.push(format!("(title LIKE ? OR {} LIKE ?)", visible_text));
+            values.push(Box::new(pattern.clone()));
+            values.push(Box::new(pattern));
+        }
+
+        values.push(Box::new(fetch_count));
+        let where_clause = if conditions.is_empty() {
+            String::new()
+        } else {
+            format!("WHERE {}", conditions.join(" AND "))
+        };
+        let sql = format!(
+            "SELECT id, file_name, timestamp, saved, title, transcription_text, post_processed_text, post_process_prompt, post_process_requested
+             FROM transcription_history
+             {}
+             ORDER BY timestamp DESC, id DESC
+             LIMIT ?",
+            where_clause
+        );
+
+        let mut stmt = conn.prepare(&sql)?;
+        let rows = stmt.query_map(
+            params_from_iter(values.iter().map(|value| value.as_ref())),
+            Self::map_history_entry,
+        )?;
+        let mut entries = rows.collect::<std::result::Result<Vec<_>, _>>()?;
+        let has_more = entries.len() > limit;
         if has_more {
             entries.pop();
         }

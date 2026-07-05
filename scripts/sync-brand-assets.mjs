@@ -15,7 +15,10 @@ const TAURI_RESOURCES_DIR = path.join(ROOT, "src-tauri", "resources");
 const TAURI_ICONS_DIR = path.join(ROOT, "src-tauri", "icons");
 
 const BANNER_UI = path.join(FRONTEND_ASSETS_DIR, "banner-ui.webp");
-const MENU_BAR_ICON_UI = path.join(FRONTEND_ASSETS_DIR, "menu-bar-icon-ui.webp");
+const MENU_BAR_ICON_UI = path.join(
+  FRONTEND_ASSETS_DIR,
+  "menu-bar-icon-ui.webp",
+);
 
 const LEGACY_FRONTEND_ASSETS = [
   path.join(FRONTEND_ASSETS_DIR, "banner.png"),
@@ -99,11 +102,7 @@ function buildBaseIcon({ tint } = {}) {
   return pipeline.png().toBuffer();
 }
 
-async function composeTrayIcon({
-  baseBuffer,
-  overlays = [],
-  outputPath,
-}) {
+async function composeTrayIcon({ baseBuffer, overlays = [], outputPath }) {
   await sharp({
     create: {
       width: TRAY_SIZE,
@@ -141,7 +140,10 @@ async function generateTrayIcons() {
     stroke: COLORS.marigold,
     strokeWidth: 2.2,
   });
-  const transcribingColorCore = circleSvg({ fill: COLORS.ochre, stroke: "none" });
+  const transcribingColorCore = circleSvg({
+    fill: COLORS.ochre,
+    stroke: "none",
+  });
 
   const templateTargets = [
     {

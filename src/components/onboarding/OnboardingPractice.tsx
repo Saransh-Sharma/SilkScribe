@@ -138,7 +138,7 @@ const OnboardingPractice: React.FC<OnboardingPracticeProps> = ({
                 <Check className="h-4 w-4" />
                 {t("onboarding.practice.success")}
               </div>
-              )}
+            )}
           </div>
 
           <div className="mt-4 rounded-[24px] border border-ss-border-subtle bg-ss-bg-surface-alt/78 p-4">

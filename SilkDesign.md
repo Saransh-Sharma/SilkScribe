@@ -245,22 +245,22 @@ The product should never drift into flashy AI-product chrome. Avoid oversized he
 
 ## Color Palette & Roles
 
-| Token | Hex | Role |
-|---|---:|---|
-| `{colors.canvas}` | `#fff8ef` | Main light app canvas and page floor. |
-| `{colors.surface}` | `#ffffff` | Primary cards, setting groups, dropdowns, and elevated product panels. |
-| `{colors.surface-alt}` | `#f7efe4` | Sidebar, secondary panels, grouped row backgrounds, and quiet fills. |
-| `{colors.border-subtle}` | `#efe4d6` | Default low-contrast dividers and card outlines. |
-| `{colors.border-default}` | `#e2d3c2` | Stronger panel borders and control outlines. |
-| `{colors.border-strong}` | `#c9b9a6` | Scrollbar thumbs, disabled fills, strong separators. |
-| `{colors.text-primary}` | `#1b1511` | Main text, headings, critical values. |
-| `{colors.text-secondary}` | `#3a2e24` | Secondary copy and readable descriptions. |
-| `{colors.text-tertiary}` | `#6a594b` | Captions, helper text, inactive labels. |
-| `{colors.brand-primary}` | `#293a18` | Light-mode primary action, success, completed onboarding states. |
-| `{colors.brand-secondary}` | `#b1205f` | Active navigation, selected model, progress accents, emphasis. |
-| `{colors.brand-highlight}` | `#febf2b` | Focus ring, glow, warning, onboarding atmosphere. |
-| `{colors.danger}` | `#c11317` | Destructive action, errors, failed states. |
-| `{colors.info}` | `#9e5f0a` | Warm informational accents and overlay atmosphere. |
+| Token                      |       Hex | Role                                                                   |
+| -------------------------- | --------: | ---------------------------------------------------------------------- |
+| `{colors.canvas}`          | `#fff8ef` | Main light app canvas and page floor.                                  |
+| `{colors.surface}`         | `#ffffff` | Primary cards, setting groups, dropdowns, and elevated product panels. |
+| `{colors.surface-alt}`     | `#f7efe4` | Sidebar, secondary panels, grouped row backgrounds, and quiet fills.   |
+| `{colors.border-subtle}`   | `#efe4d6` | Default low-contrast dividers and card outlines.                       |
+| `{colors.border-default}`  | `#e2d3c2` | Stronger panel borders and control outlines.                           |
+| `{colors.border-strong}`   | `#c9b9a6` | Scrollbar thumbs, disabled fills, strong separators.                   |
+| `{colors.text-primary}`    | `#1b1511` | Main text, headings, critical values.                                  |
+| `{colors.text-secondary}`  | `#3a2e24` | Secondary copy and readable descriptions.                              |
+| `{colors.text-tertiary}`   | `#6a594b` | Captions, helper text, inactive labels.                                |
+| `{colors.brand-primary}`   | `#293a18` | Light-mode primary action, success, completed onboarding states.       |
+| `{colors.brand-secondary}` | `#b1205f` | Active navigation, selected model, progress accents, emphasis.         |
+| `{colors.brand-highlight}` | `#febf2b` | Focus ring, glow, warning, onboarding atmosphere.                      |
+| `{colors.danger}`          | `#c11317` | Destructive action, errors, failed states.                             |
+| `{colors.info}`            | `#9e5f0a` | Warm informational accents and overlay atmosphere.                     |
 
 Dark mode inverts toward near-black ink surfaces: `{colors.dark-ink-0}` `#0f0c0a`, `{colors.dark-ink-1}` `#15110e`, `{colors.dark-ink-2}` `#1d1712`, and `{colors.dark-ink-3}` `#2a211a`. Text becomes warm parchment: `{colors.dark-text-1}` `#fff3e6`, `{colors.dark-text-2}` `#e7d9cb`, and `{colors.dark-text-3}` `#cbbba7`.
 
@@ -282,18 +282,18 @@ Technical values use:
 
 `'SF Mono', 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace`
 
-| Token | Size | Weight | Line Height | Tracking | Use |
-|---|---:|---:|---:|---:|---|
-| `{typography.display-lg}` | `36px` | 600 | `0.94` | `-0.03em` | Onboarding and major product headlines. |
-| `{typography.display-md}` | `32px` | 600 | `1.1` | `-0.03em` | Dashboard page title and compact hero headings. |
-| `{typography.title-lg}` | `20px` | 700 | `1.25` | `0` | Feature card titles and important panel headings. |
-| `{typography.title-md}` | `15px` | 600 | `1.35` | `0.01em` | Setting titles, sidebar labels, card labels. |
-| `{typography.body-md}` | `15px` | 500 | `1.5` | `0` | Default prose and descriptions. |
-| `{typography.body-sm}` | `14px` | 500 | `1.5` | `0` | Dense settings copy and secondary rows. |
-| `{typography.caption}` | `12px` | 500 | `1.45` | `0` | Helper text, compact status labels. |
-| `{typography.label-sm}` | `11px` | 700 | `1.4` | `0.22em` | Uppercase section labels and eyebrows. |
-| `{typography.button}` | `14px` | 600 | `1` | `0.01em` | Buttons and command controls. |
-| `{typography.mono}` | `12px` | 500 | `1.45` | `0` | Paths, keyboard bindings, logs, and technical values. |
+| Token                     |   Size | Weight | Line Height |  Tracking | Use                                                   |
+| ------------------------- | -----: | -----: | ----------: | --------: | ----------------------------------------------------- |
+| `{typography.display-lg}` | `36px` |    600 |      `0.94` | `-0.03em` | Onboarding and major product headlines.               |
+| `{typography.display-md}` | `32px` |    600 |       `1.1` | `-0.03em` | Dashboard page title and compact hero headings.       |
+| `{typography.title-lg}`   | `20px` |    700 |      `1.25` |       `0` | Feature card titles and important panel headings.     |
+| `{typography.title-md}`   | `15px` |    600 |      `1.35` |  `0.01em` | Setting titles, sidebar labels, card labels.          |
+| `{typography.body-md}`    | `15px` |    500 |       `1.5` |       `0` | Default prose and descriptions.                       |
+| `{typography.body-sm}`    | `14px` |    500 |       `1.5` |       `0` | Dense settings copy and secondary rows.               |
+| `{typography.caption}`    | `12px` |    500 |      `1.45` |       `0` | Helper text, compact status labels.                   |
+| `{typography.label-sm}`   | `11px` |    700 |       `1.4` |  `0.22em` | Uppercase section labels and eyebrows.                |
+| `{typography.button}`     | `14px` |    600 |         `1` |  `0.01em` | Buttons and command controls.                         |
+| `{typography.mono}`       | `12px` |    500 |      `1.45` |       `0` | Paths, keyboard bindings, logs, and technical values. |
 
 Typography principles:
 
@@ -462,14 +462,14 @@ Desktop app surfaces should optimize for repeated use. Marketing-style hero comp
 
 SilkScribe uses soft warm elevation:
 
-| Level | Treatment | Use |
-|---|---|---|
-| Canvas | `{colors.canvas}` with subtle radial glow | App page background and onboarding scene floor. |
-| Surface | `{colors.surface}` with border | Settings groups, dashboard cards, dropdowns. |
-| Surface Alt | `{colors.surface-alt}` | Sidebar, grouped backgrounds, inactive panels. |
-| Card Shadow | `{shadows.card}` | Default cards and row containers. |
-| Lift Shadow | `{shadows.lift}` | Hovered cards, dropdown menus, onboarding shell. |
-| Overlay Shadow | `{shadows.overlay-lift}` | Recording overlay only. |
+| Level          | Treatment                                 | Use                                              |
+| -------------- | ----------------------------------------- | ------------------------------------------------ |
+| Canvas         | `{colors.canvas}` with subtle radial glow | App page background and onboarding scene floor.  |
+| Surface        | `{colors.surface}` with border            | Settings groups, dashboard cards, dropdowns.     |
+| Surface Alt    | `{colors.surface-alt}`                    | Sidebar, grouped backgrounds, inactive panels.   |
+| Card Shadow    | `{shadows.card}`                          | Default cards and row containers.                |
+| Lift Shadow    | `{shadows.lift}`                          | Hovered cards, dropdown menus, onboarding shell. |
+| Overlay Shadow | `{shadows.overlay-lift}`                  | Recording overlay only.                          |
 
 Hover lift should be subtle: `translateY(-0.5px)` or `translateY(-1px)` for controls, with a shadow change. Avoid large floating cards and deep stacked shadows.
 
@@ -506,11 +506,11 @@ SilkScribe is a desktop Tauri app, but its web surfaces still need responsive di
 
 Breakpoints and behavior:
 
-| Range | Behavior |
-|---|---|
-| `< 640px` | Stack dense dashboard content, use one-column cards, preserve `44px` minimum controls. |
-| `640px-1024px` | Use two-column readiness/stat areas where space allows. |
-| `> 1024px` | Full sidebar layout, dashboard panel grids, grouped settings with horizontal rows. |
+| Range          | Behavior                                                                               |
+| -------------- | -------------------------------------------------------------------------------------- |
+| `< 640px`      | Stack dense dashboard content, use one-column cards, preserve `44px` minimum controls. |
+| `640px-1024px` | Use two-column readiness/stat areas where space allows.                                |
+| `> 1024px`     | Full sidebar layout, dashboard panel grids, grouped settings with horizontal rows.     |
 
 Rules:
 

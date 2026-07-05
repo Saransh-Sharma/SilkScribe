@@ -36,6 +36,9 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({ onError }) => {
     downloadProgress,
     downloadStats,
     extractingModels,
+    downloadErrors,
+    downloadModel,
+    cancelDownload,
     selectModel,
   } = useModelStore();
 
@@ -46,8 +49,14 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({ onError }) => {
   const [pendingModelId, setPendingModelId] = useState<string | null>(null);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const showModelDropdownRef = useRef(false);
 
   const displayModelId = pendingModelId || currentModel;
+
+  useEffect(() => {
+    showModelDropdownRef.current = showModelDropdown;
+  }, [showModelDropdown]);
 
   // Check model status when currentModel changes
   useEffect(() => {
@@ -134,10 +143,19 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({ onError }) => {
       }
     };
 
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      if (!showModelDropdownRef.current) return;
+      setShowModelDropdown(false);
+      triggerRef.current?.focus();
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
       modelStateUnlisten.then((fn) => fn());
       downloadCompleteUnlisten.then((fn) => fn());
     };
@@ -147,6 +165,7 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({ onError }) => {
     setPendingModelId(modelId);
     setModelError(null);
     setShowModelDropdown(false);
+    triggerRef.current?.focus();
     const success = await selectModel(modelId);
     if (!success) {
       setPendingModelId(null);
@@ -234,9 +253,13 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({ onError }) => {
     <div className="flex min-w-0 items-center gap-3">
       <div className="relative" ref={dropdownRef}>
         <ModelStatusButton
+          ref={triggerRef}
           status={getDisplayStatus()}
           displayText={getModelDisplayText()}
           isDropdownOpen={showModelDropdown}
+          ariaLabel={t("modelSelector.statusLabel", {
+            status: getModelDisplayText(),
+          })}
           onClick={() => setShowModelDropdown(!showModelDropdown)}
         />
 
@@ -250,8 +273,17 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({ onError }) => {
         )}
       </div>
       <DownloadProgressDisplay
+        models={models}
         downloadProgress={downloadProgress}
         downloadStats={downloadStats}
+        extractingModels={extractingModels}
+        downloadErrors={downloadErrors}
+        onCancel={(modelId) => {
+          void cancelDownload(modelId);
+        }}
+        onRetry={(modelId) => {
+          void downloadModel(modelId);
+        }}
       />
     </div>
   );

@@ -15,7 +15,8 @@
     "postProcessing": "後処理",
     "history": "履歴",
     "debug": "デバッグ",
-    "about": "概要"
+    "preferences": "環境設定",
+    "developer": "開発者"
   },
   "onboarding": {
     "subtitle": "開始するには、文字起こしモデルを選択してください",
@@ -89,21 +90,26 @@
         "iEnabledIt": "有効にしました",
         "checkAgain": "もう一度確認",
         "continue": "続ける",
+        "repairAction": "ガイド付き修復を開く",
+        "appName": "SilkScribe",
+        "guidedHelper": "ガイド付きヘルパー",
+        "privateLabel": "設計段階からプライベート",
         "statuses": {
           "checking": "確認中",
           "needed": "まだ必要です",
-          "error": "対応が必要です",
+          "error": "要確認",
           "requesting": "macOS を開いています",
           "waiting_for_user": "あなたの操作を待っています",
           "granted": "許可済み"
         }
       },
       "microphone": {
-        "title": "マイクへのアクセスを許可する",
-        "description": "SilkScribe が音声をテキストに変換するにはマイクが必要です。",
+        "title": "録音中、SilkScribe に声を聞かせましょう。",
+        "description": "声がテキストに変わります。SilkScribe が聞くのは、あなたが口述を始めたときだけです。",
+        "primaryAction": "マイクの確認を開く",
         "needLabel": "聞き取るために必要",
-        "whyItMattersTitle": "これが重要な理由",
-        "whyItMattersBody": "SilkScribe は録音中だけ音声を聞き取ります。マイクへのアクセスがないと文字起こしできません。",
+        "whyItMattersTitle": "最初の口述はここから始まります",
+        "whyItMattersBody": "マイクへのアクセスがあると、選んだショートカットで SilkScribe があなたの声を取り込めます。なければ文字起こしするものがありません。",
         "breaksWithoutTitle": "許可しない場合",
         "breaksWithoutBody": "録音は開始できますが、SilkScribe はあなたの声を聞き取れません。",
         "afterGrantTitle": "許可すると",
@@ -114,22 +120,36 @@
           "step3": "ダイアログが表示されない場合は、システム設定 > プライバシーとセキュリティ > マイクを開きます。",
           "step4": "SilkScribe をオンにしてからここに戻り、もう一度確認します。"
         },
-        "manualHint": "「許可しない」を選んだ場合は、システム設定 > プライバシーとセキュリティ > マイクで SilkScribe をオンにしてください。",
+        "manualHint": "手動の場合: システム設定 > プライバシーとセキュリティ > マイク で SilkScribe をオンにします。",
+        "privateNote": "音声はこの Mac 上で処理されます。SilkScribe が聞き取りや文字起こしにクラウドを必要とすることはありません。",
+        "guide": {
+          "windowLabel": "macOS の確認",
+          "title": "macOS に尋ねられたら「許可」を選択してください。",
+          "body": "実際の確認は SilkScribe の外に表示されます。このプレビューは、セットアップを続けるための正しい選択を示しています。",
+          "cue": "「許可」を探してください",
+          "promptTitle": "“SilkScribe” がマイクへのアクセスを求めています",
+          "promptBody": "macOS がこれを一度だけ尋ねます。許可すると録音中に SilkScribe があなたの口述を聞き取れます。",
+          "deny": "許可しない",
+          "allow": "許可",
+          "allowed": "許可済み",
+          "previewAlt": "「許可」ボタンが強調表示された macOS のマイク許可ダイアログの例。"
+        },
         "statusHelp": {
           "checking": "マイクへのアクセスがすでに有効か確認しています。",
           "needed": "マイクへのアクセスはまだオフです。",
-          "error": "SilkScribe はマイクへのアクセスを確認できませんでした。",
+          "error": "SilkScribe はまだ確認できませんでした。もう一度試すか、下の手動の手順をご利用ください。",
           "requesting": "macOS の許可ダイアログが表示されるはずです。",
-          "waiting_for_user": "許可したら戻って、もう一度確認してください。",
-          "granted": "マイクへのアクセスは有効です。"
+          "waiting_for_user": "macOS 側で完了させてから、ここに戻ってきてください。",
+          "granted": "オンになりました。SilkScribe は続行できます。"
         }
       },
       "accessibility": {
-        "title": "SilkScribe が代わりに入力できるようにする",
-        "description": "SilkScribe がアプリにテキストを入力するにはアクセシビリティへのアクセスが必要です。",
+        "title": "カーソルの位置にテキストを入力できるようにしましょう。",
+        "description": "macOS はテキスト挿入を保護しています。この権限により、SilkScribe は完成した口述を使用中のアプリに貼り付けられます。",
+        "primaryAction": "アクセシビリティ設定を開く",
         "needLabel": "テキスト挿入に必要",
-        "whyItMattersTitle": "これが重要な理由",
-        "whyItMattersBody": "SilkScribe は完成したテキストを現在使っている入力欄に入れます。macOS ではその操作がアクセシビリティで保護されています。",
+        "whyItMattersTitle": "口述とアプリをつなぐ設定です",
+        "whyItMattersBody": "文字起こしの後、SilkScribe はメモ、書類、ブラウザなどのテキストフィールドに文字を配置するための権限を必要とします。",
         "breaksWithoutTitle": "許可しない場合",
         "breaksWithoutBody": "SilkScribe は文字起こしできても、結果をアプリに確実に入力できません。",
         "afterGrantTitle": "許可すると",
@@ -140,62 +160,28 @@
           "step3": "プライバシーとセキュリティ > アクセシビリティを開き、SilkScribe を探します。",
           "step4": "SilkScribe をオンにしてからここに戻り、もう一度確認します。"
         },
-        "manualHint": "SilkScribe がまだ無効に見える場合は、オンにしたあとでアプリを再度開いてからもう一度確認してください。",
+        "manualHint": "手動の場合: システム設定 > プライバシーとセキュリティ > アクセシビリティ で SilkScribe をオンにします。",
+        "privateNote": "テキストアクセスは、書き起こしをアクティブなフィールドに配置するためだけに使われます。音声もテキストもローカルに保持されます。",
+        "guide": {
+          "windowLabel": "システム設定",
+          "title": "アクセシビリティで SilkScribe をオンにしてください。",
+          "body": "macOS が「プライバシーとセキュリティ」を開くことがあります。一覧で SilkScribe を見つけてオンにし、ここへ戻ってきてください。",
+          "cue": "SilkScribe をオンに",
+          "rowHelp": "テキスト挿入を許可",
+          "promptTitle": "アクセシビリティ",
+          "exampleApp1": "Finder",
+          "exampleApp2": "メール",
+          "previewAlt": "SilkScribe がオンになっている macOS のアクセシビリティ一覧の例。"
+        },
         "statusHelp": {
           "checking": "アクセシビリティへのアクセスがすでに有効か確認しています。",
           "needed": "アクセシビリティへのアクセスはまだオフです。",
-          "error": "SilkScribe はアクセシビリティへのアクセスを確認できませんでした。",
+          "error": "SilkScribe はまだ確認できませんでした。もう一度試すか、下の手動の手順をご利用ください。",
           "requesting": "macOS の承認フローが開くはずです。",
-          "waiting_for_user": "システム設定 > プライバシーとセキュリティ > アクセシビリティで SilkScribe をオンにしてから、もう一度確認してください。",
-          "granted": "アクセシビリティへのアクセスは有効です。"
+          "waiting_for_user": "macOS 側で完了させてから、ここに戻ってきてください。",
+          "granted": "オンになりました。SilkScribe は続行できます。"
         }
       }
-    },
-    "progress": {
-      "welcome": "ようこそ",
-      "microphone": "マイク",
-      "accessibility": "テキストアクセス",
-      "setup": "セットアップ",
-      "practice": "試してみる"
-    },
-    "welcome": {
-      "eyebrow": "準備しましょう",
-      "title": "1 分で SilkScribe を設定しましょう。",
-      "description": "必要なアクセス許可を有効にし、バックグラウンドでセットアップを完了し、最後に実際の音声入力を 1 回試します。",
-      "badge": "クイックセットアップ",
-      "features": {
-        "permissions": {
-          "title": "わかりやすい許可案内",
-          "description": "何を許可する必要があるのかを正確に確認できます。"
-        },
-        "engine": {
-          "title": "自動セットアップ",
-          "description": "SilkScribe がこのデバイスに合ったオフラインエンジンを選びます。"
-        },
-        "practice": {
-          "title": "実際のテストを 1 回",
-          "description": "使い始める前に、すべてが動くことを確認します。"
-        }
-      },
-      "outcomeLabel": "セットアップ後",
-      "outcome": "ショートカットを押しながら話すと、SilkScribe が必要な場所にテキストを入力します。",
-      "planLabel": "流れ",
-      "plan": {
-        "step1": {
-          "title": "マイクを許可する",
-          "description": "SilkScribe があなたの声を聞けるようにします。"
-        },
-        "step2": {
-          "title": "テキストアクセスを許可する",
-          "description": "SilkScribe がアプリに入力できるようにします。"
-        },
-        "step3": {
-          "title": "一度試してみる",
-          "description": "セットアップが完了したら短いテストを行います。"
-        }
-      },
-      "permissionPromise": "これらの手順は SilkScribe を正しく動作させるために必要です。",
-      "continue": "続ける"
     },
     "setup": {
       "eyebrow": "準備しています",
@@ -296,6 +282,52 @@
         }
       }
     },
+    "progress": {
+      "welcome": "ようこそ",
+      "microphone": "マイク",
+      "accessibility": "テキストアクセス",
+      "setup": "セットアップ",
+      "practice": "試してみる"
+    },
+    "welcome": {
+      "eyebrow": "準備しましょう",
+      "title": "1 分で SilkScribe を設定しましょう。",
+      "description": "必要なアクセス許可を有効にし、バックグラウンドでセットアップを完了し、最後に実際の音声入力を 1 回試します。",
+      "badge": "クイックセットアップ",
+      "features": {
+        "permissions": {
+          "title": "わかりやすい許可案内",
+          "description": "何を許可する必要があるのかを正確に確認できます。"
+        },
+        "engine": {
+          "title": "自動セットアップ",
+          "description": "SilkScribe がこのデバイスに合ったオフラインエンジンを選びます。"
+        },
+        "practice": {
+          "title": "実際のテストを 1 回",
+          "description": "使い始める前に、すべてが動くことを確認します。"
+        }
+      },
+      "outcomeLabel": "セットアップ後",
+      "outcome": "ショートカットを押しながら話すと、SilkScribe が必要な場所にテキストを入力します。",
+      "planLabel": "流れ",
+      "plan": {
+        "step1": {
+          "title": "マイクを許可する",
+          "description": "SilkScribe があなたの声を聞けるようにします。"
+        },
+        "step2": {
+          "title": "テキストアクセスを許可する",
+          "description": "SilkScribe がアプリに入力できるようにします。"
+        },
+        "step3": {
+          "title": "一度試してみる",
+          "description": "セットアップが完了したら短いテストを行います。"
+        }
+      },
+      "permissionPromise": "これらの手順は SilkScribe を正しく動作させるために必要です。",
+      "continue": "続ける"
+    },
     "practice": {
       "eyebrow": "試してみる",
       "title": "SilkScribe を 1 回試してみましょう",
@@ -336,6 +368,7 @@
   "modelSelector": {
     "custom": "カスタム",
     "active": "アクティブ",
+    "statusLabel": "モデルの状態: {{status}}",
     "switching": "切替中...",
     "noModelsAvailable": "利用可能なモデルがありません",
     "extracting": "{{modelName}}を展開中...",
@@ -349,43 +382,59 @@
     "modelError": "モデルエラー",
     "modelUnloaded": "モデルがアンロードされました",
     "noModelDownloadRequired": "モデルなし - ダウンロードが必要",
+    "modelMeta": "{{size}} · {{engine}}",
     "deleteModel": "{{modelName}}を削除",
     "downloadSpeed": "{{speed}} MB/s",
+    "cancel": "キャンセル",
+    "cancelDownload": "ダウンロードをキャンセル",
+    "retryDownload": "ダウンロードを再試行",
+    "downloadErrorTitle": "ダウンロードを完了できませんでした",
+    "downloadProgress": {
+      "downloadedOf": "{{total}} 中 {{downloaded}}",
+      "speed": "{{speed}}/秒",
+      "eta": "残り {{eta}}",
+      "starting": "ダウンロードを開始中",
+      "extracting": "モデルを展開中",
+      "almostDone": "まもなく完了",
+      "unknownEta": "残り時間を計算中"
+    },
     "capabilities": {
       "languageSelection": "複数の入力言語をサポート",
-      "multiLanguage": "多言語",
-      "translation": "英語への翻訳が可能",
-      "translate": "英語に翻訳",
       "singleLanguage": "この言語のみ対応",
-      "languageOnly": "{{language}}のみ"
+      "multiLanguage": "多言語",
+      "languageOnly": "{{language}}のみ",
+      "translation": "英語への翻訳が可能",
+      "translate": "英語に翻訳"
     },
-    "cancel": "キャンセル",
-    "cancelDownload": "ダウンロードをキャンセル"
+    "diskSpaceCheckError": "SilkScribe はダウンロード前にディスク空き容量を確認できませんでした: {{error}}",
+    "insufficientSpace": "このモデルのダウンロードには {{required}} の空き容量が必要です。使用可能: {{available}}。",
+    "downloadFailed": "SilkScribe はモデルをダウンロードできませんでした: {{error}}",
+    "extractionFailed": "SilkScribe はモデルを展開できませんでした: {{error}}",
+    "downloadErrors": {
+      "preflightFailed": "SilkScribe はダウンロード前にディスク空き容量を確認できませんでした: {{detail}}",
+      "insufficientSpace": "このモデルのダウンロードには {{required}} の空き容量が必要です。使用可能: {{available}}。",
+      "downloadFailed": "SilkScribe はモデルをダウンロードできませんでした: {{detail}}",
+      "extractionFailed": "SilkScribe はモデルを展開できませんでした: {{detail}}",
+      "unknown": "SilkScribe はダウンロードを完了できませんでした。"
+    }
   },
   "settings": {
     "modelSettings": {
       "title": "{{model}} 設定",
       "noSettingsNeeded": "このモデルは設定不要で自動的に動作します。"
     },
-    "models": {
-      "title": "転写モデル",
-      "description": "転写モデルを選択するか、追加のモデルをダウンロードします。異なるモデルは精度と速度のレベルが異なります。",
-      "downloaded": "ダウンロード済み",
-      "available": "ダウンロード可能",
-      "deleteConfirm": "{{modelName}}を削除してもよろしいですか？再度使用するにはダウンロードが必要です。",
-      "deleteActiveConfirm": "{{modelName}}は現在使用中のモデルです。削除すると、新しいモデルを選択するまで文字起こしが停止します。本当に削除しますか？",
-      "deleteTitle": "モデルを削除",
-      "filters": {
-        "all": "すべて",
-        "multiLanguage": "多言語",
-        "translation": "翻訳",
-        "allLanguages": "すべての言語"
-      },
-      "noModelsMatch": "このフィルターに一致するモデルがありません。",
-      "yourModels": "ダウンロード済みモデル",
-      "availableModels": "ダウンロード可能"
-    },
     "general": {
+      "eyebrow": "毎日のセットアップ",
+      "pageTitle": "SilkScribe をいつでも録音できる状態に",
+      "pageDescription": "ショートカットを設定し、マイクを選び、基本を自動のままにしておきましょう。",
+      "sections": {
+        "recording": "録音",
+        "recordingDescription": "ほとんどの人が最初に触れる設定です。",
+        "feedback": "フィードバック",
+        "feedbackDescription": "音の合図で、SilkScribe が聞き取りを始めたり止めたりするタイミングがわかります。",
+        "app": "アプリ",
+        "appDescription": "SilkScribe アプリ自体の使い心地を選びます。"
+      },
       "title": "一般",
       "shortcut": {
         "title": "SilkScribeショートカット",
@@ -394,6 +443,7 @@
         "none": "ショートカットが設定されていません",
         "notFound": "ショートカットが見つかりません",
         "pressKeys": "キーを押してください...",
+        "reset": "ショートカットをリセット",
         "bindings": {
           "transcribe": {
             "name": "文字起こしショートカット",
@@ -412,6 +462,10 @@
           "restore": "元のショートカットを復元できませんでした",
           "set": "ショートカットを設定できませんでした: {{error}}",
           "reset": "ショートカットを元の値にリセットできませんでした"
+        },
+        "success": {
+          "saved": "ショートカットを保存しました",
+          "reset": "ショートカットをリセットしました"
         }
       },
       "language": {
@@ -425,7 +479,44 @@
       "pushToTalk": {
         "label": "プッシュトゥトーク",
         "description": "押し続けて録音、離して停止"
+      },
+      "theme": {
+        "title": "外観",
+        "description": "macOS に合わせるか、ライトまたはダークの固定表示を選びます。",
+        "options": {
+          "system": "システム",
+          "light": "ライト",
+          "dark": "ダーク"
+        }
       }
+    },
+    "models": {
+      "eyebrow": "音声エンジン",
+      "pageTitle": "SilkScribe の聞き取り方法を選ぶ",
+      "pageDescription": "SilkScribe に使わせるモデルを選び、インストール済みモデルを整理し、必要に応じて追加ダウンロードします。",
+      "title": "転写モデル",
+      "description": "転写モデルを選択するか、追加のモデルをダウンロードします。異なるモデルは精度と速度のレベルが異なります。",
+      "currentModel": "現在のモデル",
+      "currentModelSettings": "現在のモデルの設定",
+      "currentModelSettingsDescription": "ここにはアクティブなモデルの言語オプションだけが表示されます。",
+      "yourModels": "ダウンロード済みモデル",
+      "availableModels": "ダウンロード可能",
+      "downloaded": "ダウンロード済み",
+      "available": "ダウンロード可能",
+      "noActiveModelTitle": "まだアクティブなモデルがありません。",
+      "noActiveModelDescription": "下でモデルをダウンロードすると、SilkScribe が次の文字起こしで使用します。",
+      "noExtraInstalled": "今は現在のモデルだけがインストールされています。",
+      "deleteConfirm": "{{modelName}}を削除してもよろしいですか？再度使用するにはダウンロードが必要です。",
+      "deleteActiveConfirm": "{{modelName}}は現在使用中のモデルです。削除すると、新しいモデルを選択するまで文字起こしが停止します。本当に削除しますか？",
+      "deleteTitle": "モデルを削除",
+      "filters": {
+        "all": "すべて",
+        "multiLanguage": "多言語",
+        "translation": "翻訳",
+        "allLanguages": "すべての言語"
+      },
+      "noModelsMatch": "このフィルターに一致するモデルがありません。",
+      "deleteConfirmAction": "モデルを削除"
     },
     "sound": {
       "title": "サウンド",
@@ -448,20 +539,66 @@
       "volume": {
         "title": "音量",
         "description": "音声フィードバックの音量を調整"
+      },
+      "soundTheme": {
+        "options": {
+          "marimba": "マリンバ",
+          "pop": "ポップ",
+          "custom": "カスタム"
+        },
+        "preview": "サウンドテーマを試聴（開始→停止の順に再生）"
       }
     },
     "advanced": {
+      "eyebrow": "任意の設定",
+      "pageTitle": "詳細な動作とサポート",
+      "pageDescription": "ほとんどの人はそのままで大丈夫です。お使いの環境で SilkScribe の動作を変えたいときに使ってください。",
       "title": "詳細設定",
       "groups": {
         "app": "アプリ",
         "output": "出力",
         "transcription": "文字起こし",
         "history": "履歴",
+        "support": "サポート",
         "experimental": "実験的"
+      },
+      "groupDescriptions": {
+        "app": "アプリ自体の起動とオーバーレイの動作。",
+        "output": "完成したテキストを使用中のアプリにどう入れるか。",
+        "transcription": "SilkScribe がテキストを整える方法を変える小さな調整。",
+        "history": "文字起こしと録音の保持とクリーンアップの設定。",
+        "support": "トラブルシューティングに役立つメンテナンスツールとフォルダ。",
+        "experimental": "まだ発展途上で変更される可能性のある機能。"
       },
       "experimentalToggle": {
         "label": "実験的機能",
         "description": "まだ開発中の実験的機能を有効にします。"
+      },
+      "lazyStreamClose": {
+        "label": "文字起こしの間もマイクを開いたままにする",
+        "description": "録音停止後も短時間マイクストリームを開いたままにして待ち時間を減らします。"
+      },
+      "acceleration": {
+        "whisper": {
+          "title": "Whisper アクセラレーション",
+          "description": "Whisper モデルのハードウェアアクセラレーションを選択します。"
+        },
+        "ort": {
+          "title": "ONNX アクセラレーション",
+          "description": "ONNX モデルのハードウェアアクセラレーションを選択します。"
+        },
+        "gpuDevice": {
+          "title": "GPU デバイス",
+          "description": "Whisper 推論に使用する GPU を選択します。",
+          "auto": "自動"
+        },
+        "labels": {
+          "auto": "自動",
+          "cpu": "CPU",
+          "cuda": "CUDA",
+          "directml": "DirectML",
+          "rocm": "ROCm"
+        }
       },
       "startHidden": {
         "label": "非表示で起動",
@@ -550,32 +687,6 @@
         "add": "追加",
         "remove": "{{word}}を削除",
         "duplicate": "「{{word}}」は既に存在します"
-      },
-      "acceleration": {
-        "labels": {
-          "auto": "自動",
-          "cpu": "CPU",
-          "cuda": "CUDA",
-          "directml": "DirectML",
-          "rocm": "ROCm"
-        },
-        "whisper": {
-          "title": "Whisper アクセラレーション",
-          "description": "Whisper モデルのハードウェアアクセラレーションを選択します。"
-        },
-        "ort": {
-          "title": "ONNX アクセラレーション",
-          "description": "ONNX モデルのハードウェアアクセラレーションを選択します。"
-        },
-        "gpuDevice": {
-          "title": "GPU デバイス",
-          "description": "Whisper 推論に使用する GPU を選択します。",
-          "auto": "自動"
-        }
-      },
-      "lazyStreamClose": {
-        "label": "文字起こしの間もマイクを開いたままにする",
-        "description": "録音停止後も短時間マイクストリームを開いたままにして待ち時間を減らします。"
       }
     },
     "postProcessing": {
@@ -639,22 +750,46 @@
       }
     },
     "history": {
+      "eyebrow": "文字起こしアーカイブ",
+      "pageTitle": "最近の文字起こしを見返す",
+      "pageDescription": "SilkScribe が取り込んだ内容を見て、音声を再生し、手元に残したいものを保存できます。",
       "title": "履歴",
       "openFolder": "録音フォルダを開く",
+      "exportMarkdown": "Markdown をエクスポート",
+      "exportJson": "JSON をエクスポート",
+      "exportTitle": "履歴をエクスポート",
+      "exportEmpty": "エクスポートする履歴がありません。",
+      "exportSuccess": "履歴をエクスポートしました",
+      "exportError": "SilkScribe は履歴をエクスポートできませんでした。",
       "loading": "履歴を読み込み中...",
       "empty": "まだ文字起こしがありません。録音を開始して履歴を作成しましょう！",
+      "emptyDescription": "保存した文字起こしと録音は、最初の口述のあとここに表示されます。",
+      "emptyFiltered": "一致する文字起こしはありません。",
+      "emptyFilteredDescription": "別の検索を試すか、「すべて」に戻してください。",
+      "searchPlaceholder": "履歴を検索",
+      "filters": {
+        "all": "すべて",
+        "saved": "保存済み",
+        "failed": "失敗"
+      },
       "copyToClipboard": "文字起こしをクリップボードにコピー",
+      "copyAsMarkdown": "文字起こしを Markdown でコピー",
+      "copySuccess": "クリップボードにコピーしました",
+      "copyError": "SilkScribe はこの文字起こしをコピーできませんでした。",
       "save": "文字起こしを保存",
       "unsave": "保存から削除",
       "delete": "エントリーを削除",
       "deleteError": "エントリーの削除に失敗しました。もう一度お試しください。",
+      "deleteQueued": "エントリを削除しました",
+      "deleteUndoDescription": "数秒間は元に戻せます。",
+      "undoDelete": "元に戻す",
       "loadError": "履歴を読み込めませんでした。もう一度お試しください。",
-      "retry": "再試行",
       "loadMore": "さらに読み込む",
       "loadingMore": "読み込み中...",
       "retryableEmpty": "文字起こしに失敗しました。録音は再試行できます。",
       "retryTranscription": "文字起こしを再試行",
-      "retryTranscriptionError": "文字起こしの再試行に失敗しました。もう一度お試しください。"
+      "retryTranscriptionError": "文字起こしの再試行に失敗しました。もう一度お試しください。",
+      "retry": "再試行"
     },
     "debug": {
       "title": "デバッグ",
@@ -760,10 +895,16 @@
     "downloading": "ダウンロード中... {{progress}}%",
     "installing": "インストール中...",
     "preparing": "準備中...",
-    "checkForUpdates": "アップデートを確認"
+    "checkForUpdates": "アップデートを確認",
+    "support": {
+      "label": "サポート",
+      "appData": "アプリデータを開く",
+      "logs": "ログを開く"
+    }
   },
   "common": {
     "loading": "読み込み中...",
+    "versionLabel": "v{{version}}",
     "save": "保存",
     "cancel": "キャンセル",
     "reset": "リセット",
@@ -783,13 +924,12 @@
     "yes": "はい",
     "no": "いいえ",
     "noOptionsFound": "オプションが見つかりません",
-    "versionLabel": "v{{version}}"
-  },
-  "accessibility": {
-    "permissionsRequired": "アクセシビリティ権限が必要です",
-    "permissionsDescription": "SilkScribeが文字起こしテキストを入力するには、アクセシビリティ権限が必要です。",
-    "openSettings": "システム設定を開く",
-    "dismiss": "閉じる"
+    "moreInformation": "詳細情報",
+    "errorBoundary": {
+      "description": "SilkScribe はこの画面を表示できませんでした。設定と録音はこのデバイスにローカル保存されたままです。",
+      "reload": "再読み込み",
+      "openLogs": "ログを開く"
+    }
   },
   "errors": {
     "loadDirectory": "ディレクトリの読み込みエラー: {{error}}"
@@ -803,10 +943,87 @@
     "transcribing": "文字起こし中",
     "processing": "処理中",
     "success": "完了",
-    "failed": "失敗"
+    "failed": "失敗",
+    "cancelled": "キャンセル済み",
+    "cancelledDetail": "あなたが停止しました"
+  },
+  "feedback": {
+    "pasteFailed": {
+      "copiedTitle": "クリップボードにコピーしました",
+      "copiedDescription": "SilkScribe はアクティブなアプリに貼り付けできませんでした。",
+      "failedTitle": "SilkScribe は貼り付けできませんでした",
+      "failedDescription": "テキストを貼り付けることもコピーすることもできませんでした。",
+      "copyFailedTitle": "SilkScribe はテキストをコピーできませんでした",
+      "copyFailedDescription": "貼り付けに失敗し、予備のコピーも完了しませんでした。"
+    }
   },
   "home": {
+    "title": "おかえりなさい",
+    "subtitle": "最近の口述アクティビティと再生履歴。",
+    "welcome": {
+      "eyebrow": "ホーム",
+      "title": "おかえりなさい。",
+      "firstRunTitle": "SilkScribe へようこそ。",
+      "readyDescription": "準備は整っているようです。ショートカットを押しながら自然に話すと、SilkScribe が必要な場所にテキストを配置します。",
+      "setupDescription": "最初に基本を済ませておけば、あとは SilkScribe は邪魔をせず、すばやい口述が必要なときにいつでも使えます。",
+      "primaryReady": "録音設定を確認",
+      "primarySetup": "セットアップを完了",
+      "secondaryAction": "モデルを見る"
+    },
+    "setup": {
+      "title": "いくつかの基本項目にまだ対応が必要です。",
+      "description": "ショートカット、モデル、権限が整えば、SilkScribe は日常の口述に使えます。",
+      "modelAction": "モデルを選ぶ",
+      "generalAction": "一般設定を開く"
+    },
+    "readiness": {
+      "shortcut": {
+        "label": "ショートカット",
+        "missingValue": "録音用ショートカットを設定",
+        "action": "編集"
+      },
+      "microphone": {
+        "label": "マイク",
+        "action": "変更"
+      },
+      "model": {
+        "label": "モデル",
+        "missingValue": "音声モデルを選択",
+        "action": "管理"
+      },
+      "permissions": {
+        "label": "権限",
+        "ready": "アプリに入力する準備ができています",
+        "needsAttention": "口述を完了するには対応が必要です",
+        "action": "確認"
+      }
+    },
+    "firstUse": {
+      "title": "最初の文字起こしはここに表示されます。",
+      "description": "テキスト欄をクリックし、ショートカットを押しながら一文を話して離します。SilkScribe が結果をここに保存するので、あとで見返せます。",
+      "generalAction": "基本を確認",
+      "modelsAction": "モデルを選ぶ"
+    },
+    "activityTitle": "最近のアクティビティ",
+    "loadMore": "さらに読み込む",
     "loadingMore": "読み込み中...",
-    "loadMore": "さらに読み込む"
+    "stats": {
+      "streak": "現在の連続記録",
+      "words": "文字起こしした語数",
+      "wpm": "平均 WPM"
+    },
+    "empty": {
+      "title": "まだ最近の文字起こしはありません。",
+      "description": "何かを録音すると、SilkScribe が文字起こしと音声をここに自動で保存します。"
+    },
+    "error": {
+      "title": "ダッシュボードを読み込めませんでした。",
+      "description": "もう一度試して最近のアクティビティを更新してください。",
+      "retry": "再試行"
+    },
+    "days": {
+      "today": "今日",
+      "yesterday": "昨日"
+    }
   }
 }

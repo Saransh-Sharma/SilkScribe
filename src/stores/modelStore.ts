@@ -3,6 +3,7 @@ import { subscribeWithSelector } from "zustand/middleware";
 import { produce } from "immer";
 import { listen } from "@tauri-apps/api/event";
 import { commands, type ModelInfo } from "@/bindings";
+import type { DownloadError } from "@/lib/utils/download";
 
 interface DownloadProgress {
   model_id: string;
@@ -26,6 +27,7 @@ interface ModelsStore {
   extractingModels: Record<string, true>;
   downloadProgress: Record<string, DownloadProgress>;
   downloadStats: Record<string, DownloadStats>;
+  downloadErrors: Record<string, DownloadError>;
   loading: boolean;
   error: string | null;
   hasAnyModels: boolean;
@@ -45,6 +47,7 @@ interface ModelsStore {
   isModelDownloading: (modelId: string) => boolean;
   isModelExtracting: (modelId: string) => boolean;
   getDownloadProgress: (modelId: string) => DownloadProgress | undefined;
+  getDownloadError: (modelId: string) => DownloadError | undefined;
 
   // Internal setters
   setModels: (models: ModelInfo[]) => void;
@@ -61,6 +64,7 @@ export const useModelStore = create<ModelsStore>()(
     extractingModels: {},
     downloadProgress: {},
     downloadStats: {},
+    downloadErrors: {},
     loading: true,
     error: null,
     hasAnyModels: false,
@@ -165,6 +169,42 @@ export const useModelStore = create<ModelsStore>()(
         set({ error: null });
         set(
           produce((state) => {
+            delete state.downloadErrors[modelId];
+          }),
+        );
+        const preflight = await commands.getModelDownloadPreflight(modelId);
+        if (preflight.status !== "ok") {
+          set(
+            produce((state) => {
+              state.error = preflight.error;
+              state.downloadErrors[modelId] = {
+                modelId,
+                code: "preflight_failed",
+                detail: preflight.error,
+              };
+            }),
+          );
+          return false;
+        }
+
+        if (!preflight.data.has_enough_space) {
+          set(
+            produce((state) => {
+              state.error = "insufficient_space";
+              state.downloadErrors[modelId] = {
+                modelId,
+                code: "insufficient_space",
+                requiredBytes: preflight.data.required_bytes,
+                freeBytes: preflight.data.free_bytes,
+              };
+            }),
+          );
+          return false;
+        }
+
+        set(
+          produce((state) => {
+            delete state.downloadErrors[modelId];
             state.downloadingModels[modelId] = true;
             state.downloadProgress[modelId] = {
               model_id: modelId,
@@ -178,19 +218,34 @@ export const useModelStore = create<ModelsStore>()(
         if (result.status === "ok") {
           return true;
         } else {
-          set({ error: `Failed to download model: ${result.error}` });
           set(
             produce((state) => {
+              state.error = result.error;
+              state.downloadErrors[modelId] = {
+                modelId,
+                code: "download_failed",
+                detail: result.error,
+              };
               delete state.downloadingModels[modelId];
+              delete state.downloadProgress[modelId];
+              delete state.downloadStats[modelId];
             }),
           );
           return false;
         }
       } catch (err) {
-        set({ error: `Failed to download model: ${err}` });
+        const detail = String(err);
         set(
           produce((state) => {
+            state.error = detail;
+            state.downloadErrors[modelId] = {
+              modelId,
+              code: "download_failed",
+              detail,
+            };
             delete state.downloadingModels[modelId];
+            delete state.downloadProgress[modelId];
+            delete state.downloadStats[modelId];
           }),
         );
         return false;
@@ -207,6 +262,7 @@ export const useModelStore = create<ModelsStore>()(
               delete state.downloadingModels[modelId];
               delete state.downloadProgress[modelId];
               delete state.downloadStats[modelId];
+              delete state.downloadErrors[modelId];
             }),
           );
 
@@ -255,6 +311,10 @@ export const useModelStore = create<ModelsStore>()(
 
     getDownloadProgress: (modelId: string) => {
       return get().downloadProgress[modelId];
+    },
+
+    getDownloadError: (modelId: string) => {
+      return get().downloadErrors[modelId];
     },
 
     initialize: async () => {
@@ -318,6 +378,7 @@ export const useModelStore = create<ModelsStore>()(
             delete state.downloadingModels[modelId];
             delete state.downloadProgress[modelId];
             delete state.downloadStats[modelId];
+            delete state.downloadErrors[modelId];
           }),
         );
         get().loadModels();
@@ -328,6 +389,9 @@ export const useModelStore = create<ModelsStore>()(
         set(
           produce((state) => {
             state.extractingModels[modelId] = true;
+            delete state.downloadProgress[modelId];
+            delete state.downloadStats[modelId];
+            delete state.downloadErrors[modelId];
           }),
         );
       });
@@ -349,7 +413,32 @@ export const useModelStore = create<ModelsStore>()(
           set(
             produce((state) => {
               delete state.extractingModels[modelId];
-              state.error = `Failed to extract model: ${event.payload.error}`;
+              state.error = event.payload.error;
+              state.downloadErrors[modelId] = {
+                modelId,
+                code: "extraction_failed",
+                detail: event.payload.error,
+              };
+            }),
+          );
+        },
+      );
+
+      listen<{ model_id: string; error: string }>(
+        "model-download-failed",
+        (event) => {
+          const modelId = event.payload.model_id;
+          set(
+            produce((state) => {
+              delete state.downloadingModels[modelId];
+              delete state.downloadProgress[modelId];
+              delete state.downloadStats[modelId];
+              state.error = event.payload.error;
+              state.downloadErrors[modelId] = {
+                modelId,
+                code: "download_failed",
+                detail: event.payload.error,
+              };
             }),
           );
         },
@@ -362,11 +451,18 @@ export const useModelStore = create<ModelsStore>()(
             delete state.downloadingModels[modelId];
             delete state.downloadProgress[modelId];
             delete state.downloadStats[modelId];
+            delete state.downloadErrors[modelId];
           }),
         );
       });
 
-      listen<string>("model-deleted", () => {
+      listen<string>("model-deleted", (event) => {
+        const modelId = event.payload;
+        set(
+          produce((state) => {
+            delete state.downloadErrors[modelId];
+          }),
+        );
         get().loadModels();
         get().loadCurrentModel();
       });

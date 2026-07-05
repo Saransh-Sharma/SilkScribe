@@ -12,7 +12,8 @@ type OverlayState =
   | "transcribing"
   | "processing"
   | "success"
-  | "error";
+  | "error"
+  | "cancelled";
 
 interface OverlayEventPayload {
   state: OverlayState;
@@ -24,9 +25,14 @@ interface OverlayEventPayload {
 
 const isOverlayState = (value: unknown): value is OverlayState =>
   typeof value === "string" &&
-  ["recording", "transcribing", "processing", "success", "error"].includes(
-    value,
-  );
+  [
+    "recording",
+    "transcribing",
+    "processing",
+    "success",
+    "error",
+    "cancelled",
+  ].includes(value);
 
 const ENERGY_ATTACK = 0.5;
 const ENERGY_RELEASE = 0.12;
@@ -38,10 +44,12 @@ const RecordingOverlay: React.FC = () => {
     state: "recording",
     canCancel: true,
   });
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const levelsRef = useRef<number[]>(Array(WAVEFORM_BUCKET_COUNT).fill(0));
   const waveformSinkRef = useRef<((levels: number[]) => void) | null>(null);
   const isVisibleRef = useRef(false);
   const overlayStateRef = useRef<OverlayState>("recording");
+  const recordingStartedAtRef = useRef<number | null>(null);
   const pillRef = useRef<HTMLDivElement | null>(null);
   const energyRef = useRef(0);
   const direction = getLanguageDirection(i18n.language);
@@ -62,7 +70,15 @@ const RecordingOverlay: React.FC = () => {
         return t("overlay.success");
       case "error":
         return t("overlay.failed");
+      case "cancelled":
+        return t("overlay.cancelled");
     }
+  };
+
+  const formatElapsed = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainder = seconds % 60;
+    return `${minutes}:${String(remainder).padStart(2, "0")}`;
   };
 
   const resolvePayload = (payload: unknown): OverlayEventPayload => {
@@ -101,7 +117,11 @@ const RecordingOverlay: React.FC = () => {
           const nextOverlay = resolvePayload(event.payload);
           overlayStateRef.current = nextOverlay.state;
           isVisibleRef.current = true;
-          if (nextOverlay.state !== "recording") {
+          if (nextOverlay.state === "recording") {
+            recordingStartedAtRef.current = Date.now();
+            setElapsedSeconds(0);
+          } else {
+            recordingStartedAtRef.current = null;
             energyRef.current = 0;
             pillRef.current?.style.setProperty("--overlay-energy", "0");
           }
@@ -110,6 +130,8 @@ const RecordingOverlay: React.FC = () => {
         }),
         listen("hide-overlay", () => {
           isVisibleRef.current = false;
+          recordingStartedAtRef.current = null;
+          setElapsedSeconds(0);
           setIsVisible(false);
         }),
         listen<number[]>("mic-level", (event) => {
@@ -158,6 +180,30 @@ const RecordingOverlay: React.FC = () => {
     };
   }, [t]);
 
+  useEffect(() => {
+    if (!isVisible || !isRecording) return;
+
+    const timer = window.setInterval(() => {
+      if (recordingStartedAtRef.current === null) {
+        setElapsedSeconds(0);
+        return;
+      }
+
+      setElapsedSeconds(
+        Math.floor((Date.now() - recordingStartedAtRef.current) / 1000),
+      );
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [isRecording, isVisible]);
+
+  const showElapsed = isRecording && elapsedSeconds >= 5;
+  const stateLabel = ariaForState(state);
+  const detailText =
+    overlay.detail ??
+    (state === "cancelled" ? t("overlay.cancelledDetail") : undefined);
+  const announcement = [stateLabel, detailText].filter(Boolean).join(". ");
+
   return (
     <div className="overlay-stage" dir={direction}>
       <div
@@ -165,6 +211,9 @@ const RecordingOverlay: React.FC = () => {
         className={`overlay-pill ${isVisible ? "is-visible" : ""}`}
         data-state={state}
         role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        aria-label={announcement}
       >
         <div className="overlay-grain" aria-hidden="true" />
 
@@ -192,7 +241,18 @@ const RecordingOverlay: React.FC = () => {
           <div className="overlay-ring" />
         </div>
 
-        <div className="overlay-label">{ariaForState(state)}</div>
+        {showElapsed ? (
+          <div className="overlay-timer" aria-hidden="true">
+            {formatElapsed(elapsedSeconds)}
+          </div>
+        ) : null}
+
+        <div className="overlay-copy">
+          <div className="overlay-label">{stateLabel}</div>
+          {detailText ? (
+            <div className="overlay-detail">{detailText}</div>
+          ) : null}
+        </div>
       </div>
     </div>
   );

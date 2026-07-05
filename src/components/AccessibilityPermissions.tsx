@@ -1,107 +1,80 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { type } from "@tauri-apps/plugin-os";
+import { checkAccessibilityPermission } from "tauri-plugin-macos-permissions-api";
 import {
-  checkAccessibilityPermission,
-  requestAccessibilityPermission,
-} from "tauri-plugin-macos-permissions-api";
+  getErrorMessage,
+  PermissionStatusCard,
+  type PermissionStatus,
+} from "./onboarding/PermissionStep";
 import { Button } from "./ui/Button";
 
-// Define permission state type
-type PermissionState = "request" | "verify" | "granted";
+interface AccessibilityPermissionsProps {
+  onStartRepair: () => void;
+}
 
-const AccessibilityPermissions: React.FC = () => {
+const AccessibilityPermissions: React.FC<AccessibilityPermissionsProps> = ({
+  onStartRepair,
+}) => {
   const { t } = useTranslation();
-  const [hasAccessibility, setHasAccessibility] = useState<boolean>(false);
-  const [permissionState, setPermissionState] =
-    useState<PermissionState>("request");
+  const [status, setStatus] = useState<PermissionStatus>("checking");
+  const [error, setError] = useState<string | null>(null);
 
-  // Accessibility permissions are only required on macOS
   const isMacOS = type() === "macos";
 
-  // Check permissions without requesting
-  const checkPermissions = async (): Promise<boolean> => {
-    const hasPermissions: boolean = await checkAccessibilityPermission();
-    setHasAccessibility(hasPermissions);
-    setPermissionState(hasPermissions ? "granted" : "verify");
-    return hasPermissions;
-  };
+  const checkPermissions = async (): Promise<void> => {
+    if (!isMacOS) return;
 
-  // Handle the unified button action based on current state
-  const handleButtonClick = async (): Promise<void> => {
-    if (permissionState === "request") {
-      try {
-        await requestAccessibilityPermission();
-        // After system prompt, transition to verification state
-        setPermissionState("verify");
-      } catch (error) {
-        console.error("Error requesting permissions:", error);
-        setPermissionState("verify");
-      }
-    } else if (permissionState === "verify") {
-      // State is "verify" - check if permission was granted
-      await checkPermissions();
+    setStatus("checking");
+    setError(null);
+
+    try {
+      const hasPermissions = await checkAccessibilityPermission();
+      setStatus(hasPermissions ? "granted" : "needed");
+    } catch (permissionError) {
+      console.error(
+        "Error checking accessibility permissions:",
+        permissionError,
+      );
+      setError(getErrorMessage(permissionError));
+      setStatus("error");
     }
   };
 
-  // On app boot - check permissions (only on macOS)
   useEffect(() => {
-    if (!isMacOS) return;
-
-    const initialSetup = async (): Promise<void> => {
-      const hasPermissions: boolean = await checkAccessibilityPermission();
-      setHasAccessibility(hasPermissions);
-      setPermissionState(hasPermissions ? "granted" : "request");
-    };
-
-    initialSetup();
+    void checkPermissions();
   }, [isMacOS]);
 
-  // Skip rendering on non-macOS platforms or if permission is already granted
-  if (!isMacOS || hasAccessibility) {
+  if (!isMacOS || status === "granted") {
     return null;
   }
 
-  // Configure button text and style based on state
-  const buttonConfig: Record<
-    PermissionState,
-    | {
-        text: string;
-        variant: "primary-soft" | "secondary";
-      }
-    | null
-  > = {
-    request: {
-      text: t("accessibility.openSettings"),
-      variant: "primary-soft",
-    },
-    verify: {
-      text: t("accessibility.openSettings"),
-      variant: "secondary",
-    },
-    granted: null,
-  };
-
-  const config = buttonConfig[permissionState];
-
   return (
-    <div className="w-full rounded-[18px] border border-ss-border-subtle bg-ss-bg-surface px-4 py-4 shadow-[var(--ss-shadow-card)]">
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="min-w-0">
-          <p className="text-sm font-medium leading-relaxed text-ss-text-primary">
-            {t("accessibility.permissionsDescription")}
-          </p>
-        </div>
+    <section className="w-full rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface p-4 shadow-[var(--ss-shadow-card)]">
+      <PermissionStatusCard
+        permission="accessibility"
+        status={status}
+        error={error}
+      />
+      <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
         <Button
-          onClick={handleButtonClick}
-          variant={config?.variant}
+          type="button"
+          onClick={onStartRepair}
+          variant="primary-soft"
           size="sm"
-          className="min-w-[11rem] md:shrink-0"
         >
-          {config?.text}
+          {t("onboarding.permissions.shared.repairAction")}
+        </Button>
+        <Button
+          type="button"
+          onClick={() => void checkPermissions()}
+          variant="secondary"
+          size="sm"
+        >
+          {t("onboarding.permissions.shared.checkAgain")}
         </Button>
       </div>
-    </div>
+    </section>
   );
 };
 

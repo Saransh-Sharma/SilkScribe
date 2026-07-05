@@ -505,6 +505,17 @@ export const commands = {
       else return { status: "error", error: e as any };
     }
   },
+  async changeThemeSetting(theme: string): Promise<Result<null, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("change_theme_setting", { theme }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
   async changeUpdateChecksSetting(
     enabled: boolean,
   ): Promise<Result<null, string>> {
@@ -817,6 +828,19 @@ export const commands = {
       else return { status: "error", error: e as any };
     }
   },
+  async getModelDownloadPreflight(
+    modelId: string,
+  ): Promise<Result<ModelDownloadPreflight, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("get_model_download_preflight", { modelId }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
   async downloadModel(modelId: string): Promise<Result<null, string>> {
     try {
       return {
@@ -1099,6 +1123,27 @@ export const commands = {
       else return { status: "error", error: e as any };
     }
   },
+  async searchHistoryEntries(
+    query: string | null,
+    filter: HistoryFilter,
+    cursor: number | null,
+    limit: number | null,
+  ): Promise<Result<PaginatedHistory, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("search_history_entries", {
+          query,
+          filter,
+          cursor,
+          limit,
+        }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
   async toggleHistoryEntrySaved(id: number): Promise<Result<null, string>> {
     try {
       return {
@@ -1235,6 +1280,7 @@ export type AppSettings = {
   experimental_enabled?: boolean;
   lazy_stream_close?: boolean;
   keyboard_implementation?: KeyboardImplementation;
+  theme?: ThemePreference;
   show_tray_icon?: boolean;
   paste_delay_ms?: number;
   typing_tool?: TypingTool;
@@ -1284,6 +1330,7 @@ export type HistoryEntry = {
   post_process_prompt: string | null;
   post_process_requested: boolean;
 };
+export type HistoryFilter = "all" | "saved" | "failed";
 export type HistoryUpdatePayload =
   | { action: "added"; entry: HistoryEntry }
   | { action: "updated"; entry: HistoryEntry }
@@ -1329,6 +1376,15 @@ export type ModelInfo = {
   supported_languages: string[];
   supports_language_selection: boolean;
   is_custom: boolean;
+};
+export type ModelDownloadPreflight = {
+  model_id: string;
+  free_bytes: number;
+  required_bytes: number;
+  model_size_bytes: number;
+  partial_bytes: number;
+  recommended_headroom_bytes: number;
+  has_enough_space: boolean;
 };
 export type ModelLoadStatus = {
   is_loaded: boolean;
@@ -1384,6 +1440,7 @@ export type ShortcutBinding = {
   current_binding: string;
 };
 export type SoundTheme = "marimba" | "pop" | "custom";
+export type ThemePreference = "system" | "light" | "dark";
 export type TypingTool =
   | "auto"
   | "wtype"

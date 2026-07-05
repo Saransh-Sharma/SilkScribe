@@ -168,6 +168,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
   const handleSelect = (value: string) => {
     onSelect(value);
     setIsOpen(false);
+    triggerRef.current?.focus();
   };
 
   const handleToggle = () => {
@@ -221,7 +222,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
                 left: menuPosition?.left ?? -9999,
                 width: menuPosition?.width,
                 maxHeight: menuPosition?.maxHeight,
-                zIndex: 9999,
+                zIndex: "var(--ss-layer-dropdown)",
                 opacity: menuPosition ? 1 : 0,
                 transform:
                   menuPosition?.placement === "top"

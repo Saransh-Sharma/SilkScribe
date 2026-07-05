@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Info } from "lucide-react";
 import { Tooltip } from "./Tooltip";
 
@@ -23,8 +24,10 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
   disabled = false,
   tooltipPosition = "top",
 }) => {
+  const { t } = useTranslation();
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const tooltipId = useId();
 
   // Handle click outside to close tooltip
   useEffect(() => {
@@ -65,14 +68,19 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
     >
       <button
         type="button"
-        aria-label="More information"
+        aria-label={t("common.moreInformation")}
+        aria-describedby={showTooltip ? tooltipId : undefined}
         className="inline-flex h-6 w-6 items-center justify-center rounded-full text-ss-text-tertiary transition-colors duration-150 hover:bg-ss-brand-secondary/10 hover:text-ss-brand-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/40"
         onClick={toggleTooltip}
       >
         <Info className="h-3.5 w-3.5" />
       </button>
       {showTooltip && (
-        <Tooltip targetRef={tooltipRef} position={tooltipPosition}>
+        <Tooltip
+          id={tooltipId}
+          targetRef={tooltipRef}
+          position={tooltipPosition}
+        >
           <p className="text-xs leading-relaxed text-ss-text-secondary">
             {description}
           </p>

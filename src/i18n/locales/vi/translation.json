@@ -15,7 +15,8 @@
     "postProcessing": "Xử lý sau",
     "history": "Lịch sử",
     "debug": "Gỡ lỗi",
-    "about": "Giới thiệu"
+    "preferences": "Tùy chọn",
+    "developer": "Nhà phát triển"
   },
   "onboarding": {
     "subtitle": "Để bắt đầu, hãy chọn một mô hình chuyển đổi giọng nói",
@@ -80,119 +81,107 @@
     },
     "permissions": {
       "shared": {
-        "eyebrow": "Permissions",
-        "repairEyebrow": "Permission needed",
-        "stepByStep": "What to do",
-        "statusLabel": "Status",
-        "openPrompt": "Open macOS prompt",
-        "openingPrompt": "Opening macOS prompt…",
-        "iEnabledIt": "I turned it on",
-        "checkAgain": "Check again",
-        "continue": "Continue",
+        "eyebrow": "Quyền truy cập",
+        "repairEyebrow": "Cần cấp quyền",
+        "stepByStep": "Cần làm gì",
+        "statusLabel": "Trạng thái",
+        "openPrompt": "Mở lời nhắc macOS",
+        "openingPrompt": "Đang mở lời nhắc macOS…",
+        "iEnabledIt": "Tôi đã bật rồi",
+        "checkAgain": "Kiểm tra lại",
+        "continue": "Tiếp tục",
+        "repairAction": "Mở sửa chữa có hướng dẫn",
+        "appName": "SilkScribe",
+        "guidedHelper": "Trợ giúp từng bước",
+        "privateLabel": "Riêng tư từ thiết kế",
         "statuses": {
-          "checking": "Checking",
-          "needed": "Still needed",
-          "requesting": "Opening macOS",
-          "waiting_for_user": "Waiting for you",
-          "granted": "Allowed"
+          "checking": "Đang kiểm tra",
+          "needed": "Vẫn còn thiếu",
+          "error": "Cần chú ý",
+          "requesting": "Đang mở macOS",
+          "waiting_for_user": "Đang chờ bạn",
+          "granted": "Đã cho phép"
         }
       },
       "microphone": {
-        "title": "Allow microphone access",
-        "description": "SilkScribe needs your mic to turn speech into text.",
-        "needLabel": "Needed to listen",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe only listens while you record. Without mic access, it has nothing to transcribe.",
-        "breaksWithoutTitle": "Without it",
-        "breaksWithoutBody": "Recording can start, but SilkScribe cannot hear your voice.",
-        "afterGrantTitle": "After you allow it",
-        "afterGrantBody": "SilkScribe can record your voice and continue setup.",
+        "title": "Cho phép SilkScribe nghe bạn khi ghi âm.",
+        "description": "Đây là cách giọng nói của bạn trở thành văn bản. SilkScribe chỉ nghe khi bạn bắt đầu đọc chính tả.",
+        "primaryAction": "Mở lời nhắc micrô",
+        "needLabel": "Cần để nghe",
+        "whyItMattersTitle": "Lần đọc chính tả đầu tiên bắt đầu từ đây",
+        "whyItMattersBody": "Quyền micrô cho phép SilkScribe thu giọng nói của bạn bằng phím tắt bạn chọn. Không có nó thì không có gì để phiên âm.",
+        "breaksWithoutTitle": "Nếu thiếu quyền này",
+        "breaksWithoutBody": "Việc ghi âm có thể bắt đầu, nhưng SilkScribe không thể nghe thấy giọng bạn.",
+        "afterGrantTitle": "Sau khi cho phép",
+        "afterGrantBody": "SilkScribe có thể ghi lại giọng nói của bạn và tiếp tục thiết lập.",
         "steps": {
-          "step1": "Click “Open macOS prompt.”",
-          "step2": "When macOS asks, choose “Allow.”",
-          "step3": "If no prompt appears, open System Settings > Privacy & Security > Microphone.",
-          "step4": "Turn on SilkScribe, then return here and check again."
+          "step1": "Nhấp vào “Mở lời nhắc macOS”.",
+          "step2": "Khi macOS hỏi, hãy chọn “Cho phép”.",
+          "step3": "Nếu không thấy lời nhắc, mở Cài đặt Hệ thống > Quyền riêng tư & Bảo mật > Micrô.",
+          "step4": "Bật SilkScribe, sau đó quay lại đây và kiểm tra lại."
         },
-        "manualHint": "If you chose “Don’t Allow,” turn SilkScribe on in System Settings > Privacy & Security > Microphone.",
+        "manualHint": "Cách thủ công: Cài đặt Hệ thống > Quyền riêng tư & Bảo mật > Micrô, rồi bật SilkScribe.",
+        "privateNote": "Âm thanh được xử lý ngay trên máy Mac này. SilkScribe không cần đám mây để nghe hay phiên âm.",
+        "guide": {
+          "windowLabel": "Lời nhắc macOS",
+          "title": "Chọn Cho phép khi macOS hỏi.",
+          "body": "Lời nhắc thật sẽ mở bên ngoài SilkScribe. Bản xem trước này cho thấy lựa chọn đúng để tiếp tục thiết lập.",
+          "cue": "Tìm nút “Cho phép”",
+          "promptTitle": "“SilkScribe” muốn truy cập micrô",
+          "promptBody": "macOS chỉ hỏi một lần để SilkScribe có thể nghe bạn đọc chính tả khi ghi âm.",
+          "deny": "Không cho phép",
+          "allow": "Cho phép",
+          "allowed": "Đã cho phép",
+          "previewAlt": "Ví dụ về lời nhắc quyền micrô của macOS với nút Cho phép được làm nổi bật."
+        },
         "statusHelp": {
-          "checking": "Checking whether microphone access is already on.",
-          "needed": "Microphone access is still off.",
-          "requesting": "The macOS permission prompt should appear now.",
-          "waiting_for_user": "Allow the permission, then come back and check again.",
-          "granted": "Microphone access is on."
+          "checking": "Đang kiểm tra xem quyền micrô đã được bật chưa.",
+          "needed": "Quyền micrô vẫn đang tắt.",
+          "error": "SilkScribe chưa thể kiểm tra. Hãy thử lại hoặc dùng cách thủ công bên dưới.",
+          "requesting": "Lời nhắc cấp quyền của macOS sẽ xuất hiện ngay bây giờ.",
+          "waiting_for_user": "Hoàn tất trong macOS rồi quay lại đây.",
+          "granted": "Xong rồi. SilkScribe có thể tiếp tục."
         }
       },
       "accessibility": {
-        "title": "Allow SilkScribe to type for you",
-        "description": "SilkScribe needs Accessibility access to place text into your apps.",
-        "needLabel": "Needed to insert text",
-        "whyItMattersTitle": "Why it matters",
-        "whyItMattersBody": "SilkScribe puts finished text into the field you’re using. macOS protects that with Accessibility access.",
-        "breaksWithoutTitle": "Without it",
-        "breaksWithoutBody": "SilkScribe may transcribe, but it cannot reliably type the result into your apps.",
-        "afterGrantTitle": "After you allow it",
-        "afterGrantBody": "SilkScribe can type into apps and finish setup normally.",
+        "title": "Cho phép SilkScribe đặt văn bản ngay tại con trỏ của bạn.",
+        "description": "macOS bảo vệ việc chèn văn bản. Quyền này cho phép SilkScribe dán bản đọc chính tả hoàn chỉnh vào ứng dụng bạn đang dùng.",
+        "primaryAction": "Mở cài đặt Trợ năng",
+        "needLabel": "Cần để chèn văn bản",
+        "whyItMattersTitle": "Quyền này kết nối chính tả với ứng dụng của bạn",
+        "whyItMattersBody": "Sau khi phiên âm, SilkScribe cần quyền để đặt văn bản vào ghi chú, tài liệu, trình duyệt và các ô văn bản khác.",
+        "breaksWithoutTitle": "Nếu thiếu quyền này",
+        "breaksWithoutBody": "SilkScribe có thể phiên âm nhưng không thể gõ kết quả vào ứng dụng một cách ổn định.",
+        "afterGrantTitle": "Sau khi cho phép",
+        "afterGrantBody": "SilkScribe có thể gõ vào ứng dụng và hoàn tất thiết lập bình thường.",
         "steps": {
-          "step1": "Click “Open macOS prompt.”",
-          "step2": "If macOS sends you to System Settings, continue there.",
-          "step3": "Open Privacy & Security > Accessibility and find SilkScribe.",
-          "step4": "Turn on SilkScribe, then return here and check again."
+          "step1": "Nhấp vào “Mở lời nhắc macOS”.",
+          "step2": "Nếu macOS đưa bạn tới Cài đặt Hệ thống, hãy tiếp tục ở đó.",
+          "step3": "Mở Quyền riêng tư & Bảo mật > Trợ năng và tìm SilkScribe.",
+          "step4": "Bật SilkScribe, sau đó quay lại đây và kiểm tra lại."
         },
-        "manualHint": "If SilkScribe still looks disabled, reopen the app after turning it on, then check again.",
+        "manualHint": "Cách thủ công: Cài đặt Hệ thống > Quyền riêng tư & Bảo mật > Trợ năng, rồi bật SilkScribe.",
+        "privateNote": "Quyền văn bản chỉ dùng để đặt bản phiên âm vào ô đang hoạt động. Giọng nói và văn bản của bạn vẫn ở trên máy.",
+        "guide": {
+          "windowLabel": "Cài đặt Hệ thống",
+          "title": "Bật SilkScribe trong Trợ năng.",
+          "body": "macOS có thể đưa bạn tới Quyền riêng tư & Bảo mật. Tìm SilkScribe trong danh sách, bật lên rồi quay lại đây.",
+          "cue": "Bật SilkScribe",
+          "rowHelp": "Cho phép chèn văn bản",
+          "promptTitle": "Trợ năng",
+          "exampleApp1": "Finder",
+          "exampleApp2": "Mail",
+          "previewAlt": "Ví dụ về danh sách Trợ năng của macOS với SilkScribe được bật."
+        },
         "statusHelp": {
-          "checking": "Checking whether Accessibility access is already on.",
-          "needed": "Accessibility access is still off.",
-          "requesting": "The macOS approval flow should open now.",
-          "waiting_for_user": "Turn SilkScribe on in System Settings > Privacy & Security > Accessibility, then check again.",
-          "granted": "Accessibility access is on."
+          "checking": "Đang kiểm tra xem quyền Trợ năng đã được bật chưa.",
+          "needed": "Quyền Trợ năng vẫn đang tắt.",
+          "error": "SilkScribe chưa thể kiểm tra. Hãy thử lại hoặc dùng cách thủ công bên dưới.",
+          "requesting": "Quy trình phê duyệt của macOS sẽ mở ngay bây giờ.",
+          "waiting_for_user": "Hoàn tất trong macOS rồi quay lại đây.",
+          "granted": "Xong rồi. SilkScribe có thể tiếp tục."
         }
       }
-    },
-    "progress": {
-      "welcome": "Welcome",
-      "microphone": "Microphone",
-      "accessibility": "Text Access",
-      "setup": "Setup",
-      "practice": "Try It"
-    },
-    "welcome": {
-      "eyebrow": "Get set up",
-      "title": "Set up SilkScribe in a minute.",
-      "description": "We’ll turn on the permissions it needs, finish setup in the background, and let you try one real dictation.",
-      "badge": "Quick setup",
-      "features": {
-        "permissions": {
-          "title": "Clear permission help",
-          "description": "See exactly what to allow and why."
-        },
-        "engine": {
-          "title": "Automatic setup",
-          "description": "SilkScribe picks the right offline engine for this device."
-        },
-        "practice": {
-          "title": "One real test",
-          "description": "Make sure everything works before you start."
-        }
-      },
-      "outcomeLabel": "After setup",
-      "outcome": "Hold your shortcut, speak, and SilkScribe will place the text where you need it.",
-      "planLabel": "What happens",
-      "plan": {
-        "step1": {
-          "title": "Allow the microphone",
-          "description": "So SilkScribe can hear you."
-        },
-        "step2": {
-          "title": "Allow text access",
-          "description": "So SilkScribe can type into your apps."
-        },
-        "step3": {
-          "title": "Try it once",
-          "description": "Setup finishes, then you run one quick test."
-        }
-      },
-      "permissionPromise": "These steps are required for SilkScribe to work properly.",
-      "continue": "Continue"
     },
     "setup": {
       "eyebrow": "Setting things up",
@@ -293,6 +282,52 @@
         }
       }
     },
+    "progress": {
+      "welcome": "Welcome",
+      "microphone": "Microphone",
+      "accessibility": "Text Access",
+      "setup": "Setup",
+      "practice": "Try It"
+    },
+    "welcome": {
+      "eyebrow": "Get set up",
+      "title": "Set up SilkScribe in a minute.",
+      "description": "We’ll turn on the permissions it needs, finish setup in the background, and let you try one real dictation.",
+      "badge": "Quick setup",
+      "features": {
+        "permissions": {
+          "title": "Clear permission help",
+          "description": "See exactly what to allow and why."
+        },
+        "engine": {
+          "title": "Automatic setup",
+          "description": "SilkScribe picks the right offline engine for this device."
+        },
+        "practice": {
+          "title": "One real test",
+          "description": "Make sure everything works before you start."
+        }
+      },
+      "outcomeLabel": "After setup",
+      "outcome": "Hold your shortcut, speak, and SilkScribe will place the text where you need it.",
+      "planLabel": "What happens",
+      "plan": {
+        "step1": {
+          "title": "Allow the microphone",
+          "description": "So SilkScribe can hear you."
+        },
+        "step2": {
+          "title": "Allow text access",
+          "description": "So SilkScribe can type into your apps."
+        },
+        "step3": {
+          "title": "Try it once",
+          "description": "Setup finishes, then you run one quick test."
+        }
+      },
+      "permissionPromise": "These steps are required for SilkScribe to work properly.",
+      "continue": "Continue"
+    },
     "practice": {
       "eyebrow": "Try it",
       "title": "Try SilkScribe once",
@@ -333,6 +368,7 @@
   "modelSelector": {
     "custom": "Tùy chỉnh",
     "active": "Đang hoạt động",
+    "statusLabel": "Trạng thái mô hình: {{status}}",
     "switching": "Đang chuyển...",
     "noModelsAvailable": "Không có mô hình nào",
     "extracting": "Đang giải nén {{modelName}}...",
@@ -346,43 +382,59 @@
     "modelError": "Lỗi Mô Hình",
     "modelUnloaded": "Mô Hình Đã Gỡ",
     "noModelDownloadRequired": "Chưa Có Mô Hình - Cần Tải Xuống",
+    "modelMeta": "{{size}} · {{engine}}",
     "deleteModel": "Xóa {{modelName}}",
     "downloadSpeed": "{{speed}} MB/s",
+    "cancel": "Hủy",
+    "cancelDownload": "Hủy tải xuống",
+    "retryDownload": "Thử tải lại",
+    "downloadErrorTitle": "Không thể hoàn tất tải xuống",
+    "downloadProgress": {
+      "downloadedOf": "{{downloaded}} trên {{total}}",
+      "speed": "{{speed}}/giây",
+      "eta": "còn {{eta}}",
+      "starting": "Đang bắt đầu tải xuống",
+      "extracting": "Đang giải nén mô hình",
+      "almostDone": "Sắp xong",
+      "unknownEta": "Đang tính thời gian"
+    },
     "capabilities": {
       "languageSelection": "Hỗ trợ nhiều ngôn ngữ đầu vào",
-      "multiLanguage": "Đa ngôn ngữ",
-      "translation": "Có thể dịch sang tiếng Anh",
-      "translate": "Dịch sang tiếng Anh",
       "singleLanguage": "Chỉ hỗ trợ ngôn ngữ này",
-      "languageOnly": "Chỉ {{language}}"
+      "multiLanguage": "Đa ngôn ngữ",
+      "languageOnly": "Chỉ {{language}}",
+      "translation": "Có thể dịch sang tiếng Anh",
+      "translate": "Dịch sang tiếng Anh"
     },
-    "cancel": "Hủy",
-    "cancelDownload": "Hủy tải xuống"
+    "diskSpaceCheckError": "SilkScribe không thể kiểm tra dung lượng ổ đĩa trước khi tải xuống: {{error}}",
+    "insufficientSpace": "SilkScribe cần {{required}} dung lượng trống để tải mô hình này. Hiện có {{available}}.",
+    "downloadFailed": "SilkScribe không thể tải xuống mô hình: {{error}}",
+    "extractionFailed": "SilkScribe không thể giải nén mô hình: {{error}}",
+    "downloadErrors": {
+      "preflightFailed": "SilkScribe không thể kiểm tra dung lượng ổ đĩa trước khi tải xuống: {{detail}}",
+      "insufficientSpace": "SilkScribe cần {{required}} dung lượng trống để tải mô hình này. Hiện có {{available}}.",
+      "downloadFailed": "SilkScribe không thể tải mô hình xuống: {{detail}}",
+      "extractionFailed": "SilkScribe không thể giải nén mô hình: {{detail}}",
+      "unknown": "SilkScribe không thể hoàn tất tải xuống."
+    }
   },
   "settings": {
     "modelSettings": {
       "title": "Cài đặt {{model}}",
       "noSettingsNeeded": "Mô hình này hoạt động tự động mà không cần cấu hình."
     },
-    "models": {
-      "title": "Mô hình chuyển đổi",
-      "description": "Chọn mô hình chuyển đổi hoặc tải thêm mô hình. Các mô hình khác nhau có mức độ chính xác và tốc độ khác nhau.",
-      "downloaded": "Đã tải xuống",
-      "available": "Có thể tải xuống",
-      "deleteConfirm": "Bạn có chắc chắn muốn xóa {{modelName}}? Bạn sẽ cần tải lại để sử dụng.",
-      "deleteActiveConfirm": "{{modelName}} là mô hình đang hoạt động của bạn. Xóa nó sẽ dừng phiên âm cho đến khi bạn chọn một mô hình mới. Bạn có chắc không?",
-      "deleteTitle": "Xóa mô hình",
-      "filters": {
-        "all": "Tất cả",
-        "multiLanguage": "Đa ngôn ngữ",
-        "translation": "Dịch thuật",
-        "allLanguages": "Tất cả ngôn ngữ"
-      },
-      "noModelsMatch": "Không có mô hình nào khớp với bộ lọc này.",
-      "yourModels": "Mô hình đã tải",
-      "availableModels": "Có sẵn để tải xuống"
-    },
     "general": {
+      "eyebrow": "Thiết lập hằng ngày",
+      "pageTitle": "Giữ SilkScribe sẵn sàng ghi âm",
+      "pageDescription": "Đặt phím tắt, chọn micrô và để những điều cơ bản tự vận hành.",
+      "sections": {
+        "recording": "Ghi âm",
+        "recordingDescription": "Đây là những điều khiển mà hầu hết mọi người chạm vào đầu tiên.",
+        "feedback": "Phản hồi",
+        "feedbackDescription": "Tín hiệu âm thanh giúp bạn biết khi nào SilkScribe bắt đầu và ngừng lắng nghe.",
+        "app": "Ứng dụng",
+        "appDescription": "Chọn cảm giác của chính ứng dụng SilkScribe."
+      },
       "title": "Chung",
       "shortcut": {
         "title": "Phím tắt SilkScribe",
@@ -391,6 +443,7 @@
         "none": "Chưa cấu hình phím tắt",
         "notFound": "Không tìm thấy phím tắt",
         "pressKeys": "Nhấn phím...",
+        "reset": "Đặt lại phím tắt",
         "bindings": {
           "transcribe": {
             "name": "Phím tắt chuyển đổi",
@@ -409,6 +462,10 @@
           "restore": "Không thể khôi phục phím tắt gốc",
           "set": "Không thể đặt phím tắt: {{error}}",
           "reset": "Không thể đặt lại phím tắt về giá trị gốc"
+        },
+        "success": {
+          "saved": "Đã lưu phím tắt",
+          "reset": "Đã đặt lại phím tắt"
         }
       },
       "language": {
@@ -422,7 +479,44 @@
       "pushToTalk": {
         "label": "Nhấn để nói",
         "description": "Giữ để ghi âm, thả để dừng"
+      },
+      "theme": {
+        "title": "Giao diện",
+        "description": "Theo macOS hoặc chọn giao diện sáng hay tối cố định.",
+        "options": {
+          "system": "Hệ thống",
+          "light": "Sáng",
+          "dark": "Tối"
+        }
       }
+    },
+    "models": {
+      "eyebrow": "Công cụ nhận dạng giọng nói",
+      "pageTitle": "Chọn cách SilkScribe lắng nghe",
+      "pageDescription": "Chọn mô hình bạn muốn SilkScribe dùng, giữ các mô hình đã cài gọn gàng và tải thêm khi cần.",
+      "title": "Mô hình chuyển đổi",
+      "description": "Chọn mô hình chuyển đổi hoặc tải thêm mô hình. Các mô hình khác nhau có mức độ chính xác và tốc độ khác nhau.",
+      "currentModel": "Mô hình hiện tại",
+      "currentModelSettings": "Cài đặt mô hình hiện tại",
+      "currentModelSettingsDescription": "Chỉ các tùy chọn ngôn ngữ của mô hình đang hoạt động vẫn hiển thị ở đây.",
+      "yourModels": "Mô hình đã tải",
+      "availableModels": "Có sẵn để tải xuống",
+      "downloaded": "Đã tải xuống",
+      "available": "Có thể tải xuống",
+      "noActiveModelTitle": "Chưa có mô hình nào đang hoạt động.",
+      "noActiveModelDescription": "Tải một mô hình bên dưới và SilkScribe sẽ dùng nó cho lần phiên âm tiếp theo của bạn.",
+      "noExtraInstalled": "Hiện bạn chỉ cài mô hình hiện tại.",
+      "deleteConfirm": "Bạn có chắc chắn muốn xóa {{modelName}}? Bạn sẽ cần tải lại để sử dụng.",
+      "deleteActiveConfirm": "{{modelName}} là mô hình đang hoạt động của bạn. Xóa nó sẽ dừng phiên âm cho đến khi bạn chọn một mô hình mới. Bạn có chắc không?",
+      "deleteTitle": "Xóa mô hình",
+      "filters": {
+        "all": "Tất cả",
+        "multiLanguage": "Đa ngôn ngữ",
+        "translation": "Dịch thuật",
+        "allLanguages": "Tất cả ngôn ngữ"
+      },
+      "noModelsMatch": "Không có mô hình nào khớp với bộ lọc này.",
+      "deleteConfirmAction": "Xóa mô hình"
     },
     "sound": {
       "title": "Âm thanh",
@@ -445,20 +539,66 @@
       "volume": {
         "title": "Âm lượng",
         "description": "Điều chỉnh âm lượng của âm thanh phản hồi"
+      },
+      "soundTheme": {
+        "options": {
+          "marimba": "Marimba",
+          "pop": "Pop",
+          "custom": "Tùy chỉnh"
+        },
+        "preview": "Nghe thử chủ đề âm thanh (phát bắt đầu rồi dừng)"
       }
     },
     "advanced": {
+      "eyebrow": "Điều khiển tùy chọn",
+      "pageTitle": "Hành vi nâng cao và hỗ trợ",
+      "pageDescription": "Hầu hết mọi người có thể để nguyên. Dùng chúng khi bạn cần SilkScribe hoạt động khác đi trên máy của mình.",
       "title": "Nâng cao",
       "groups": {
         "app": "Ứng dụng",
         "output": "Đầu ra",
         "transcription": "Chuyển đổi",
         "history": "Lịch sử",
+        "support": "Hỗ trợ",
         "experimental": "Thử nghiệm"
+      },
+      "groupDescriptions": {
+        "app": "Hành vi khởi động và lớp phủ của chính ứng dụng.",
+        "output": "Cách văn bản hoàn chỉnh được đặt vào ứng dụng bạn đang dùng.",
+        "transcription": "Các điều chỉnh nhỏ thay đổi cách SilkScribe định hình văn bản của bạn.",
+        "history": "Cài đặt lưu giữ và dọn dẹp cho bản phiên âm và bản ghi.",
+        "support": "Công cụ bảo trì và thư mục giúp khắc phục sự cố.",
+        "experimental": "Các tính năng vẫn đang phát triển và có thể thay đổi."
       },
       "experimentalToggle": {
         "label": "Tính năng thử nghiệm",
         "description": "Bật các tính năng thử nghiệm đang trong quá trình phát triển."
+      },
+      "lazyStreamClose": {
+        "label": "Giữ mic mở giữa các lần phiên âm",
+        "description": "Giữ luồng mic mở ngắn sau khi dừng ghi để giảm độ trễ."
+      },
+      "acceleration": {
+        "whisper": {
+          "title": "Tăng tốc Whisper",
+          "description": "Chọn tăng tốc phần cứng cho mô hình Whisper."
+        },
+        "ort": {
+          "title": "Tăng tốc ONNX",
+          "description": "Chọn tăng tốc phần cứng cho mô hình ONNX."
+        },
+        "gpuDevice": {
+          "title": "Thiết bị GPU",
+          "description": "Chọn GPU cho suy luận Whisper.",
+          "auto": "Tự động"
+        },
+        "labels": {
+          "auto": "Tự động",
+          "cpu": "CPU",
+          "cuda": "CUDA",
+          "directml": "DirectML",
+          "rocm": "ROCm"
+        }
       },
       "startHidden": {
         "label": "Khởi động ẩn",
@@ -547,32 +687,6 @@
         "add": "Thêm",
         "remove": "Xóa {{word}}",
         "duplicate": "\"{{word}}\" đã tồn tại"
-      },
-      "acceleration": {
-        "labels": {
-          "auto": "Tự động",
-          "cpu": "CPU",
-          "cuda": "CUDA",
-          "directml": "DirectML",
-          "rocm": "ROCm"
-        },
-        "whisper": {
-          "title": "Tăng tốc Whisper",
-          "description": "Chọn tăng tốc phần cứng cho mô hình Whisper."
-        },
-        "ort": {
-          "title": "Tăng tốc ONNX",
-          "description": "Chọn tăng tốc phần cứng cho mô hình ONNX."
-        },
-        "gpuDevice": {
-          "title": "Thiết bị GPU",
-          "description": "Chọn GPU cho suy luận Whisper.",
-          "auto": "Tự động"
-        }
-      },
-      "lazyStreamClose": {
-        "label": "Giữ mic mở giữa các lần phiên âm",
-        "description": "Giữ luồng mic mở ngắn sau khi dừng ghi để giảm độ trễ."
       }
     },
     "postProcessing": {
@@ -636,22 +750,46 @@
       }
     },
     "history": {
+      "eyebrow": "Kho lưu bản phiên âm",
+      "pageTitle": "Xem lại các bản phiên âm gần đây của bạn",
+      "pageDescription": "Duyệt những gì SilkScribe đã ghi lại, phát lại âm thanh và lưu bất cứ thứ gì bạn muốn giữ bên mình.",
       "title": "Lịch sử",
       "openFolder": "Mở thư mục ghi âm",
+      "exportMarkdown": "Xuất Markdown",
+      "exportJson": "Xuất JSON",
+      "exportTitle": "Xuất lịch sử",
+      "exportEmpty": "Không có lịch sử để xuất.",
+      "exportSuccess": "Đã xuất lịch sử",
+      "exportError": "SilkScribe không thể xuất lịch sử.",
       "loading": "Đang tải lịch sử...",
       "empty": "Chưa có bản ghi nào. Bắt đầu ghi âm để xây dựng lịch sử của bạn!",
+      "emptyDescription": "Các bản phiên âm và bản ghi đã lưu của bạn sẽ hiện ở đây sau lần đọc chính tả đầu tiên.",
+      "emptyFiltered": "Không có bản phiên âm phù hợp.",
+      "emptyFilteredDescription": "Thử tìm kiếm khác hoặc quay lại Tất cả.",
+      "searchPlaceholder": "Tìm trong lịch sử",
+      "filters": {
+        "all": "Tất cả",
+        "saved": "Đã lưu",
+        "failed": "Thất bại"
+      },
       "copyToClipboard": "Sao chép bản ghi vào clipboard",
+      "copyAsMarkdown": "Sao chép bản phiên âm dưới dạng Markdown",
+      "copySuccess": "Đã sao chép vào bảng nhớ tạm",
+      "copyError": "SilkScribe không thể sao chép bản phiên âm này.",
       "save": "Lưu bản ghi",
       "unsave": "Xóa khỏi đã lưu",
       "delete": "Xóa mục",
       "deleteError": "Không thể xóa mục. Vui lòng thử lại.",
+      "deleteQueued": "Đã xóa mục",
+      "deleteUndoDescription": "Bạn có thể hoàn tác trong vài giây.",
+      "undoDelete": "Hoàn tác",
       "loadError": "Không thể tải lịch sử lúc này. Vui lòng thử lại.",
-      "retry": "Thử lại",
       "loadMore": "Tải thêm",
       "loadingMore": "Đang tải...",
       "retryableEmpty": "Phiên âm thất bại. Bản ghi có thể thử lại.",
       "retryTranscription": "Thử lại phiên âm",
-      "retryTranscriptionError": "Thử lại phiên âm thất bại. Vui lòng thử lại."
+      "retryTranscriptionError": "Thử lại phiên âm thất bại. Vui lòng thử lại.",
+      "retry": "Thử lại"
     },
     "debug": {
       "title": "Gỡ lỗi",
@@ -757,10 +895,16 @@
     "downloading": "Đang tải... {{progress}}%",
     "installing": "Đang cài đặt...",
     "preparing": "Đang chuẩn bị...",
-    "checkForUpdates": "Kiểm tra cập nhật"
+    "checkForUpdates": "Kiểm tra cập nhật",
+    "support": {
+      "label": "Hỗ trợ",
+      "appData": "Mở dữ liệu ứng dụng",
+      "logs": "Mở nhật ký"
+    }
   },
   "common": {
     "loading": "Đang tải...",
+    "versionLabel": "v{{version}}",
     "save": "Lưu",
     "cancel": "Hủy",
     "reset": "Đặt lại",
@@ -780,13 +924,12 @@
     "yes": "Có",
     "no": "Không",
     "noOptionsFound": "Không tìm thấy tùy chọn",
-    "versionLabel": "v{{version}}"
-  },
-  "accessibility": {
-    "permissionsRequired": "Cần quyền truy cập",
-    "permissionsDescription": "SilkScribe cần quyền truy cập để gõ văn bản đã chuyển đổi.",
-    "openSettings": "Mở Cài đặt Hệ thống",
-    "dismiss": "Bỏ qua"
+    "moreInformation": "Thêm thông tin",
+    "errorBoundary": {
+      "description": "SilkScribe không thể hiển thị chế độ xem này. Cài đặt và bản ghi của bạn vẫn được lưu trên máy.",
+      "reload": "Tải lại",
+      "openLogs": "Mở nhật ký"
+    }
   },
   "errors": {
     "loadDirectory": "Lỗi khi tải thư mục: {{error}}"
@@ -800,10 +943,87 @@
     "transcribing": "Đang phiên âm",
     "processing": "Đang xử lý",
     "success": "Xong",
-    "failed": "Thất bại"
+    "failed": "Thất bại",
+    "cancelled": "Đã hủy",
+    "cancelledDetail": "Bạn đã dừng"
+  },
+  "feedback": {
+    "pasteFailed": {
+      "copiedTitle": "Đã sao chép vào bảng nhớ tạm",
+      "copiedDescription": "SilkScribe không thể dán vào ứng dụng đang hoạt động.",
+      "failedTitle": "SilkScribe không thể dán",
+      "failedDescription": "Không thể dán hoặc sao chép văn bản.",
+      "copyFailedTitle": "SilkScribe không thể sao chép văn bản",
+      "copyFailedDescription": "Dán thất bại và bản sao dự phòng chưa hoàn tất."
+    }
   },
   "home": {
+    "title": "Chào mừng trở lại",
+    "subtitle": "Hoạt động đọc chính tả gần đây và lịch sử phát lại của bạn.",
+    "welcome": {
+      "eyebrow": "Trang chủ",
+      "title": "Chào mừng trở lại.",
+      "firstRunTitle": "Chào mừng đến với SilkScribe.",
+      "readyDescription": "Mọi thứ có vẻ đã sẵn sàng. Giữ phím tắt, nói tự nhiên, và SilkScribe sẽ đặt văn bản vào nơi bạn cần.",
+      "setupDescription": "Hoàn tất những điều cơ bản một lần, sau đó SilkScribe sẽ không làm phiền và luôn sẵn sàng mỗi khi bạn cần đọc chính tả nhanh.",
+      "primaryReady": "Xem lại thiết lập ghi âm",
+      "primarySetup": "Hoàn tất thiết lập",
+      "secondaryAction": "Duyệt các mô hình"
+    },
+    "setup": {
+      "title": "Vẫn còn vài điều cơ bản cần xử lý.",
+      "description": "Khi phím tắt, mô hình và quyền đã sẵn sàng, SilkScribe đã sẵn sàng cho việc đọc chính tả hằng ngày.",
+      "modelAction": "Chọn một mô hình",
+      "generalAction": "Mở thiết lập chung"
+    },
+    "readiness": {
+      "shortcut": {
+        "label": "Phím tắt",
+        "missingValue": "Đặt phím tắt ghi âm của bạn",
+        "action": "Chỉnh sửa"
+      },
+      "microphone": {
+        "label": "Micrô",
+        "action": "Thay đổi"
+      },
+      "model": {
+        "label": "Mô hình",
+        "missingValue": "Chọn một mô hình giọng nói",
+        "action": "Quản lý"
+      },
+      "permissions": {
+        "label": "Quyền",
+        "ready": "Sẵn sàng gõ vào các ứng dụng của bạn",
+        "needsAttention": "Cần xử lý trước khi việc đọc chính tả hoàn tất",
+        "action": "Xem lại"
+      }
+    },
+    "firstUse": {
+      "title": "Bản phiên âm đầu tiên của bạn sẽ hiện ở đây.",
+      "description": "Nhấp vào một ô văn bản, giữ phím tắt của bạn, nói một câu rồi thả ra. SilkScribe sẽ lưu kết quả tại đây để bạn xem lại sau.",
+      "generalAction": "Kiểm tra cơ bản",
+      "modelsAction": "Chọn một mô hình"
+    },
+    "activityTitle": "Hoạt động gần đây",
+    "loadMore": "Tải thêm",
     "loadingMore": "Đang tải...",
-    "loadMore": "Tải thêm"
+    "stats": {
+      "streak": "Chuỗi hiện tại",
+      "words": "Số từ đã phiên âm",
+      "wpm": "Số từ/phút trung bình"
+    },
+    "empty": {
+      "title": "Chưa có bản phiên âm gần đây.",
+      "description": "Ngay khi bạn ghi âm điều gì đó, SilkScribe sẽ tự động lưu bản phiên âm và âm thanh tại đây."
+    },
+    "error": {
+      "title": "Không thể tải bảng điều khiển của bạn.",
+      "description": "Hãy thử lại để làm mới hoạt động gần đây của bạn.",
+      "retry": "Thử lại"
+    },
+    "days": {
+      "today": "Hôm nay",
+      "yesterday": "Hôm qua"
+    }
   }
 }

@@ -25,6 +25,7 @@ import { getTranslatedModelName } from "@/lib/utils/modelTranslation";
 import { formatKeyCombination } from "@/lib/utils/keyboard";
 import { useOsType } from "@/hooks/useOsType";
 import { Button } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { HistoryFeed } from "@/components/history/HistoryFeed";
 import { UsageStatsStrip } from "./UsageStatsStrip";
 
@@ -39,17 +40,18 @@ const EMPTY_SUMMARY: UsageSummary = {
 const HOME_PAGE_SIZE = 50;
 const MIDNIGHT_REFRESH_BUFFER_MS = 5_000;
 
+type HomeNavigationSection =
+  | "home"
+  | "general"
+  | "models"
+  | "advanced"
+  | "postprocessing"
+  | "history"
+  | "debug";
+
 interface HomeDashboardProps {
-  onNavigate?: (
-    section:
-      | "home"
-      | "general"
-      | "models"
-      | "advanced"
-      | "postprocessing"
-      | "history"
-      | "debug",
-  ) => void;
+  onNavigate?: (section: HomeNavigationSection) => void;
+  onStartPermissionRepair?: () => void | Promise<void>;
 }
 
 interface PermissionSnapshot {
@@ -84,7 +86,10 @@ const selectHomeCursor = (data: HomeDashboardPageData) => data.next_cursor;
 
 const HOME_EMPTY_SUMMARY = () => ({ ...EMPTY_SUMMARY });
 
-const HomeDashboard = ({ onNavigate }: HomeDashboardProps) => {
+const HomeDashboard = ({
+  onNavigate,
+  onStartPermissionRepair,
+}: HomeDashboardProps) => {
   const { t } = useTranslation();
   const osType = useOsType();
   const { settings } = useSettings();
@@ -94,6 +99,8 @@ const HomeDashboard = ({ onNavigate }: HomeDashboardProps) => {
     accessibility: true,
     microphone: true,
   });
+  const [isStartingPermissionRepair, setIsStartingPermissionRepair] =
+    useState(false);
   const lastFetchedDayRef = useRef<string>(getLocalDayKey());
 
   const {
@@ -187,7 +194,10 @@ const HomeDashboard = ({ onNavigate }: HomeDashboardProps) => {
           setPermissions({ accessibility, microphone });
         }
       } catch (permissionError) {
-        console.warn("Failed to load permissions for dashboard:", permissionError);
+        console.warn(
+          "Failed to load permissions for dashboard:",
+          permissionError,
+        );
       }
     };
 
@@ -225,6 +235,27 @@ const HomeDashboard = ({ onNavigate }: HomeDashboardProps) => {
   const setupActionLabel = setupReady
     ? t("home.welcome.primaryReady")
     : t("home.welcome.primarySetup");
+  const startPermissionRepairOnce = async () => {
+    if (isStartingPermissionRepair || !onStartPermissionRepair) {
+      return;
+    }
+
+    setIsStartingPermissionRepair(true);
+    try {
+      await onStartPermissionRepair();
+    } finally {
+      setIsStartingPermissionRepair(false);
+    }
+  };
+
+  const navigateWithPermissionGate = (destination: HomeNavigationSection) => {
+    if (permissionsReady) {
+      onNavigate?.(destination);
+      return;
+    }
+
+    void startPermissionRepairOnce();
+  };
 
   const readinessItems = [
     {
@@ -262,8 +293,9 @@ const HomeDashboard = ({ onNavigate }: HomeDashboardProps) => {
         ? t("home.readiness.permissions.ready")
         : t("home.readiness.permissions.needsAttention"),
       status: permissionsReady,
-      action: () => onNavigate?.("general"),
+      action: () => navigateWithPermissionGate("general"),
       actionLabel: t("home.readiness.permissions.action"),
+      disabled: !permissionsReady && isStartingPermissionRepair,
     },
   ];
 
@@ -291,8 +323,15 @@ const HomeDashboard = ({ onNavigate }: HomeDashboardProps) => {
                 type="button"
                 variant="primary"
                 size="md"
+                disabled={!permissionsReady && isStartingPermissionRepair}
                 onClick={() =>
-                  onNavigate?.(setupReady ? "general" : currentModelInfo ? "general" : "models")
+                  navigateWithPermissionGate(
+                    setupReady
+                      ? "general"
+                      : currentModelInfo
+                        ? "general"
+                        : "models",
+                  )
                 }
               >
                 {setupActionLabel}
@@ -331,7 +370,8 @@ const HomeDashboard = ({ onNavigate }: HomeDashboardProps) => {
                     type="button"
                     variant="secondary"
                     size="sm"
-                    onClick={() => onNavigate?.("general")}
+                    disabled={!permissionsReady && isStartingPermissionRepair}
+                    onClick={() => navigateWithPermissionGate("general")}
                   >
                     {t("home.setup.generalAction")}
                   </Button>
@@ -365,8 +405,9 @@ const HomeDashboard = ({ onNavigate }: HomeDashboardProps) => {
                     </span>
                     <button
                       type="button"
-                      className="text-xs font-semibold text-ss-text-tertiary transition-colors duration-150 hover:text-ss-brand-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35"
-                      onClick={item.action}
+                      className="text-xs font-semibold text-ss-text-tertiary transition-colors duration-150 hover:text-ss-brand-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:text-ss-text-tertiary"
+                      disabled={item.disabled}
+                      onClick={() => item.action()}
                     >
                       {item.actionLabel}
                     </button>
@@ -389,32 +430,30 @@ const HomeDashboard = ({ onNavigate }: HomeDashboardProps) => {
       </section>
 
       {!hasActivity ? (
-        <section className="rounded-[22px] border border-ss-border-subtle bg-ss-bg-surface px-5 py-5 shadow-[var(--ss-shadow-card)]">
-          <p className="text-sm font-semibold text-ss-text-primary">
-            {t("home.firstUse.title")}
-          </p>
-          <p className="mt-2 max-w-[66ch] text-sm leading-relaxed text-ss-text-secondary">
-            {t("home.firstUse.description")}
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={() => onNavigate?.("general")}
-            >
-              {t("home.firstUse.generalAction")}
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={() => onNavigate?.("models")}
-            >
-              {t("home.firstUse.modelsAction")}
-            </Button>
-          </div>
-        </section>
+        <EmptyState
+          title={t("home.firstUse.title")}
+          description={t("home.firstUse.description")}
+          action={
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => onNavigate?.("general")}
+              >
+                {t("home.firstUse.generalAction")}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => onNavigate?.("models")}
+              >
+                {t("home.firstUse.modelsAction")}
+              </Button>
+            </div>
+          }
+        />
       ) : null}
 
       <section className="space-y-3">
