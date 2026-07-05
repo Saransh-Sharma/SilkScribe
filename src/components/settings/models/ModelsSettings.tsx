@@ -7,7 +7,7 @@ import { ModelCard } from "@/components/onboarding";
 import { useModelStore } from "@/stores/modelStore";
 import { LANGUAGES } from "@/lib/constants/languages.ts";
 import type { ModelInfo } from "@/bindings";
-import { AppPage } from "@/components/ui";
+import { AppPage, EmptyState, Skeleton } from "@/components/ui";
 import { SettingsGroup } from "@/components/ui/SettingsGroup";
 import { LanguageSelector } from "../LanguageSelector";
 import { TranslateToEnglish } from "../TranslateToEnglish";
@@ -294,10 +294,10 @@ export const ModelsSettings: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="w-full">
-        <div className="flex items-center justify-center py-16">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-ss-brand-secondary border-t-transparent" />
-        </div>
+      <div className="w-full space-y-3">
+        <Skeleton className="h-4 w-32" />
+        <Skeleton rounded="lg" className="h-28 w-full" />
+        <Skeleton rounded="lg" className="h-28 w-full" />
       </div>
     );
   }
@@ -332,7 +332,9 @@ export const ModelsSettings: React.FC = () => {
               {supportsLanguageSelection || supportsTranslation ? (
                 <SettingsGroup
                   title={t("settings.models.currentModelSettings")}
-                  description={t("settings.models.currentModelSettingsDescription")}
+                  description={t(
+                    "settings.models.currentModelSettingsDescription",
+                  )}
                 >
                   {supportsLanguageSelection ? (
                     <LanguageSelector
@@ -342,7 +344,10 @@ export const ModelsSettings: React.FC = () => {
                     />
                   ) : null}
                   {supportsTranslation ? (
-                    <TranslateToEnglish descriptionMode="inline" grouped={true} />
+                    <TranslateToEnglish
+                      descriptionMode="inline"
+                      grouped={true}
+                    />
                   ) : null}
                 </SettingsGroup>
               ) : null}
@@ -419,9 +424,7 @@ export const ModelsSettings: React.FC = () => {
             )}
           </div>
         ) : (
-          <div className="rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface px-5 py-8 text-center text-sm text-ss-text-tertiary shadow-[var(--ss-shadow-card)]">
-            {t("settings.models.noModelsMatch")}
-          </div>
+          <EmptyState title={t("settings.models.noModelsMatch")} />
         )}
       </div>
     </AppPage>

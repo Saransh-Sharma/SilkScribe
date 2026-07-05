@@ -11,6 +11,7 @@ import { AudioFeedback } from "../AudioFeedback";
 import { useSettings } from "../../../hooks/useSettings";
 import { VolumeSlider } from "../VolumeSlider";
 import { MuteWhileRecording } from "../MuteWhileRecording";
+import { ThemeSelector } from "../ThemeSelector";
 
 export const GeneralSettings: React.FC = () => {
   const { t } = useTranslation();
@@ -47,6 +48,7 @@ export const GeneralSettings: React.FC = () => {
         description={t("settings.general.sections.appDescription")}
       >
         <AppLanguageSelector descriptionMode="inline" grouped={true} />
+        <ThemeSelector descriptionMode="inline" grouped={true} />
       </SettingsGroup>
     </AppPage>
   );

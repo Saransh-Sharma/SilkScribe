@@ -123,6 +123,7 @@ export const GlobalShortcutInput: React.FC<GlobalShortcutInputProps> = ({
         if (editingShortcutId && bindings[editingShortcutId]) {
           try {
             await updateBinding(editingShortcutId, newShortcut);
+            toast.success(t("settings.general.shortcut.success.saved"));
           } catch (error) {
             console.error("Failed to change binding:", error);
             toast.error(
@@ -192,6 +193,7 @@ export const GlobalShortcutInput: React.FC<GlobalShortcutInputProps> = ({
     originalBinding,
     updateBinding,
     osType,
+    t,
   ]);
 
   // Start recording a new shortcut
@@ -306,8 +308,18 @@ export const GlobalShortcutInput: React.FC<GlobalShortcutInputProps> = ({
           </div>
         )}
         <ResetButton
-          onClick={() => resetBinding(shortcutId)}
+          onClick={() => {
+            resetBinding(shortcutId)
+              .then(() => {
+                toast.success(t("settings.general.shortcut.success.reset"));
+              })
+              .catch((error) => {
+                console.error("Failed to reset shortcut:", error);
+                toast.error(t("settings.general.shortcut.errors.reset"));
+              });
+          }}
           disabled={isUpdating(`binding_${shortcutId}`)}
+          ariaLabel={t("settings.general.shortcut.reset")}
         />
       </div>
     </SettingContainer>

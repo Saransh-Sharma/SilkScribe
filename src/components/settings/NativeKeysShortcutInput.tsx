@@ -23,7 +23,9 @@ interface NativeKeysEvent {
   hotkey_string: string;
 }
 
-export const NativeKeysShortcutInput: React.FC<NativeKeysShortcutInputProps> = ({
+export const NativeKeysShortcutInput: React.FC<
+  NativeKeysShortcutInputProps
+> = ({
   descriptionMode = "tooltip",
   grouped = false,
   shortcutId,
@@ -96,6 +98,7 @@ export const NativeKeysShortcutInput: React.FC<NativeKeysShortcutInputProps> = (
             const keysToCommit = currentKeysRef.current;
             try {
               await updateBinding(shortcutId, keysToCommit);
+              toast.success(t("settings.general.shortcut.success.saved"));
             } catch (error) {
               console.error("Failed to change binding:", error);
               toast.error(
@@ -291,8 +294,18 @@ export const NativeKeysShortcutInput: React.FC<NativeKeysShortcutInputProps> = (
           </div>
         )}
         <ResetButton
-          onClick={() => resetBinding(shortcutId)}
+          onClick={() => {
+            resetBinding(shortcutId)
+              .then(() => {
+                toast.success(t("settings.general.shortcut.success.reset"));
+              })
+              .catch((error) => {
+                console.error("Failed to reset shortcut:", error);
+                toast.error(t("settings.general.shortcut.errors.reset"));
+              });
+          }}
           disabled={isUpdating(`binding_${shortcutId}`)}
+          ariaLabel={t("settings.general.shortcut.reset")}
         />
       </div>
     </SettingContainer>
