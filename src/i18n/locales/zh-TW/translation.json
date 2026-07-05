@@ -14,7 +14,9 @@
     "advanced": "進階",
     "postProcessing": "後處理",
     "history": "歷史紀錄",
-    "debug": "偵錯"
+    "debug": "偵錯",
+    "preferences": "偏好設定",
+    "developer": "開發者"
   },
   "onboarding": {
     "subtitle": "首先，請選擇一種模型",
@@ -88,6 +90,7 @@
         "iEnabledIt": "我已經開啟了",
         "checkAgain": "再檢查一次",
         "continue": "繼續",
+        "repairAction": "開啟引導式修復",
         "appName": "SilkScribe",
         "guidedHelper": "引導式協助",
         "privateLabel": "隱私優先設計",
@@ -128,7 +131,8 @@
           "promptBody": "macOS 只會詢問一次,讓 SilkScribe 能在錄音時聽見你的聽寫。",
           "deny": "不允許",
           "allow": "允許",
-          "allowed": "已允許"
+          "allowed": "已允許",
+          "previewAlt": "macOS 麥克風權限要求範例，其中「允許」按鈕已突顯。"
         },
         "statusHelp": {
           "checking": "正在檢查麥克風存取是否已經開啟。",
@@ -166,7 +170,8 @@
           "rowHelp": "允許文字插入",
           "promptTitle": "輔助使用",
           "exampleApp1": "Finder",
-          "exampleApp2": "郵件"
+          "exampleApp2": "郵件",
+          "previewAlt": "已開啟 SilkScribe 的 macOS 輔助使用列表範例。"
         },
         "statusHelp": {
           "checking": "正在檢查輔助使用權限是否已經開啟。",
@@ -177,52 +182,6 @@
           "granted": "已開啟。SilkScribe 可以繼續。"
         }
       }
-    },
-    "progress": {
-      "welcome": "歡迎",
-      "microphone": "麥克風",
-      "accessibility": "文字存取",
-      "setup": "設定",
-      "practice": "試用"
-    },
-    "welcome": {
-      "eyebrow": "開始設定",
-      "title": "用一分鐘完成 SilkScribe 設定。",
-      "description": "我們會開啟它需要的權限、在背景完成設定，並讓你實際試用一次語音輸入。",
-      "badge": "快速設定",
-      "features": {
-        "permissions": {
-          "title": "清楚的權限說明",
-          "description": "清楚知道該允許什麼以及原因。"
-        },
-        "engine": {
-          "title": "自動設定",
-          "description": "SilkScribe 會為這台裝置挑選合適的離線引擎。"
-        },
-        "practice": {
-          "title": "一次真實測試",
-          "description": "開始使用前先確認一切都正常。"
-        }
-      },
-      "outcomeLabel": "設定完成後",
-      "outcome": "按住你的快捷鍵開始說話，SilkScribe 會把文字放到你需要的位置。",
-      "planLabel": "接下來會發生什麼",
-      "plan": {
-        "step1": {
-          "title": "允許麥克風",
-          "description": "讓 SilkScribe 能聽見你。"
-        },
-        "step2": {
-          "title": "允許文字存取",
-          "description": "讓 SilkScribe 能在你的應用程式中輸入文字。"
-        },
-        "step3": {
-          "title": "實際試一次",
-          "description": "設定完成後，你會做一次快速測試。"
-        }
-      },
-      "permissionPromise": "這些步驟是 SilkScribe 正常運作所必需的。",
-      "continue": "繼續"
     },
     "setup": {
       "eyebrow": "正在準備",
@@ -323,6 +282,52 @@
         }
       }
     },
+    "progress": {
+      "welcome": "歡迎",
+      "microphone": "麥克風",
+      "accessibility": "文字存取",
+      "setup": "設定",
+      "practice": "試用"
+    },
+    "welcome": {
+      "eyebrow": "開始設定",
+      "title": "用一分鐘完成 SilkScribe 設定。",
+      "description": "我們會開啟它需要的權限、在背景完成設定，並讓你實際試用一次語音輸入。",
+      "badge": "快速設定",
+      "features": {
+        "permissions": {
+          "title": "清楚的權限說明",
+          "description": "清楚知道該允許什麼以及原因。"
+        },
+        "engine": {
+          "title": "自動設定",
+          "description": "SilkScribe 會為這台裝置挑選合適的離線引擎。"
+        },
+        "practice": {
+          "title": "一次真實測試",
+          "description": "開始使用前先確認一切都正常。"
+        }
+      },
+      "outcomeLabel": "設定完成後",
+      "outcome": "按住你的快捷鍵開始說話，SilkScribe 會把文字放到你需要的位置。",
+      "planLabel": "接下來會發生什麼",
+      "plan": {
+        "step1": {
+          "title": "允許麥克風",
+          "description": "讓 SilkScribe 能聽見你。"
+        },
+        "step2": {
+          "title": "允許文字存取",
+          "description": "讓 SilkScribe 能在你的應用程式中輸入文字。"
+        },
+        "step3": {
+          "title": "實際試一次",
+          "description": "設定完成後，你會做一次快速測試。"
+        }
+      },
+      "permissionPromise": "這些步驟是 SilkScribe 正常運作所必需的。",
+      "continue": "繼續"
+    },
     "practice": {
       "eyebrow": "試用",
       "title": "試用一次 SilkScribe",
@@ -363,6 +368,7 @@
   "modelSelector": {
     "custom": "自訂",
     "active": "使用中",
+    "statusLabel": "模型狀態：{{status}}",
     "switching": "切換中...",
     "noModelsAvailable": "沒有可用的模型",
     "extracting": "正在解壓 {{modelName}}...",
@@ -376,10 +382,22 @@
     "modelError": "模型錯誤",
     "modelUnloaded": "模型已卸載",
     "noModelDownloadRequired": "無模型 - 需要下載",
+    "modelMeta": "{{size}} · {{engine}}",
     "deleteModel": "刪除 {{modelName}}",
     "downloadSpeed": "{{speed}} MB/s",
     "cancel": "取消",
     "cancelDownload": "取消下載",
+    "retryDownload": "重試下載",
+    "downloadErrorTitle": "下載未能完成",
+    "downloadProgress": {
+      "downloadedOf": "{{downloaded}} / {{total}}",
+      "speed": "{{speed}}/秒",
+      "eta": "剩餘 {{eta}}",
+      "starting": "正在開始下載",
+      "extracting": "正在解壓縮模型",
+      "almostDone": "即將完成",
+      "unknownEta": "正在計算時間"
+    },
     "capabilities": {
       "languageSelection": "支援多種輸入語言",
       "singleLanguage": "僅支援此語言",
@@ -387,7 +405,11 @@
       "languageOnly": "僅 {{language}}",
       "translation": "可翻譯為英語",
       "translate": "翻譯為英語"
-    }
+    },
+    "diskSpaceCheckError": "SilkScribe 在下載前無法檢查磁碟空間：{{error}}",
+    "insufficientSpace": "下載此模型需要 {{required}} 的可用空間。目前可用 {{available}}。",
+    "downloadFailed": "SilkScribe 無法下載該模型：{{error}}",
+    "extractionFailed": "SilkScribe 無法解壓縮該模型：{{error}}"
   },
   "settings": {
     "modelSettings": {
@@ -395,6 +417,17 @@
       "noSettingsNeeded": "此模型自動運行，無需設定"
     },
     "general": {
+      "eyebrow": "日常設定",
+      "pageTitle": "讓 SilkScribe 隨時可錄",
+      "pageDescription": "設定快速鍵、選擇麥克風，並讓基本功能自動運作。",
+      "sections": {
+        "recording": "錄音",
+        "recordingDescription": "這些是大多數人最先調整的設定。",
+        "feedback": "回饋",
+        "feedbackDescription": "聲音提示讓你知道 SilkScribe 何時開始與停止聆聽。",
+        "app": "App",
+        "appDescription": "選擇 SilkScribe App 本身的使用感受。"
+      },
       "title": "一般",
       "shortcut": {
         "title": "SilkScribe 快捷鍵",
@@ -403,6 +436,7 @@
         "none": "未設定快捷鍵",
         "notFound": "未找到快捷鍵",
         "pressKeys": "請按鍵...",
+        "reset": "重設快速鍵",
         "bindings": {
           "transcribe": {
             "name": "轉錄快捷鍵",
@@ -421,6 +455,10 @@
           "restore": "無法還原原始快捷鍵",
           "set": "無法設定快捷鍵: {{error}}",
           "reset": "無法將快捷鍵重設為原始值"
+        },
+        "success": {
+          "saved": "已儲存快速鍵",
+          "reset": "已重設快速鍵"
         }
       },
       "language": {
@@ -434,15 +472,33 @@
       "pushToTalk": {
         "label": "按住說話",
         "description": "按住錄製，放開停止"
+      },
+      "theme": {
+        "title": "外觀",
+        "description": "跟隨 macOS，或選擇固定的淺色或深色介面。",
+        "options": {
+          "system": "系統",
+          "light": "淺色",
+          "dark": "深色"
+        }
       }
     },
     "models": {
+      "eyebrow": "語音引擎",
+      "pageTitle": "選擇 SilkScribe 的聆聽方式",
+      "pageDescription": "選擇你希望 SilkScribe 使用的模型，整理已安裝的模型，並在需要時下載更多。",
       "title": "轉錄模型",
       "description": "選擇轉錄模型或下載其他模型。不同模型提供不同的準確度和速度",
+      "currentModel": "目前模型",
+      "currentModelSettings": "目前模型設定",
+      "currentModelSettingsDescription": "這裡僅顯示目前使用中模型的語言選項。",
       "yourModels": "已下載的模型",
       "availableModels": "可供下載",
       "downloaded": "已下載",
       "available": "可下載",
+      "noActiveModelTitle": "尚無使用中的模型。",
+      "noActiveModelDescription": "在下方下載模型，SilkScribe 會在你下次轉錄時使用它。",
+      "noExtraInstalled": "目前你只安裝了目前的模型。",
       "deleteConfirm": "確定要刪除 {{modelName}} 嗎？刪除後須重新下載才能使用",
       "deleteActiveConfirm": "{{modelName}} 是您目前使用的模型。刪除後將停止轉錄，直到您選擇新的模型。確定要刪除嗎？",
       "deleteTitle": "刪除模型",
@@ -452,7 +508,8 @@
         "translation": "翻譯",
         "allLanguages": "所有語言"
       },
-      "noModelsMatch": "沒有符合此篩選條件的模型"
+      "noModelsMatch": "沒有符合此篩選條件的模型",
+      "deleteConfirmAction": "刪除模型"
     },
     "sound": {
       "title": "聲音",
@@ -475,20 +532,66 @@
       "volume": {
         "title": "音量",
         "description": "調整聲音回饋的音量"
+      },
+      "soundTheme": {
+        "options": {
+          "marimba": "馬林巴",
+          "pop": "流行",
+          "custom": "自訂"
+        },
+        "preview": "試聽聲音主題（先播放開始再播放停止）"
       }
     },
     "advanced": {
+      "eyebrow": "選用控制項",
+      "pageTitle": "進階行為與支援",
+      "pageDescription": "大多數人無需更動這些。當你需要 SilkScribe 在你的裝置上有不同表現時再使用。",
       "title": "進階",
       "groups": {
         "app": "應用程式",
         "output": "輸出",
         "transcription": "轉錄",
         "history": "歷史",
+        "support": "支援",
         "experimental": "實驗性"
+      },
+      "groupDescriptions": {
+        "app": "App 本身的啟動與浮動視窗行為。",
+        "output": "完成的文字如何放入你正在使用的 App。",
+        "transcription": "改變 SilkScribe 整理文字方式的細微調整。",
+        "history": "轉錄與錄音的保留與清理設定。",
+        "support": "有助於疑難排解的維護工具與檔案夾。",
+        "experimental": "仍在演進、可能會變動的功能。"
       },
       "experimentalToggle": {
         "label": "實驗性功能",
         "description": "啟用仍在開發中的實驗性功能"
+      },
+      "lazyStreamClose": {
+        "label": "轉寫之間保持麥克風開啟",
+        "description": "停止錄音後短暫保持麥克風串流開啟，以減少連續轉寫的延遲。"
+      },
+      "acceleration": {
+        "whisper": {
+          "title": "Whisper 加速",
+          "description": "為 Whisper 模型選擇硬體加速。"
+        },
+        "ort": {
+          "title": "ONNX 加速",
+          "description": "為 ONNX 模型選擇硬體加速。"
+        },
+        "gpuDevice": {
+          "title": "GPU 裝置",
+          "description": "選擇 Whisper 推論使用的 GPU。",
+          "auto": "自動"
+        },
+        "labels": {
+          "auto": "自動",
+          "cpu": "CPU",
+          "cuda": "CUDA",
+          "directml": "DirectML",
+          "rocm": "ROCm"
+        }
       },
       "startHidden": {
         "label": "隱藏啟動",
@@ -577,32 +680,6 @@
         "add": "新增",
         "remove": "刪除 {{word}}",
         "duplicate": "「{{word}}」已存在"
-      },
-      "acceleration": {
-        "labels": {
-          "auto": "自動",
-          "cpu": "CPU",
-          "cuda": "CUDA",
-          "directml": "DirectML",
-          "rocm": "ROCm"
-        },
-        "whisper": {
-          "title": "Whisper 加速",
-          "description": "為 Whisper 模型選擇硬體加速。"
-        },
-        "ort": {
-          "title": "ONNX 加速",
-          "description": "為 ONNX 模型選擇硬體加速。"
-        },
-        "gpuDevice": {
-          "title": "GPU 裝置",
-          "description": "選擇 Whisper 推論使用的 GPU。",
-          "auto": "自動"
-        }
-      },
-      "lazyStreamClose": {
-        "label": "轉寫之間保持麥克風開啟",
-        "description": "停止錄音後短暫保持麥克風串流開啟，以減少連續轉寫的延遲。"
       }
     },
     "postProcessing": {
@@ -666,22 +743,46 @@
       }
     },
     "history": {
+      "eyebrow": "轉錄封存",
+      "pageTitle": "查看你的近期轉錄",
+      "pageDescription": "瀏覽 SilkScribe 擷取的內容、重播音訊，並保存任何你想留存的內容。",
       "title": "歷史紀錄",
       "openFolder": "開啟錄音資料夾",
+      "exportMarkdown": "匯出 Markdown",
+      "exportJson": "匯出 JSON",
+      "exportTitle": "匯出歷史記錄",
+      "exportEmpty": "沒有可匯出的歷史記錄。",
+      "exportSuccess": "已匯出歷史記錄",
+      "exportError": "SilkScribe 無法匯出歷史記錄。",
       "loading": "載入歷史紀錄中...",
       "empty": "還沒有轉錄紀錄。開始錄製以建立您的歷史紀錄！",
+      "emptyDescription": "你保存的轉錄與錄音將在首次聽寫後顯示在這裡。",
+      "emptyFiltered": "沒有相符的轉錄。",
+      "emptyFilteredDescription": "試試其他搜尋，或切換回「全部」。",
+      "searchPlaceholder": "搜尋歷史記錄",
+      "filters": {
+        "all": "全部",
+        "saved": "已儲存",
+        "failed": "失敗"
+      },
       "copyToClipboard": "複製轉錄到剪貼簿",
+      "copyAsMarkdown": "將轉錄複製為 Markdown",
+      "copySuccess": "已複製到剪貼簿",
+      "copyError": "SilkScribe 無法複製此轉錄。",
       "save": "儲存轉錄",
       "unsave": "從已儲存中移除",
       "delete": "刪除條目",
       "deleteError": "刪除條目失敗，請重試",
+      "deleteQueued": "已刪除項目",
+      "deleteUndoDescription": "你可以在幾秒內復原。",
+      "undoDelete": "復原",
       "loadError": "暫時無法載入歷史記錄。請再試一次。",
-      "retry": "重試",
       "loadMore": "載入更多",
       "loadingMore": "載入中...",
       "retryableEmpty": "轉寫失敗。錄音可重試。",
       "retryTranscription": "重試轉寫",
-      "retryTranscriptionError": "重試轉寫失敗。請再試一次。"
+      "retryTranscriptionError": "重試轉寫失敗。請再試一次。",
+      "retry": "重試"
     },
     "debug": {
       "title": "偵錯",
@@ -787,10 +888,16 @@
     "downloading": "下載中... {{progress}}%",
     "installing": "安裝中...",
     "preparing": "準備中...",
-    "checkForUpdates": "檢查更新"
+    "checkForUpdates": "檢查更新",
+    "support": {
+      "label": "支援",
+      "appData": "開啟 App 資料",
+      "logs": "開啟記錄"
+    }
   },
   "common": {
     "loading": "載入中...",
+    "versionLabel": "v{{version}}",
     "save": "儲存",
     "cancel": "取消",
     "reset": "重設",
@@ -810,7 +917,12 @@
     "yes": "是",
     "no": "否",
     "noOptionsFound": "未找到選項",
-    "versionLabel": "v{{version}}"
+    "moreInformation": "更多資訊",
+    "errorBoundary": {
+      "description": "SilkScribe 無法算繪此檢視。你的設定與錄音仍保存在本機。",
+      "reload": "重新載入",
+      "openLogs": "開啟記錄"
+    }
   },
   "errors": {
     "loadDirectory": "載入目錄時發生錯誤: {{error}}"
@@ -824,10 +936,85 @@
     "transcribing": "轉寫中",
     "processing": "處理中",
     "success": "完成",
-    "failed": "失敗"
+    "failed": "失敗",
+    "cancelled": "已取消",
+    "cancelledDetail": "由你停止"
+  },
+  "feedback": {
+    "pasteFailed": {
+      "copiedTitle": "已複製到剪貼簿",
+      "copiedDescription": "SilkScribe 無法貼上到目前的 App。",
+      "failedTitle": "SilkScribe 無法貼上",
+      "failedDescription": "文字無法貼上，也無法複製。"
+    }
   },
   "home": {
+    "title": "歡迎回來",
+    "subtitle": "你近期的聽寫活動與播放記錄。",
+    "welcome": {
+      "eyebrow": "首頁",
+      "title": "歡迎回來。",
+      "firstRunTitle": "歡迎使用 SilkScribe。",
+      "readyDescription": "看起來一切就緒。按住快速鍵自然地說話，SilkScribe 會把文字放到你需要的地方。",
+      "setupDescription": "把基本項目一次設好，之後 SilkScribe 就不會打擾你，隨時可用於快速聽寫。",
+      "primaryReady": "檢查錄音設定",
+      "primarySetup": "完成設定",
+      "secondaryAction": "瀏覽模型"
+    },
+    "setup": {
+      "title": "還有一些基本項目需要處理。",
+      "description": "當快速鍵、模型與權限都就緒後，SilkScribe 即可用於日常聽寫。",
+      "modelAction": "選擇模型",
+      "generalAction": "開啟一般設定"
+    },
+    "readiness": {
+      "shortcut": {
+        "label": "快速鍵",
+        "missingValue": "設定你的錄音快速鍵",
+        "action": "編輯"
+      },
+      "microphone": {
+        "label": "麥克風",
+        "action": "變更"
+      },
+      "model": {
+        "label": "模型",
+        "missingValue": "選擇語音模型",
+        "action": "管理"
+      },
+      "permissions": {
+        "label": "權限",
+        "ready": "已可將文字輸入你的 App",
+        "needsAttention": "需處理後才能完成聽寫",
+        "action": "查看"
+      }
+    },
+    "firstUse": {
+      "title": "你的第一則轉錄將顯示在這裡。",
+      "description": "點按文字欄位，按住快速鍵，說一句話，然後放開。SilkScribe 會將結果保存在這裡，方便你日後查看。",
+      "generalAction": "檢查基本設定",
+      "modelsAction": "選擇模型"
+    },
+    "activityTitle": "近期活動",
+    "loadMore": "載入更多",
     "loadingMore": "載入中...",
-    "loadMore": "載入更多"
+    "stats": {
+      "streak": "目前連續天數",
+      "words": "已轉錄字數",
+      "wpm": "平均每分鐘字數"
+    },
+    "empty": {
+      "title": "尚無近期轉錄。",
+      "description": "只要你錄製內容，SilkScribe 就會自動在此保存轉錄與音訊。"
+    },
+    "error": {
+      "title": "無法載入你的儀表板。",
+      "description": "請重試以重新整理你的近期活動。",
+      "retry": "重試"
+    },
+    "days": {
+      "today": "今天",
+      "yesterday": "昨天"
+    }
   }
 }

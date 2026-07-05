@@ -131,7 +131,8 @@
           "promptBody": "macOS asks this once so SilkScribe can hear your dictation while recording.",
           "deny": "Don’t Allow",
           "allow": "Allow",
-          "allowed": "Allowed"
+          "allowed": "Allowed",
+          "previewAlt": "Example of the macOS microphone permission prompt with the Allow button highlighted."
         },
         "statusHelp": {
           "checking": "Checking whether microphone access is already on.",
@@ -169,7 +170,8 @@
           "rowHelp": "Allow text insertion",
           "promptTitle": "Accessibility",
           "exampleApp1": "Finder",
-          "exampleApp2": "Mail"
+          "exampleApp2": "Mail",
+          "previewAlt": "Example of the macOS Accessibility settings list with SilkScribe turned on."
         },
         "statusHelp": {
           "checking": "Checking whether Accessibility access is already on.",
@@ -403,7 +405,11 @@
       "languageOnly": "{{language}} Only",
       "translation": "Can translate to English",
       "translate": "Translate to English"
-    }
+    },
+    "diskSpaceCheckError": "SilkScribe couldn't check disk space before downloading: {{error}}",
+    "insufficientSpace": "SilkScribe needs {{required}} free to download this model. {{available}} is available.",
+    "downloadFailed": "SilkScribe couldn't download the model: {{error}}",
+    "extractionFailed": "SilkScribe couldn't extract the model: {{error}}"
   },
   "settings": {
     "modelSettings": {
@@ -502,7 +508,8 @@
         "translation": "Translation",
         "allLanguages": "All Languages"
       },
-      "noModelsMatch": "No models match this filter."
+      "noModelsMatch": "No models match this filter.",
+      "deleteConfirmAction": "Delete model"
     },
     "sound": {
       "title": "Sound",
@@ -525,6 +532,14 @@
       "volume": {
         "title": "Volume",
         "description": "Adjust the volume of audio feedback sounds"
+      },
+      "soundTheme": {
+        "options": {
+          "marimba": "Marimba",
+          "pop": "Pop",
+          "custom": "Custom"
+        },
+        "preview": "Preview sound theme (plays start then stop)"
       }
     },
     "advanced": {

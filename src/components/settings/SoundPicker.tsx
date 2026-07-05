@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../ui/Button";
 import { Dropdown, DropdownOption } from "../ui/Dropdown";
 import { PlayIcon } from "lucide-react";
@@ -9,12 +10,17 @@ import { useSettings } from "../../hooks/useSettings";
 interface SoundPickerProps {
   label: string;
   description: string;
+  descriptionMode?: "inline" | "tooltip";
+  grouped?: boolean;
 }
 
 export const SoundPicker: React.FC<SoundPickerProps> = ({
   label,
   description,
+  descriptionMode = "tooltip",
+  grouped = false,
 }) => {
+  const { t } = useTranslation();
   const { getSetting, updateSetting } = useSettings();
   const playTestSound = useSettingsStore((state) => state.playTestSound);
   const customSounds = useSettingsStore((state) => state.customSounds);
@@ -22,13 +28,16 @@ export const SoundPicker: React.FC<SoundPickerProps> = ({
   const selectedTheme = getSetting("sound_theme") ?? "marimba";
 
   const options: DropdownOption[] = [
-    { value: "marimba", label: "Marimba" },
-    { value: "pop", label: "Pop" },
+    { value: "marimba", label: t("settings.sound.soundTheme.options.marimba") },
+    { value: "pop", label: t("settings.sound.soundTheme.options.pop") },
   ];
 
   // Only add Custom option if both custom sound files exist
   if (customSounds.start && customSounds.stop) {
-    options.push({ value: "custom", label: "Custom" });
+    options.push({
+      value: "custom",
+      label: t("settings.sound.soundTheme.options.custom"),
+    });
   }
 
   const handlePlayBothSounds = async () => {
@@ -36,11 +45,14 @@ export const SoundPicker: React.FC<SoundPickerProps> = ({
     await playTestSound("stop");
   };
 
+  const previewLabel = t("settings.sound.soundTheme.preview");
+
   return (
     <SettingContainer
       title={label}
       description={description}
-      grouped
+      descriptionMode={descriptionMode}
+      grouped={grouped}
       layout="horizontal"
     >
       <div className="flex items-center gap-2">
@@ -55,9 +67,10 @@ export const SoundPicker: React.FC<SoundPickerProps> = ({
           variant="ghost"
           size="sm"
           onClick={handlePlayBothSounds}
-          title="Preview sound theme (plays start then stop)"
+          title={previewLabel}
+          aria-label={previewLabel}
         >
-          <PlayIcon className="h-4 w-4" />
+          <PlayIcon className="h-4 w-4" aria-hidden="true" />
         </Button>
       </div>
     </SettingContainer>

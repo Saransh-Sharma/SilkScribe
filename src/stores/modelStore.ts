@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { produce } from "immer";
 import { listen } from "@tauri-apps/api/event";
+import i18n from "@/i18n";
 import { commands, type ModelInfo } from "@/bindings";
 
 interface DownloadProgress {
@@ -185,18 +186,21 @@ export const useModelStore = create<ModelsStore>()(
         set({ error: null });
         const preflight = await commands.getModelDownloadPreflight(modelId);
         if (preflight.status !== "ok") {
+          const message = i18n.t("modelSelector.diskSpaceCheckError", {
+            error: preflight.error,
+          });
           set({
-            error: `SilkScribe couldn't check disk space before downloading: ${preflight.error}`,
-            downloadError: {
-              modelId,
-              message: `SilkScribe couldn't check disk space before downloading: ${preflight.error}`,
-            },
+            error: message,
+            downloadError: { modelId, message },
           });
           return false;
         }
 
         if (!preflight.data.has_enough_space) {
-          const message = `SilkScribe needs ${formatBytes(preflight.data.required_bytes)} free to download this model. ${formatBytes(preflight.data.free_bytes)} is available.`;
+          const message = i18n.t("modelSelector.insufficientSpace", {
+            required: formatBytes(preflight.data.required_bytes),
+            available: formatBytes(preflight.data.free_bytes),
+          });
           set({
             error: message,
             downloadError: { modelId, message },
@@ -220,7 +224,9 @@ export const useModelStore = create<ModelsStore>()(
         if (result.status === "ok") {
           return true;
         } else {
-          const message = `Failed to download model: ${result.error}`;
+          const message = i18n.t("modelSelector.downloadFailed", {
+            error: result.error,
+          });
           set({
             error: message,
             downloadError: { modelId, message },
@@ -235,7 +241,9 @@ export const useModelStore = create<ModelsStore>()(
           return false;
         }
       } catch (err) {
-        const message = `Failed to download model: ${err}`;
+        const message = i18n.t("modelSelector.downloadFailed", {
+          error: String(err),
+        });
         set({
           error: message,
           downloadError: { modelId, message },
@@ -402,13 +410,16 @@ export const useModelStore = create<ModelsStore>()(
         "model-extraction-failed",
         (event) => {
           const modelId = event.payload.model_id;
+          const message = i18n.t("modelSelector.extractionFailed", {
+            error: event.payload.error,
+          });
           set(
             produce((state) => {
               delete state.extractingModels[modelId];
-              state.error = `Failed to extract model: ${event.payload.error}`;
+              state.error = message;
               state.downloadError = {
                 modelId,
-                message: `Failed to extract model: ${event.payload.error}`,
+                message,
               };
             }),
           );
@@ -419,7 +430,9 @@ export const useModelStore = create<ModelsStore>()(
         "model-download-failed",
         (event) => {
           const modelId = event.payload.model_id;
-          const message = `Failed to download model: ${event.payload.error}`;
+          const message = i18n.t("modelSelector.downloadFailed", {
+            error: event.payload.error,
+          });
           set(
             produce((state) => {
               delete state.downloadingModels[modelId];

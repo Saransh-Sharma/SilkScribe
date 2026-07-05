@@ -188,6 +188,16 @@ function App() {
     document.documentElement.dataset.theme = resolvedTheme;
   }, [resolvedTheme]);
 
+  // Mirror the theme preference to localStorage so the pre-paint script in
+  // index.html can apply the correct theme on next launch without a flash.
+  useEffect(() => {
+    try {
+      window.localStorage.setItem("ss-theme-preference", themePreference);
+    } catch {
+      // Ignore storage failures; the in-app theme still applies.
+    }
+  }, [themePreference]);
+
   useEffect(() => {
     let unlisten: (() => void) | undefined;
 

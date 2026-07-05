@@ -25,7 +25,11 @@ const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div className="rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface p-5 shadow-[var(--ss-shadow-card)]">
+    <div
+      role="alert"
+      aria-live="assertive"
+      className="rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface p-5 shadow-[var(--ss-shadow-card)]"
+    >
       <Alert variant="error" contained>
         {t("common.errorBoundary.description")}
       </Alert>

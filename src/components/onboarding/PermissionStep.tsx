@@ -137,7 +137,7 @@ const PermissionGuidePreview = ({
         }`}
       >
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" aria-hidden="true">
             <span className="h-3 w-3 rounded-full bg-[#ed6a5e]" />
             <span className="h-3 w-3 rounded-full bg-[#f5bf4f]" />
             <span className="h-3 w-3 rounded-full bg-[#61c454]" />
@@ -176,12 +176,20 @@ const PermissionGuidePreview = ({
           </div>
         </div>
 
-        <div className="relative mt-6 rounded-[24px] border border-ss-border-subtle bg-ss-bg-surface/88 p-4 shadow-[var(--ss-shadow-card)]">
-          {permission === "microphone" ? (
-            <MicrophonePreview status={status} />
-          ) : (
-            <AccessibilityPreview status={status} />
+        <div
+          className="relative mt-6 rounded-[24px] border border-ss-border-subtle bg-ss-bg-surface/88 p-4 shadow-[var(--ss-shadow-card)]"
+          role="img"
+          aria-label={t(
+            `onboarding.permissions.${permission}.guide.previewAlt`,
           )}
+        >
+          <div aria-hidden="true">
+            {permission === "microphone" ? (
+              <MicrophonePreview status={status} />
+            ) : (
+              <AccessibilityPreview status={status} />
+            )}
+          </div>
         </div>
 
         <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -193,7 +201,10 @@ const PermissionGuidePreview = ({
           </div>
           {showGuidance ? (
             <div className="inline-flex items-center gap-2 text-sm font-semibold text-ss-brand-secondary">
-              <ArrowUp className="ss-permission-arrow-pulse h-5 w-5" />
+              <ArrowUp
+                className="ss-permission-arrow-pulse h-5 w-5"
+                aria-hidden="true"
+              />
               <span>{t(`onboarding.permissions.${permission}.guide.cue`)}</span>
             </div>
           ) : null}
@@ -320,18 +331,23 @@ export const PermissionStatusCard = ({
   const Icon = ICONS[permission];
 
   return (
-    <div className="rounded-[24px] border border-ss-brand-secondary/18 bg-ss-brand-secondary/8 p-5">
+    <div
+      className="rounded-[24px] border border-ss-brand-secondary/18 bg-ss-brand-secondary/8 p-5"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    >
       <div className="flex items-start gap-3">
         {status === "granted" ? (
           <div className="ss-onboarding-success-ring flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ss-brand-primary text-ss-brand-primary-ink">
-            <ShieldCheck className="h-5 w-5" />
+            <ShieldCheck className="h-5 w-5" aria-hidden="true" />
           </div>
         ) : (
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ss-brand-secondary/12 text-ss-brand-secondary">
             {status === "requesting" ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
+              <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
             ) : (
-              <Icon className="h-5 w-5" />
+              <Icon className="h-5 w-5" aria-hidden="true" />
             )}
           </div>
         )}
