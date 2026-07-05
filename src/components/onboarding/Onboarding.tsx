@@ -122,14 +122,6 @@ const Onboarding: React.FC<OnboardingProps> = ({
               ))}
             </ol>
           </div>
-          <div className="mt-5 rounded-[22px] border border-ss-brand-primary/16 bg-ss-brand-primary/8 p-5">
-            <p className="text-sm font-semibold text-ss-text-primary">
-              {t("onboarding.welcome.outcomeLabel")}
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-ss-text-secondary">
-              {t("onboarding.welcome.outcome")}
-            </p>
-          </div>
         </aside>
       </div>
     </OnboardingShell>
