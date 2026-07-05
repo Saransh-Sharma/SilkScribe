@@ -40,6 +40,7 @@ interface PermissionSnapshot {
 }
 
 interface PasteFailedPayload {
+  code?: "copied" | "copy_failed";
   detail?: string;
   copiedToClipboard?: boolean;
 }
@@ -202,17 +203,19 @@ function App() {
     let unlisten: (() => void) | undefined;
 
     void listen<PasteFailedPayload>("transcription-paste-failed", (event) => {
-      const copiedToClipboard = event.payload?.copiedToClipboard ?? false;
+      const code =
+        event.payload?.code ??
+        (event.payload?.copiedToClipboard ? "copied" : "copy_failed");
+      const copiedToClipboard = code === "copied";
 
       toast.warning(
         copiedToClipboard
           ? t("feedback.pasteFailed.copiedTitle")
-          : t("feedback.pasteFailed.failedTitle"),
+          : t("feedback.pasteFailed.copyFailedTitle"),
         {
           description: copiedToClipboard
             ? t("feedback.pasteFailed.copiedDescription")
-            : (event.payload?.detail ??
-              t("feedback.pasteFailed.failedDescription")),
+            : t("feedback.pasteFailed.copyFailedDescription"),
         },
       );
     }).then((unsubscribe) => {

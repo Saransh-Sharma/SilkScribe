@@ -46,8 +46,16 @@ pub(crate) struct ProcessedTranscription {
 #[derive(Clone, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
 struct PasteFailedPayload {
-    detail: String,
+    code: PasteFailureCode,
     copied_to_clipboard: bool,
+    detail: Option<String>,
+}
+
+#[derive(Clone, serde::Serialize)]
+#[serde(rename_all = "snake_case")]
+enum PasteFailureCode {
+    Copied,
+    CopyFailed,
 }
 
 // Shortcut Action Trait
@@ -567,36 +575,36 @@ impl ShortcutAction for TranscribeAction {
                                     }
                                     Err(e) => {
                                         error!("Failed to paste transcription: {}", e);
-                                        let copied_to_clipboard = match ah_clone
+                                        let (copied_to_clipboard, copy_error_detail) = match ah_clone
                                             .clipboard()
                                             .write_text(&paste_text)
                                         {
-                                            Ok(()) => true,
+                                            Ok(()) => (true, None),
                                             Err(copy_error) => {
                                                 error!(
                                                     "Failed to copy transcription fallback to clipboard: {}",
                                                     copy_error
                                                 );
-                                                false
+                                                (false, Some(copy_error.to_string()))
                                             }
                                         };
-                                        let detail = if copied_to_clipboard {
-                                            "Copied to clipboard; paste into the active app failed."
-                                                .to_string()
+                                        let (code, detail) = if copied_to_clipboard {
+                                            (PasteFailureCode::Copied, None)
                                         } else {
-                                            format!(
-                                                "Paste failed, and SilkScribe could not copy the text: {}",
-                                                e
-                                            )
+                                            (PasteFailureCode::CopyFailed, copy_error_detail)
                                         };
                                         let _ = ah_clone.emit(
                                             "transcription-paste-failed",
                                             PasteFailedPayload {
-                                                detail: detail.clone(),
+                                                code,
                                                 copied_to_clipboard,
+                                                detail,
                                             },
                                         );
-                                        utils::show_error_overlay_with_detail(&ah_clone, detail);
+                                        utils::show_error_overlay_with_detail(
+                                            &ah_clone,
+                                            "Paste failed",
+                                        );
                                         utils::hide_recording_overlay_after(&ah_clone, 1500);
                                     }
                                 }
