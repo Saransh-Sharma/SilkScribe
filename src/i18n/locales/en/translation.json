@@ -90,6 +90,7 @@
         "iEnabledIt": "I turned it on",
         "checkAgain": "Check again",
         "continue": "Continue",
+        "repairAction": "Open guided repair",
         "appName": "SilkScribe",
         "guidedHelper": "Guided helper",
         "privateLabel": "Private by design",
@@ -365,6 +366,7 @@
   "modelSelector": {
     "custom": "Custom",
     "active": "Active",
+    "statusLabel": "Model status: {{status}}",
     "switching": "Switching...",
     "noModelsAvailable": "No models available",
     "extracting": "Extracting {{modelName}}...",
@@ -378,10 +380,22 @@
     "modelError": "Model Error",
     "modelUnloaded": "Model Unloaded",
     "noModelDownloadRequired": "No Model - Download Required",
+    "modelMeta": "{{size}} · {{engine}}",
     "deleteModel": "Delete {{modelName}}",
     "downloadSpeed": "{{speed}} MB/s",
     "cancel": "Cancel",
     "cancelDownload": "Cancel download",
+    "retryDownload": "Retry download",
+    "downloadErrorTitle": "Download could not finish",
+    "downloadProgress": {
+      "downloadedOf": "{{downloaded}} of {{total}}",
+      "speed": "{{speed}}/s",
+      "eta": "{{eta}} left",
+      "starting": "Starting download",
+      "extracting": "Extracting model",
+      "almostDone": "Almost done",
+      "unknownEta": "Calculating time"
+    },
     "capabilities": {
       "languageSelection": "Supports multiple input languages",
       "singleLanguage": "Supports this language only",
@@ -416,6 +430,7 @@
         "none": "No shortcuts configured",
         "notFound": "Shortcut not found",
         "pressKeys": "Press keys...",
+        "reset": "Reset shortcut",
         "bindings": {
           "transcribe": {
             "name": "Transcribe Shortcut",
@@ -434,6 +449,10 @@
           "restore": "Failed to restore original shortcut",
           "set": "Failed to set shortcut: {{error}}",
           "reset": "Failed to reset shortcut to original value"
+        },
+        "success": {
+          "saved": "Shortcut saved",
+          "reset": "Shortcut reset"
         }
       },
       "language": {
@@ -447,6 +466,15 @@
       "pushToTalk": {
         "label": "Hold to record",
         "description": "Press and hold your shortcut while you speak, then release to finish."
+      },
+      "theme": {
+        "title": "Appearance",
+        "description": "Follow macOS or choose a fixed light or dark interface.",
+        "options": {
+          "system": "System",
+          "light": "Light",
+          "dark": "Dark"
+        }
       }
     },
     "models": {
@@ -705,14 +733,34 @@
       "pageDescription": "Browse what SilkScribe captured, replay audio, and save anything you want to keep close.",
       "title": "History",
       "openFolder": "Open Recordings Folder",
+      "exportMarkdown": "Export Markdown",
+      "exportJson": "Export JSON",
+      "exportTitle": "Export history",
+      "exportEmpty": "There is no history to export.",
+      "exportSuccess": "History exported",
+      "exportError": "SilkScribe could not export history.",
       "loading": "Loading history...",
       "empty": "No transcriptions yet. Start recording to build your history!",
       "emptyDescription": "Your saved transcripts and recordings will appear here after your first dictation.",
+      "emptyFiltered": "No matching transcripts.",
+      "emptyFilteredDescription": "Try a different search or switch back to All.",
+      "searchPlaceholder": "Search history",
+      "filters": {
+        "all": "All",
+        "saved": "Saved",
+        "failed": "Failed"
+      },
       "copyToClipboard": "Copy transcription to clipboard",
+      "copyAsMarkdown": "Copy transcription as Markdown",
+      "copySuccess": "Copied to clipboard",
+      "copyError": "SilkScribe could not copy this transcript.",
       "save": "Save transcription",
       "unsave": "Remove from saved",
       "delete": "Delete entry",
       "deleteError": "Failed to delete entry. Please try again.",
+      "deleteQueued": "Entry deleted",
+      "deleteUndoDescription": "You can undo this for a few seconds.",
+      "undoDelete": "Undo",
       "loadError": "Unable to load history right now. Please try again.",
       "loadMore": "Load more",
       "loadingMore": "Loading more...",
@@ -853,7 +901,13 @@
     "off": "Off",
     "yes": "Yes",
     "no": "No",
-    "noOptionsFound": "No options found"
+    "noOptionsFound": "No options found",
+    "moreInformation": "More information",
+    "errorBoundary": {
+      "description": "SilkScribe could not render this view. Your settings and recordings are still stored locally.",
+      "reload": "Reload",
+      "openLogs": "Open logs"
+    }
   },
   "errors": {
     "loadDirectory": "Error loading directory: {{error}}"
@@ -867,7 +921,17 @@
     "transcribing": "Transcribing",
     "processing": "Processing",
     "success": "Done",
-    "failed": "Failed"
+    "failed": "Failed",
+    "cancelled": "Cancelled",
+    "cancelledDetail": "Stopped by you"
+  },
+  "feedback": {
+    "pasteFailed": {
+      "copiedTitle": "Copied to clipboard",
+      "copiedDescription": "SilkScribe could not paste into the active app.",
+      "failedTitle": "SilkScribe could not paste",
+      "failedDescription": "The text could not be pasted or copied."
+    }
   },
   "home": {
     "title": "Welcome back",

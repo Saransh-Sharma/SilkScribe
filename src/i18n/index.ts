@@ -50,6 +50,14 @@ export const SUPPORTED_LANGUAGES = Object.keys(resources)
   });
 
 export type SupportedLanguageCode = string;
+const warnedMissingKeys = new Set<string>();
+
+const warnMissingKey = (key: string) => {
+  if (!import.meta.env.DEV || warnedMissingKeys.has(key)) return;
+
+  warnedMissingKeys.add(key);
+  console.warn(`Missing i18n key: ${key}`);
+};
 
 // Check if a language code is supported
 const getSupportedLanguage = (
@@ -77,6 +85,14 @@ i18n.use(initReactI18next).init({
   resources,
   lng: "en",
   fallbackLng: "en",
+  saveMissing: import.meta.env.DEV,
+  missingKeyHandler: (_lngs, _namespace, key) => {
+    warnMissingKey(key);
+  },
+  parseMissingKeyHandler: (key) => {
+    warnMissingKey(key);
+    return key;
+  },
   interpolation: {
     escapeValue: false, // React already escapes values
   },
