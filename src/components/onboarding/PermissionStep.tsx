@@ -18,7 +18,7 @@ import OnboardingShell from "./OnboardingShell";
 import { Button } from "../ui/Button";
 
 export type PermissionKind = "microphone" | "accessibility";
-type PermissionStatus =
+export type PermissionStatus =
   | "checking"
   | "needed"
   | "error"
@@ -311,7 +311,7 @@ interface PermissionStatusCardProps extends PermissionVisualProps {
   error: string | null;
 }
 
-const PermissionStatusCard = ({
+export const PermissionStatusCard = ({
   permission,
   status,
   error,

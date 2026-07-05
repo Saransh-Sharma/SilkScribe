@@ -83,10 +83,7 @@ const OnboardingTipsRotator: React.FC<OnboardingTipsRotatorProps> = ({
             <Sparkles className="h-3.5 w-3.5" />
             {t("onboarding.setup.tipsBadge")}
           </div>
-          <div
-            key={activeCardKey}
-            className="ss-onboarding-card-enter"
-          >
+          <div key={activeCardKey} className="ss-onboarding-card-enter">
             <h3 className="text-xl font-semibold text-ss-text-primary">
               {t(`onboarding.setup.tips.cards.${activeCardKey}.title`, {
                 shortcut: shortcutLabel,

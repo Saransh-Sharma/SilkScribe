@@ -1,5 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { arch as getSystemArch, locale as getSystemLocale } from "@tauri-apps/plugin-os";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  arch as getSystemArch,
+  locale as getSystemLocale,
+} from "@tauri-apps/plugin-os";
 import { Check, Loader2, Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -399,7 +408,9 @@ const OnboardingSetup: React.FC<OnboardingSetupProps> = ({
                 <p className="mt-1.5 text-base font-semibold text-ss-text-primary">
                   {setupState === "downloading" && downloadSpeed
                     ? t("onboarding.setup.speedValue", {
-                        speed: downloadSpeed.toFixed(downloadSpeed >= 10 ? 0 : 1),
+                        speed: downloadSpeed.toFixed(
+                          downloadSpeed >= 10 ? 0 : 1,
+                        ),
                       })
                     : t("onboarding.setup.notAvailable")}
                 </p>
@@ -424,7 +435,9 @@ const OnboardingSetup: React.FC<OnboardingSetupProps> = ({
                 {t("onboarding.setup.shortcutTitle")}
               </p>
               <p className="mt-2 text-sm leading-relaxed text-ss-text-secondary">
-                {t("onboarding.setup.shortcutBody", { shortcut: shortcutLabel })}
+                {t("onboarding.setup.shortcutBody", {
+                  shortcut: shortcutLabel,
+                })}
               </p>
               <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-ss-brand-highlight/24 bg-ss-brand-highlight/12 px-4 py-2 text-sm font-semibold text-ss-brand-primary">
                 <span className="h-2.5 w-2.5 rounded-full bg-current" />
