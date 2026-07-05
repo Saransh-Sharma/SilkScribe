@@ -14,8 +14,7 @@
     "advanced": "Gelişmiş",
     "postProcessing": "Son İşlem",
     "history": "Geçmiş",
-    "debug": "Hata Ayıklama",
-    "about": "Hakkında"
+    "debug": "Hata Ayıklama"
   },
   "onboarding": {
     "subtitle": "Başlamak için bir transkripsiyon modeli seçin",

@@ -14,8 +14,7 @@
     "advanced": "進階",
     "postProcessing": "後處理",
     "history": "歷史紀錄",
-    "debug": "偵錯",
-    "about": "關於"
+    "debug": "偵錯"
   },
   "onboarding": {
     "subtitle": "首先，請選擇一種模型",

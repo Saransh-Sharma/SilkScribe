@@ -14,8 +14,7 @@
     "advanced": "Avançado",
     "postProcessing": "Pós-Processamento",
     "history": "Histórico",
-    "debug": "Depuração",
-    "about": "Sobre"
+    "debug": "Depuração"
   },
   "onboarding": {
     "subtitle": "Para começar, escolha um modelo de transcrição",

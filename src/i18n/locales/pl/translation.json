@@ -14,8 +14,7 @@
     "advanced": "Zaawansowane",
     "postProcessing": "Postproces",
     "history": "Historia",
-    "debug": "Debugowanie",
-    "about": "O programie"
+    "debug": "Debugowanie"
   },
   "onboarding": {
     "subtitle": "Aby rozpocząć, wybierz model transkrypcji",

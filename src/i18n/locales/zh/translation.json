@@ -14,8 +14,7 @@
     "advanced": "高级",
     "postProcessing": "后处理",
     "history": "历史记录",
-    "debug": "调试",
-    "about": "关于"
+    "debug": "调试"
   },
   "onboarding": {
     "subtitle": "请选择一个转录模型以开始使用",

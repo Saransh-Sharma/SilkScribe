@@ -15,7 +15,8 @@
     "postProcessing": "Post Proceso",
     "history": "Historial",
     "debug": "Depuración",
-    "about": "Acerca de"
+    "preferences": "Preferences",
+    "developer": "Developer"
   },
   "onboarding": {
     "subtitle": "Para comenzar, elige un modelo de transcripción",
@@ -99,7 +100,8 @@
           "requesting": "Abriendo macOS",
           "waiting_for_user": "Esperándote",
           "granted": "Permitido"
-        }
+        },
+        "repairAction": "Open guided repair"
       },
       "microphone": {
         "title": "Deja que SilkScribe te escuche mientras grabas.",
@@ -388,7 +390,20 @@
       "languageOnly": "Solo {{language}}"
     },
     "cancel": "Cancelar",
-    "cancelDownload": "Cancelar descarga"
+    "cancelDownload": "Cancelar descarga",
+    "statusLabel": "Model status: {{status}}",
+    "modelMeta": "{{size}} · {{engine}}",
+    "retryDownload": "Retry download",
+    "downloadErrorTitle": "Download could not finish",
+    "downloadProgress": {
+      "downloadedOf": "{{downloaded}} of {{total}}",
+      "speed": "{{speed}}/s",
+      "eta": "{{eta}} left",
+      "starting": "Starting download",
+      "extracting": "Extracting model",
+      "almostDone": "Almost done",
+      "unknownEta": "Calculating time"
+    }
   },
   "settings": {
     "modelSettings": {
@@ -411,7 +426,16 @@
       },
       "noModelsMatch": "Ningún modelo coincide con este filtro.",
       "yourModels": "Modelos descargados",
-      "availableModels": "Disponibles para descargar"
+      "availableModels": "Disponibles para descargar",
+      "eyebrow": "Speech engines",
+      "pageTitle": "Choose how SilkScribe listens",
+      "pageDescription": "Pick the model you want SilkScribe to use, keep your installed models tidy, and download more when you need them.",
+      "currentModel": "Current model",
+      "currentModelSettings": "Current model settings",
+      "currentModelSettingsDescription": "Only the active model’s language options stay visible here.",
+      "noActiveModelTitle": "No model is active yet.",
+      "noActiveModelDescription": "Download a model below and SilkScribe will use it for your next transcription.",
+      "noExtraInstalled": "You only have your current model installed right now."
     },
     "general": {
       "title": "General",
@@ -440,6 +464,11 @@
           "restore": "Error al restaurar el atajo original",
           "set": "Error al configurar el atajo: {{error}}",
           "reset": "Error al restablecer el atajo al valor original"
+        },
+        "reset": "Reset shortcut",
+        "success": {
+          "saved": "Shortcut saved",
+          "reset": "Shortcut reset"
         }
       },
       "language": {
@@ -453,6 +482,26 @@
       "pushToTalk": {
         "label": "Presionar para Hablar",
         "description": "Mantén presionado para grabar, suelta para detener"
+      },
+      "eyebrow": "Everyday setup",
+      "pageTitle": "Keep SilkScribe ready to record",
+      "pageDescription": "Set the shortcut, choose your microphone, and keep the basics feeling automatic.",
+      "sections": {
+        "recording": "Recording",
+        "recordingDescription": "These are the controls most people touch first.",
+        "feedback": "Feedback",
+        "feedbackDescription": "Audio cues help you know when SilkScribe starts and stops listening.",
+        "app": "App",
+        "appDescription": "Choose how the SilkScribe app itself should feel."
+      },
+      "theme": {
+        "title": "Appearance",
+        "description": "Follow macOS or choose a fixed light or dark interface.",
+        "options": {
+          "system": "System",
+          "light": "Light",
+          "dark": "Dark"
+        }
       }
     },
     "sound": {
@@ -485,7 +534,8 @@
         "output": "Salida",
         "transcription": "Transcripción",
         "history": "Historial",
-        "experimental": "Experimental"
+        "experimental": "Experimental",
+        "support": "Support"
       },
       "experimentalToggle": {
         "label": "Funciones Experimentales",
@@ -604,6 +654,17 @@
       "lazyStreamClose": {
         "label": "Mantener micrófono abierto entre transcripciones",
         "description": "Mantener el flujo del micrófono abierto brevemente tras detener la grabación."
+      },
+      "eyebrow": "Optional controls",
+      "pageTitle": "Advanced behavior and support",
+      "pageDescription": "Most people can leave these alone. Use them when you need SilkScribe to behave differently on your machine.",
+      "groupDescriptions": {
+        "app": "Startup and overlay behavior for the app itself.",
+        "output": "How finished text gets placed into the app you are using.",
+        "transcription": "Small adjustments that change how SilkScribe shapes your text.",
+        "history": "Retention and cleanup settings for transcripts and recordings.",
+        "support": "Maintenance tools and folders that help with troubleshooting.",
+        "experimental": "Features that are still evolving and may change."
       }
     },
     "postProcessing": {
@@ -682,7 +743,31 @@
       "loadingMore": "Cargando más...",
       "retryableEmpty": "La transcripción falló. La grabación está disponible para reintentar.",
       "retryTranscription": "Reintentar transcripción",
-      "retryTranscriptionError": "Error al reintentar la transcripción. Inténtalo de nuevo."
+      "retryTranscriptionError": "Error al reintentar la transcripción. Inténtalo de nuevo.",
+      "eyebrow": "Transcript archive",
+      "pageTitle": "Review your recent transcripts",
+      "pageDescription": "Browse what SilkScribe captured, replay audio, and save anything you want to keep close.",
+      "exportMarkdown": "Export Markdown",
+      "exportJson": "Export JSON",
+      "exportTitle": "Export history",
+      "exportEmpty": "There is no history to export.",
+      "exportSuccess": "History exported",
+      "exportError": "SilkScribe could not export history.",
+      "emptyDescription": "Your saved transcripts and recordings will appear here after your first dictation.",
+      "emptyFiltered": "No matching transcripts.",
+      "emptyFilteredDescription": "Try a different search or switch back to All.",
+      "searchPlaceholder": "Search history",
+      "filters": {
+        "all": "All",
+        "saved": "Saved",
+        "failed": "Failed"
+      },
+      "copyAsMarkdown": "Copy transcription as Markdown",
+      "copySuccess": "Copied to clipboard",
+      "copyError": "SilkScribe could not copy this transcript.",
+      "deleteQueued": "Entry deleted",
+      "deleteUndoDescription": "You can undo this for a few seconds.",
+      "undoDelete": "Undo"
     },
     "debug": {
       "title": "Depuración",
@@ -788,7 +873,12 @@
     "downloading": "Descargando... {{progress}}%",
     "installing": "Instalando...",
     "preparing": "Preparando...",
-    "checkForUpdates": "Buscar actualizaciones"
+    "checkForUpdates": "Buscar actualizaciones",
+    "support": {
+      "label": "Support",
+      "appData": "Open app data",
+      "logs": "Open logs"
+    }
   },
   "common": {
     "loading": "Cargando...",
@@ -811,7 +901,13 @@
     "yes": "Sí",
     "no": "No",
     "noOptionsFound": "No se encontraron opciones",
-    "versionLabel": "v{{version}}"
+    "versionLabel": "v{{version}}",
+    "moreInformation": "More information",
+    "errorBoundary": {
+      "description": "SilkScribe could not render this view. Your settings and recordings are still stored locally.",
+      "reload": "Reload",
+      "openLogs": "Open logs"
+    }
   },
   "errors": {
     "loadDirectory": "Error al cargar el directorio: {{error}}"
@@ -825,10 +921,85 @@
     "transcribing": "Transcribiendo",
     "processing": "Procesando",
     "success": "Listo",
-    "failed": "Fallido"
+    "failed": "Fallido",
+    "cancelled": "Cancelled",
+    "cancelledDetail": "Stopped by you"
   },
   "home": {
     "loadingMore": "Cargando más...",
-    "loadMore": "Cargar más"
+    "loadMore": "Cargar más",
+    "title": "Welcome back",
+    "subtitle": "Your recent dictation activity and listening history.",
+    "welcome": {
+      "eyebrow": "Home",
+      "title": "Welcome back.",
+      "firstRunTitle": "Welcome to SilkScribe.",
+      "readyDescription": "Everything looks ready. Hold your shortcut, speak naturally, and SilkScribe will place the text where you need it.",
+      "setupDescription": "Finish the essentials once, then SilkScribe stays out of your way and is ready whenever you need quick dictation.",
+      "primaryReady": "Review recording setup",
+      "primarySetup": "Finish setup",
+      "secondaryAction": "Browse models"
+    },
+    "setup": {
+      "title": "A few essentials still need attention.",
+      "description": "Once your shortcut, model, and permissions are in place, SilkScribe is ready for everyday dictation.",
+      "modelAction": "Choose a model",
+      "generalAction": "Open general setup"
+    },
+    "readiness": {
+      "shortcut": {
+        "label": "Shortcut",
+        "missingValue": "Set your recording shortcut",
+        "action": "Edit"
+      },
+      "microphone": {
+        "label": "Microphone",
+        "action": "Change"
+      },
+      "model": {
+        "label": "Model",
+        "missingValue": "Choose a speech model",
+        "action": "Manage"
+      },
+      "permissions": {
+        "label": "Permissions",
+        "ready": "Ready to type into your apps",
+        "needsAttention": "Needs attention before dictation is complete",
+        "action": "Review"
+      }
+    },
+    "firstUse": {
+      "title": "Your first transcript will show up here.",
+      "description": "Click into a text field, hold your shortcut, speak a sentence, then release. SilkScribe will save the result here so you can revisit it later.",
+      "generalAction": "Check basics",
+      "modelsAction": "Pick a model"
+    },
+    "activityTitle": "Recent activity",
+    "stats": {
+      "streak": "Current streak",
+      "words": "Words transcribed",
+      "wpm": "Average WPM"
+    },
+    "empty": {
+      "title": "No recent transcriptions yet.",
+      "description": "Once you record something, SilkScribe will keep the transcript and audio here automatically."
+    },
+    "error": {
+      "title": "Couldn't load your dashboard.",
+      "description": "Try again to refresh your recent activity.",
+      "retry": "Retry"
+    },
+    "days": {
+      "today": "Today",
+      "yesterday": "Yesterday"
+    }
+  },
+  "feedback": {
+    "pasteFailed": {
+      "copiedTitle": "Copied to clipboard",
+      "copiedDescription": "SilkScribe could not paste into the active app.",
+      "failedTitle": "SilkScribe could not paste",
+      "failedDescription": "The text could not be pasted or copied."
+    }
   }
 }
