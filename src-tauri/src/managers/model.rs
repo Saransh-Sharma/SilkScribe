@@ -60,6 +60,17 @@ pub struct DownloadProgress {
     pub percentage: f64,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, Type)]
+pub struct ModelDownloadPreflight {
+    pub model_id: String,
+    pub free_bytes: u64,
+    pub required_bytes: u64,
+    pub model_size_bytes: u64,
+    pub partial_bytes: u64,
+    pub recommended_headroom_bytes: u64,
+    pub has_enough_space: bool,
+}
+
 const DEFAULT_MODEL_BROKER_URL: &str =
     "https://silkscribebackend.vercel.app/api/model-download-token";
 const MODEL_BROKER_URL_ENV: &str = "SILKSCRIBE_MODEL_BROKER_URL";
@@ -1308,6 +1319,44 @@ impl ModelManager {
         download_guard.disarm();
 
         Ok(())
+    }
+
+    pub fn get_download_preflight(&self, model_id: &str) -> Result<ModelDownloadPreflight> {
+        let model_info = {
+            let models = self.available_models.lock().unwrap();
+            models.get(model_id).cloned()
+        };
+
+        let model_info =
+            model_info.ok_or_else(|| anyhow::anyhow!("Model not found: {}", model_id))?;
+
+        let model_size_bytes = model_info.size_mb.saturating_mul(1024 * 1024);
+        let partial_path = self
+            .models_dir
+            .join(format!("{}.partial", &model_info.filename));
+        let partial_bytes = partial_path.metadata().map(|m| m.len()).unwrap_or(0);
+        let remaining_download_bytes = model_size_bytes.saturating_sub(partial_bytes);
+        let recommended_headroom_bytes = 512 * 1024 * 1024;
+        let extraction_bytes = if model_info.is_directory {
+            model_size_bytes
+        } else {
+            0
+        };
+        let required_bytes = remaining_download_bytes
+            .saturating_add(extraction_bytes)
+            .saturating_add(recommended_headroom_bytes);
+        let free_bytes = fs2::available_space(&self.models_dir)
+            .map_err(|e| anyhow::anyhow!("Failed to check free disk space: {}", e))?;
+
+        Ok(ModelDownloadPreflight {
+            model_id: model_id.to_string(),
+            free_bytes,
+            required_bytes,
+            model_size_bytes,
+            partial_bytes,
+            recommended_headroom_bytes,
+            has_enough_space: free_bytes >= required_bytes,
+        })
     }
 
     pub fn delete_model(&self, model_id: &str) -> Result<()> {

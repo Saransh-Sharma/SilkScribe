@@ -1,5 +1,5 @@
 use crate::managers::history::{
-    HistoryManager, HomeDashboardPageData, HomeHistoryCursor, PaginatedHistory,
+    HistoryFilter, HistoryManager, HomeDashboardPageData, HomeHistoryCursor, PaginatedHistory,
 };
 use crate::managers::transcription::TranscriptionManager;
 use std::sync::Arc;
@@ -15,6 +15,22 @@ pub async fn get_history_entries(
 ) -> Result<PaginatedHistory, String> {
     history_manager
         .get_history_entries(cursor, limit)
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn search_history_entries(
+    _app: AppHandle,
+    history_manager: State<'_, Arc<HistoryManager>>,
+    query: Option<String>,
+    filter: HistoryFilter,
+    cursor: Option<i64>,
+    limit: Option<usize>,
+) -> Result<PaginatedHistory, String> {
+    history_manager
+        .search_history_entries(query, filter, cursor, limit)
         .await
         .map_err(|e| e.to_string())
 }

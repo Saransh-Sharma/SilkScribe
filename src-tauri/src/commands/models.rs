@@ -1,4 +1,4 @@
-use crate::managers::model::{ModelInfo, ModelManager};
+use crate::managers::model::{ModelDownloadPreflight, ModelInfo, ModelManager};
 use crate::managers::transcription::{ModelStateEvent, TranscriptionManager};
 use crate::settings::{get_settings, write_settings, ModelUnloadTimeout};
 use std::sync::Arc;
@@ -19,6 +19,17 @@ pub async fn get_model_info(
     model_id: String,
 ) -> Result<Option<ModelInfo>, String> {
     Ok(model_manager.get_model_info(&model_id))
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn get_model_download_preflight(
+    model_manager: State<'_, Arc<ModelManager>>,
+    model_id: String,
+) -> Result<ModelDownloadPreflight, String> {
+    model_manager
+        .get_download_preflight(&model_id)
+        .map_err(|e| e.to_string())
 }
 
 #[tauri::command]
