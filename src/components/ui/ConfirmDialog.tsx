@@ -84,7 +84,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[var(--ss-layer-modal)] flex items-center justify-center bg-[color-mix(in_srgb,var(--ss-neutral-ink)_58%,transparent)] px-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[var(--ss-layer-modal)] flex items-center justify-center bg-[var(--ss-overlay-scrim)] px-4 backdrop-blur-sm"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) {
           onCancel();
