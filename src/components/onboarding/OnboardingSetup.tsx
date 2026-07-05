@@ -9,7 +9,7 @@ import {
   arch as getSystemArch,
   locale as getSystemLocale,
 } from "@tauri-apps/plugin-os";
-import { Check, Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { type ModelInfo } from "@/bindings";
@@ -429,7 +429,7 @@ const OnboardingSetup: React.FC<OnboardingSetupProps> = ({
             </div>
           </div>
 
-          <div className="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1fr)_280px]">
+          <div className="mt-5">
             <div className="rounded-[24px] border border-ss-border-subtle bg-ss-bg-surface-alt/88 p-5">
               <p className="text-sm font-semibold text-ss-text-primary">
                 {t("onboarding.setup.shortcutTitle")}
@@ -443,26 +443,6 @@ const OnboardingSetup: React.FC<OnboardingSetupProps> = ({
                 <span className="h-2.5 w-2.5 rounded-full bg-current" />
                 {shortcutLabel}
               </div>
-            </div>
-
-            <div className="rounded-[24px] border border-ss-brand-secondary/18 bg-ss-brand-secondary/8 p-5">
-              <div className="flex items-center gap-3">
-                {setupState === "ready" ? (
-                  <div className="ss-onboarding-success-ring flex h-10 w-10 items-center justify-center rounded-full bg-ss-brand-primary text-ss-brand-primary-ink">
-                    <Check className="h-[18px] w-[18px]" />
-                  </div>
-                ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-ss-brand-secondary/12 text-ss-brand-secondary">
-                    <Loader2 className="h-[18px] w-[18px] animate-spin" />
-                  </div>
-                )}
-                <p className="text-sm font-semibold text-ss-text-primary">
-                  {t(`onboarding.setup.panelStates.${setupState}`)}
-                </p>
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-ss-text-secondary">
-                {t(`onboarding.setup.panelHelp.${setupState}`)}
-              </p>
             </div>
           </div>
         </section>
