@@ -41,7 +41,6 @@ interface PermissionSnapshot {
 
 interface PasteFailedPayload {
   code?: "copied" | "copy_failed";
-  detail?: string;
   copiedToClipboard?: boolean;
 }
 

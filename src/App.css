@@ -259,8 +259,14 @@
   position: relative;
   min-height: 100%;
   overflow: hidden;
+  border: 1px solid var(--ss-border-subtle);
   border: 1px solid color-mix(in srgb, var(--ss-border-subtle) 86%, transparent);
   border-radius: 24px;
+  background: linear-gradient(
+    180deg,
+    var(--ss-bg-surface),
+    var(--ss-bg-surface-alt)
+  );
   background: linear-gradient(
     180deg,
     color-mix(in srgb, var(--ss-bg-surface) 88%, transparent),
@@ -277,6 +283,13 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 82% 18%,
+      rgba(254, 191, 43, 0.16),
+      transparent 32%
+    ),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.32), transparent 46%);
   background:
     radial-gradient(
       circle at 82% 18%,
@@ -302,6 +315,12 @@
   left: 0;
   width: 42%;
   pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(254, 191, 43, 0.38),
+    transparent
+  );
   background: linear-gradient(
     90deg,
     transparent,
