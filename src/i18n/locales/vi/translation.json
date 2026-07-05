@@ -409,7 +409,14 @@
     "diskSpaceCheckError": "SilkScribe không thể kiểm tra dung lượng ổ đĩa trước khi tải xuống: {{error}}",
     "insufficientSpace": "SilkScribe cần {{required}} dung lượng trống để tải mô hình này. Hiện có {{available}}.",
     "downloadFailed": "SilkScribe không thể tải xuống mô hình: {{error}}",
-    "extractionFailed": "SilkScribe không thể giải nén mô hình: {{error}}"
+    "extractionFailed": "SilkScribe không thể giải nén mô hình: {{error}}",
+    "downloadErrors": {
+      "preflightFailed": "SilkScribe không thể kiểm tra dung lượng ổ đĩa trước khi tải xuống: {{detail}}",
+      "insufficientSpace": "SilkScribe cần {{required}} dung lượng trống để tải mô hình này. Hiện có {{available}}.",
+      "downloadFailed": "SilkScribe không thể tải mô hình xuống: {{detail}}",
+      "extractionFailed": "SilkScribe không thể giải nén mô hình: {{detail}}",
+      "unknown": "SilkScribe không thể hoàn tất tải xuống."
+    }
   },
   "settings": {
     "modelSettings": {
@@ -945,7 +952,9 @@
       "copiedTitle": "Đã sao chép vào bảng nhớ tạm",
       "copiedDescription": "SilkScribe không thể dán vào ứng dụng đang hoạt động.",
       "failedTitle": "SilkScribe không thể dán",
-      "failedDescription": "Không thể dán hoặc sao chép văn bản."
+      "failedDescription": "Không thể dán hoặc sao chép văn bản.",
+      "copyFailedTitle": "SilkScribe không thể sao chép văn bản",
+      "copyFailedDescription": "Dán thất bại và bản sao dự phòng chưa hoàn tất."
     }
   },
   "home": {

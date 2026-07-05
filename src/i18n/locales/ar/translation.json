@@ -409,7 +409,14 @@
     "diskSpaceCheckError": "تعذّر على SilkScribe التحقق من مساحة القرص قبل التنزيل: {{error}}",
     "insufficientSpace": "يحتاج SilkScribe إلى {{required}} من المساحة الحرة لتنزيل هذا النموذج. المتاح {{available}}.",
     "downloadFailed": "تعذّر على SilkScribe تنزيل النموذج: {{error}}",
-    "extractionFailed": "تعذّر على SilkScribe استخراج النموذج: {{error}}"
+    "extractionFailed": "تعذّر على SilkScribe استخراج النموذج: {{error}}",
+    "downloadErrors": {
+      "preflightFailed": "تعذّر على SilkScribe التحقق من مساحة القرص قبل التنزيل: {{detail}}",
+      "insufficientSpace": "يحتاج SilkScribe إلى {{required}} مساحة فارغة لتنزيل هذا النموذج. المتاح {{available}}.",
+      "downloadFailed": "تعذّر على SilkScribe تنزيل النموذج: {{detail}}",
+      "extractionFailed": "تعذّر على SilkScribe استخراج النموذج: {{detail}}",
+      "unknown": "تعذّر على SilkScribe إكمال التنزيل."
+    }
   },
   "settings": {
     "modelSettings": {
@@ -945,7 +952,9 @@
       "copiedTitle": "تم النسخ إلى الحافظة",
       "copiedDescription": "تعذّر على SilkScribe اللصق في التطبيق النشط.",
       "failedTitle": "تعذّر على SilkScribe اللصق",
-      "failedDescription": "تعذّر لصق النص أو نسخه."
+      "failedDescription": "تعذّر لصق النص أو نسخه.",
+      "copyFailedTitle": "تعذّر على SilkScribe نسخ النص",
+      "copyFailedDescription": "فشل اللصق، ولم يكتمل النسخ الاحتياطي."
     }
   },
   "home": {

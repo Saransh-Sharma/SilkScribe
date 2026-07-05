@@ -409,7 +409,14 @@
     "diskSpaceCheckError": "SilkScribe non è riuscito a controllare lo spazio su disco prima del download: {{error}}",
     "insufficientSpace": "SilkScribe ha bisogno di {{required}} liberi per scaricare questo modello. Disponibili {{available}}.",
     "downloadFailed": "SilkScribe non è riuscito a scaricare il modello: {{error}}",
-    "extractionFailed": "SilkScribe non è riuscito a estrarre il modello: {{error}}"
+    "extractionFailed": "SilkScribe non è riuscito a estrarre il modello: {{error}}",
+    "downloadErrors": {
+      "preflightFailed": "SilkScribe non ha potuto controllare lo spazio su disco prima del download: {{detail}}",
+      "insufficientSpace": "SilkScribe richiede {{required}} liberi per scaricare questo modello. Sono disponibili {{available}}.",
+      "downloadFailed": "SilkScribe non ha potuto scaricare il modello: {{detail}}",
+      "extractionFailed": "SilkScribe non ha potuto estrarre il modello: {{detail}}",
+      "unknown": "SilkScribe non ha potuto completare il download."
+    }
   },
   "settings": {
     "modelSettings": {
@@ -945,7 +952,9 @@
       "copiedTitle": "Copiato negli appunti",
       "copiedDescription": "SilkScribe non è riuscito a incollare nell'app attiva.",
       "failedTitle": "SilkScribe non è riuscito a incollare",
-      "failedDescription": "Impossibile incollare o copiare il testo."
+      "failedDescription": "Impossibile incollare o copiare il testo.",
+      "copyFailedTitle": "SilkScribe non ha potuto copiare il testo",
+      "copyFailedDescription": "L'incollaggio non è riuscito e la copia di riserva non è stata completata."
     }
   },
   "home": {

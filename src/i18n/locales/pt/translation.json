@@ -409,7 +409,14 @@
     "diskSpaceCheckError": "O SilkScribe não conseguiu verificar o espaço em disco antes de baixar: {{error}}",
     "insufficientSpace": "O SilkScribe precisa de {{required}} livres para baixar este modelo. Há {{available}} disponíveis.",
     "downloadFailed": "O SilkScribe não conseguiu baixar o modelo: {{error}}",
-    "extractionFailed": "O SilkScribe não conseguiu extrair o modelo: {{error}}"
+    "extractionFailed": "O SilkScribe não conseguiu extrair o modelo: {{error}}",
+    "downloadErrors": {
+      "preflightFailed": "O SilkScribe não conseguiu verificar o espaço em disco antes do download: {{detail}}",
+      "insufficientSpace": "O SilkScribe precisa de {{required}} livres para baixar este modelo. Há {{available}} disponíveis.",
+      "downloadFailed": "O SilkScribe não conseguiu baixar o modelo: {{detail}}",
+      "extractionFailed": "O SilkScribe não conseguiu extrair o modelo: {{detail}}",
+      "unknown": "O SilkScribe não conseguiu concluir o download."
+    }
   },
   "settings": {
     "modelSettings": {
@@ -945,7 +952,9 @@
       "copiedTitle": "Copiado para a área de transferência",
       "copiedDescription": "O SilkScribe não conseguiu colar no app ativo.",
       "failedTitle": "O SilkScribe não conseguiu colar",
-      "failedDescription": "Não foi possível colar nem copiar o texto."
+      "failedDescription": "Não foi possível colar nem copiar o texto.",
+      "copyFailedTitle": "O SilkScribe não conseguiu copiar o texto",
+      "copyFailedDescription": "A colagem falhou e a cópia de reserva não foi concluída."
     }
   },
   "home": {

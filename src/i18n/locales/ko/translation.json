@@ -409,7 +409,14 @@
     "diskSpaceCheckError": "SilkScribe가 다운로드하기 전에 디스크 공간을 확인하지 못했습니다: {{error}}",
     "insufficientSpace": "이 모델을 다운로드하려면 {{required}}의 여유 공간이 필요합니다. 사용 가능: {{available}}.",
     "downloadFailed": "SilkScribe가 모델을 다운로드하지 못했습니다: {{error}}",
-    "extractionFailed": "SilkScribe가 모델의 압축을 풀지 못했습니다: {{error}}"
+    "extractionFailed": "SilkScribe가 모델의 압축을 풀지 못했습니다: {{error}}",
+    "downloadErrors": {
+      "preflightFailed": "SilkScribe가 다운로드 전에 디스크 공간을 확인하지 못했습니다: {{detail}}",
+      "insufficientSpace": "이 모델을 다운로드하려면 {{required}}의 여유 공간이 필요합니다. 사용 가능 공간은 {{available}}입니다.",
+      "downloadFailed": "SilkScribe가 모델을 다운로드하지 못했습니다: {{detail}}",
+      "extractionFailed": "SilkScribe가 모델을 추출하지 못했습니다: {{detail}}",
+      "unknown": "SilkScribe가 다운로드를 완료하지 못했습니다."
+    }
   },
   "settings": {
     "modelSettings": {
@@ -945,7 +952,9 @@
       "copiedTitle": "클립보드에 복사됨",
       "copiedDescription": "SilkScribe가 활성 앱에 붙여넣지 못했습니다.",
       "failedTitle": "SilkScribe가 붙여넣지 못했습니다",
-      "failedDescription": "텍스트를 붙여넣거나 복사할 수 없습니다."
+      "failedDescription": "텍스트를 붙여넣거나 복사할 수 없습니다.",
+      "copyFailedTitle": "SilkScribe가 텍스트를 복사하지 못했습니다",
+      "copyFailedDescription": "붙여넣기에 실패했고 대체 복사도 완료되지 않았습니다."
     }
   },
   "home": {

@@ -409,7 +409,14 @@
     "diskSpaceCheckError": "SilkScribe 在下載前無法檢查磁碟空間：{{error}}",
     "insufficientSpace": "下載此模型需要 {{required}} 的可用空間。目前可用 {{available}}。",
     "downloadFailed": "SilkScribe 無法下載該模型：{{error}}",
-    "extractionFailed": "SilkScribe 無法解壓縮該模型：{{error}}"
+    "extractionFailed": "SilkScribe 無法解壓縮該模型：{{error}}",
+    "downloadErrors": {
+      "preflightFailed": "SilkScribe 無法在下載前檢查磁碟空間：{{detail}}",
+      "insufficientSpace": "SilkScribe 需要 {{required}} 可用空間才能下載此模型。目前可用 {{available}}。",
+      "downloadFailed": "SilkScribe 無法下載模型：{{detail}}",
+      "extractionFailed": "SilkScribe 無法解壓縮模型：{{detail}}",
+      "unknown": "SilkScribe 無法完成下載。"
+    }
   },
   "settings": {
     "modelSettings": {
@@ -945,7 +952,9 @@
       "copiedTitle": "已複製到剪貼簿",
       "copiedDescription": "SilkScribe 無法貼上到目前的 App。",
       "failedTitle": "SilkScribe 無法貼上",
-      "failedDescription": "文字無法貼上，也無法複製。"
+      "failedDescription": "文字無法貼上，也無法複製。",
+      "copyFailedTitle": "SilkScribe 無法複製文字",
+      "copyFailedDescription": "貼上失敗，備用複製也未完成。"
     }
   },
   "home": {

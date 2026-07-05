@@ -409,7 +409,14 @@
     "diskSpaceCheckError": "SilkScribe nie mógł sprawdzić miejsca na dysku przed pobraniem: {{error}}",
     "insufficientSpace": "SilkScribe potrzebuje {{required}} wolnego miejsca, aby pobrać ten model. Dostępne: {{available}}.",
     "downloadFailed": "SilkScribe nie mógł pobrać modelu: {{error}}",
-    "extractionFailed": "SilkScribe nie mógł rozpakować modelu: {{error}}"
+    "extractionFailed": "SilkScribe nie mógł rozpakować modelu: {{error}}",
+    "downloadErrors": {
+      "preflightFailed": "SilkScribe nie mógł sprawdzić miejsca na dysku przed pobraniem: {{detail}}",
+      "insufficientSpace": "SilkScribe potrzebuje {{required}} wolnego miejsca, aby pobrać ten model. Dostępne jest {{available}}.",
+      "downloadFailed": "SilkScribe nie mógł pobrać modelu: {{detail}}",
+      "extractionFailed": "SilkScribe nie mógł rozpakować modelu: {{detail}}",
+      "unknown": "SilkScribe nie mógł ukończyć pobierania."
+    }
   },
   "settings": {
     "modelSettings": {
@@ -945,7 +952,9 @@
       "copiedTitle": "Skopiowano do schowka",
       "copiedDescription": "SilkScribe nie mógł wkleić do aktywnej aplikacji.",
       "failedTitle": "SilkScribe nie mógł wkleić",
-      "failedDescription": "Nie udało się wkleić ani skopiować tekstu."
+      "failedDescription": "Nie udało się wkleić ani skopiować tekstu.",
+      "copyFailedTitle": "SilkScribe nie mógł skopiować tekstu",
+      "copyFailedDescription": "Wklejanie nie powiodło się, a kopia zapasowa nie została ukończona."
     }
   },
   "home": {

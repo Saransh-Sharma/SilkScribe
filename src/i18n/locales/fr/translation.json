@@ -409,7 +409,14 @@
     "diskSpaceCheckError": "SilkScribe n'a pas pu vérifier l'espace disque avant le téléchargement : {{error}}",
     "insufficientSpace": "SilkScribe a besoin de {{required}} d'espace libre pour télécharger ce modèle. {{available}} disponible(s).",
     "downloadFailed": "SilkScribe n'a pas pu télécharger le modèle : {{error}}",
-    "extractionFailed": "SilkScribe n'a pas pu extraire le modèle : {{error}}"
+    "extractionFailed": "SilkScribe n'a pas pu extraire le modèle : {{error}}",
+    "downloadErrors": {
+      "preflightFailed": "SilkScribe n'a pas pu vérifier l'espace disque avant le téléchargement : {{detail}}",
+      "insufficientSpace": "SilkScribe a besoin de {{required}} d'espace libre pour télécharger ce modèle. {{available}} disponible(s).",
+      "downloadFailed": "SilkScribe n'a pas pu télécharger le modèle : {{detail}}",
+      "extractionFailed": "SilkScribe n'a pas pu extraire le modèle : {{detail}}",
+      "unknown": "SilkScribe n'a pas pu terminer le téléchargement."
+    }
   },
   "settings": {
     "modelSettings": {
@@ -945,7 +952,9 @@
       "copiedTitle": "Copié dans le presse-papiers",
       "copiedDescription": "SilkScribe n'a pas pu coller dans l'app active.",
       "failedTitle": "SilkScribe n'a pas pu coller",
-      "failedDescription": "Le texte n'a pas pu être collé ni copié."
+      "failedDescription": "Le texte n'a pas pu être collé ni copié.",
+      "copyFailedTitle": "SilkScribe n'a pas pu copier le texte",
+      "copyFailedDescription": "Le collage a échoué et la copie de secours ne s'est pas terminée."
     }
   },
   "home": {

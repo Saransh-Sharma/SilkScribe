@@ -409,7 +409,14 @@
     "diskSpaceCheckError": "SilkScribe couldn't check disk space before downloading: {{error}}",
     "insufficientSpace": "SilkScribe needs {{required}} free to download this model. {{available}} is available.",
     "downloadFailed": "SilkScribe couldn't download the model: {{error}}",
-    "extractionFailed": "SilkScribe couldn't extract the model: {{error}}"
+    "extractionFailed": "SilkScribe couldn't extract the model: {{error}}",
+    "downloadErrors": {
+      "preflightFailed": "SilkScribe couldn't check disk space before downloading: {{detail}}",
+      "insufficientSpace": "SilkScribe needs {{required}} free to download this model. {{available}} is available.",
+      "downloadFailed": "SilkScribe couldn't download the model: {{detail}}",
+      "extractionFailed": "SilkScribe couldn't extract the model: {{detail}}",
+      "unknown": "SilkScribe couldn't finish the download."
+    }
   },
   "settings": {
     "modelSettings": {
@@ -945,7 +952,9 @@
       "copiedTitle": "Copied to clipboard",
       "copiedDescription": "SilkScribe could not paste into the active app.",
       "failedTitle": "SilkScribe could not paste",
-      "failedDescription": "The text could not be pasted or copied."
+      "failedDescription": "The text could not be pasted or copied.",
+      "copyFailedTitle": "SilkScribe could not copy the text",
+      "copyFailedDescription": "Paste failed, and the fallback copy did not finish."
     }
   },
   "home": {

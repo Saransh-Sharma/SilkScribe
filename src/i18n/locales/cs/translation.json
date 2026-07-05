@@ -409,7 +409,14 @@
     "diskSpaceCheckError": "SilkScribe nedokázal před stažením zkontrolovat místo na disku: {{error}}",
     "insufficientSpace": "Ke stažení tohoto modelu potřebuje SilkScribe {{required}} volného místa. K dispozici je {{available}}.",
     "downloadFailed": "SilkScribe nedokázal model stáhnout: {{error}}",
-    "extractionFailed": "SilkScribe nedokázal model rozbalit: {{error}}"
+    "extractionFailed": "SilkScribe nedokázal model rozbalit: {{error}}",
+    "downloadErrors": {
+      "preflightFailed": "SilkScribe nemohl před stažením zkontrolovat místo na disku: {{detail}}",
+      "insufficientSpace": "SilkScribe potřebuje pro stažení tohoto modelu {{required}} volného místa. K dispozici je {{available}}.",
+      "downloadFailed": "SilkScribe nemohl stáhnout model: {{detail}}",
+      "extractionFailed": "SilkScribe nemohl model rozbalit: {{detail}}",
+      "unknown": "SilkScribe nemohl dokončit stahování."
+    }
   },
   "settings": {
     "modelSettings": {
@@ -945,7 +952,9 @@
       "copiedTitle": "Zkopírováno do schránky",
       "copiedDescription": "SilkScribe nedokázal vložit do aktivní aplikace.",
       "failedTitle": "SilkScribe nedokázal vložit",
-      "failedDescription": "Text se nepodařilo vložit ani zkopírovat."
+      "failedDescription": "Text se nepodařilo vložit ani zkopírovat.",
+      "copyFailedTitle": "SilkScribe nemohl text zkopírovat",
+      "copyFailedDescription": "Vložení selhalo a záložní kopírování se nedokončilo."
     }
   },
   "home": {

@@ -409,7 +409,14 @@
     "diskSpaceCheckError": "SilkScribe konnte vor dem Download den Speicherplatz nicht prüfen: {{error}}",
     "insufficientSpace": "SilkScribe benötigt {{required}} freien Speicher, um dieses Modell herunterzuladen. Verfügbar sind {{available}}.",
     "downloadFailed": "SilkScribe konnte das Modell nicht herunterladen: {{error}}",
-    "extractionFailed": "SilkScribe konnte das Modell nicht entpacken: {{error}}"
+    "extractionFailed": "SilkScribe konnte das Modell nicht entpacken: {{error}}",
+    "downloadErrors": {
+      "preflightFailed": "SilkScribe konnte vor dem Download den Speicherplatz nicht prüfen: {{detail}}",
+      "insufficientSpace": "SilkScribe benötigt {{required}} freien Speicher, um dieses Modell herunterzuladen. Verfügbar sind {{available}}.",
+      "downloadFailed": "SilkScribe konnte das Modell nicht herunterladen: {{detail}}",
+      "extractionFailed": "SilkScribe konnte das Modell nicht entpacken: {{detail}}",
+      "unknown": "SilkScribe konnte den Download nicht abschließen."
+    }
   },
   "settings": {
     "modelSettings": {
@@ -945,7 +952,9 @@
       "copiedTitle": "In die Zwischenablage kopiert",
       "copiedDescription": "SilkScribe konnte nicht in die aktive App einfügen.",
       "failedTitle": "SilkScribe konnte nicht einfügen",
-      "failedDescription": "Der Text konnte weder eingefügt noch kopiert werden."
+      "failedDescription": "Der Text konnte weder eingefügt noch kopiert werden.",
+      "copyFailedTitle": "SilkScribe konnte den Text nicht kopieren",
+      "copyFailedDescription": "Das Einfügen ist fehlgeschlagen, und die Ersatzkopie wurde nicht abgeschlossen."
     }
   },
   "home": {

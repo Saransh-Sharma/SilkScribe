@@ -409,7 +409,14 @@
     "diskSpaceCheckError": "SilkScribe はダウンロード前にディスク空き容量を確認できませんでした: {{error}}",
     "insufficientSpace": "このモデルのダウンロードには {{required}} の空き容量が必要です。使用可能: {{available}}。",
     "downloadFailed": "SilkScribe はモデルをダウンロードできませんでした: {{error}}",
-    "extractionFailed": "SilkScribe はモデルを展開できませんでした: {{error}}"
+    "extractionFailed": "SilkScribe はモデルを展開できませんでした: {{error}}",
+    "downloadErrors": {
+      "preflightFailed": "SilkScribe はダウンロード前にディスク空き容量を確認できませんでした: {{detail}}",
+      "insufficientSpace": "このモデルのダウンロードには {{required}} の空き容量が必要です。使用可能: {{available}}。",
+      "downloadFailed": "SilkScribe はモデルをダウンロードできませんでした: {{detail}}",
+      "extractionFailed": "SilkScribe はモデルを展開できませんでした: {{detail}}",
+      "unknown": "SilkScribe はダウンロードを完了できませんでした。"
+    }
   },
   "settings": {
     "modelSettings": {
@@ -945,7 +952,9 @@
       "copiedTitle": "クリップボードにコピーしました",
       "copiedDescription": "SilkScribe はアクティブなアプリに貼り付けできませんでした。",
       "failedTitle": "SilkScribe は貼り付けできませんでした",
-      "failedDescription": "テキストを貼り付けることもコピーすることもできませんでした。"
+      "failedDescription": "テキストを貼り付けることもコピーすることもできませんでした。",
+      "copyFailedTitle": "SilkScribe はテキストをコピーできませんでした",
+      "copyFailedDescription": "貼り付けに失敗し、予備のコピーも完了しませんでした。"
     }
   },
   "home": {

@@ -409,7 +409,14 @@
     "diskSpaceCheckError": "SilkScribe не вдалося перевірити вільне місце перед завантаженням: {{error}}",
     "insufficientSpace": "Для завантаження цієї моделі SilkScribe потрібно {{required}} вільного місця. Доступно {{available}}.",
     "downloadFailed": "SilkScribe не вдалося завантажити модель: {{error}}",
-    "extractionFailed": "SilkScribe не вдалося розпакувати модель: {{error}}"
+    "extractionFailed": "SilkScribe не вдалося розпакувати модель: {{error}}",
+    "downloadErrors": {
+      "preflightFailed": "SilkScribe не вдалося перевірити місце на диску перед завантаженням: {{detail}}",
+      "insufficientSpace": "Для завантаження цієї моделі SilkScribe потрібно {{required}} вільного місця. Доступно {{available}}.",
+      "downloadFailed": "SilkScribe не вдалося завантажити модель: {{detail}}",
+      "extractionFailed": "SilkScribe не вдалося розпакувати модель: {{detail}}",
+      "unknown": "SilkScribe не вдалося завершити завантаження."
+    }
   },
   "settings": {
     "modelSettings": {
@@ -945,7 +952,9 @@
       "copiedTitle": "Скопійовано в буфер обміну",
       "copiedDescription": "SilkScribe не вдалося вставити в активний застосунок.",
       "failedTitle": "SilkScribe не вдалося вставити",
-      "failedDescription": "Текст не вдалося ні вставити, ні скопіювати."
+      "failedDescription": "Текст не вдалося ні вставити, ні скопіювати.",
+      "copyFailedTitle": "SilkScribe не вдалося скопіювати текст",
+      "copyFailedDescription": "Вставлення не вдалося, і резервне копіювання не завершилося."
     }
   },
   "home": {

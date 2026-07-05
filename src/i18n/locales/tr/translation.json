@@ -409,7 +409,14 @@
     "diskSpaceCheckError": "SilkScribe indirmeden önce disk alanını kontrol edemedi: {{error}}",
     "insufficientSpace": "Bu modeli indirmek için SilkScribe {{required}} boş alana ihtiyaç duyar. {{available}} kullanılabilir.",
     "downloadFailed": "SilkScribe modeli indiremedi: {{error}}",
-    "extractionFailed": "SilkScribe modeli çıkaramadı: {{error}}"
+    "extractionFailed": "SilkScribe modeli çıkaramadı: {{error}}",
+    "downloadErrors": {
+      "preflightFailed": "SilkScribe indirmeden önce disk alanını kontrol edemedi: {{detail}}",
+      "insufficientSpace": "SilkScribe bu modeli indirmek için {{required}} boş alana ihtiyaç duyuyor. Kullanılabilir alan {{available}}.",
+      "downloadFailed": "SilkScribe modeli indiremedi: {{detail}}",
+      "extractionFailed": "SilkScribe modeli çıkaramadı: {{detail}}",
+      "unknown": "SilkScribe indirmeyi tamamlayamadı."
+    }
   },
   "settings": {
     "modelSettings": {
@@ -945,7 +952,9 @@
       "copiedTitle": "Panoya kopyalandı",
       "copiedDescription": "SilkScribe etkin uygulamaya yapıştıramadı.",
       "failedTitle": "SilkScribe yapıştıramadı",
-      "failedDescription": "Metin yapıştırılamadı veya kopyalanamadı."
+      "failedDescription": "Metin yapıştırılamadı veya kopyalanamadı.",
+      "copyFailedTitle": "SilkScribe metni kopyalayamadı",
+      "copyFailedDescription": "Yapıştırma başarısız oldu ve yedek kopyalama tamamlanmadı."
     }
   },
   "home": {
