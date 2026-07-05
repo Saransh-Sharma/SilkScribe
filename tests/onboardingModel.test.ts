@@ -37,12 +37,10 @@ describe("selectOnboardingModel", () => {
       supported_languages: ["en", "fr"],
     });
 
-    const model = selectOnboardingModel(
-      [small, parakeetV3],
-      "small",
-      "en-US",
-      { osType: "macos", arch: "arm64" },
-    );
+    const model = selectOnboardingModel([small, parakeetV3], "small", "en-US", {
+      osType: "macos",
+      arch: "arm64",
+    });
 
     expect(model?.id).toBe("parakeet-tdt-0.6b-v3");
   });
@@ -57,12 +55,10 @@ describe("selectOnboardingModel", () => {
       supported_languages: ["en", "fr"],
     });
 
-    const model = selectOnboardingModel(
-      [small, parakeetV3],
-      "small",
-      "hi-IN",
-      { osType: "macos", arch: "x86_64" },
-    );
+    const model = selectOnboardingModel([small, parakeetV3], "small", "hi-IN", {
+      osType: "macos",
+      arch: "x86_64",
+    });
 
     expect(model?.id).toBe("parakeet-tdt-0.6b-v3");
   });
@@ -79,12 +75,9 @@ describe("selectOnboardingModel", () => {
       supported_languages: ["en", "fr"],
     });
 
-    const model = selectOnboardingModel(
-      [small, parakeetV3],
-      "small",
-      "en-US",
-      { osType: "macos" },
-    );
+    const model = selectOnboardingModel([small, parakeetV3], "small", "en-US", {
+      osType: "macos",
+    });
 
     expect(model?.id).toBe("parakeet-tdt-0.6b-v3");
   });

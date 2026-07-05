@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dist-site/
+.build/
+artifacts/
+permiso-main/
+playwright-report/
+test-results/
+
+src-tauri/target/
+src-tauri/gen/
+src-tauri/vendor/
+
+public/playwright/
+site/
+docs/superpowers/plans/

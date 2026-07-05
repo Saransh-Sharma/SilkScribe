@@ -25,6 +25,7 @@ import { getTranslatedModelName } from "@/lib/utils/modelTranslation";
 import { formatKeyCombination } from "@/lib/utils/keyboard";
 import { useOsType } from "@/hooks/useOsType";
 import { Button } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { HistoryFeed } from "@/components/history/HistoryFeed";
 import { UsageStatsStrip } from "./UsageStatsStrip";
 
@@ -50,6 +51,7 @@ interface HomeDashboardProps {
       | "history"
       | "debug",
   ) => void;
+  onStartPermissionRepair?: () => void;
 }
 
 interface PermissionSnapshot {
@@ -84,7 +86,10 @@ const selectHomeCursor = (data: HomeDashboardPageData) => data.next_cursor;
 
 const HOME_EMPTY_SUMMARY = () => ({ ...EMPTY_SUMMARY });
 
-const HomeDashboard = ({ onNavigate }: HomeDashboardProps) => {
+const HomeDashboard = ({
+  onNavigate,
+  onStartPermissionRepair,
+}: HomeDashboardProps) => {
   const { t } = useTranslation();
   const osType = useOsType();
   const { settings } = useSettings();
@@ -187,7 +192,10 @@ const HomeDashboard = ({ onNavigate }: HomeDashboardProps) => {
           setPermissions({ accessibility, microphone });
         }
       } catch (permissionError) {
-        console.warn("Failed to load permissions for dashboard:", permissionError);
+        console.warn(
+          "Failed to load permissions for dashboard:",
+          permissionError,
+        );
       }
     };
 
@@ -262,7 +270,10 @@ const HomeDashboard = ({ onNavigate }: HomeDashboardProps) => {
         ? t("home.readiness.permissions.ready")
         : t("home.readiness.permissions.needsAttention"),
       status: permissionsReady,
-      action: () => onNavigate?.("general"),
+      action: () =>
+        permissionsReady
+          ? onNavigate?.("general")
+          : onStartPermissionRepair?.(),
       actionLabel: t("home.readiness.permissions.action"),
     },
   ];
@@ -292,7 +303,15 @@ const HomeDashboard = ({ onNavigate }: HomeDashboardProps) => {
                 variant="primary"
                 size="md"
                 onClick={() =>
-                  onNavigate?.(setupReady ? "general" : currentModelInfo ? "general" : "models")
+                  !permissionsReady
+                    ? onStartPermissionRepair?.()
+                    : onNavigate?.(
+                        setupReady
+                          ? "general"
+                          : currentModelInfo
+                            ? "general"
+                            : "models",
+                      )
                 }
               >
                 {setupActionLabel}
@@ -331,7 +350,11 @@ const HomeDashboard = ({ onNavigate }: HomeDashboardProps) => {
                     type="button"
                     variant="secondary"
                     size="sm"
-                    onClick={() => onNavigate?.("general")}
+                    onClick={() =>
+                      !permissionsReady
+                        ? onStartPermissionRepair?.()
+                        : onNavigate?.("general")
+                    }
                   >
                     {t("home.setup.generalAction")}
                   </Button>
@@ -389,32 +412,30 @@ const HomeDashboard = ({ onNavigate }: HomeDashboardProps) => {
       </section>
 
       {!hasActivity ? (
-        <section className="rounded-[22px] border border-ss-border-subtle bg-ss-bg-surface px-5 py-5 shadow-[var(--ss-shadow-card)]">
-          <p className="text-sm font-semibold text-ss-text-primary">
-            {t("home.firstUse.title")}
-          </p>
-          <p className="mt-2 max-w-[66ch] text-sm leading-relaxed text-ss-text-secondary">
-            {t("home.firstUse.description")}
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={() => onNavigate?.("general")}
-            >
-              {t("home.firstUse.generalAction")}
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={() => onNavigate?.("models")}
-            >
-              {t("home.firstUse.modelsAction")}
-            </Button>
-          </div>
-        </section>
+        <EmptyState
+          title={t("home.firstUse.title")}
+          description={t("home.firstUse.description")}
+          action={
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => onNavigate?.("general")}
+              >
+                {t("home.firstUse.generalAction")}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => onNavigate?.("models")}
+              >
+                {t("home.firstUse.modelsAction")}
+              </Button>
+            </div>
+          }
+        />
       ) : null}
 
       <section className="space-y-3">
