@@ -72,9 +72,7 @@ export const externalLinks = {
 
 export const primaryDownloadHref = externalLinks.githubReleases;
 
-export const primaryDownloadLabel = externalLinks.appStore
-  ? "Get SilkScribe for Mac"
-  : "Download from GitHub Releases";
+export const primaryDownloadLabel = "Get SilkScribe for Mac";
 
 export const marketingScreenshots: Record<"hero", ScreenshotAsset> = {
   hero: {
