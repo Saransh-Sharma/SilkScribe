@@ -134,16 +134,15 @@ const ExampleSwitcher = () => {
   };
 
   return (
-    <div className="example-switcher" data-reveal>
+    <div className="example-switcher premium-switcher" data-reveal>
       <div
-        className="example-switcher__tabs"
+        className="premium-switcher__tabs"
         role="tablist"
         aria-label="Before and after examples"
-        aria-orientation="vertical"
       >
         {beforeAfterExamples.map((example, index) => (
           <button
-            className={index === activeIndex ? "is-active" : undefined}
+            className={`premium-switcher__tab ${index === activeIndex ? "is-active" : ""}`}
             key={example.label}
             type="button"
             role="tab"
@@ -154,30 +153,69 @@ const ExampleSwitcher = () => {
             onClick={() => setActiveIndex(index)}
             onKeyDown={(event) => activateTab(event, index)}
           >
-            <span>0{index + 1}</span>
             {example.label}
           </button>
         ))}
       </div>
-      {beforeAfterExamples.map((example, index) => (
-        <div
-          className="example-switcher__stage"
-          key={example.label}
-          role="tabpanel"
-          id={`example-tabpanel-${index}`}
-          aria-labelledby={`example-tab-${index}`}
-          hidden={index !== activeIndex}
-        >
-          <div className="example-pane example-pane--spoken">
-            <span>You say</span>
-            <p>"{example.spoken}"</p>
+
+      <div className="premium-switcher__stage-container">
+        {beforeAfterExamples.map((example, index) => (
+          <div
+            className={`premium-switcher__stage ${index === activeIndex ? "is-active" : ""}`}
+            key={example.label}
+            role="tabpanel"
+            id={`example-tabpanel-${index}`}
+            aria-labelledby={`example-tab-${index}`}
+            hidden={index !== activeIndex}
+          >
+            {/* Left: You Say (Raw Speech) */}
+            <div className="premium-pane premium-pane--spoken">
+              <div className="premium-pane__header">
+                <div className="recording-indicator">
+                  <span className="dot"></span>
+                  <span className="label">You say</span>
+                </div>
+                <div className="equalizer">
+                  <span className="bar"></span>
+                  <span className="bar"></span>
+                  <span className="bar"></span>
+                  <span className="bar"></span>
+                </div>
+              </div>
+              <p className="premium-pane__content">"{example.spoken}"</p>
+            </div>
+
+            {/* Center: Magic Connector */}
+            <div className="premium-connector">
+              <div className="premium-connector__line">
+                <div className="premium-connector__pulse"></div>
+              </div>
+              <div className="premium-connector__icon-wrapper">
+                <Sparkles className="premium-connector__icon" size={18} />
+              </div>
+            </div>
+
+            {/* Right: SilkScribe Writes (Polished) */}
+            <div className="premium-pane premium-pane--written">
+              <div className="premium-pane__header">
+                <span className="label">
+                  <img src="/favicon-32.png" alt="" aria-hidden="true" className="silk-icon" style={{ width: 16, height: 16, marginRight: 6, display: 'inline-block', verticalAlign: 'middle', opacity: 0.8 }} />
+                  SilkScribe writes
+                </span>
+                <button 
+                  className="copy-btn" 
+                  onClick={handleCopy}
+                  aria-label="Copy polished text"
+                >
+                  {copied ? <Check size={14} /> : <Copy size={14} />}
+                  <span>{copied ? "Copied" : "Copy"}</span>
+                </button>
+              </div>
+              <p className="premium-pane__content premium-pane__content--animated">{example.written}</p>
+            </div>
           </div>
-          <div className="example-pane example-pane--written">
-            <span>SilkScribe writes</span>
-            <p>{example.written}</p>
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };
