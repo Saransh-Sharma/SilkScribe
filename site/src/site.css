@@ -718,15 +718,18 @@ p {
 }
 
 .premium-switcher__stage-container {
-  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
   border-radius: 30px;
   background: var(--site-surface-strong);
   padding: 8px;
   border: 1px solid var(--site-border);
-  min-height: 400px;
 }
 
 .premium-switcher__stage {
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
   display: flex;
   flex-direction: row;
   align-items: stretch;
@@ -734,27 +737,20 @@ p {
   border-radius: 24px;
   background: var(--site-surface);
   padding: 8px;
-  min-height: inherit;
   opacity: 0;
   transform: translateY(10px) scale(0.98);
   transition: all 400ms var(--ease-out);
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  right: 8px;
-  bottom: 8px;
   pointer-events: none;
+  visibility: hidden;
+  z-index: 1;
 }
 
 .premium-switcher__stage.is-active {
   opacity: 1;
   transform: translateY(0) scale(1);
   pointer-events: auto;
-  position: relative;
-  top: auto;
-  left: auto;
-  right: auto;
-  bottom: auto;
+  visibility: visible;
+  z-index: 2;
 }
 
 .premium-pane {
