@@ -128,6 +128,11 @@ const ExampleSwitcher = () => {
       [nextIndex]?.focus();
   };
 
+  const handleCopy = () => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="example-switcher" data-reveal>
       <div
