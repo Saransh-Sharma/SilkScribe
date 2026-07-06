@@ -59,7 +59,7 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEJBQjcyMDk1MjA2NjAxRjkKUldUNUFXWWdsU0MzdXRRZi8zYzhqV2FaNUVDbDd2Rk5VM1IvWWowVXdmRFNKQ1BrMXF5RFFsLy8K",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDRDOUY2OEUxMzNFMkQ3NjgKUldSbzErSXo0V2lmVENlSGlTQTdOTEg2K2ZleG1SbHArdkVWd0ZqMzRwd2VJdTdTMXdmV2p6a0UK",
       "endpoints": [
         "https://github.com/Saransh-Sharma/SilkScribe/releases/latest/download/latest.json"
       ]
