@@ -1,5 +1,5 @@
-import { useState, type KeyboardEvent } from "react";
-import { Check, Github, LockKeyhole } from "lucide-react";
+import { useState, useEffect, type KeyboardEvent } from "react";
+import { Check, Github, LockKeyhole, Mic, Sparkles, Copy, ArrowRight, ArrowDown } from "lucide-react";
 import {
   appBadges,
   audienceCards,
