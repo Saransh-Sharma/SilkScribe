@@ -61,7 +61,8 @@ const normalizedSiteUrl =
 export const externalLinks = {
   github: "https://github.com/Saransh-Sharma/SilkScribe",
   githubIssues: "https://github.com/Saransh-Sharma/SilkScribe/issues",
-  githubReleases: "https://github.com/Saransh-Sharma/SilkScribe/releases",
+  githubReleases:
+    "https://github.com/Saransh-Sharma/SilkScribe/releases/tag/v0.1.0",
   email: "mailto:contact@silkscribe.app",
   appStore: import.meta.env.VITE_SITE_APP_STORE_URL?.trim() || null,
   siteUrl: normalizedSiteUrl,
