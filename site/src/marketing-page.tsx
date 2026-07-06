@@ -88,18 +88,25 @@ const WorkflowSequence = () => (
 
 const ExampleSwitcher = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const activateTab = (
     event: KeyboardEvent<HTMLButtonElement>,
     index: number,
   ) => {
     let nextIndex: number;
-
     switch (event.key) {
       case "ArrowLeft":
       case "ArrowUp":
-        nextIndex =
-          (index - 1 + beforeAfterExamples.length) % beforeAfterExamples.length;
+        nextIndex = (index - 1 + beforeAfterExamples.length) % beforeAfterExamples.length;
         break;
       case "ArrowRight":
       case "ArrowDown":
@@ -114,7 +121,6 @@ const ExampleSwitcher = () => {
       default:
         return;
     }
-
     event.preventDefault();
     setActiveIndex(nextIndex);
     event.currentTarget.parentElement
