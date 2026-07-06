@@ -1,4 +1,4 @@
-import { useState, useEffect, type KeyboardEvent } from "react";
+import { useState, type KeyboardEvent } from "react";
 import { Check, Github, LockKeyhole, Mic, Sparkles, Copy, ArrowRight, ArrowDown } from "lucide-react";
 import {
   appBadges,
@@ -89,14 +89,6 @@ const WorkflowSequence = () => (
 const ExampleSwitcher = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [copied, setCopied] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const activateTab = (
     event: KeyboardEvent<HTMLButtonElement>,
@@ -128,7 +120,8 @@ const ExampleSwitcher = () => {
       [nextIndex]?.focus();
   };
 
-  const handleCopy = () => {
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -166,7 +159,7 @@ const ExampleSwitcher = () => {
             role="tabpanel"
             id={`example-tabpanel-${index}`}
             aria-labelledby={`example-tab-${index}`}
-            hidden={index !== activeIndex}
+            aria-hidden={index !== activeIndex}
           >
             {/* Left: You Say (Raw Speech) */}
             <div className="premium-pane premium-pane--spoken">
@@ -199,12 +192,12 @@ const ExampleSwitcher = () => {
             <div className="premium-pane premium-pane--written">
               <div className="premium-pane__header">
                 <span className="label">
-                  <img src="/favicon-32.png" alt="" aria-hidden="true" className="silk-icon" style={{ width: 16, height: 16, marginRight: 6, display: 'inline-block', verticalAlign: 'middle', opacity: 0.8 }} />
+                  <Sparkles size={16} aria-hidden="true" style={{ marginRight: 6, display: 'inline-block', verticalAlign: 'middle', opacity: 0.8 }} />
                   SilkScribe writes
                 </span>
                 <button 
                   className="copy-btn" 
-                  onClick={handleCopy}
+                  onClick={() => handleCopy(example.written)}
                   aria-label="Copy polished text"
                 >
                   {copied ? <Check size={14} /> : <Copy size={14} />}
