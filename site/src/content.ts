@@ -70,8 +70,7 @@ export const externalLinks = {
     : null,
 };
 
-export const primaryDownloadHref =
-  externalLinks.appStore ?? externalLinks.githubReleases;
+export const primaryDownloadHref = externalLinks.githubReleases;
 
 export const primaryDownloadLabel = externalLinks.appStore
   ? "Get SilkScribe for Mac"
