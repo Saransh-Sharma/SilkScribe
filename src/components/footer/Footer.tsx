@@ -10,6 +10,7 @@ const FooterUtilityMenu = () => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -18,8 +19,19 @@ const FooterUtilityMenu = () => {
       }
     };
 
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
 
   const actions = [
@@ -44,9 +56,12 @@ const FooterUtilityMenu = () => {
   return (
     <div className="relative" ref={menuRef}>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setIsOpen((open) => !open)}
-        className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-ss-border-subtle bg-ss-bg-surface-alt px-3 text-xs font-semibold text-ss-text-secondary transition-colors duration-150 hover:border-ss-brand-secondary/30 hover:text-ss-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35"
+        className="inline-flex min-h-9 w-full items-center justify-between gap-1.5 rounded-[var(--ss-radius-sm)] border border-transparent px-2.5 text-xs font-semibold text-ss-text-tertiary transition-colors duration-150 hover:border-ss-border-subtle hover:bg-ss-bg-surface hover:text-ss-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35"
+        aria-expanded={isOpen}
+        aria-haspopup="menu"
       >
         {t("footer.support.label")}
         <ChevronDown
@@ -56,7 +71,10 @@ const FooterUtilityMenu = () => {
         />
       </button>
       {isOpen ? (
-        <div className="absolute bottom-[calc(100%+0.5rem)] right-0 z-50 min-w-[180px] overflow-hidden rounded-[16px] border border-ss-border-default bg-ss-bg-surface p-1 shadow-[var(--ss-shadow-lift)]">
+        <div
+          className="absolute bottom-[calc(100%+0.5rem)] start-0 z-[var(--ss-layer-dropdown)] min-w-[200px] overflow-hidden rounded-[var(--ss-radius-md)] border border-ss-border-default bg-ss-bg-surface p-1 shadow-[var(--ss-shadow-lift)]"
+          role="menu"
+        >
           {actions.map((action) => {
             const Icon = action.icon;
             return (
@@ -68,6 +86,7 @@ const FooterUtilityMenu = () => {
                   void action.onClick();
                   setIsOpen(false);
                 }}
+                role="menuitem"
               >
                 <Icon className="h-4 w-4" />
                 {action.label}
@@ -99,23 +118,22 @@ const Footer: React.FC = () => {
   }, []);
 
   return (
-    <div className="mt-3">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-[18px] border border-ss-border-subtle bg-[color-mix(in_srgb,var(--ss-bg-surface)_82%,transparent)] px-3.5 py-2.5 text-xs text-ss-text-tertiary shadow-[var(--ss-shadow-card)]">
-        <div className="min-w-0 flex items-center gap-3">
+    <footer className="mt-3 border-t border-ss-border-subtle pt-3 text-xs text-ss-text-tertiary">
+      <div className="space-y-2 rounded-[var(--ss-radius-md)] bg-[color-mix(in_srgb,var(--ss-bg-surface)_58%,transparent)] p-2 shadow-[var(--ss-shadow-hairline)]">
+        <div className="min-w-0 overflow-visible">
           <ModelSelector />
         </div>
-
-        <div className="flex shrink-0 flex-wrap items-center gap-2.5">
-          <UpdateChecker />
-          <span className="rounded-full border border-ss-border-subtle bg-ss-bg-surface-alt px-2.5 py-1 font-mono text-[11px] text-ss-text-secondary">
+        <div className="flex min-h-7 items-center justify-between gap-2 px-1">
+          <UpdateChecker className="min-w-0 text-[11px]" />
+          <span className="shrink-0 font-mono text-[10px] text-ss-text-tertiary">
             {version
               ? t("common.versionLabel", { version })
               : t("common.loading")}
           </span>
-          <FooterUtilityMenu />
         </div>
+        <FooterUtilityMenu />
       </div>
-    </div>
+    </footer>
   );
 };
 

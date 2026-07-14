@@ -52,7 +52,7 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
   };
 
   const containerClasses = grouped
-    ? "px-[14px] py-3"
+    ? "px-4 py-3"
     : "rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface px-[14px] py-3 shadow-[var(--ss-shadow-card)]";
 
   const titleBlockClasses = disabled ? "opacity-60" : "";
@@ -114,8 +114,8 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
   }
 
   const horizontalContainerClasses = grouped
-    ? "flex min-h-12 items-center justify-between gap-4 px-[14px] py-3"
-    : "flex min-h-12 items-center justify-between gap-4 rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface px-[14px] py-3 shadow-[var(--ss-shadow-card)]";
+    ? "grid min-h-12 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-5 gap-y-3 px-4 py-3 max-[760px]:grid-cols-1"
+    : "grid min-h-12 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-5 gap-y-3 rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface px-4 py-3 shadow-[var(--ss-shadow-hairline)] max-[760px]:grid-cols-1";
 
   if (descriptionMode === "tooltip") {
     return (
@@ -126,7 +126,9 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
             {tooltipTrigger}
           </div>
         </div>
-        <div className="relative shrink-0 text-ss-text-primary">{children}</div>
+        <div className="relative min-w-0 justify-self-end text-ss-text-primary max-[760px]:w-full max-[760px]:justify-self-stretch">
+          {children}
+        </div>
       </div>
     );
   }
@@ -137,7 +139,9 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
         <h3 className={titleClasses}>{title}</h3>
         <p className={`mt-1 ${descriptionClasses}`}>{description}</p>
       </div>
-      <div className="relative shrink-0 text-ss-text-primary">{children}</div>
+      <div className="relative min-w-0 justify-self-end text-ss-text-primary max-[760px]:w-full max-[760px]:justify-self-stretch">
+        {children}
+      </div>
     </div>
   );
 };

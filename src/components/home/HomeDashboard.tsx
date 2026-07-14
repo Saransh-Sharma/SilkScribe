@@ -299,132 +299,94 @@ const HomeDashboard = ({
     },
   ];
 
+  const primaryDestination: HomeNavigationSection = !permissionsReady
+    ? "general"
+    : !currentModelInfo
+      ? "models"
+      : "general";
+
   return (
-    <div className="w-full space-y-6">
-      <section className="home-fade-in overflow-hidden rounded-[26px] border border-ss-border-subtle/80 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--ss-brand-highlight)_12%,var(--ss-bg-surface))_0%,var(--ss-bg-surface)_36%,color-mix(in_srgb,var(--ss-brand-secondary)_8%,var(--ss-bg-surface))_100%)] px-5 py-5 shadow-[var(--ss-shadow-card)]">
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)]">
-          <div className="min-w-0 space-y-5">
-            <div className="space-y-3">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-ss-brand-secondary">
+    <div className="w-full space-y-7">
+      <section className="home-fade-in overflow-hidden rounded-[var(--ss-radius-xl)] border border-ss-border-default bg-ss-bg-surface shadow-[var(--ss-shadow-card)]">
+        <div className="flex flex-col gap-5 px-5 pb-5 pt-5 lg:flex-row lg:items-start lg:justify-between lg:px-6">
+          <div className="min-w-0 max-w-[64ch]">
+            <div className="mb-3 flex items-center gap-2.5">
+              <span
+                className={`relative flex h-3 w-3 items-center justify-center rounded-full ${
+                  setupReady ? "bg-ss-state-success" : "bg-ss-brand-highlight"
+                }`}
+                aria-hidden="true"
+              >
+                <span className="absolute h-5 w-5 rounded-full border border-current opacity-20" />
+              </span>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ss-text-tertiary">
                 {t("home.welcome.eyebrow")}
               </p>
-              <div>
-                <h1 className="text-[2.15rem] font-semibold tracking-[-0.04em] text-ss-text-primary sm:text-[2.45rem]">
-                  {welcomeTitle}
-                </h1>
-                <p className="mt-3 max-w-[62ch] text-sm leading-relaxed text-ss-text-secondary sm:text-[15px]">
-                  {welcomeDescription}
-                </p>
-              </div>
             </div>
-
-            <div className="flex flex-wrap items-center gap-3">
-              <Button
-                type="button"
-                variant="primary"
-                size="md"
-                disabled={!permissionsReady && isStartingPermissionRepair}
-                onClick={() =>
-                  navigateWithPermissionGate(
-                    setupReady
-                      ? "general"
-                      : currentModelInfo
-                        ? "general"
-                        : "models",
-                  )
-                }
-              >
-                {setupActionLabel}
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                size="md"
-                onClick={() => onNavigate?.("models")}
-              >
-                {t("home.welcome.secondaryAction")}
-              </Button>
-            </div>
-
-            {!setupReady ? (
-              <div className="rounded-[20px] border border-ss-brand-secondary/18 bg-ss-bg-surface/72 px-4 py-4">
-                <p className="text-sm font-semibold text-ss-text-primary">
-                  {t("home.setup.title")}
-                </p>
-                <p className="mt-1.5 text-sm leading-relaxed text-ss-text-secondary">
-                  {t("home.setup.description")}
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {!currentModelInfo ? (
-                    <Button
-                      type="button"
-                      variant="primary-soft"
-                      size="sm"
-                      onClick={() => onNavigate?.("models")}
-                    >
-                      {t("home.setup.modelAction")}
-                    </Button>
-                  ) : null}
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="sm"
-                    disabled={!permissionsReady && isStartingPermissionRepair}
-                    onClick={() => navigateWithPermissionGate("general")}
-                  >
-                    {t("home.setup.generalAction")}
-                  </Button>
-                </div>
-              </div>
-            ) : null}
+            <h1 className="text-[2rem] font-semibold leading-[1.06] tracking-[-0.038em] text-ss-text-primary">
+              {welcomeTitle}
+            </h1>
+            <p className="mt-2 max-w-[58ch] text-sm leading-relaxed text-ss-text-secondary">
+              {welcomeDescription}
+            </p>
           </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            {readinessItems.map((item) => {
-              const Icon = item.icon;
-
-              return (
-                <div
-                  key={item.key}
-                  className="rounded-[20px] border border-ss-border-subtle bg-ss-bg-surface/88 px-4 py-4 shadow-[var(--ss-shadow-card)]"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <span
-                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] ${
-                        item.status
-                          ? "bg-ss-brand-primary/12 text-ss-brand-primary"
-                          : "bg-ss-brand-secondary/10 text-ss-brand-secondary"
-                      }`}
-                    >
-                      {item.status ? (
-                        <CheckCircle2 className="h-5 w-5" />
-                      ) : (
-                        <Icon className="h-5 w-5" />
-                      )}
-                    </span>
-                    <button
-                      type="button"
-                      className="text-xs font-semibold text-ss-text-tertiary transition-colors duration-150 hover:text-ss-brand-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:text-ss-text-tertiary"
-                      disabled={item.disabled}
-                      onClick={() => item.action()}
-                    >
-                      {item.actionLabel}
-                    </button>
-                  </div>
-                  <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-ss-text-tertiary">
-                    {item.label}
-                  </p>
-                  <p className="mt-2 text-sm font-semibold leading-relaxed text-ss-text-primary">
-                    {item.value}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
+          <Button
+            type="button"
+            variant="primary"
+            size="md"
+            className="shrink-0"
+            disabled={!permissionsReady && isStartingPermissionRepair}
+            onClick={() => navigateWithPermissionGate(primaryDestination)}
+          >
+            {setupActionLabel}
+            <ChevronRight className="h-4 w-4" />
+          </Button>
         </div>
 
-        <div className="mt-5 border-t border-ss-border-subtle/80 pt-4">
+        <div className="grid border-y border-ss-border-subtle bg-ss-bg-surface-alt/38 sm:grid-cols-2 xl:grid-cols-4">
+          {readinessItems.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.key}
+                type="button"
+                disabled={item.disabled}
+                onClick={() => item.action()}
+                className={`group min-w-0 px-4 py-3.5 text-start transition-colors duration-[var(--ss-duration-hover)] hover:bg-ss-bg-surface focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ss-action-focus/45 disabled:cursor-wait disabled:opacity-60 ${
+                  index > 0 ? "border-s border-ss-border-subtle" : ""
+                } ${index === 2 ? "sm:border-s-0 xl:border-s" : ""}`}
+                aria-label={`${item.label}: ${item.value}. ${item.actionLabel}`}
+              >
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-[10px] ${
+                      item.status
+                        ? "bg-ss-brand-primary/10 text-ss-brand-primary"
+                        : "bg-ss-brand-secondary/10 text-ss-brand-secondary"
+                    }`}
+                  >
+                    {item.status ? (
+                      <CheckCircle2 className="h-4 w-4" />
+                    ) : (
+                      <Icon className="h-4 w-4" />
+                    )}
+                  </span>
+                  <span className="truncate text-xs font-semibold text-ss-text-tertiary">
+                    {item.label}
+                  </span>
+                </div>
+                <div className="mt-2 flex items-center justify-between gap-2 ps-9">
+                  <span className="truncate text-sm font-semibold text-ss-text-primary">
+                    {item.value}
+                  </span>
+                  <ChevronRight className="h-3.5 w-3.5 shrink-0 text-ss-text-tertiary opacity-0 transition-opacity group-hover:opacity-100" />
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="px-5 py-3 lg:px-6">
           <UsageStatsStrip summary={summary} loading={loading} />
         </div>
       </section>
@@ -456,11 +418,19 @@ const HomeDashboard = ({
         />
       ) : null}
 
-      <section className="space-y-3">
-        <div className="px-1">
+      <section className="space-y-3.5">
+        <div className="flex items-end justify-between gap-4 px-0.5">
           <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-ss-text-tertiary">
             {t("home.activityTitle")}
           </h2>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onNavigate?.("history")}
+          >
+            {t("sidebar.history")}
+            <ChevronRight className="h-3.5 w-3.5" />
+          </Button>
         </div>
         <HistoryFeed
           entries={entries}

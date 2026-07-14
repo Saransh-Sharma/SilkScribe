@@ -26,7 +26,7 @@ export const DisclosureSection = ({
 
   return (
     <section
-      className={`overflow-hidden rounded-[var(--ss-radius-lg)] border shadow-[var(--ss-shadow-card)] ${toneClasses}`}
+      className={`overflow-hidden rounded-[var(--ss-radius-lg)] border shadow-[var(--ss-shadow-hairline)] ${toneClasses}`}
     >
       <button
         type="button"
@@ -54,7 +54,7 @@ export const DisclosureSection = ({
         </span>
       </button>
       <div
-        className="grid transition-[grid-template-rows] duration-300 ease-out"
+        className="grid transition-[grid-template-rows] duration-[var(--ss-duration-panel)] ease-[var(--ss-ease-out-quint)]"
         style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
       >
         <div id={panelId} className="overflow-hidden">

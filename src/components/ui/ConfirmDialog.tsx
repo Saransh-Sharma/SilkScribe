@@ -87,7 +87,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[var(--ss-layer-modal)] flex items-center justify-center bg-[var(--ss-overlay-scrim)] px-4 backdrop-blur-sm"
+      className="ss-dialog-backdrop fixed inset-0 z-[var(--ss-layer-modal)] flex items-center justify-center bg-[var(--ss-overlay-scrim)] px-4"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) {
           onCancel();
@@ -100,7 +100,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={descriptionId}
-        className="w-full max-w-[420px] rounded-[var(--ss-radius-lg)] border border-ss-border-default bg-ss-bg-surface p-5 text-ss-text-primary shadow-[var(--ss-shadow-lift)]"
+        className="ss-dialog-panel w-full max-w-[420px] rounded-[var(--ss-radius-lg)] border border-ss-border-default bg-ss-bg-surface p-5 text-ss-text-primary shadow-[var(--ss-shadow-lift)]"
       >
         <div className="flex items-start gap-3">
           <div

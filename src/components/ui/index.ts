@@ -1,9 +1,11 @@
 export { Dropdown } from "./Dropdown";
+export { Button } from "./Button";
 export { EmptyState } from "./EmptyState";
 export { ErrorBoundary } from "./ErrorBoundary";
 export { ConfirmDialog } from "./ConfirmDialog";
 export { Skeleton } from "./Skeleton";
 export { Slider } from "./Slider";
+export { Select } from "./Select";
 export { ToggleSwitch } from "./ToggleSwitch";
 export { SettingContainer } from "./SettingContainer";
 export { SettingsGroup } from "./SettingsGroup";

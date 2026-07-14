@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import SilkScribeWordmark from "./icons/SilkScribeWordmark";
 import SilkScribeMark from "./icons/SilkScribeMark";
+import Footer from "./footer";
 import HomeDashboard from "./home/HomeDashboard";
 import { useSettings } from "../hooks/useSettings";
 import {
@@ -119,7 +120,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {t(labelKey)}
         </p>
       ) : null}
-      <div className="flex flex-col gap-1.5">
+      <nav
+        className="flex flex-col gap-1"
+        aria-label={labelKey ? t(labelKey) : t("sidebar.home")}
+      >
         {sections.map((section) => {
           const Icon = section.icon;
           const isActive = activeSection === section.id;
@@ -134,6 +138,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   : "border-transparent text-ss-text-secondary hover:-translate-y-0.5 hover:border-ss-border-subtle hover:bg-ss-bg-surface"
               }`}
               onClick={() => onSectionChange(section.id)}
+              aria-current={isActive ? "page" : undefined}
             >
               <span
                 className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors ${
@@ -153,13 +158,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
           );
         })}
-      </div>
+      </nav>
     </div>
   );
 
   return (
-    <aside className="flex h-full w-[240px] shrink-0 flex-col border-e border-ss-border-subtle bg-ss-bg-surface-alt/70 px-4 py-5">
-      <div className="flex items-center justify-center overflow-hidden px-2 py-2">
+    <aside className="flex h-full w-[240px] shrink-0 flex-col border-e border-ss-border-subtle bg-ss-bg-surface-alt px-3.5 pb-3 pt-4 shadow-[var(--ss-shadow-hairline)]">
+      <div className="flex items-center justify-center overflow-hidden px-2 py-1.5">
         <SilkScribeWordmark
           height={46}
           fit="cover"
@@ -167,7 +172,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           imageScale={1.68}
         />
       </div>
-      <div className="mt-5 flex flex-1 flex-col gap-5">
+      <div className="mt-4 flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-0.5">
         {renderSectionList(primarySections)}
         {secondarySections.length > 0
           ? renderSectionList(secondarySections, "sidebar.preferences")
@@ -176,6 +181,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           ? renderSectionList(developerSections, "sidebar.developer")
           : null}
       </div>
+      <Footer />
     </aside>
   );
 };

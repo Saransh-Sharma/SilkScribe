@@ -9,7 +9,6 @@ import {
 } from "tauri-plugin-macos-permissions-api";
 import "./App.css";
 import AccessibilityPermissions from "./components/AccessibilityPermissions";
-import Footer from "./components/footer";
 import Onboarding, {
   OnboardingPractice,
   OnboardingSetup,
@@ -449,40 +448,43 @@ function App() {
       <div
         dir={direction}
         data-theme={resolvedTheme}
-        className="relative h-[100dvh] overflow-hidden select-none cursor-default bg-transparent text-ss-text-primary"
+        className="relative h-[100dvh] overflow-hidden select-none cursor-default bg-ss-bg-canvas text-ss-text-primary"
       >
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-ss-brand-highlight/8 via-ss-brand-secondary/4 to-transparent" />
-        <div className="pointer-events-none absolute -left-20 top-12 h-48 w-48 rounded-full bg-ss-brand-secondary/10 blur-3xl" />
-        <div className="pointer-events-none absolute right-0 top-0 h-56 w-56 rounded-full bg-ss-brand-highlight/12 blur-3xl" />
-
-        <div className="relative flex h-full flex-col px-4 py-4">
-          <div className="flex min-h-0 flex-1 overflow-hidden rounded-[28px] border border-ss-border-subtle bg-[color-mix(in_srgb,var(--ss-bg-surface)_92%,transparent)] shadow-[var(--ss-shadow-lift)] backdrop-blur-sm">
-            <Sidebar
-              activeSection={currentSection}
-              onSectionChange={setCurrentSection}
-            />
-            <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-              <div className="app-content-scroll flex-1 overflow-y-auto">
-                <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-6 px-5 py-6">
-                  <ErrorBoundary>
-                    <AccessibilityPermissions
-                      onStartRepair={() => {
-                        void handleStartPermissionRepair();
-                      }}
-                    />
-                    {renderSettingsContent(
-                      currentSection,
-                      setCurrentSection,
-                      () => {
-                        void handleStartPermissionRepair();
-                      },
-                    )}
-                  </ErrorBoundary>
+        <a
+          href="#main-content"
+          className="fixed start-3 top-3 z-[var(--ss-layer-toast)] -translate-y-20 rounded-[var(--ss-radius-md)] bg-ss-action-primary px-4 py-2 text-sm font-semibold text-ss-brand-primary-ink shadow-[var(--ss-shadow-lift)] transition-transform focus:translate-y-0"
+        >
+          {t("sidebar.home")}
+        </a>
+        <div className="relative flex h-full min-h-0 overflow-hidden">
+          <Sidebar
+            activeSection={currentSection}
+            onSectionChange={setCurrentSection}
+          />
+          <main
+            id="main-content"
+            className="app-content-scroll min-w-0 flex-1 overflow-y-auto bg-ss-bg-canvas"
+            tabIndex={-1}
+          >
+            <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-5 px-6 py-6 2xl:px-8 2xl:py-7">
+              <ErrorBoundary>
+                <AccessibilityPermissions
+                  onStartRepair={() => {
+                    void handleStartPermissionRepair();
+                  }}
+                />
+                <div key={currentSection} className="ss-page-enter">
+                  {renderSettingsContent(
+                    currentSection,
+                    setCurrentSection,
+                    () => {
+                      void handleStartPermissionRepair();
+                    },
+                  )}
                 </div>
-              </div>
+              </ErrorBoundary>
             </div>
-          </div>
-          <Footer />
+          </main>
         </div>
       </div>
     </>

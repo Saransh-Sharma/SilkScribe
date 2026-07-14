@@ -45,6 +45,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
   const listboxId = useId();
   const [menuPosition, setMenuPosition] = useState<DropdownMenuPosition | null>(
     null,
@@ -133,7 +135,23 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
     updateMenuPosition();
 
-    const animationFrame = window.requestAnimationFrame(updateMenuPosition);
+    const animationFrame = window.requestAnimationFrame(() => {
+      updateMenuPosition();
+      const selectedIndex = options.findIndex(
+        (option) => option.value === selectedValue && !option.disabled,
+      );
+      const firstEnabledIndex = options.findIndex((option) => !option.disabled);
+      const nextIndex =
+        focusedIndex >= 0 && !options[focusedIndex]?.disabled
+          ? focusedIndex
+          : selectedIndex >= 0
+            ? selectedIndex
+            : firstEnabledIndex;
+      setFocusedIndex(nextIndex);
+      if (nextIndex >= 0) {
+        optionRefs.current[nextIndex]?.focus();
+      }
+    });
     window.addEventListener("resize", updateMenuPosition);
     window.addEventListener("scroll", updateMenuPosition, true);
 
@@ -142,7 +160,14 @@ export const Dropdown: React.FC<DropdownProps> = ({
       window.removeEventListener("resize", updateMenuPosition);
       window.removeEventListener("scroll", updateMenuPosition, true);
     };
-  }, [disabled, isOpen, updateMenuPosition]);
+  }, [
+    disabled,
+    focusedIndex,
+    isOpen,
+    options,
+    selectedValue,
+    updateMenuPosition,
+  ]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -177,6 +202,47 @@ export const Dropdown: React.FC<DropdownProps> = ({
     setIsOpen(!isOpen);
   };
 
+  const focusOption = (index: number) => {
+    const enabledIndexes = options
+      .map((option, optionIndex) => (!option.disabled ? optionIndex : -1))
+      .filter((optionIndex) => optionIndex >= 0);
+    if (enabledIndexes.length === 0) return;
+    const normalized =
+      enabledIndexes[
+        ((index % enabledIndexes.length) + enabledIndexes.length) %
+          enabledIndexes.length
+      ];
+    setFocusedIndex(normalized);
+    optionRefs.current[normalized]?.focus();
+  };
+
+  const handleOptionKeyDown = (
+    event: React.KeyboardEvent<HTMLButtonElement>,
+    index: number,
+    value: string,
+  ) => {
+    const enabledIndexes = options
+      .map((option, optionIndex) => (!option.disabled ? optionIndex : -1))
+      .filter((optionIndex) => optionIndex >= 0);
+    const enabledPosition = enabledIndexes.indexOf(index);
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      focusOption(enabledPosition + 1);
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      focusOption(enabledPosition - 1);
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      focusOption(0);
+    } else if (event.key === "End") {
+      event.preventDefault();
+      focusOption(enabledIndexes.length - 1);
+    } else if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleSelect(value);
+    }
+  };
+
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
@@ -188,6 +254,20 @@ export const Dropdown: React.FC<DropdownProps> = ({
             : "cursor-pointer border-ss-border-default bg-ss-bg-elevated text-ss-text-primary hover:-translate-y-0.5 hover:border-ss-brand-secondary/35 hover:bg-ss-bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35"
         }`}
         onClick={handleToggle}
+        onKeyDown={(event) => {
+          if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+            event.preventDefault();
+            const enabledIndexes = options
+              .map((option, index) => (!option.disabled ? index : -1))
+              .filter((index) => index >= 0);
+            setFocusedIndex(
+              event.key === "ArrowUp"
+                ? (enabledIndexes[enabledIndexes.length - 1] ?? -1)
+                : (enabledIndexes[0] ?? -1),
+            );
+            setIsOpen(true);
+          }
+        }}
         disabled={disabled}
         aria-expanded={isOpen}
         aria-controls={isOpen ? listboxId : undefined}
@@ -235,12 +315,20 @@ export const Dropdown: React.FC<DropdownProps> = ({
                   {t("common.noOptionsFound")}
                 </div>
               ) : (
-                options.map((option) => (
+                options.map((option, index) => (
                   <button
                     key={option.value}
                     type="button"
                     role="option"
                     aria-selected={selectedValue === option.value}
+                    ref={(element) => {
+                      optionRefs.current[index] = element;
+                    }}
+                    tabIndex={focusedIndex === index ? 0 : -1}
+                    onFocus={() => setFocusedIndex(index)}
+                    onKeyDown={(event) =>
+                      handleOptionKeyDown(event, index, option.value)
+                    }
                     className={`w-full rounded-[10px] px-3 py-2 text-start text-sm transition-colors duration-150 ${
                       selectedValue === option.value
                         ? "bg-ss-brand-secondary/14 font-semibold text-ss-brand-secondary"

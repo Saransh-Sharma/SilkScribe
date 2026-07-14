@@ -119,6 +119,7 @@
   --ss-radius-md: 14px;
   --ss-radius-lg: 18px;
   --ss-radius-xl: 22px;
+  --ss-radius-window: 24px;
   --ss-radius-pill: 999px;
 
   --ss-layer-dropdown: 30;
@@ -135,8 +136,11 @@
   --ss-space-8: 32px;
   --ss-space-10: 40px;
 
-  --ss-shadow-card: 0 10px 28px rgba(16, 11, 8, 0.1);
-  --ss-shadow-lift: 0 14px 40px rgba(16, 11, 8, 0.14);
+  --ss-shadow-hairline: 0 1px 0 rgba(255, 255, 255, 0.58) inset;
+  --ss-shadow-card:
+    0 1px 2px rgba(58, 46, 36, 0.045), 0 8px 24px rgba(58, 46, 36, 0.055);
+  --ss-shadow-lift:
+    0 1px 2px rgba(58, 46, 36, 0.06), 0 16px 42px rgba(58, 46, 36, 0.12);
   --ss-shadow-control-thumb: 0 3px 10px
     color-mix(in srgb, var(--ss-neutral-ink) 20%, transparent);
   --ss-overlay-scrim: color-mix(
@@ -151,6 +155,9 @@
   --ss-duration-panel: 260ms;
   --ss-duration-overlay-in: 280ms;
   --ss-duration-overlay-out: 220ms;
+  --ss-ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ss-ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ss-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
   font-family: var(--font-sans);
   font-size: 15px;
@@ -163,23 +170,7 @@
   -webkit-text-size-adjust: 100%;
 
   color: var(--ss-text-primary);
-  background:
-    radial-gradient(
-      circle at top right,
-      color-mix(in srgb, var(--ss-brand-highlight) 15%, transparent) 0%,
-      transparent 28%
-    ),
-    radial-gradient(
-      circle at top left,
-      color-mix(in srgb, var(--ss-accent-selection) 10%, transparent) 0%,
-      transparent 32%
-    ),
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--ss-bg-canvas) 92%, var(--ss-brand-highlight) 8%)
-        0%,
-      var(--ss-bg-canvas) 100%
-    );
+  background: var(--ss-bg-canvas);
   color-scheme: light;
 }
 
@@ -225,27 +216,15 @@
   --ss-accent-selection: var(--ss-primitive-pink);
   --ss-accent-glow: var(--ss-primitive-gold);
 
-  --ss-shadow-card: 0 10px 28px rgba(0, 0, 0, 0.35);
-  --ss-shadow-lift: 0 14px 40px rgba(0, 0, 0, 0.45);
+  --ss-shadow-hairline: 0 1px 0 rgba(255, 243, 230, 0.035) inset;
+  --ss-shadow-card:
+    0 1px 2px rgba(0, 0, 0, 0.28), 0 10px 28px rgba(0, 0, 0, 0.2);
+  --ss-shadow-lift:
+    0 2px 4px rgba(0, 0, 0, 0.3), 0 18px 48px rgba(0, 0, 0, 0.38);
   --ss-shadow-control-thumb: 0 3px 12px rgba(0, 0, 0, 0.38);
   --ss-overlay-scrim: rgba(0, 0, 0, 0.68);
 
-  background:
-    radial-gradient(
-      circle at top right,
-      color-mix(in srgb, var(--ss-brand-highlight) 18%, transparent) 0%,
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at top left,
-      color-mix(in srgb, var(--ss-accent-selection) 12%, transparent) 0%,
-      transparent 34%
-    ),
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--ss-bg-canvas) 92%, var(--ss-brand-primary) 8%) 0%,
-      var(--ss-bg-canvas) 100%
-    );
+  background: var(--ss-bg-canvas);
   color-scheme: dark;
 }
 
@@ -280,11 +259,25 @@ body,
   min-height: 100%;
 }
 
+html {
+  background: var(--ss-bg-canvas);
+}
+
 body {
   margin: 0;
   background-color: var(--ss-bg-canvas);
   color: var(--ss-text-primary);
   font-family: var(--font-sans);
+}
+
+:where(button, [href], input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--ss-action-focus) 72%, transparent);
+  outline-offset: 2px;
+}
+
+.ss-focus-ring {
+  outline: 2px solid color-mix(in srgb, var(--ss-action-focus) 72%, transparent);
+  outline-offset: 2px;
 }
 
 button,

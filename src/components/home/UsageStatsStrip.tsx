@@ -33,17 +33,16 @@ export const UsageStatsStrip = ({ summary, loading }: UsageStatsStripProps) => {
   ];
 
   return (
-    <div className="flex flex-wrap gap-2.5">
-      {stats.map((stat, index) => {
+    <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+      {stats.map((stat) => {
         const Icon = stat.icon;
 
         return (
           <div
             key={stat.key}
-            className="home-fade-in flex min-h-11 min-w-[150px] flex-1 items-center gap-3 rounded-[18px] border border-ss-border-subtle/80 bg-ss-bg-surface/72 px-3.5 py-2.5 shadow-[var(--ss-shadow-card)] transition-transform duration-150 hover:-translate-y-px sm:flex-none"
-            style={{ animationDelay: `${40 + index * 40}ms` }}
+            className="flex min-h-10 min-w-[128px] items-center gap-2.5"
           >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[14px] bg-ss-bg-surface-alt text-ss-brand-primary">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[11px] bg-ss-bg-surface-alt text-ss-brand-primary">
               <Icon width={16} height={16} />
             </span>
             <div className="min-w-0">
@@ -54,10 +53,10 @@ export const UsageStatsStrip = ({ summary, loading }: UsageStatsStripProps) => {
                 </>
               ) : (
                 <>
-                  <p className="text-base font-semibold tabular-nums text-ss-text-primary">
+                  <p className="text-sm font-semibold tabular-nums text-ss-text-primary">
                     {stat.value}
                   </p>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ss-text-tertiary">
+                  <p className="text-[11px] font-medium text-ss-text-tertiary">
                     {stat.label}
                   </p>
                 </>
