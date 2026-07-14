@@ -39,8 +39,8 @@ dry-run behavior, and troubleshooting.
 Set the same semantic version in `package.json`, `src-tauri/tauri.conf.json`, and `src-tauri/Cargo.toml`, then push a matching tag:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v1.0.0
+git push origin v1.0.0
 ```
 
 The `Release macOS` workflow creates a draft release in `Saransh-Sharma/SilkScribe`. Review the uploaded DMG, updater archives, signatures, generated `latest.json`, and release notes before publishing the draft.
