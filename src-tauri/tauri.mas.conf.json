@@ -42,6 +42,10 @@
     "createUpdaterArtifacts": false,
     "macOS": {
       "entitlements": "Entitlements.mas.plist",
+      "files": {
+        "PrivacyInfo.xcprivacy": "gen/apple/PrivacyInfo.xcprivacy"
+      },
+      "minimumSystemVersion": "12.0",
       "signingIdentity": null
     }
   },
