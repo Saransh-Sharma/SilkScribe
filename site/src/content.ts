@@ -47,6 +47,12 @@ export interface FaqItem {
   answer: string;
 }
 
+export interface PrivacySection {
+  title: string;
+  body: string;
+  items?: string[];
+}
+
 export interface ScreenshotAsset {
   src: string;
   alt: string;
@@ -379,6 +385,7 @@ export const marketingNav: NavLink[] = [
   { label: "Use cases", href: "#use-cases" },
   { label: "Open source", href: "#open-source" },
   { label: "Support", href: "support/" },
+  { label: "Privacy Policy", href: "privacy/" },
   { label: "GitHub", href: externalLinks.github, external: true },
 ];
 
@@ -386,5 +393,60 @@ export const supportNav: NavLink[] = [
   { label: "Overview", href: "../" },
   { label: "Troubleshooting", href: "#troubleshooting" },
   { label: "FAQ", href: "#faq" },
+  { label: "Privacy", href: "../privacy/" },
   { label: "GitHub", href: externalLinks.github, external: true },
+];
+
+export const privacyNav: NavLink[] = [
+  { label: "Overview", href: "../" },
+  { label: "Support", href: "../support/" },
+  { label: "GitHub", href: externalLinks.github, external: true },
+];
+
+export const privacySections: PrivacySection[] = [
+  {
+    title: "Local transcription",
+    body: "SilkScribe is designed around local speech-to-text on your Mac. Microphone audio is used to create a transcription when you trigger dictation.",
+    items: [
+      "Core transcription runs with local model files on your device.",
+      "SilkScribe does not require an account for the core voice typing flow.",
+      "Microphone permission is requested so the app can capture speech when you start dictation.",
+    ],
+  },
+  {
+    title: "Local app data",
+    body: "SilkScribe stores settings, model files, and optional recent dictation history locally so the app can work as a desktop utility.",
+    items: [
+      "Settings include shortcuts, microphone choices, paste behavior, model choices, and similar preferences.",
+      "Model files are downloaded as local data files used for transcription.",
+      "History and recordings are local to your Mac and can be managed from the app.",
+    ],
+  },
+  {
+    title: "Optional post-processing",
+    body: "If you choose to enable an external post-processing provider, transcript text may be sent to the provider you configure for cleanup or formatting.",
+    items: [
+      "Post-processing is optional and controlled in settings.",
+      "Provider API keys and settings are configured by you.",
+      "Provider handling is governed by the provider you choose.",
+    ],
+  },
+  {
+    title: "Support contact",
+    body: "If you contact support by email or GitHub, the information you provide is used to investigate your request and reply to you.",
+    items: [
+      "Email support is available at contact@silkscribe.app.",
+      "GitHub issues are public, so avoid posting private transcripts or secrets there.",
+      "Support requests should include only the diagnostic details needed to understand the issue.",
+    ],
+  },
+  {
+    title: "Deleting data",
+    body: "SilkScribe does not use an app account for the core product. You can remove local app data from within the app where controls are provided, or by deleting the app data directory from your Mac.",
+    items: [
+      "Deleting the app removes the app bundle.",
+      "Deleting local app data removes locally stored settings, history, recordings, and downloaded models.",
+      "For support email deletion requests, contact contact@silkscribe.app from the same email address.",
+    ],
+  },
 ];

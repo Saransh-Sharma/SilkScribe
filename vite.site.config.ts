@@ -14,6 +14,7 @@ export default defineConfig({
       input: {
         marketing: resolve(__dirname, "site/index.html"),
         support: resolve(__dirname, "site/support/index.html"),
+        privacy: resolve(__dirname, "site/privacy/index.html"),
       },
     },
   },

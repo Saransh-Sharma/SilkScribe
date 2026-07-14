@@ -10,13 +10,14 @@ import {
 import {
   externalLinks,
   marketingNav,
+  privacyNav,
   primaryDownloadHref,
   supportNav,
   type NavLink,
 } from "./content";
 import { bootEffects } from "./reveal";
 
-type PageKind = "marketing" | "support";
+type PageKind = "marketing" | "support" | "privacy";
 
 const isExternal = (href: string) =>
   href.startsWith("http://") ||
@@ -92,14 +93,26 @@ export const SiteFrame = ({
     bootEffects();
   }, []);
 
-  const navLinks = page === "marketing" ? marketingNav : supportNav;
+  const navLinks =
+    page === "marketing"
+      ? marketingNav
+      : page === "support"
+        ? supportNav
+        : privacyNav;
   const homeHref = page === "marketing" ? "#top" : "../";
-  const logoMark =
-    page === "marketing" ? "./menu-bar-icon.png" : "../menu-bar-icon.png";
-  const wordmark = page === "marketing" ? "./banner.png" : "../banner.png";
+  const assetPrefix = page === "marketing" ? "." : "..";
+  const logoMark = `${assetPrefix}/menu-bar-icon.png`;
+  const wordmark = `${assetPrefix}/banner.png`;
   const headerDownloadLabel = externalLinks.appStore
     ? "Get SilkScribe"
     : "Download";
+  const supportHref =
+    page === "marketing"
+      ? "support/"
+      : page === "support"
+        ? "#support-channels"
+        : "../support/";
+  const privacyHref = page === "marketing" ? "privacy/" : "../privacy/";
 
   return (
     <div className={`site-shell site-shell--${page}`}>
@@ -159,9 +172,13 @@ export const SiteFrame = ({
             <Mail aria-hidden="true" />
             contact@silkscribe.app
           </a>
-          <a href={page === "marketing" ? "support/" : "#support-channels"}>
+          <a href={supportHref}>
             <BookOpenCheck aria-hidden="true" />
             Support
+          </a>
+          <a href={privacyHref}>
+            <BookOpenCheck aria-hidden="true" />
+            Privacy
           </a>
         </div>
         <p className="site-footer__fine-print">

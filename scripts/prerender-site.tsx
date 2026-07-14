@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { MarketingPage } from "../site/src/marketing-page";
+import { PrivacyPage } from "../site/src/privacy-page";
 import { SupportPage } from "../site/src/support-page";
 
 const ROOT = process.cwd();
@@ -65,6 +66,13 @@ const run = async () => {
     filePath: resolve(DIST, "support/index.html"),
     app: <SupportPage />,
     pagePath: "/support/",
+    imagePath: "/og-image.webp",
+  });
+
+  await renderDocument({
+    filePath: resolve(DIST, "privacy/index.html"),
+    app: <PrivacyPage />,
+    pagePath: "/privacy/",
     imagePath: "/og-image.webp",
   });
 };
