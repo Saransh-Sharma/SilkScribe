@@ -9,7 +9,6 @@ interface HistoryDayGroupProps {
   onDelete: (id: number) => void;
   onRetryTranscription?: (id: number) => void;
   getAudioUrl: (fileName: string) => Promise<string | null>;
-  animationDelayMs?: number;
 }
 
 export const HistoryDayGroup = ({
@@ -20,12 +19,8 @@ export const HistoryDayGroup = ({
   onDelete,
   onRetryTranscription,
   getAudioUrl,
-  animationDelayMs = 0,
 }: HistoryDayGroupProps) => (
-  <section
-    className="space-y-2 home-fade-in"
-    style={{ animationDelay: `${animationDelayMs}ms` }}
-  >
+  <section className="space-y-2">
     <div className="px-1">
       <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-ss-text-tertiary">
         {label}

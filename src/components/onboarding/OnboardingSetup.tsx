@@ -343,7 +343,7 @@ const OnboardingSetup: React.FC<OnboardingSetupProps> = ({
       footer={footerContent}
     >
       <div className="h-full">
-        <section className="flex h-full flex-col rounded-[28px] border border-ss-border-default bg-ss-bg-surface/94 p-6 shadow-[var(--ss-shadow-card)]">
+        <section className="flex h-full flex-col rounded-[var(--ss-radius-xl)] border border-ss-border-default bg-ss-bg-surface p-5 shadow-[var(--ss-shadow-hairline)] lg:p-6">
           <div className="flex items-start justify-between gap-5">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-ss-brand-highlight/20 bg-ss-brand-highlight/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-ss-brand-primary">
@@ -363,7 +363,7 @@ const OnboardingSetup: React.FC<OnboardingSetupProps> = ({
             </div>
           </div>
 
-          <div className="mt-6 rounded-[24px] border border-ss-border-subtle bg-ss-bg-surface-alt/88 p-5">
+          <div className="mt-6 rounded-[var(--ss-radius-lg)] bg-ss-bg-surface-alt p-5 shadow-[var(--ss-shadow-hairline)]">
             <div className="overflow-hidden rounded-full bg-ss-bg-surface">
               <div
                 className={`ss-onboarding-progress-bar h-4 rounded-full ${
@@ -378,8 +378,8 @@ const OnboardingSetup: React.FC<OnboardingSetupProps> = ({
               />
             </div>
 
-            <div className="mt-5 grid gap-3 md:grid-cols-4">
-              <div className="rounded-[20px] border border-ss-border-subtle bg-ss-bg-surface/80 p-4">
+            <div className="mt-5 grid gap-0 overflow-hidden rounded-[var(--ss-radius-md)] border border-ss-border-subtle bg-ss-bg-surface md:grid-cols-4">
+              <div className="p-4">
                 <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-ss-text-tertiary">
                   {t("onboarding.setup.progressLabel")}
                 </p>
@@ -390,7 +390,7 @@ const OnboardingSetup: React.FC<OnboardingSetupProps> = ({
                 </p>
               </div>
 
-              <div className="rounded-[20px] border border-ss-border-subtle bg-ss-bg-surface/80 p-4">
+              <div className="border-t border-ss-border-subtle p-4 md:border-s md:border-t-0">
                 <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-ss-text-tertiary">
                   {t("onboarding.setup.sizeLabel")}
                 </p>
@@ -401,7 +401,7 @@ const OnboardingSetup: React.FC<OnboardingSetupProps> = ({
                 </p>
               </div>
 
-              <div className="rounded-[20px] border border-ss-border-subtle bg-ss-bg-surface/80 p-4">
+              <div className="border-t border-ss-border-subtle p-4 md:border-s md:border-t-0">
                 <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-ss-text-tertiary">
                   {t("onboarding.setup.speedLabel")}
                 </p>
@@ -416,7 +416,7 @@ const OnboardingSetup: React.FC<OnboardingSetupProps> = ({
                 </p>
               </div>
 
-              <div className="rounded-[20px] border border-ss-border-subtle bg-ss-bg-surface/80 p-4">
+              <div className="border-t border-ss-border-subtle p-4 md:border-s md:border-t-0">
                 <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-ss-text-tertiary">
                   {t("onboarding.setup.etaLabel")}
                 </p>
@@ -430,7 +430,7 @@ const OnboardingSetup: React.FC<OnboardingSetupProps> = ({
           </div>
 
           <div className="mt-5">
-            <div className="rounded-[24px] border border-ss-border-subtle bg-ss-bg-surface-alt/88 p-5">
+            <div className="rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface p-4 shadow-[var(--ss-shadow-hairline)]">
               <p className="text-sm font-semibold text-ss-text-primary">
                 {t("onboarding.setup.shortcutTitle")}
               </p>

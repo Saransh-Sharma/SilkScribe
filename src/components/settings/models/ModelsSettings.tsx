@@ -1,12 +1,17 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronDown, Globe } from "lucide-react";
 import type { ModelCardStatus } from "@/components/onboarding";
 import { ModelCard } from "@/components/onboarding";
 import { useModelStore } from "@/stores/modelStore";
 import { LANGUAGES } from "@/lib/constants/languages.ts";
 import type { ModelInfo } from "@/bindings";
-import { AppPage, ConfirmDialog, EmptyState, Skeleton } from "@/components/ui";
+import {
+  AppPage,
+  ConfirmDialog,
+  EmptyState,
+  Select,
+  Skeleton,
+} from "@/components/ui";
 import { SettingsGroup } from "@/components/ui/SettingsGroup";
 import { LanguageSelector } from "../LanguageSelector";
 import { TranslateToEnglish } from "../TranslateToEnglish";
@@ -25,16 +30,13 @@ export const ModelsSettings: React.FC = () => {
     isActive: boolean;
   } | null>(null);
   const [languageFilter, setLanguageFilter] = useState("all");
-  const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
-  const [languageSearch, setLanguageSearch] = useState("");
-  const languageDropdownRef = useRef<HTMLDivElement>(null);
-  const languageSearchInputRef = useRef<HTMLInputElement>(null);
   const {
     models,
     currentModel,
     downloadingModels,
     downloadProgress,
     downloadStats,
+    downloadErrors,
     extractingModels,
     loading,
     downloadModel,
@@ -43,44 +45,13 @@ export const ModelsSettings: React.FC = () => {
     deleteModel,
   } = useModelStore();
 
-  // click outside handler for language dropdown
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        languageDropdownRef.current &&
-        !languageDropdownRef.current.contains(event.target as Node)
-      ) {
-        setLanguageDropdownOpen(false);
-        setLanguageSearch("");
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  // focus search input when dropdown opens
-  useEffect(() => {
-    if (languageDropdownOpen && languageSearchInputRef.current) {
-      languageSearchInputRef.current.focus();
-    }
-  }, [languageDropdownOpen]);
-
-  // filtered languages for dropdown (exclude "auto")
-  const filteredLanguages = useMemo(() => {
-    return LANGUAGES.filter(
-      (lang) =>
-        lang.value !== "auto" &&
-        lang.label.toLowerCase().includes(languageSearch.toLowerCase()),
-    );
-  }, [languageSearch]);
-
-  // Get selected language label
-  const selectedLanguageLabel = useMemo(() => {
-    if (languageFilter === "all") {
-      return t("settings.models.filters.allLanguages");
-    }
-    return LANGUAGES.find((lang) => lang.value === languageFilter)?.label || "";
-  }, [languageFilter, t]);
+  const languageOptions = useMemo(
+    () => [
+      { value: "all", label: t("settings.models.filters.allLanguages") },
+      ...LANGUAGES.filter((language) => language.value !== "auto"),
+    ],
+    [t],
+  );
 
   const getModelStatus = (modelId: string): ModelCardStatus => {
     if (modelId in extractingModels) {
@@ -91,6 +62,9 @@ export const ModelsSettings: React.FC = () => {
     }
     if (switchingModelId === modelId) {
       return "switching";
+    }
+    if (modelId in downloadErrors) {
+      return "error";
     }
     if (modelId === currentModel) {
       return "active";
@@ -110,6 +84,13 @@ export const ModelsSettings: React.FC = () => {
   const getDownloadSpeed = (modelId: string): number | undefined => {
     const stats = downloadStats[modelId];
     return stats?.speed;
+  };
+
+  const getDownloadBytes = (modelId: string) => {
+    const progress = downloadProgress[modelId];
+    return progress
+      ? { downloaded: progress.downloaded, total: progress.total }
+      : undefined;
   };
 
   const handleModelSelect = async (modelId: string) => {
@@ -206,90 +187,13 @@ export const ModelsSettings: React.FC = () => {
   );
 
   const filterControl = (
-    <div className="relative" ref={languageDropdownRef}>
-      <button
-        type="button"
-        onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
-        className={`flex min-h-10 items-center gap-1.5 rounded-[var(--ss-radius-pill)] border px-3 py-1.5 text-sm font-medium transition-[background-color,border-color,color] duration-150 ${
-          languageFilter !== "all"
-            ? "border-ss-brand-secondary/30 bg-ss-brand-secondary/12 text-ss-brand-secondary"
-            : "border-ss-border-subtle bg-ss-bg-surface-alt text-ss-text-tertiary hover:text-ss-text-secondary"
-        }`}
-      >
-        <Globe className="h-3.5 w-3.5" />
-        <span className="max-w-[120px] truncate">{selectedLanguageLabel}</span>
-        <ChevronDown
-          className={`h-3.5 w-3.5 transition-transform ${
-            languageDropdownOpen ? "rotate-180" : ""
-          }`}
-        />
-      </button>
-
-      {languageDropdownOpen && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-[18px] border border-ss-border-default bg-ss-bg-surface shadow-[var(--ss-shadow-lift)]">
-          <div className="border-b border-ss-border-subtle p-2">
-            <input
-              ref={languageSearchInputRef}
-              type="text"
-              value={languageSearch}
-              onChange={(e) => setLanguageSearch(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && filteredLanguages.length > 0) {
-                  setLanguageFilter(filteredLanguages[0].value);
-                  setLanguageDropdownOpen(false);
-                  setLanguageSearch("");
-                } else if (e.key === "Escape") {
-                  setLanguageDropdownOpen(false);
-                  setLanguageSearch("");
-                }
-              }}
-              placeholder={t("settings.general.language.searchPlaceholder")}
-              className="w-full rounded-[12px] border border-ss-border-default bg-ss-bg-elevated px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ss-action-focus/30"
-            />
-          </div>
-          <div className="max-h-56 overflow-y-auto p-1">
-            <button
-              type="button"
-              onClick={() => {
-                setLanguageFilter("all");
-                setLanguageDropdownOpen(false);
-                setLanguageSearch("");
-              }}
-              className={`w-full rounded-[12px] px-3 py-2 text-left text-sm transition-colors ${
-                languageFilter === "all"
-                  ? "bg-ss-brand-secondary/12 font-semibold text-ss-brand-secondary"
-                  : "text-ss-text-secondary hover:bg-ss-bg-surface-alt"
-              }`}
-            >
-              {t("settings.models.filters.allLanguages")}
-            </button>
-            {filteredLanguages.map((lang) => (
-              <button
-                key={lang.value}
-                type="button"
-                onClick={() => {
-                  setLanguageFilter(lang.value);
-                  setLanguageDropdownOpen(false);
-                  setLanguageSearch("");
-                }}
-                className={`w-full rounded-[12px] px-3 py-2 text-left text-sm transition-colors ${
-                  languageFilter === lang.value
-                    ? "bg-ss-brand-secondary/12 font-semibold text-ss-brand-secondary"
-                    : "text-ss-text-secondary hover:bg-ss-bg-surface-alt"
-                }`}
-              >
-                {lang.label}
-              </button>
-            ))}
-            {filteredLanguages.length === 0 && (
-              <div className="px-3 py-3 text-center text-sm text-ss-text-tertiary">
-                {t("settings.general.language.noResults")}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+    <Select
+      value={languageFilter}
+      options={languageOptions}
+      onChange={(value) => setLanguageFilter(value ?? "all")}
+      isClearable={false}
+      className="w-64"
+    />
   );
 
   if (loading) {
@@ -327,6 +231,7 @@ export const ModelsSettings: React.FC = () => {
                 onCancel={handleModelCancel}
                 downloadProgress={getDownloadProgress(currentModelInfo.id)}
                 downloadSpeed={getDownloadSpeed(currentModelInfo.id)}
+                downloadBytes={getDownloadBytes(currentModelInfo.id)}
                 showRecommended={false}
               />
               {supportsLanguageSelection || supportsTranslation ? (
@@ -388,6 +293,7 @@ export const ModelsSettings: React.FC = () => {
                     onCancel={handleModelCancel}
                     downloadProgress={getDownloadProgress(model.id)}
                     downloadSpeed={getDownloadSpeed(model.id)}
+                    downloadBytes={getDownloadBytes(model.id)}
                     showRecommended={false}
                   />
                 ))
@@ -417,6 +323,7 @@ export const ModelsSettings: React.FC = () => {
                     onCancel={handleModelCancel}
                     downloadProgress={getDownloadProgress(model.id)}
                     downloadSpeed={getDownloadSpeed(model.id)}
+                    downloadBytes={getDownloadBytes(model.id)}
                     showRecommended={false}
                   />
                 ))}

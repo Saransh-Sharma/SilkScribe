@@ -12,6 +12,7 @@ import { ClamshellMicrophoneSelector } from "../ClamshellMicrophoneSelector";
 import { ShortcutInput } from "../ShortcutInput";
 import { UpdateChecksToggle } from "../UpdateChecksToggle";
 import { useSettings } from "../../../hooks/useSettings";
+import { AppPage } from "../../ui";
 
 export const DebugSettings: React.FC = () => {
   const { t } = useTranslation();
@@ -20,8 +21,8 @@ export const DebugSettings: React.FC = () => {
   const isLinux = type() === "linux";
 
   return (
-    <div className="max-w-3xl w-full mx-auto space-y-6">
-      <SettingsGroup title={t("settings.debug.title")}>
+    <AppPage title={t("settings.debug.title")}>
+      <SettingsGroup>
         <LogLevelSelector grouped={true} />
         <UpdateChecksToggle descriptionMode="tooltip" grouped={true} />
         <SoundPicker
@@ -42,6 +43,6 @@ export const DebugSettings: React.FC = () => {
           />
         )}
       </SettingsGroup>
-    </div>
+    </AppPage>
   );
 };

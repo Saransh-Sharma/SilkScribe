@@ -171,7 +171,7 @@ export const HistoryFeed = ({
 
   return (
     <div className="space-y-5">
-      {groupedEntries.map((group, index) => (
+      {groupedEntries.map((group) => (
         <HistoryDayGroup
           key={group.key}
           label={group.label}
@@ -181,7 +181,6 @@ export const HistoryFeed = ({
           onDelete={onDelete}
           onRetryTranscription={onRetryTranscription}
           getAudioUrl={getAudioUrl}
-          animationDelayMs={120 + index * 40}
         />
       ))}
       {hasMore && onLoadMore ? (

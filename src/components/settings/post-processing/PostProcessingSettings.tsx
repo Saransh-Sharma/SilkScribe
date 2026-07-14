@@ -5,6 +5,7 @@ import { commands } from "@/bindings";
 
 import { Alert } from "../../ui/Alert";
 import {
+  AppPage,
   Dropdown,
   SettingContainer,
   SettingsGroup,
@@ -427,7 +428,7 @@ export const PostProcessingSettings: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="w-full space-y-6">
+    <AppPage title={t("settings.postProcessing.title")}>
       <SettingsGroup title={t("settings.postProcessing.hotkey.title")}>
         <ShortcutInput
           shortcutId="transcribe_with_post_process"
@@ -443,6 +444,6 @@ export const PostProcessingSettings: React.FC = () => {
       <SettingsGroup title={t("settings.postProcessing.prompts.title")}>
         <PostProcessingSettingsPrompts />
       </SettingsGroup>
-    </div>
+    </AppPage>
   );
 };

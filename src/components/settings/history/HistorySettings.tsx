@@ -2,7 +2,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { save } from "@tauri-apps/plugin-dialog";
 import { writeTextFile } from "@tauri-apps/plugin-fs";
-import { FileJson, FileText, FolderOpen, Search } from "lucide-react";
+import {
+  ChevronDown,
+  FileJson,
+  FileText,
+  FolderOpen,
+  Search,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   commands,
@@ -41,6 +47,8 @@ export const HistorySettings = () => {
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [historyFilter, setHistoryFilter] = useState<HistoryFilter>("all");
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  const exportMenuRef = useRef<HTMLDivElement>(null);
   const hasMountedRef = useRef(false);
   const isFiltered =
     debouncedSearch.trim().length > 0 || historyFilter !== "all";
@@ -111,6 +119,26 @@ export const HistorySettings = () => {
     }
     void reload(true);
   }, [debouncedSearch, historyFilter]);
+
+  useEffect(() => {
+    if (!exportMenuOpen) return;
+
+    const dismiss = (event: MouseEvent) => {
+      if (!exportMenuRef.current?.contains(event.target as Node)) {
+        setExportMenuOpen(false);
+      }
+    };
+    const dismissWithKeyboard = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setExportMenuOpen(false);
+    };
+
+    document.addEventListener("mousedown", dismiss);
+    document.addEventListener("keydown", dismissWithKeyboard);
+    return () => {
+      document.removeEventListener("mousedown", dismiss);
+      document.removeEventListener("keydown", dismissWithKeyboard);
+    };
+  }, [exportMenuOpen]);
 
   const openRecordingsFolder = async () => {
     try {
@@ -225,30 +253,58 @@ export const HistorySettings = () => {
             <FolderOpen className="h-4 w-4" />
             <span>{t("settings.history.openFolder")}</span>
           </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            className="flex items-center gap-2"
-            onClick={() => {
-              void exportHistory("markdown");
-            }}
-          >
-            <FileText className="h-4 w-4" />
-            <span>{t("settings.history.exportMarkdown")}</span>
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            className="flex items-center gap-2"
-            onClick={() => {
-              void exportHistory("json");
-            }}
-          >
-            <FileJson className="h-4 w-4" />
-            <span>{t("settings.history.exportJson")}</span>
-          </Button>
+          <div ref={exportMenuRef} className="relative">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              aria-haspopup="menu"
+              aria-expanded={exportMenuOpen}
+              onClick={() => setExportMenuOpen((open) => !open)}
+            >
+              <FileText className="h-4 w-4" />
+              <span>{t("settings.history.exportTitle")}</span>
+              <ChevronDown
+                className={`h-3.5 w-3.5 transition-transform ${exportMenuOpen ? "rotate-180" : ""}`}
+              />
+            </Button>
+            {exportMenuOpen ? (
+              <div
+                role="menu"
+                className="absolute end-0 top-[calc(100%+0.5rem)] z-[var(--ss-layer-dropdown)] w-52 rounded-[var(--ss-radius-md)] border border-ss-border-default bg-ss-bg-surface p-1 shadow-[var(--ss-shadow-lift)]"
+              >
+                {[
+                  {
+                    format: "markdown" as const,
+                    label: t("settings.history.exportMarkdown"),
+                    icon: FileText,
+                  },
+                  {
+                    format: "json" as const,
+                    label: t("settings.history.exportJson"),
+                    icon: FileJson,
+                  },
+                ].map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.format}
+                      type="button"
+                      role="menuitem"
+                      className="flex min-h-10 w-full items-center gap-2 rounded-[10px] px-3 text-start text-sm text-ss-text-secondary transition-colors hover:bg-ss-bg-surface-alt hover:text-ss-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/40"
+                      onClick={() => {
+                        setExportMenuOpen(false);
+                        void exportHistory(item.format);
+                      }}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {item.label}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : null}
+          </div>
         </div>
       }
     >

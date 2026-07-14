@@ -70,7 +70,7 @@ const PermissionValuePanel = ({
   const Icon = ICONS[permission];
 
   return (
-    <section className="flex min-h-0 flex-col rounded-[28px] border border-ss-border-default bg-ss-bg-surface/94 p-6 shadow-[var(--ss-shadow-card)]">
+    <section className="flex min-h-0 flex-col p-2 lg:p-4">
       <div className="flex items-start gap-4">
         <div className="ss-onboarding-float flex h-14 w-14 shrink-0 items-center justify-center rounded-[20px] bg-ss-brand-highlight/16 text-ss-brand-primary shadow-[var(--ss-shadow-card)]">
           <Icon className="h-6 w-6" />
@@ -92,7 +92,7 @@ const PermissionValuePanel = ({
         {[1, 2, 3].map((index) => (
           <article
             key={`${permission}-value-${index}`}
-            className="rounded-[20px] border border-ss-border-subtle bg-ss-bg-surface-alt/82 p-4"
+            className="border-b border-ss-border-subtle py-3.5 last:border-b-0"
           >
             <div className="flex items-start gap-3">
               <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ss-brand-primary/10 text-xs font-bold text-ss-brand-primary">
@@ -107,7 +107,7 @@ const PermissionValuePanel = ({
       </div>
 
       <div className="mt-auto pt-5">
-        <div className="rounded-[22px] border border-ss-border-default bg-ss-bg-elevated/95 p-4 shadow-[var(--ss-shadow-card)]">
+        <div className="rounded-[var(--ss-radius-lg)] bg-ss-bg-surface-alt p-4 shadow-[var(--ss-shadow-hairline)]">
           <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-ss-brand-primary">
             {t("onboarding.permissions.shared.privateLabel")}
           </p>
@@ -130,7 +130,7 @@ const PermissionGuidePreview = ({
   const showGuidance = isActiveGuidanceState(status);
 
   return (
-    <section className="ss-permission-helper-enter relative flex min-h-[440px] flex-col overflow-hidden rounded-[28px] border border-ss-border-default bg-ss-bg-surface/94 p-6 shadow-[var(--ss-shadow-card)]">
+    <section className="ss-permission-helper-enter relative flex min-h-[420px] flex-col overflow-hidden border-s border-ss-border-subtle ps-5">
       <div
         className={`ss-permission-guide-surface ${
           isGranted ? "ss-permission-guide-granted" : ""
@@ -312,18 +312,18 @@ export const PermissionStatusCard = ({
 
   return (
     <div
-      className="rounded-[24px] border border-ss-brand-secondary/18 bg-ss-brand-secondary/8 p-5"
+      className="rounded-[var(--ss-radius-lg)] border border-ss-brand-secondary/18 bg-ss-brand-secondary/8 p-4"
       role="status"
       aria-live="polite"
       aria-atomic="true"
     >
       <div className="flex items-start gap-3">
         {status === "granted" ? (
-          <div className="ss-onboarding-success-ring flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ss-brand-primary text-ss-brand-primary-ink">
+          <div className="ss-onboarding-success-ring flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ss-brand-primary text-ss-brand-primary-ink">
             <ShieldCheck className="h-5 w-5" aria-hidden="true" />
           </div>
         ) : (
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ss-brand-secondary/12 text-ss-brand-secondary">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ss-brand-secondary/12 text-ss-brand-secondary">
             {status === "requesting" ? (
               <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
             ) : (
@@ -537,9 +537,9 @@ const PermissionStep = ({
         </div>
       }
     >
-      <div className="grid h-full min-h-[560px] gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+      <div className="grid h-full min-h-[520px] gap-5 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)]">
         <PermissionValuePanel permission={permission} status={status} />
-        <div className="grid min-h-0 gap-5">
+        <div className="grid min-h-0 content-start gap-4">
           <PermissionGuidePreview permission={permission} status={status} />
           <PermissionStatusCard
             permission={permission}

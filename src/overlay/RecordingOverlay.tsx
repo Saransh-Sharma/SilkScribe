@@ -7,7 +7,7 @@ import { WAVEFORM_BUCKET_COUNT } from "./waveformConfig";
 import i18n, { syncLanguageFromSettings } from "@/i18n";
 import { getLanguageDirection } from "@/lib/utils/rtl";
 
-type OverlayState =
+export type OverlayState =
   | "recording"
   | "transcribing"
   | "processing"
@@ -37,7 +37,15 @@ const isOverlayState = (value: unknown): value is OverlayState =>
 const ENERGY_ATTACK = 0.5;
 const ENERGY_RELEASE = 0.12;
 
-const RecordingOverlay: React.FC = () => {
+interface RecordingOverlayProps {
+  previewState?: OverlayState;
+  previewVisible?: boolean;
+}
+
+const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
+  previewState,
+  previewVisible,
+}) => {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
   const [overlay, setOverlay] = useState<OverlayEventPayload>({
@@ -54,9 +62,10 @@ const RecordingOverlay: React.FC = () => {
   const energyRef = useRef(0);
   const direction = getLanguageDirection(i18n.language);
 
-  const state = overlay.state;
+  const state = previewState ?? overlay.state;
+  const visible = previewVisible ?? isVisible;
   const isRecording = state === "recording";
-  const shouldRenderGpuWaveform = isVisible && isRecording;
+  const shouldRenderGpuWaveform = visible && isRecording;
 
   const ariaForState = (value: OverlayState) => {
     switch (value) {
@@ -107,6 +116,8 @@ const RecordingOverlay: React.FC = () => {
   };
 
   useEffect(() => {
+    if (previewState) return;
+
     let disposed = false;
     const unlisteners: Array<() => void> = [];
 
@@ -178,10 +189,10 @@ const RecordingOverlay: React.FC = () => {
       disposed = true;
       unlisteners.forEach((unlisten) => unlisten());
     };
-  }, [t]);
+  }, [previewState, t]);
 
   useEffect(() => {
-    if (!isVisible || !isRecording) return;
+    if (!visible || !isRecording) return;
 
     const timer = window.setInterval(() => {
       if (recordingStartedAtRef.current === null) {
@@ -195,7 +206,7 @@ const RecordingOverlay: React.FC = () => {
     }, 1000);
 
     return () => window.clearInterval(timer);
-  }, [isRecording, isVisible]);
+  }, [isRecording, visible]);
 
   const showElapsed = isRecording && elapsedSeconds >= 5;
   const stateLabel = ariaForState(state);
@@ -208,7 +219,7 @@ const RecordingOverlay: React.FC = () => {
     <div className="overlay-stage" dir={direction}>
       <div
         ref={pillRef}
-        className={`overlay-pill ${isVisible ? "is-visible" : ""}`}
+        className={`overlay-pill ${visible ? "is-visible" : ""}`}
         data-state={state}
         role="status"
         aria-live="polite"

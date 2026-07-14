@@ -39,7 +39,8 @@ export type ModelCardStatus =
   | "extracting"
   | "switching"
   | "active"
-  | "available";
+  | "available"
+  | "error";
 
 type ModelCardLayout = "onboarding" | "settings";
 
@@ -56,6 +57,7 @@ interface ModelCardProps {
   onCancel?: (modelId: string) => void;
   downloadProgress?: number;
   downloadSpeed?: number;
+  downloadBytes?: { downloaded: number; total: number };
   showRecommended?: boolean;
 }
 
@@ -76,7 +78,9 @@ const MetricItem: React.FC<MetricItemProps> = ({
 
   return (
     <div
-      className={`rounded-[14px] border border-ss-border-subtle bg-ss-bg-surface-alt ${dense ? "px-2.5 py-2" : "px-3 py-2.5"}`}
+      className={
+        dense ? "py-1" : "rounded-[14px] bg-ss-bg-surface-alt px-3 py-2.5"
+      }
     >
       <div
         className={`mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ss-text-tertiary ${dense ? "" : "leading-none"}`}
@@ -124,6 +128,7 @@ const ModelCard: React.FC<ModelCardProps> = ({
   onCancel,
   downloadProgress,
   downloadSpeed,
+  downloadBytes,
   showRecommended = true,
 }) => {
   const { t } = useTranslation();
@@ -187,18 +192,20 @@ const ModelCard: React.FC<ModelCardProps> = ({
       "group relative flex flex-col rounded-[18px] border text-left transition-[transform,background-color,border-color,box-shadow,opacity] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/40";
     const sizeClasses = isOnboardingLayout
       ? `${isFeatured ? "min-h-[168px]" : "min-h-[152px]"} gap-4 px-[18px] py-[18px] shadow-[var(--ss-shadow-card)]`
-      : "min-h-[112px] gap-3 px-4 py-4";
+      : "min-h-[104px] gap-3 px-4 py-3.5 shadow-[var(--ss-shadow-hairline)]";
     const surfaceClasses =
       status === "active"
-        ? "border-ss-brand-secondary/55 bg-ss-brand-secondary/10 shadow-[var(--ss-shadow-lift)]"
-        : isFeatured
-          ? "border-ss-brand-secondary/28 bg-gradient-to-br from-ss-brand-secondary/7 via-ss-bg-surface to-ss-brand-highlight/10"
-          : "border-ss-border-default bg-ss-bg-surface";
+        ? "border-ss-brand-secondary/40 bg-ss-brand-secondary/8"
+        : status === "error"
+          ? "border-ss-state-danger/30 bg-ss-state-danger/5"
+          : isFeatured
+            ? "border-ss-brand-secondary/28 bg-gradient-to-br from-ss-brand-secondary/7 via-ss-bg-surface to-ss-brand-highlight/10"
+            : "border-ss-border-default bg-ss-bg-surface";
     const stateClasses = isVisuallyDisabled
       ? "opacity-60"
       : isCardInteractive
-        ? "cursor-pointer hover:-translate-y-0.5 hover:border-ss-brand-secondary/35 hover:bg-ss-bg-elevated hover:shadow-[var(--ss-shadow-lift)] active:translate-y-0 active:scale-[0.995]"
-        : "cursor-default hover:-translate-y-0.5 hover:shadow-[var(--ss-shadow-lift)]";
+        ? "cursor-pointer hover:border-ss-brand-secondary/35 hover:bg-ss-bg-elevated active:scale-[0.995]"
+        : "cursor-default";
 
     return [baseClasses, sizeClasses, surfaceClasses, stateClasses, className]
       .filter(Boolean)
@@ -238,6 +245,14 @@ const ModelCard: React.FC<ModelCardProps> = ({
         <Badge key="switching" variant="secondary">
           <Loader2 className="mr-1 h-3 w-3 animate-spin" />
           {t("modelSelector.switching")}
+        </Badge>,
+      );
+    }
+
+    if (status === "error") {
+      badges.push(
+        <Badge key="error" tone="danger">
+          {t("modelSelector.downloadErrorTitle")}
         </Badge>,
       );
     }
@@ -310,6 +325,16 @@ const ModelCard: React.FC<ModelCardProps> = ({
 
     if (status === "downloading") {
       const safeProgress = Math.max(0, Math.min(100, downloadProgress ?? 0));
+      const etaSeconds =
+        downloadBytes && downloadSpeed && downloadSpeed > 0
+          ? Math.max(0, downloadBytes.total - downloadBytes.downloaded) /
+            (downloadSpeed * 1024 * 1024)
+          : 0;
+      const etaLabel = etaSeconds
+        ? etaSeconds < 60
+          ? `${Math.max(1, Math.ceil(etaSeconds))}s`
+          : `${Math.ceil(etaSeconds / 60)}m`
+        : null;
 
       return (
         <div
@@ -323,9 +348,16 @@ const ModelCard: React.FC<ModelCardProps> = ({
           </div>
           <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-ss-text-tertiary">
             <span>
-              {t("modelSelector.downloading", {
-                percentage: Math.round(safeProgress),
-              })}
+              {downloadBytes && downloadBytes.total > 0
+                ? t("modelSelector.downloadProgress.downloadedOf", {
+                    downloaded: formatModelSize(
+                      downloadBytes.downloaded / 1024 / 1024,
+                    ),
+                    total: formatModelSize(downloadBytes.total / 1024 / 1024),
+                  })
+                : t("modelSelector.downloading", {
+                    percentage: Math.round(safeProgress),
+                  })}
             </span>
             <div className="flex flex-wrap items-center gap-2">
               {downloadSpeed !== undefined && downloadSpeed > 0 && (
@@ -335,6 +367,11 @@ const ModelCard: React.FC<ModelCardProps> = ({
                   })}
                 </span>
               )}
+              {etaLabel ? (
+                <span>
+                  {t("modelSelector.downloadProgress.eta", { eta: etaLabel })}
+                </span>
+              ) : null}
               {onCancel && !isOnboardingLayout && (
                 <Button
                   variant="danger-ghost"
@@ -470,6 +507,24 @@ const ModelCard: React.FC<ModelCardProps> = ({
       )}
 
       {renderProgress()}
+
+      {status === "error" && onDownload ? (
+        <div className="flex items-center justify-between gap-3 rounded-[var(--ss-radius-sm)] bg-ss-state-danger/8 px-3 py-2">
+          <p className="text-xs text-ss-state-danger">
+            {t("modelSelector.downloadErrors.unknown")}
+          </p>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={(event) => {
+              event.stopPropagation();
+              onDownload(model.id);
+            }}
+          >
+            {t("modelSelector.retryDownload")}
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 };
