@@ -448,7 +448,7 @@ function App() {
       <div
         dir={direction}
         data-theme={resolvedTheme}
-        className="relative h-[100dvh] overflow-hidden select-none cursor-default bg-ss-bg-canvas text-ss-text-primary"
+        className="ss-app-shell relative h-[100dvh] overflow-hidden select-none cursor-default bg-ss-bg-canvas text-ss-text-primary"
       >
         <a
           href="#main-content"
@@ -456,17 +456,17 @@ function App() {
         >
           {t("sidebar.home")}
         </a>
-        <div className="relative flex h-full min-h-0 overflow-hidden">
+        <div className="ss-app-frame relative flex h-full min-h-0 overflow-hidden">
           <Sidebar
             activeSection={currentSection}
             onSectionChange={setCurrentSection}
           />
           <main
             id="main-content"
-            className="app-content-scroll min-w-0 flex-1 overflow-y-auto bg-ss-bg-canvas"
+            className="app-content-scroll ss-main-panel min-w-0 flex-1 overflow-y-auto"
             tabIndex={-1}
           >
-            <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-5 px-6 py-6 2xl:px-8 2xl:py-7">
+            <div className="ss-content-container mx-auto flex w-full max-w-[1160px] flex-col gap-5 px-7 py-7 2xl:px-9 2xl:py-8">
               <ErrorBoundary>
                 <AccessibilityPermissions
                   onStartRepair={() => {
