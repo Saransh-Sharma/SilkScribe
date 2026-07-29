@@ -114,14 +114,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
     sections: typeof availableSections,
     labelKey?: string,
   ) => (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       {labelKey ? (
-        <p className="px-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-ss-text-tertiary">
+        <p className="px-3.5 text-[10px] font-bold uppercase tracking-[0.2em] text-ss-text-tertiary/80">
           {t(labelKey)}
         </p>
       ) : null}
       <nav
-        className="flex flex-col gap-1"
+        className="flex flex-col gap-1.5"
         aria-label={labelKey ? t(labelKey) : t("sidebar.home")}
       >
         {sections.map((section) => {
@@ -132,25 +132,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               type="button"
               key={section.id}
-              className={`group flex min-h-11 w-full items-center gap-3 rounded-[var(--ss-radius-md)] border px-3 py-2 text-left transition-[background-color,border-color,color,transform] duration-200 ${
+              className={`ss-nav-item group relative flex min-h-11 w-full items-center gap-3 overflow-hidden rounded-[var(--ss-radius-md)] border px-3 py-2 text-left transition-[background-color,border-color,color,transform] duration-200 ${
                 isActive
-                  ? "border-ss-brand-secondary/50 bg-ss-brand-secondary/12 text-ss-text-primary shadow-[inset_0_0_0_1px_rgba(0,0,0,0.02)]"
-                  : "border-transparent text-ss-text-secondary hover:-translate-y-0.5 hover:border-ss-border-subtle hover:bg-ss-bg-surface"
+                  ? "is-active border-ss-brand-secondary/18 bg-ss-bg-elevated text-ss-text-primary shadow-[var(--ss-shadow-card)]"
+                  : "border-transparent text-ss-text-secondary hover:translate-x-0.5 hover:border-ss-border-subtle hover:bg-ss-bg-surface/55 rtl:hover:-translate-x-0.5"
               }`}
               onClick={() => onSectionChange(section.id)}
               aria-current={isActive ? "page" : undefined}
             >
               <span
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                className={`relative z-[1] flex h-8 w-8 shrink-0 items-center justify-center rounded-[12px] transition-[background-color,color,transform] duration-200 ${
                   isActive
-                    ? "bg-ss-brand-secondary/16 text-ss-brand-secondary"
-                    : "bg-ss-bg-elevated text-ss-text-tertiary group-hover:text-ss-brand-secondary"
+                    ? "scale-[1.03] bg-ss-brand-secondary text-ss-brand-secondary-ink shadow-[inset_0_1px_0_rgba(255,255,255,.22)]"
+                    : "bg-ss-bg-elevated/75 text-ss-text-tertiary group-hover:text-ss-brand-secondary"
                 }`}
               >
                 <Icon width={18} height={18} className="shrink-0" />
               </span>
               <span
-                className="truncate text-sm font-semibold tracking-[0.01em]"
+                className="relative z-[1] truncate text-[13px] font-semibold tracking-[-0.005em]"
                 title={t(section.labelKey)}
               >
                 {t(section.labelKey)}
@@ -163,16 +163,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
   );
 
   return (
-    <aside className="flex h-full w-[240px] shrink-0 flex-col border-e border-ss-border-subtle bg-ss-bg-surface-alt px-3.5 pb-3 pt-4 shadow-[var(--ss-shadow-hairline)]">
-      <div className="flex items-center justify-center overflow-hidden px-2 py-1.5">
+    <aside className="ss-sidebar flex h-full w-[248px] shrink-0 flex-col border-e border-ss-border-subtle px-3.5 pb-3 pt-4">
+      <div className="ss-sidebar-brand flex items-center overflow-hidden rounded-[20px] px-2.5 py-2">
         <SilkScribeWordmark
-          height={46}
+          height={38}
           fit="cover"
-          className="w-full shrink-0"
-          imageScale={1.68}
+          className="w-full shrink-0 text-[20px]"
         />
       </div>
-      <div className="mt-4 flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-0.5">
+      <div className="mt-5 flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-0.5">
         {renderSectionList(primarySections)}
         {secondarySections.length > 0
           ? renderSectionList(secondarySections, "sidebar.preferences")
