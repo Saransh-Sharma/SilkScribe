@@ -30,11 +30,11 @@ body {
 ---------------------------------------------------------------------------- */
 .overlay-pill {
   /* Scoped, theme-independent palette (overlay is always the dark instrument). */
-  --gold: #febf2b;
-  --berry: #b1205f;
-  --crimson: #c11317;
-  --sand: #9e5f0a;
-  --parchment: #fff3e6;
+  --gold: #d9aa4b;
+  --berry: #c83b66;
+  --crimson: #b52a36;
+  --sand: #8b502f;
+  --parchment: #fff8f4;
   --overlay-energy: 0;
 
   position: relative;
@@ -46,12 +46,20 @@ body {
   color: var(--parchment);
   background:
     radial-gradient(
-      ellipse 90% 130% at 50% 88%,
-      rgba(158, 95, 10, 0.08) 0%,
+      ellipse 88% 150% at 42% 105%,
+      rgba(200, 59, 102, 0.18),
       transparent 62%
     ),
-    linear-gradient(180deg, #1e2d12 0%, #131e08 55%, #0d1604 100%);
-  border: 1px solid rgba(254, 191, 43, 0.13);
+    radial-gradient(
+      ellipse 60% 100% at 76% -20%,
+      rgba(217, 170, 75, 0.1),
+      transparent 64%
+    ),
+    linear-gradient(180deg, rgba(38, 27, 31, 0.97), rgba(18, 14, 16, 0.98));
+  border: 1px solid rgba(255, 248, 244, 0.11);
+  box-shadow:
+    0 18px 46px -22px rgba(14, 8, 10, 0.82),
+    inset 0 1px 0 rgba(255, 248, 244, 0.08);
 
   opacity: 0;
   transform: translateY(4px) scale(0.96);
@@ -151,7 +159,7 @@ body {
 
 /* Recording: energy-reactive border + slow rim breath. */
 .overlay-pill[data-state="recording"] {
-  border-color: rgba(254, 191, 43, calc(0.13 + 0.32 * var(--overlay-energy)));
+  border-color: rgba(217, 170, 75, calc(0.13 + 0.3 * var(--overlay-energy)));
 }
 
 .overlay-pill[data-state="recording"]::after {
@@ -422,7 +430,7 @@ body {
   transform: translateY(-50%);
   border-radius: 999px;
   border: 1px solid rgba(254, 191, 43, 0.12);
-  background: rgba(13, 22, 4, 0.56);
+  background: rgba(18, 14, 16, 0.64);
   padding: 3px 7px;
   font-variant-numeric: tabular-nums;
   font-size: 10.5px;
@@ -445,11 +453,11 @@ body {
   background:
     radial-gradient(
       ellipse 55% 75% at 50% 50%,
-      rgba(254, 191, 43, 0.04) 0%,
+      rgba(217, 170, 75, 0.045) 0%,
       transparent 65%
     ),
-    linear-gradient(180deg, #192810 0%, #0b1204 100%);
-  border: 1px solid rgba(158, 95, 10, 0.1);
+    linear-gradient(180deg, #24171d 0%, #110c0e 100%);
+  border: 1px solid rgba(217, 170, 75, 0.1);
   box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 

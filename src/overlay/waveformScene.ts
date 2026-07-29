@@ -17,11 +17,11 @@ const SMOOTH_ALPHA = 0.85;
 const FEEDBACK_ALPHA = 0.82;
 
 const COLORS = {
-  forest: 0x293a18,
-  magenta: 0xb1205f,
-  marigold: 0xfebf2b,
-  crimson: 0xc11317,
-  ochre: 0x9e5f0a,
+  forest: 0x1b1116,
+  magenta: 0xc83b66,
+  marigold: 0xd9aa4b,
+  crimson: 0xb52a36,
+  ochre: 0x8b502f,
 } as const;
 
 export type WaveformSceneController = {

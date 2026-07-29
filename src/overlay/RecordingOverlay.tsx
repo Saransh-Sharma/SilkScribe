@@ -212,6 +212,7 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
   const stateLabel = ariaForState(state);
   const detailText =
     overlay.detail ??
+    overlay.previewText ??
     (state === "cancelled" ? t("overlay.cancelledDetail") : undefined);
   const announcement = [stateLabel, detailText].filter(Boolean).join(". ");
 
