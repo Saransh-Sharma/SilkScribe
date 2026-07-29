@@ -306,44 +306,71 @@ const HomeDashboard = ({
       : "general";
 
   return (
-    <div className="w-full space-y-7">
-      <section className="home-fade-in overflow-hidden rounded-[var(--ss-radius-xl)] border border-ss-border-default bg-ss-bg-surface shadow-[var(--ss-shadow-card)]">
-        <div className="flex flex-col gap-5 px-5 pb-5 pt-5 lg:flex-row lg:items-start lg:justify-between lg:px-6">
-          <div className="min-w-0 max-w-[64ch]">
-            <div className="mb-3 flex items-center gap-2.5">
+    <div className="w-full space-y-8">
+      <section className="ss-home-hero home-fade-in overflow-hidden rounded-[var(--ss-radius-xl)] border border-ss-border-default bg-ss-bg-surface shadow-[var(--ss-shadow-lift)]">
+        <div className="ss-home-hero-main grid gap-8 px-6 pb-6 pt-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(310px,0.85fr)] lg:items-center lg:px-8 lg:pb-8 lg:pt-8">
+          <div className="min-w-0">
+            <div className="mb-5 flex items-center gap-2.5">
               <span
-                className={`relative flex h-3 w-3 items-center justify-center rounded-full ${
+                className={`ss-status-orbit relative flex h-2.5 w-2.5 items-center justify-center rounded-full ${
                   setupReady ? "bg-ss-state-success" : "bg-ss-brand-highlight"
                 }`}
                 aria-hidden="true"
-              >
-                <span className="absolute h-5 w-5 rounded-full border border-current opacity-20" />
-              </span>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ss-text-tertiary">
+              />
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-ss-text-tertiary">
                 {t("home.welcome.eyebrow")}
               </p>
             </div>
-            <h1 className="text-[2rem] font-semibold leading-[1.06] tracking-[-0.038em] text-ss-text-primary">
+            <h1 className="max-w-[13ch] text-[clamp(2.25rem,1.95rem+1.25vw,3.35rem)] font-semibold leading-[0.98] tracking-[-0.058em] text-ss-text-primary">
               {welcomeTitle}
             </h1>
-            <p className="mt-2 max-w-[58ch] text-sm leading-relaxed text-ss-text-secondary">
+            <p className="mt-4 max-w-[55ch] text-[15px] leading-relaxed text-ss-text-secondary">
               {welcomeDescription}
             </p>
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <Button
+                type="button"
+                variant="primary"
+                size="lg"
+                className="rounded-[18px] px-5"
+                disabled={!permissionsReady && isStartingPermissionRepair}
+                onClick={() => navigateWithPermissionGate(primaryDestination)}
+              >
+                {setupActionLabel}
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <div className="ss-shortcut-hint inline-flex min-h-11 items-center gap-2.5 rounded-[18px] border border-ss-border-subtle bg-ss-bg-elevated/58 px-4 text-sm font-semibold text-ss-text-secondary shadow-[var(--ss-shadow-hairline)] backdrop-blur-xl">
+                <Keyboard className="h-4 w-4 text-ss-brand-secondary" />
+                <span className="tabular-nums">{shortcutLabel}</span>
+              </div>
+            </div>
+            <div className="mt-7 border-t border-ss-border-subtle pt-4">
+              <UsageStatsStrip summary={summary} loading={loading} />
+            </div>
           </div>
-          <Button
-            type="button"
-            variant="primary"
-            size="md"
-            className="shrink-0"
-            disabled={!permissionsReady && isStartingPermissionRepair}
-            onClick={() => navigateWithPermissionGate(primaryDestination)}
-          >
-            {setupActionLabel}
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+
+          <div className="ss-voice-stage" aria-hidden="true">
+            <div className="ss-voice-aura" />
+            <div className="ss-voice-rings">
+              <div className="ss-voice-ring ss-voice-ring-outer" />
+              <div className="ss-voice-ring ss-voice-ring-middle" />
+              <div className="ss-voice-core">
+                <Mic className="h-7 w-7" strokeWidth={1.7} />
+              </div>
+            </div>
+            <div className="ss-voice-bars">
+              {Array.from({ length: 15 }).map((_, index) => (
+                <span key={index} />
+              ))}
+            </div>
+            <div className="ss-voice-caption">
+              <span className="ss-voice-caption-dot" />
+              {modelLabel}
+            </div>
+          </div>
         </div>
 
-        <div className="grid border-y border-ss-border-subtle bg-ss-bg-surface-alt/38 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="ss-readiness-dock grid border-t border-ss-border-subtle bg-ss-bg-surface-alt/34 sm:grid-cols-2 xl:grid-cols-4">
           {readinessItems.map((item, index) => {
             const Icon = item.icon;
             return (
@@ -352,7 +379,7 @@ const HomeDashboard = ({
                 type="button"
                 disabled={item.disabled}
                 onClick={() => item.action()}
-                className={`group min-w-0 px-4 py-3.5 text-start transition-colors duration-[var(--ss-duration-hover)] hover:bg-ss-bg-surface focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ss-action-focus/45 disabled:cursor-wait disabled:opacity-60 ${
+                className={`group min-w-0 px-5 py-4 text-start transition-[background-color,transform] duration-[var(--ss-duration-hover)] hover:-translate-y-0.5 hover:bg-ss-bg-elevated/64 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ss-action-focus/35 disabled:cursor-wait disabled:opacity-60 ${
                   index > 0 ? "border-s border-ss-border-subtle" : ""
                 } ${index === 2 ? "sm:border-s-0 xl:border-s" : ""}`}
                 aria-label={`${item.label}: ${item.value}. ${item.actionLabel}`}
@@ -379,15 +406,11 @@ const HomeDashboard = ({
                   <span className="truncate text-sm font-semibold text-ss-text-primary">
                     {item.value}
                   </span>
-                  <ChevronRight className="h-3.5 w-3.5 shrink-0 text-ss-text-tertiary opacity-0 transition-opacity group-hover:opacity-100" />
+                  <ChevronRight className="h-3.5 w-3.5 shrink-0 text-ss-text-tertiary opacity-0 transition-[opacity,transform] group-hover:translate-x-0.5 group-hover:opacity-100 rtl:group-hover:-translate-x-0.5" />
                 </div>
               </button>
             );
           })}
-        </div>
-
-        <div className="px-5 py-3 lg:px-6">
-          <UsageStatsStrip summary={summary} loading={loading} />
         </div>
       </section>
 
