@@ -46,7 +46,7 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
           disabled={disabled || isUpdating}
           onChange={(e) => onChange(e.target.checked)}
         />
-        <div className="peer relative h-7 w-[52px] rounded-full border border-ss-border-default bg-ss-bg-elevated transition-colors duration-150 after:absolute after:start-[3px] after:top-[3px] after:h-5 after:w-5 after:rounded-full after:bg-ss-bg-surface after:shadow-[var(--ss-shadow-control-thumb)] after:transition-transform after:duration-200 peer-checked:border-ss-action-primary peer-checked:bg-ss-action-primary peer-checked:after:translate-x-6 peer-checked:after:bg-ss-brand-primary-ink rtl:peer-checked:after:-translate-x-6 peer-focus-visible:ring-4 peer-focus-visible:ring-ss-action-focus/30 peer-disabled:opacity-50" />
+        <div className="ss-toggle-track peer relative h-7 w-[52px] rounded-full border border-ss-border-default bg-ss-bg-elevated transition-[background-color,border-color,transform] duration-200 after:absolute after:start-[3px] after:top-[3px] after:h-5 after:w-5 after:rounded-full after:bg-ss-bg-surface after:shadow-[var(--ss-shadow-control-thumb)] after:transition-transform after:duration-200 peer-checked:border-ss-action-primary peer-checked:bg-ss-action-primary peer-checked:after:translate-x-6 peer-checked:after:bg-ss-brand-primary-ink rtl:peer-checked:after:-translate-x-6 peer-focus-visible:ring-4 peer-focus-visible:ring-ss-action-focus/20 peer-disabled:opacity-50" />
       </label>
       {isUpdating && (
         <div className="absolute inset-0 flex items-center justify-center">

@@ -52,8 +52,8 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
   };
 
   const containerClasses = grouped
-    ? "px-4 py-3"
-    : "rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface px-[14px] py-3 shadow-[var(--ss-shadow-card)]";
+    ? "ss-setting-row px-5 py-4"
+    : "ss-setting-row rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface px-5 py-4 shadow-[var(--ss-shadow-card)]";
 
   const titleBlockClasses = disabled ? "opacity-60" : "";
   const titleClasses = "text-sm font-semibold leading-5 text-ss-text-primary";
@@ -114,8 +114,8 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
   }
 
   const horizontalContainerClasses = grouped
-    ? "grid min-h-12 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-5 gap-y-3 px-4 py-3 max-[760px]:grid-cols-1"
-    : "grid min-h-12 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-5 gap-y-3 rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface px-4 py-3 shadow-[var(--ss-shadow-hairline)] max-[760px]:grid-cols-1";
+    ? "ss-setting-row grid min-h-14 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-6 gap-y-3 px-5 py-4 max-[760px]:grid-cols-1"
+    : "ss-setting-row grid min-h-14 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-6 gap-y-3 rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface px-5 py-4 shadow-[var(--ss-shadow-hairline)] max-[760px]:grid-cols-1";
 
   if (descriptionMode === "tooltip") {
     return (

@@ -14,7 +14,7 @@ export const SettingsGroup: React.FC<SettingsGroupProps> = ({
   children,
 }) => {
   return (
-    <section className="space-y-2.5">
+    <section className="ss-settings-group space-y-3">
       {(title || description || actions) && (
         <div className="flex items-end justify-between gap-4 px-1">
           <div className="min-w-0">
@@ -32,7 +32,7 @@ export const SettingsGroup: React.FC<SettingsGroupProps> = ({
           {actions && <div className="shrink-0">{actions}</div>}
         </div>
       )}
-      <div className="overflow-visible rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface shadow-[var(--ss-shadow-hairline)]">
+      <div className="ss-settings-surface overflow-visible rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface shadow-[var(--ss-shadow-card)]">
         <div className="divide-y divide-ss-border-subtle">{children}</div>
       </div>
     </section>

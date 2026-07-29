@@ -248,7 +248,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
       <button
         ref={triggerRef}
         type="button"
-        className={`flex min-h-11 min-w-[220px] items-center justify-between gap-2 rounded-[var(--ss-radius-md)] border px-3.5 py-2 text-start text-sm font-medium transition-[background-color,border-color,box-shadow,transform] duration-150 ${
+        className={`ss-control flex min-h-11 min-w-[220px] items-center justify-between gap-2 rounded-[var(--ss-radius-md)] border px-3.5 py-2 text-start text-sm font-medium transition-[background-color,border-color,box-shadow,transform] duration-200 ${
           disabled
             ? "cursor-not-allowed border-ss-border-subtle bg-ss-bg-surface-alt text-ss-text-disabled opacity-70"
             : "cursor-pointer border-ss-border-default bg-ss-bg-elevated text-ss-text-primary hover:-translate-y-0.5 hover:border-ss-brand-secondary/35 hover:bg-ss-bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35"
@@ -295,7 +295,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
               id={listboxId}
               role="listbox"
               aria-label={selectedOption?.label || placeholder}
-              className="overflow-y-auto overscroll-contain rounded-[var(--ss-radius-md)] border border-ss-border-default bg-ss-bg-surface p-1 shadow-[var(--ss-shadow-lift)] transition-[opacity,transform] duration-150"
+              className="ss-popover overflow-y-auto overscroll-contain rounded-[var(--ss-radius-lg)] border border-ss-border-default bg-ss-bg-surface p-1.5 shadow-[var(--ss-shadow-lift)] transition-[opacity,transform] duration-200"
               style={{
                 position: "fixed",
                 top: menuPosition?.top ?? -9999,

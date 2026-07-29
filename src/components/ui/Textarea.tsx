@@ -12,7 +12,7 @@ export const Textarea: React.FC<TextareaProps> = ({
   ...props
 }) => {
   const baseClasses =
-    "w-full border text-sm font-medium text-ss-text-primary bg-ss-bg-elevated border-ss-border-default rounded-[var(--ss-radius-md)] text-start transition-[background-color,border-color,box-shadow] duration-150 placeholder:text-ss-text-tertiary focus:outline-none resize-y";
+    "ss-control w-full border text-sm font-medium text-ss-text-primary bg-ss-bg-elevated border-ss-border-default rounded-[var(--ss-radius-md)] text-start transition-[background-color,border-color,box-shadow,transform] duration-200 placeholder:text-ss-text-tertiary focus:outline-none resize-y";
 
   const interactiveClasses = disabled
     ? "opacity-60 cursor-not-allowed bg-ss-bg-surface-alt border-ss-border-subtle"
