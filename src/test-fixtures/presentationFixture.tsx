@@ -1,6 +1,10 @@
 /* eslint-disable i18next/no-literal-string */
 import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
+import "@fontsource/manrope/latin-400.css";
+import "@fontsource/manrope/latin-500.css";
+import "@fontsource/manrope/latin-600.css";
+import "@fontsource/manrope/latin-700.css";
 import i18next from "i18next";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 import { CheckCircle2, Command, Mic2, ShieldCheck } from "lucide-react";
@@ -20,6 +24,7 @@ import ModelCard, {
 } from "@/components/onboarding/ModelCard";
 import OnboardingShell from "@/components/onboarding/OnboardingShell";
 import { HistoryFeedItem } from "@/components/history/HistoryFeedItem";
+import SilkScribeWordmark from "@/components/icons/SilkScribeWordmark";
 import RecordingOverlay, {
   type OverlayState,
 } from "@/overlay/RecordingOverlay";
@@ -78,24 +83,26 @@ const mockHistory: HistoryEntry = {
 };
 
 const SidebarPreview = () => (
-  <aside className="flex w-[240px] shrink-0 flex-col border-e border-ss-border-subtle bg-ss-bg-surface-alt p-4">
-    <div className="px-2 pb-5 text-xl font-semibold tracking-[-0.03em] text-ss-text-primary">
-      SilkScribe
+  <aside className="ss-sidebar flex w-[248px] shrink-0 flex-col border-e border-ss-border-subtle p-4">
+    <div className="ss-sidebar-brand mb-5 rounded-[20px] px-2.5 py-2">
+      <SilkScribeWordmark height={38} className="text-[20px]" />
     </div>
-    <nav aria-label="Preview navigation" className="space-y-1">
+    <nav aria-label="Preview navigation" className="space-y-1.5">
       {["Home", "General", "Models", "Advanced", "History"].map(
         (label, index) => (
           <button
             key={label}
             type="button"
             aria-current={index === 1 ? "page" : undefined}
-            className={`flex min-h-11 w-full items-center gap-3 rounded-[var(--ss-radius-md)] px-3 text-sm font-semibold ${
+            className={`ss-nav-item relative flex min-h-11 w-full items-center gap-3 overflow-hidden rounded-[var(--ss-radius-md)] border px-3 text-[13px] font-semibold ${
               index === 1
-                ? "bg-ss-brand-secondary/12 text-ss-brand-secondary"
-                : "text-ss-text-secondary"
+                ? "is-active border-ss-brand-secondary/18 bg-ss-bg-elevated text-ss-text-primary shadow-[var(--ss-shadow-card)]"
+                : "border-transparent text-ss-text-secondary"
             }`}
           >
-            <span className="h-2 w-2 rounded-full bg-current opacity-70" />
+            <span
+              className={`h-8 w-8 rounded-[12px] ${index === 1 ? "bg-ss-brand-secondary" : "bg-ss-bg-elevated"}`}
+            />
             {label}
           </button>
         ),
@@ -107,10 +114,10 @@ const SidebarPreview = () => (
 const SystemFixture = () => {
   const [feedback, setFeedback] = useState(true);
   return (
-    <div className="flex h-[100dvh] bg-ss-bg-canvas text-ss-text-primary">
+    <div className="ss-app-shell ss-app-frame flex h-[100dvh] bg-ss-bg-canvas text-ss-text-primary">
       <SidebarPreview />
-      <main className="flex-1 overflow-y-auto p-6">
-        <div className="mx-auto max-w-[1060px]">
+      <main className="ss-main-panel flex-1 overflow-y-auto p-7">
+        <div className="ss-content-container mx-auto max-w-[1060px]">
           <AppPage
             eyebrow="Everyday setup"
             title="Keep SilkScribe ready to record"
@@ -161,23 +168,47 @@ const SystemFixture = () => {
 };
 
 const HomeFixture = () => (
-  <div className="min-h-[100dvh] bg-ss-bg-canvas p-6 text-ss-text-primary">
-    <section className="mx-auto max-w-[1040px] overflow-hidden rounded-[var(--ss-radius-xl)] border border-ss-border-default bg-ss-bg-surface shadow-[var(--ss-shadow-card)]">
-      <div className="flex items-start justify-between gap-5 px-6 py-5">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ss-text-tertiary">
+  <div className="ss-app-shell min-h-[100dvh] bg-ss-bg-canvas p-7 text-ss-text-primary">
+    <section className="ss-home-hero mx-auto max-w-[1060px] overflow-hidden rounded-[var(--ss-radius-xl)] border border-ss-border-default bg-ss-bg-surface shadow-[var(--ss-shadow-lift)]">
+      <div className="ss-home-hero-main grid grid-cols-[minmax(0,1.15fr)_minmax(310px,.85fr)] items-center gap-8 px-8 py-8">
+        <div className="min-w-0">
+          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-ss-text-tertiary">
             Ready to dictate
           </p>
-          <h1 className="mt-2 text-[2rem] font-semibold tracking-[-0.038em]">
+          <h1 className="mt-5 max-w-[13ch] text-[3.1rem] font-semibold leading-[.98] tracking-[-0.058em]">
             SilkScribe is ready
           </h1>
-          <p className="mt-2 text-sm text-ss-text-secondary">
+          <p className="mt-4 max-w-[52ch] text-[15px] leading-relaxed text-ss-text-secondary">
             Your shortcut, microphone, local model, and permissions are all set.
           </p>
+          <div className="mt-6 flex items-center gap-3">
+            <Button size="lg">Review recording setup</Button>
+            <div className="ss-shortcut-hint rounded-[18px] border border-ss-border-subtle bg-ss-bg-elevated/58 px-4 py-3 text-sm font-semibold">
+              ⌘ ⇧ Space
+            </div>
+          </div>
         </div>
-        <Button>Review recording setup</Button>
+        <div className="ss-voice-stage" aria-hidden="true">
+          <div className="ss-voice-aura" />
+          <div className="ss-voice-rings">
+            <div className="ss-voice-ring ss-voice-ring-outer" />
+            <div className="ss-voice-ring ss-voice-ring-middle" />
+            <div className="ss-voice-core">
+              <Mic2 className="h-7 w-7" />
+            </div>
+          </div>
+          <div className="ss-voice-bars">
+            {Array.from({ length: 15 }).map((_, index) => (
+              <span key={index} />
+            ))}
+          </div>
+          <div className="ss-voice-caption">
+            <span className="ss-voice-caption-dot" />
+            Parakeet v3
+          </div>
+        </div>
       </div>
-      <div className="grid grid-cols-4 border-y border-ss-border-subtle bg-ss-bg-surface-alt/38">
+      <div className="ss-readiness-dock grid grid-cols-4 border-t border-ss-border-subtle bg-ss-bg-surface-alt/34">
         {[
           [Command, "Shortcut", "⌘ ⇧ Space"],
           [Mic2, "Microphone", "Studio Display"],
