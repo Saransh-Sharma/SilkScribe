@@ -115,6 +115,44 @@ const MetadataChip: React.FC<MetadataChipProps> = ({ icon, label, title }) => (
   </div>
 );
 
+const CircularProgress = ({ value }: { value: number }) => {
+  const safeValue = Math.max(0, Math.min(100, value));
+  const radius = 18;
+  const circumference = 2 * Math.PI * radius;
+
+  return (
+    <div
+      className="ss-circular-progress relative grid h-12 w-12 shrink-0 place-items-center"
+      aria-hidden="true"
+    >
+      <svg viewBox="0 0 48 48" className="absolute inset-0 -rotate-90">
+        <circle
+          cx="24"
+          cy="24"
+          r={radius}
+          fill="none"
+          stroke="var(--ss-border-subtle)"
+          strokeWidth="3"
+        />
+        <circle
+          cx="24"
+          cy="24"
+          r={radius}
+          fill="none"
+          stroke="var(--ss-brand-secondary)"
+          strokeLinecap="round"
+          strokeWidth="3"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference * (1 - safeValue / 100)}
+        />
+      </svg>
+      <span className="text-[9px] font-bold tabular-nums text-ss-text-secondary">
+        {Math.round(safeValue)}%
+      </span>
+    </div>
+  );
+};
+
 const ModelCard: React.FC<ModelCardProps> = ({
   model,
   variant = "default",
@@ -189,7 +227,7 @@ const ModelCard: React.FC<ModelCardProps> = ({
 
   const getRootClasses = () => {
     const baseClasses =
-      "group relative flex flex-col rounded-[18px] border text-left transition-[transform,background-color,border-color,box-shadow,opacity] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/40";
+      "ss-model-card group relative flex flex-col rounded-[22px] border text-left transition-[transform,background-color,border-color,box-shadow,opacity] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/40";
     const sizeClasses = isOnboardingLayout
       ? `${isFeatured ? "min-h-[168px]" : "min-h-[152px]"} gap-4 px-[18px] py-[18px] shadow-[var(--ss-shadow-card)]`
       : "min-h-[104px] gap-3 px-4 py-3.5 shadow-[var(--ss-shadow-hairline)]";
@@ -338,50 +376,53 @@ const ModelCard: React.FC<ModelCardProps> = ({
 
       return (
         <div
-          className={`w-full rounded-[14px] border border-ss-border-subtle bg-ss-bg-surface-alt ${isOnboardingLayout ? "px-3 py-3" : "px-3 py-2.5"}`}
+          className={`ss-model-progress grid w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-3 rounded-[16px] border border-ss-border-subtle bg-ss-bg-surface-alt ${isOnboardingLayout ? "px-3 py-3" : "px-3 py-2.5"}`}
         >
-          <div className="h-2 w-full overflow-hidden rounded-full bg-ss-bg-elevated">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-ss-brand-highlight to-ss-brand-secondary transition-all duration-300"
-              style={{ width: `${safeProgress}%` }}
-            />
-          </div>
-          <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-ss-text-tertiary">
-            <span>
-              {downloadBytes && downloadBytes.total > 0
-                ? t("modelSelector.downloadProgress.downloadedOf", {
-                    downloaded: formatModelSize(
-                      downloadBytes.downloaded / 1024 / 1024,
-                    ),
-                    total: formatModelSize(downloadBytes.total / 1024 / 1024),
-                  })
-                : t("modelSelector.downloading", {
-                    percentage: Math.round(safeProgress),
-                  })}
-            </span>
-            <div className="flex flex-wrap items-center gap-2">
-              {downloadSpeed !== undefined && downloadSpeed > 0 && (
-                <span className="tabular-nums">
-                  {t("modelSelector.downloadSpeed", {
-                    speed: downloadSpeed.toFixed(1),
-                  })}
-                </span>
-              )}
-              {etaLabel ? (
-                <span>
-                  {t("modelSelector.downloadProgress.eta", { eta: etaLabel })}
-                </span>
-              ) : null}
-              {onCancel && !isOnboardingLayout && (
-                <Button
-                  variant="danger-ghost"
-                  size="sm"
-                  onClick={handleCancel}
-                  aria-label={t("modelSelector.cancelDownload")}
-                >
-                  {t("modelSelector.cancel")}
-                </Button>
-              )}
+          <CircularProgress value={safeProgress} />
+          <div className="min-w-0">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-ss-bg-elevated">
+              <div
+                className="h-full origin-left rounded-full bg-gradient-to-r from-ss-brand-highlight to-ss-brand-secondary transition-transform duration-300 rtl:origin-right"
+                style={{ transform: `scaleX(${safeProgress / 100})` }}
+              />
+            </div>
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-ss-text-tertiary">
+              <span>
+                {downloadBytes && downloadBytes.total > 0
+                  ? t("modelSelector.downloadProgress.downloadedOf", {
+                      downloaded: formatModelSize(
+                        downloadBytes.downloaded / 1024 / 1024,
+                      ),
+                      total: formatModelSize(downloadBytes.total / 1024 / 1024),
+                    })
+                  : t("modelSelector.downloading", {
+                      percentage: Math.round(safeProgress),
+                    })}
+              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                {downloadSpeed !== undefined && downloadSpeed > 0 && (
+                  <span className="tabular-nums">
+                    {t("modelSelector.downloadSpeed", {
+                      speed: downloadSpeed.toFixed(1),
+                    })}
+                  </span>
+                )}
+                {etaLabel ? (
+                  <span>
+                    {t("modelSelector.downloadProgress.eta", { eta: etaLabel })}
+                  </span>
+                ) : null}
+                {onCancel && !isOnboardingLayout && (
+                  <Button
+                    variant="danger-ghost"
+                    size="sm"
+                    onClick={handleCancel}
+                    aria-label={t("modelSelector.cancelDownload")}
+                  >
+                    {t("modelSelector.cancel")}
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -445,6 +486,7 @@ const ModelCard: React.FC<ModelCardProps> = ({
       onKeyDown={handleCardKeyDown}
       role={isCardInteractive ? "button" : undefined}
       tabIndex={isCardInteractive ? 0 : undefined}
+      data-status={status}
       className={getRootClasses()}
     >
       {status === "active" && (
