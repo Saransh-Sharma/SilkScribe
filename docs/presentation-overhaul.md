@@ -1,5 +1,7 @@
 # SilkScribe presentation overhaul
 
+> Historical note: this documents the July 14 presentation pass. The current design direction and release plan are defined in [`ui-ux-overhaul-execution-plan.md`](./ui-ux-overhaul-execution-plan.md).
+
 ## Intent
 
 SilkScribe now presents itself as a warm native transcription instrument: compact, calm, status-led, keyboard-friendly, and precise. The visual language uses an ivory/forest/berry/gold palette, restrained depth, a single application scroller, and motion only where it communicates response or continuity.
