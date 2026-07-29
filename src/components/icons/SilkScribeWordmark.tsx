@@ -1,15 +1,12 @@
+/* eslint-disable i18next/no-literal-string -- Product name is invariant. */
 import React from "react";
-import bannerSrc from "../../assets/banner-ui.webp";
-
-const BANNER_ASPECT_RATIO = 2992 / 1273;
+import SilkScribeMark from "./SilkScribeMark";
 
 const SilkScribeWordmark = ({
   width,
   height,
   className,
   imageClassName,
-  imageScale = 1,
-  fit = "contain",
 }: {
   width?: number;
   height?: number;
@@ -19,29 +16,26 @@ const SilkScribeWordmark = ({
   fit?: "contain" | "cover";
 }) => {
   const resolvedHeight = height ?? 44;
-  const resolvedWidth =
-    width ?? Math.round(resolvedHeight * BANNER_ASPECT_RATIO);
+  const resolvedWidth = width ?? Math.round(resolvedHeight * 4.8);
+  const markSize = Math.max(22, Math.round(resolvedHeight * 0.78));
 
   return (
     <div
-      className={`block ${className ?? ""}`}
-      style={{ width: resolvedWidth, height: resolvedHeight }}
+      className={`flex items-center gap-[0.48em] ${className ?? ""}`}
+      style={{
+        width: resolvedWidth,
+        height: resolvedHeight,
+        fontSize: Math.max(16, resolvedHeight * 0.44),
+      }}
+      role="img"
+      aria-label="SilkScribe"
     >
-      <img
-        src={bannerSrc}
-        alt="SilkScribe"
-        className={`h-full w-full ${
-          fit === "cover" ? "object-cover" : "object-contain"
-        } ${imageClassName ?? ""}`}
-        style={
-          imageScale !== 1
-            ? {
-                transform: `scale(${imageScale})`,
-                transformOrigin: "center",
-              }
-            : undefined
-        }
-      />
+      <span className={`shrink-0 ${imageClassName ?? ""}`} aria-hidden="true">
+        <SilkScribeMark width={markSize} height={markSize} />
+      </span>
+      <span className="whitespace-nowrap text-[1.04em] font-[750] tracking-[-0.055em] text-ss-text-primary">
+        Silk<span className="font-[520] text-ss-text-secondary">Scribe</span>
+      </span>
     </div>
   );
 };
