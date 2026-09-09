@@ -535,6 +535,7 @@
   content: "";
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   pointer-events: none;
   background: linear-gradient(
     145deg,
@@ -552,6 +553,31 @@
   border: 1px solid color-mix(in srgb, var(--ss-border-subtle) 72%, transparent);
   background: color-mix(in srgb, var(--ss-bg-elevated) 52%, transparent);
   box-shadow: var(--ss-shadow-hairline);
+}
+
+.ss-sidebar-nav-stack > *:not(.ss-nav-indicator) {
+  position: relative;
+  z-index: 1;
+}
+
+.ss-nav-indicator {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 0;
+  border: 1px solid
+    color-mix(in srgb, var(--ss-brand-secondary) 18%, var(--ss-border-subtle));
+  border-radius: var(--ss-radius-md);
+  background: color-mix(in srgb, var(--ss-bg-elevated) 84%, transparent);
+  box-shadow:
+    var(--ss-shadow-card),
+    inset 0 1px 0 rgba(255, 255, 255, 0.44);
+  pointer-events: none;
+  transition:
+    transform 420ms var(--ss-ease-out-expo),
+    height 320ms var(--ss-ease-out-quint),
+    opacity 160ms var(--ss-ease-out-quart);
+  will-change: transform;
 }
 
 .ss-nav-item::before {
