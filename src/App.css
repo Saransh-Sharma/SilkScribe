@@ -813,6 +813,10 @@
 }
 
 .ss-home-hero {
+  --ss-spotlight-x: 88%;
+  --ss-spotlight-y: 16%;
+  --ss-orb-x: 0px;
+  --ss-orb-y: 0px;
   position: relative;
   background: color-mix(in srgb, var(--ss-bg-surface) 86%, transparent);
   backdrop-filter: blur(28px) saturate(1.12);
@@ -827,7 +831,7 @@
   background:
     linear-gradient(128deg, rgba(255, 255, 255, 0.34), transparent 28%),
     radial-gradient(
-      circle at 88% 16%,
+      circle at var(--ss-spotlight-x) var(--ss-spotlight-y),
       rgba(165, 31, 72, 0.075),
       transparent 32%
     );
@@ -902,6 +906,8 @@
   width: 132px;
   height: 132px;
   place-items: center;
+  transform: translate3d(var(--ss-orb-x), var(--ss-orb-y), 0);
+  transition: transform 420ms var(--ss-ease-out-quint);
 }
 
 .ss-voice-ring,
@@ -948,6 +954,12 @@
   justify-content: space-between;
   gap: 4px;
   opacity: 0.7;
+  transform: translate3d(
+    calc(0px - var(--ss-orb-x)),
+    calc(0px - var(--ss-orb-y)),
+    0
+  );
+  transition: transform 520ms var(--ss-ease-out-quint);
   mask-image: linear-gradient(
     90deg,
     transparent,
