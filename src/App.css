@@ -518,15 +518,20 @@
 }
 
 .ss-app-frame {
+  position: relative;
+  z-index: 1;
+  gap: 12px;
+  padding: 12px;
   background: transparent;
 }
 
 .ss-sidebar {
   position: relative;
+  border-radius: 30px;
   background: color-mix(in srgb, var(--ss-bg-surface-alt) 74%, transparent);
   box-shadow:
-    inset -1px 0 0 rgba(255, 255, 255, 0.34),
-    16px 0 42px -34px rgba(45, 25, 22, 0.2);
+    0 22px 54px -38px rgba(45, 25, 22, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(34px) saturate(1.16);
   -webkit-backdrop-filter: blur(34px) saturate(1.16);
 }
@@ -613,7 +618,14 @@
 
 .ss-main-panel {
   position: relative;
-  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--ss-border-subtle) 78%, transparent);
+  border-radius: 30px;
+  background: color-mix(in srgb, var(--ss-bg-surface) 38%, transparent);
+  box-shadow:
+    0 24px 60px -44px rgba(45, 25, 22, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42);
+  backdrop-filter: blur(18px) saturate(1.06);
+  -webkit-backdrop-filter: blur(18px) saturate(1.06);
 }
 
 .ss-content-container {
