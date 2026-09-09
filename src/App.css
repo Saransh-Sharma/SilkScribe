@@ -1085,6 +1085,79 @@
   transition: stroke-dashoffset 380ms var(--ss-ease-out-quint);
 }
 
+.ss-circular-progress svg {
+  z-index: 1;
+}
+
+.ss-circular-progress-liquid {
+  position: absolute;
+  inset: 6px;
+  overflow: hidden;
+  border-radius: 50%;
+  opacity: 0.18;
+}
+
+.ss-circular-progress-liquid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    155deg,
+    var(--ss-brand-highlight),
+    var(--ss-brand-secondary)
+  );
+  transform: translateY(calc(100% - var(--ss-progress)));
+  transition: transform 460ms var(--ss-ease-out-quint);
+}
+
+.ss-circular-progress-liquid::after {
+  content: "";
+  position: absolute;
+  top: calc(100% - var(--ss-progress) - 4px);
+  left: -20%;
+  width: 140%;
+  height: 9px;
+  border-radius: 46%;
+  background: color-mix(in srgb, var(--ss-brand-highlight) 55%, transparent);
+  animation: ss-progress-wave 2.6s ease-in-out infinite alternate;
+  transition: top 460ms var(--ss-ease-out-quint);
+}
+
+@keyframes ss-progress-wave {
+  from {
+    transform: translate3d(-3%, 0, 0) rotate(-2deg);
+  }
+  to {
+    transform: translate3d(3%, 1px, 0) rotate(2deg);
+  }
+}
+
+.ss-liquid-progress {
+  position: relative;
+  overflow: hidden;
+}
+
+.ss-liquid-progress::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.38),
+    transparent
+  );
+  transform: translate3d(-110%, 0, 0);
+  animation: ss-progress-sheen 2.2s var(--ss-ease-out-quart) infinite;
+}
+
+@keyframes ss-progress-sheen {
+  55%,
+  100% {
+    transform: translate3d(120%, 0, 0);
+  }
+}
+
 :root[data-theme="dark"] .ss-voice-stage {
   background:
     radial-gradient(
