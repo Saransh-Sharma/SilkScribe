@@ -1195,6 +1195,8 @@
 }
 
 .ss-onboarding-card {
+  position: relative;
+  z-index: 1;
   background: color-mix(in srgb, var(--ss-bg-surface) 88%, transparent);
   backdrop-filter: blur(34px) saturate(1.16);
   -webkit-backdrop-filter: blur(34px) saturate(1.16);
@@ -1220,6 +1222,14 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  .ss-page-enter[data-navigation-direction="forward"] {
+    animation-name: ss-page-enter-forward;
+  }
+
+  .ss-page-enter[data-navigation-direction="backward"] {
+    animation-name: ss-page-enter-backward;
+  }
+
   .ss-page-enter .ss-settings-group,
   .ss-page-enter .ss-history-item {
     animation: ss-row-reveal 480ms var(--ss-ease-out-quint) both;
@@ -1238,9 +1248,31 @@
   }
 }
 
+@keyframes ss-page-enter-forward {
+  from {
+    opacity: 0;
+    transform: translate3d(12px, 3px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes ss-page-enter-backward {
+  from {
+    opacity: 0;
+    transform: translate3d(-12px, 3px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 @media (max-width: 820px) {
   .ss-sidebar {
-    width: 214px;
+    width: 202px;
   }
 
   .ss-content-container {
