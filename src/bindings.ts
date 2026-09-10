@@ -149,6 +149,21 @@ export const commands = {
       else return { status: "error", error: e as any };
     }
   },
+  async changeOverlayAppearanceSetting(
+    appearance: string,
+  ): Promise<Result<null, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("change_overlay_appearance_setting", {
+          appearance,
+        }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
   async changeDebugModeSetting(
     enabled: boolean,
   ): Promise<Result<null, string>> {
@@ -569,6 +584,14 @@ export const commands = {
       else return { status: "error", error: e as any };
     }
   },
+  /**
+   * Controls whether an on-demand microphone stream remains open briefly after recording.
+   *
+   * When `enabled` is `true`, an idle input stream is kept open for 30 seconds so a
+   * subsequent recording can reuse the device. When `false`, the stream closes as soon
+   * as recording stops or is cancelled. This command currently has no recoverable error
+   * conditions; settings-store initialization failures panic in the settings layer.
+   */
   async changeLazyStreamCloseSetting(
     enabled: boolean,
   ): Promise<Result<null, string>> {
@@ -584,6 +607,14 @@ export const commands = {
       else return { status: "error", error: e as any };
     }
   },
+  /**
+   * Sets the extra audio captured after a recording stop is requested, in milliseconds.
+   *
+   * Values are clamped to the inclusive range `0..=1500`. The buffer delays recorder
+   * shutdown so trailing speech can reach the active input device before capture ends.
+   * This command currently has no recoverable error conditions; settings-store
+   * initialization failures panic in the settings layer.
+   */
   async changeExtraRecordingBufferSetting(
     ms: number,
   ): Promise<Result<null, string>> {
@@ -1095,6 +1126,194 @@ export const commands = {
       else return { status: "error", error: e as any };
     }
   },
+  async workspaceList(
+    query: string | null,
+    filter: string | null,
+    offset: number | null,
+  ): Promise<Result<Document[], string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("workspace_list", { query, filter, offset }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async workspaceGet(id: string): Promise<Result<Document, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("workspace_get", { id }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async workspaceImport(
+    paths: string[],
+    options: JobOptions,
+  ): Promise<Result<ImportResult, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("workspace_import", { paths, options }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async workspaceEdit(edit: DocumentEdit): Promise<Result<Document, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("workspace_edit", { edit }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async workspaceCancel(id: string): Promise<Result<null, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("workspace_cancel", { id }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async workspaceRetry(
+    id: string,
+    notesOnly: boolean,
+    notesModel: string | null,
+  ): Promise<Result<null, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("workspace_retry", {
+          id,
+          notesOnly,
+          notesModel,
+        }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async workspaceDelete(
+    id: string,
+    audioOnly: boolean,
+  ): Promise<Result<null, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("workspace_delete", { id, audioOnly }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async workspaceExport(
+    id: string,
+    format: string,
+    path: string,
+  ): Promise<Result<null, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("workspace_export", { id, format, path }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async workspacePacks(): Promise<Result<ModelPack[], string>> {
+    try {
+      return { status: "ok", data: await TAURI_INVOKE("workspace_packs") };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async workspaceInstallPack(id: string): Promise<Result<null, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("workspace_install_pack", { id }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async workspaceRuntimeReady(): Promise<Result<boolean, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("workspace_runtime_ready"),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async workspaceRecordingStatus(): Promise<Result<RecordingStatus, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("workspace_recording_status"),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async workspaceRecordingStart(
+    options: RecordingOptions,
+  ): Promise<Result<RecordingStatus, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("workspace_recording_start", { options }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async workspaceRecordingControl(
+    operation: string,
+  ): Promise<Result<RecordingStatus, string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("workspace_recording_control", { operation }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
+  async workspaceCaptureDevices(): Promise<Result<CaptureDevice[], string>> {
+    try {
+      return {
+        status: "ok",
+        data: await TAURI_INVOKE("workspace_capture_devices"),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: "error", error: e as any };
+    }
+  },
   async getHomeDashboardData(
     limit: number | null,
     cursor: HomeHistoryCursor | null,
@@ -1234,14 +1453,27 @@ export const commands = {
 
 /** user-defined events **/
 
+export const events = __makeEvents__<{
+  historyUpdatePayload: HistoryUpdatePayload;
+}>({
+  historyUpdatePayload: "history-update-payload",
+});
+
 /** user-defined constants **/
 
 /** user-defined types **/
 
+export type ActionItem = {
+  text: string;
+  owner: string | null;
+  due: string | null;
+  sources: string[];
+  done: boolean;
+};
 export type AppSettings = {
   bindings: Partial<{ [key in string]: ShortcutBinding }>;
   push_to_talk: boolean;
-  audio_feedback: boolean;
+  audio_feedback?: boolean;
   audio_feedback_volume?: number;
   sound_theme?: SoundTheme;
   start_hidden?: boolean;
@@ -1256,6 +1488,7 @@ export type AppSettings = {
   translate_to_english?: boolean;
   selected_language?: string;
   overlay_position?: OverlayPosition;
+  overlay_appearance?: OverlayAppearance;
   debug_mode?: boolean;
   log_level?: LogLevel;
   custom_words?: string[];
@@ -1291,20 +1524,57 @@ export type AppSettings = {
   whisper_gpu_device?: number;
   extra_recording_buffer_ms?: number;
 };
+export type Artifact = {
+  path: string;
+  url: string;
+  sha256: string;
+  bytes: number;
+};
 export type AudioDevice = { index: string; name: string; is_default: boolean };
+export type AutoSubmitKey = "enter" | "ctrl_enter" | "cmd_enter";
 export type AvailableAccelerators = {
   whisper: string[];
   ort: string[];
   gpu_devices: GpuDeviceOption[];
 };
-export type AutoSubmitKey = "enter" | "ctrl_enter" | "cmd_enter";
 export type BindingResponse = {
   success: boolean;
   binding: ShortcutBinding | null;
   error: string | null;
 };
+export type CaptureDevice = { id: string; name: string };
 export type ClipboardHandling = "dont_modify" | "copy_to_clipboard";
 export type CustomSounds = { start: boolean; stop: boolean };
+export type Document = {
+  id: string;
+  title: string;
+  source: Source;
+  created_at: number;
+  duration: number;
+  stage: Stage;
+  progress: number;
+  error: string | null;
+  failed_stage: Stage | null;
+  saved: boolean;
+  audio_path: string | null;
+  segments: Segment[];
+  speakers: Speaker[];
+  turns: SpeakerTurn[];
+  notes: Notes | null;
+  options: JobOptions;
+  revision: number;
+  history_id: number | null;
+  diarized: boolean;
+};
+export type DocumentEdit = {
+  id: string;
+  expected_revision: number;
+  title: string;
+  segments: Segment[];
+  speakers: Speaker[];
+  notes: Notes | null;
+  saved: boolean;
+};
 export type EngineType =
   | "Whisper"
   | "Parakeet"
@@ -1353,9 +1623,25 @@ export type ImplementationChangeResult = {
    */
   reset_bindings: string[];
 };
+export type ImportResult = { documents: Document[]; errors: string[] };
+export type JobOptions = {
+  model: string;
+  language: string;
+  speakers: boolean;
+  notes_model: string | null;
+};
 export type KeyboardImplementation = "tauri" | "native_keys";
 export type LLMPrompt = { id: string; name: string; prompt: string };
 export type LogLevel = "trace" | "debug" | "info" | "warn" | "error";
+export type ModelDownloadPreflight = {
+  model_id: string;
+  free_bytes: number;
+  required_bytes: number;
+  model_size_bytes: number;
+  partial_bytes: number;
+  recommended_headroom_bytes: number;
+  has_enough_space: boolean;
+};
 export type ModelInfo = {
   id: string;
   name: string;
@@ -1377,18 +1663,20 @@ export type ModelInfo = {
   supports_language_selection: boolean;
   is_custom: boolean;
 };
-export type ModelDownloadPreflight = {
-  model_id: string;
-  free_bytes: number;
-  required_bytes: number;
-  model_size_bytes: number;
-  partial_bytes: number;
-  recommended_headroom_bytes: number;
-  has_enough_space: boolean;
-};
 export type ModelLoadStatus = {
   is_loaded: boolean;
   current_model: string | null;
+};
+export type ModelPack = {
+  id: string;
+  name: string;
+  purpose: string;
+  revision: string;
+  license: string;
+  languages: string[];
+  artifacts: Artifact[];
+  minimum_memory_gb: number;
+  installed?: boolean;
 };
 export type ModelUnloadTimeout =
   | "never"
@@ -1399,17 +1687,29 @@ export type ModelUnloadTimeout =
   | "min_15"
   | "hour_1"
   | "sec_5";
+export type NoteItem = { text: string; sources: string[] };
+export type Notes = {
+  summary: NoteItem[];
+  decisions: NoteItem[];
+  actions: ActionItem[];
+  transcript_revision: number;
+};
 export type OrtAcceleratorSetting =
   | "auto"
   | "cpu"
   | "cuda"
   | "directml"
   | "rocm";
+/**
+ * How the recording overlay picks between its light and dark treatments.
+ *
+ * `Auto` defers to the app-wide `theme` preference (which may itself be
+ * `System`); `Light` and `Dark` pin the overlay regardless of the app theme,
+ * for people who want it to stay legible against a fixed backdrop.
+ */
+export type OverlayAppearance = "auto" | "light" | "dark";
 export type OverlayPosition = "none" | "top" | "bottom";
-export type PaginatedHistory = {
-  entries: HistoryEntry[];
-  has_more: boolean;
-};
+export type PaginatedHistory = { entries: HistoryEntry[]; has_more: boolean };
 export type PasteMethod =
   | "ctrl_v"
   | "direct"
@@ -1426,12 +1726,34 @@ export type PostProcessProvider = {
   models_endpoint?: string | null;
   supports_structured_output?: boolean;
 };
+export type RecordingOptions = {
+  title: string;
+  microphone_id: string | null;
+  system_audio: boolean;
+  options: JobOptions;
+};
 export type RecordingRetentionPeriod =
   | "never"
   | "preserve_limit"
   | "days_3"
   | "weeks_2"
   | "months_3";
+export type RecordingStatus = {
+  document_id: string | null;
+  paused: boolean;
+  seconds: number;
+  microphone_level: number;
+  system_level: number;
+  error: string | null;
+};
+export type Segment = {
+  id: string;
+  start: number;
+  end: number;
+  text: string;
+  original_text: string;
+  speaker: string | null;
+};
 export type ShortcutBinding = {
   id: string;
   name: string;
@@ -1439,7 +1761,22 @@ export type ShortcutBinding = {
   default_binding: string;
   current_binding: string;
 };
-export type SoundTheme = "marimba" | "pop" | "custom";
+export type SoundTheme = "silk" | "marimba" | "pop" | "custom";
+export type Source = "dictation" | "meeting" | "file";
+export type Speaker = { id: string; name: string };
+export type SpeakerTurn = { start: number; end: number; speaker: string };
+export type Stage =
+  | "recording"
+  | "paused"
+  | "queued"
+  | "preparing"
+  | "transcribing"
+  | "diarizing"
+  | "notes"
+  | "complete"
+  | "failed"
+  | "cancelled"
+  | "interrupted";
 export type ThemePreference = "system" | "light" | "dark";
 export type TypingTool =
   | "auto"
@@ -1448,6 +1785,13 @@ export type TypingTool =
   | "dotool"
   | "ydotool"
   | "xdotool";
+export type UsageSummary = {
+  current_streak_days: number;
+  total_words: number;
+  average_wpm: number;
+  total_transcriptions: number;
+  longest_streak_days: number;
+};
 export type WhisperAcceleratorSetting = "auto" | "cpu" | "gpu";
 export type WindowsMicrophonePermissionStatus = {
   supported: boolean;
@@ -1455,13 +1799,6 @@ export type WindowsMicrophonePermissionStatus = {
   device_access: PermissionAccess;
   app_access: PermissionAccess;
   desktop_app_access: PermissionAccess;
-};
-export type UsageSummary = {
-  current_streak_days: number;
-  total_words: number;
-  average_wpm: number;
-  total_transcriptions: number;
-  longest_streak_days: number;
 };
 
 /** tauri-specta globals **/
