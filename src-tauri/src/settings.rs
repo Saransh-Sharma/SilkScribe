@@ -113,6 +113,19 @@ pub enum OverlayPosition {
     Bottom,
 }
 
+/// How the recording overlay picks between its light and dark treatments.
+///
+/// `Auto` defers to the app-wide `theme` preference (which may itself be
+/// `System`); `Light` and `Dark` pin the overlay regardless of the app theme,
+/// for people who want it to stay legible against a fixed backdrop.
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Type)]
+#[serde(rename_all = "lowercase")]
+pub enum OverlayAppearance {
+    Auto,
+    Light,
+    Dark,
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Type)]
 #[serde(rename_all = "snake_case")]
 pub enum ModelUnloadTimeout {
@@ -252,26 +265,30 @@ impl ModelUnloadTimeout {
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Type)]
 #[serde(rename_all = "snake_case")]
 pub enum SoundTheme {
+    Silk,
     Marimba,
     Pop,
     Custom,
 }
 
 impl SoundTheme {
-    fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &'static str {
         match self {
+            SoundTheme::Silk => "silk",
             SoundTheme::Marimba => "marimba",
             SoundTheme::Pop => "pop",
             SoundTheme::Custom => "custom",
         }
     }
 
-    pub fn to_start_path(&self) -> String {
-        format!("resources/{}_start.wav", self.as_str())
-    }
-
-    pub fn to_stop_path(&self) -> String {
-        format!("resources/{}_stop.wav", self.as_str())
+    /// Bundled resource path for one cue, e.g. `resources/silk_done.wav`.
+    ///
+    /// Only `Silk` ships the full cue set. Marimba and Pop provide `start` and
+    /// `stop` only, and `Custom` provides whatever the user dropped in; callers
+    /// are expected to fall back to `Silk` when a cue is missing (see
+    /// `audio_feedback::resolve_sound_path`).
+    pub fn sound_file(&self, cue: &str) -> String {
+        format!("resources/{}_{}.wav", self.as_str(), cue)
     }
 }
 
@@ -328,6 +345,7 @@ impl Default for OrtAcceleratorSetting {
 pub struct AppSettings {
     pub bindings: HashMap<String, ShortcutBinding>,
     pub push_to_talk: bool,
+    #[serde(default = "default_audio_feedback")]
     pub audio_feedback: bool,
     #[serde(default = "default_audio_feedback_volume")]
     pub audio_feedback_volume: f32,
@@ -357,6 +375,8 @@ pub struct AppSettings {
     pub selected_language: String,
     #[serde(default = "default_overlay_position")]
     pub overlay_position: OverlayPosition,
+    #[serde(default = "default_overlay_appearance")]
+    pub overlay_appearance: OverlayAppearance,
     #[serde(default = "default_debug_mode")]
     pub debug_mode: bool,
     #[serde(default = "default_log_level")]
@@ -465,6 +485,10 @@ fn default_overlay_position() -> OverlayPosition {
     return OverlayPosition::Bottom;
 }
 
+fn default_overlay_appearance() -> OverlayAppearance {
+    OverlayAppearance::Auto
+}
+
 fn default_debug_mode() -> bool {
     false
 }
@@ -493,12 +517,16 @@ fn default_recording_retention_period() -> RecordingRetentionPeriod {
     RecordingRetentionPeriod::PreserveLimit
 }
 
+fn default_audio_feedback() -> bool {
+    true
+}
+
 fn default_audio_feedback_volume() -> f32 {
     1.0
 }
 
 fn default_sound_theme() -> SoundTheme {
-    SoundTheme::Marimba
+    SoundTheme::Silk
 }
 
 fn default_post_process_enabled() -> bool {
@@ -781,7 +809,7 @@ pub fn get_default_settings() -> AppSettings {
     AppSettings {
         bindings,
         push_to_talk: true,
-        audio_feedback: false,
+        audio_feedback: true,
         audio_feedback_volume: default_audio_feedback_volume(),
         sound_theme: default_sound_theme(),
         start_hidden: default_start_hidden(),
@@ -796,6 +824,7 @@ pub fn get_default_settings() -> AppSettings {
         translate_to_english: false,
         selected_language: "auto".to_string(),
         overlay_position: default_overlay_position(),
+        overlay_appearance: default_overlay_appearance(),
         debug_mode: false,
         log_level: default_log_level(),
         custom_words: Vec::new(),

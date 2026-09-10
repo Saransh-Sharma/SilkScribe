@@ -21,8 +21,8 @@ use tauri_plugin_autostart::ManagerExt;
 
 use crate::settings::{
     self, get_settings, AutoSubmitKey, ClipboardHandling, KeyboardImplementation, LLMPrompt,
-    OverlayPosition, PasteMethod, ShortcutBinding, SoundTheme, ThemePreference, TypingTool,
-    APPLE_INTELLIGENCE_DEFAULT_MODEL_ID, APPLE_INTELLIGENCE_PROVIDER_ID,
+    OverlayAppearance, OverlayPosition, PasteMethod, ShortcutBinding, SoundTheme, ThemePreference,
+    TypingTool, APPLE_INTELLIGENCE_DEFAULT_MODEL_ID, APPLE_INTELLIGENCE_PROVIDER_ID,
 };
 use crate::tray;
 
@@ -575,6 +575,25 @@ pub fn change_overlay_position_setting(app: AppHandle, position: String) -> Resu
 
     // Update overlay position without recreating window
     crate::utils::update_overlay_position(&app);
+
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_overlay_appearance_setting(app: AppHandle, appearance: String) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    let parsed = match appearance.as_str() {
+        "auto" => OverlayAppearance::Auto,
+        "light" => OverlayAppearance::Light,
+        "dark" => OverlayAppearance::Dark,
+        other => {
+            warn!("Invalid overlay appearance '{}', defaulting to auto", other);
+            OverlayAppearance::Auto
+        }
+    };
+    settings.overlay_appearance = parsed;
+    settings::write_settings(&app, settings);
 
     Ok(())
 }
