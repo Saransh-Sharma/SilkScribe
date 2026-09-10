@@ -5,7 +5,9 @@
     "copyLastTranscript": "複製最新轉錄",
     "unloadModel": "卸載模型",
     "quit": "結束",
-    "cancel": "取消"
+    "cancel": "取消",
+    "meetingPause": "Pause / resume meeting",
+    "meetingStop": "Stop & transcribe meeting"
   },
   "sidebar": {
     "home": "首頁",

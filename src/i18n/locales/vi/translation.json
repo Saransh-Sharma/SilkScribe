@@ -5,7 +5,9 @@
     "copyLastTranscript": "Sao chép bản chép lời mới nhất",
     "unloadModel": "Dỡ mô hình",
     "quit": "Thoát",
-    "cancel": "Hủy"
+    "cancel": "Hủy",
+    "meetingPause": "Pause / resume meeting",
+    "meetingStop": "Stop & transcribe meeting"
   },
   "sidebar": {
     "home": "Home",

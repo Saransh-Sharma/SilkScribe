@@ -5,7 +5,9 @@
     "copyLastTranscript": "Son transkripti kopyala",
     "unloadModel": "Modeli boşalt",
     "quit": "Çıkış",
-    "cancel": "İptal"
+    "cancel": "İptal",
+    "meetingPause": "Pause / resume meeting",
+    "meetingStop": "Stop & transcribe meeting"
   },
   "sidebar": {
     "home": "Ana Sayfa",

@@ -5,7 +5,9 @@
     "copyLastTranscript": "Letzte Transkription kopieren",
     "unloadModel": "Modell entladen",
     "quit": "Beenden",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "meetingPause": "Pause / resume meeting",
+    "meetingStop": "Stop & transcribe meeting"
   },
   "sidebar": {
     "home": "Startseite",

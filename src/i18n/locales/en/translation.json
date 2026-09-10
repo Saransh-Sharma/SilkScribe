@@ -5,7 +5,9 @@
     "copyLastTranscript": "Copy Last Transcript",
     "unloadModel": "Unload Model",
     "quit": "Quit",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "meetingPause": "Pause / resume meeting",
+    "meetingStop": "Stop & transcribe meeting"
   },
   "sidebar": {
     "home": "Home",
@@ -528,7 +530,7 @@
       },
       "audioFeedback": {
         "label": "Audio Feedback",
-        "description": "Play sound when recording starts and stops"
+        "description": "Play a short cue when recording starts, when transcription begins, and when the text is ready."
       },
       "outputDevice": {
         "title": "Output Device",
@@ -542,11 +544,21 @@
       },
       "soundTheme": {
         "options": {
+          "silk": "Silk",
           "marimba": "Marimba",
           "pop": "Pop",
           "custom": "Custom"
         },
-        "preview": "Preview sound theme (plays start then stop)"
+        "preview": "Preview the theme (plays the start and transcribing cues)",
+        "title": "Sound theme",
+        "description": "The set of cues played for recording and transcription.",
+        "cues": {
+          "start": "Start",
+          "transcribing": "Transcribing",
+          "done": "Done",
+          "error": "Error",
+          "cancel": "Cancel"
+        }
       }
     },
     "advanced": {
@@ -687,6 +699,15 @@
         "add": "Add",
         "remove": "Remove {{word}}",
         "duplicate": "\"{{word}}\" already exists"
+      },
+      "overlayAppearance": {
+        "title": "Overlay appearance",
+        "description": "Choose whether the recording overlay follows the app theme or stays light or dark.",
+        "options": {
+          "auto": "Match app theme",
+          "light": "Always light",
+          "dark": "Always dark"
+        }
       }
     },
     "postProcessing": {
@@ -945,7 +966,16 @@
     "success": "Done",
     "failed": "Failed",
     "cancelled": "Cancelled",
-    "cancelledDetail": "Stopped by you"
+    "cancelledDetail": "Stopped by you",
+    "empty": "Nothing heard",
+    "detail": {
+      "cancelled": "Stopped by you",
+      "empty": "No speech was detected",
+      "pasteCopied": "Couldn't paste — copied to clipboard",
+      "pasteFailed": "Couldn't paste or copy the text",
+      "transcriptionFailed": "Transcription didn't finish",
+      "recordingFailed": "Couldn't start recording"
+    }
   },
   "feedback": {
     "pasteFailed": {
@@ -1025,5 +1055,161 @@
       "today": "Today",
       "yesterday": "Yesterday"
     }
+  },
+  "workspace": {
+    "home": "Home",
+    "library": "Library",
+    "settings": "Settings",
+    "navigation": "Workspace navigation",
+    "recordMeeting": "Record meeting",
+    "importAudio": "Import audio",
+    "localOnly": "Everything stays on this device",
+    "onDevice": "On-device processing",
+    "yourWorkspace": "Your workspace",
+    "allYourWords": "All your words, together",
+    "homeTitle": "Make room for the conversation.",
+    "homeDescription": "Capture a meeting, bring in a recording, or pick up where you left off.",
+    "libraryDescription": "Your dictations, meetings, and audio files in one searchable place.",
+    "meetingShort": "Capture your microphone and computer audio.",
+    "importShort": "Turn audio files into editable transcripts.",
+    "dictation": "Dictation",
+    "dictationHelp": "Set up your shortcut and speak into any app.",
+    "inProgress": "In progress",
+    "recent": "Recent transcripts",
+    "viewLibrary": "View library",
+    "transcripts": "Transcripts",
+    "searchLibrary": "Search titles and transcripts",
+    "clearSearch": "Clear search",
+    "loading": "Loading your transcripts…",
+    "emptyTitle": "Your next conversation starts here",
+    "emptyDescription": "Record a meeting or import an audio file. Your words, speakers, and notes will appear here.",
+    "noResults": "No matching transcripts",
+    "trySearch": "Try a different search or filter.",
+    "loadMore": "Load more",
+    "back": "Back",
+    "title": "Title",
+    "saved": "Saved",
+    "saving": "Saving…",
+    "saveFailed": "Changes could not be saved",
+    "export": "Export",
+    "exported": "Transcript exported",
+    "delete": "Delete transcript",
+    "deleteHelp": "Delete this transcript, its notes, and its managed audio files? Your original imported file will remain untouched.",
+    "deleteAudio": "Delete audio",
+    "deleteAudioHelp": "Delete the managed audio and keep the transcript and notes? Playback and audio processing will no longer be available.",
+    "cancel": "Cancel",
+    "retry": "Retry",
+    "speed": "Playback speed",
+    "documentViews": "Transcript views",
+    "transcript": "Transcript",
+    "notes": "Notes",
+    "speakers": "Speakers",
+    "searchTranscript": "Find in transcript",
+    "transcriptPending": "The transcript will appear here after processing.",
+    "speaker": "Speaker",
+    "unknownSpeaker": "Unassigned",
+    "segment": "Transcript at",
+    "restoreOriginal": "Restore original text",
+    "speakerHelp": "Names apply to this recording only. Rename a speaker or merge labels that belong to the same person.",
+    "noSpeakers": "No speaker labels are available for this recording.",
+    "speakerName": "Speaker name",
+    "mergeSpeaker": "Merge into…",
+    "notesStale": "This transcript has changed. Regenerate notes to include your edits.",
+    "noNotes": "No notes yet. Enable a local notes model when creating a transcript.",
+    "regenerate": "Regenerate notes",
+    "summary": "Summary",
+    "decisions": "Decisions",
+    "actions": "Action items",
+    "action": "Action item",
+    "done": "Completed",
+    "owner": "Owner",
+    "due": "Due date",
+    "audioFiles": "Audio files",
+    "recordingConflict": "A meeting is recording. Stop it before starting dictation.",
+    "cancelJob": "Cancel {{title}}",
+    "transcriptionModel": "Transcription model",
+    "currentDictationModel": "Current dictation model (Whisper / Parakeet)",
+    "language": "Language",
+    "autoLanguage": "Detect automatically",
+    "detectSpeakers": "Identify speakers",
+    "localNotes": "Local AI notes",
+    "noAutomaticNotes": "No automatic notes",
+    "microphoneLevel": "Microphone level",
+    "systemLevel": "Computer audio level",
+    "resume": "Resume",
+    "pause": "Pause",
+    "stopTranscribe": "Stop & transcribe",
+    "newTranscript": "New transcript",
+    "meetingHelp": "Record both sides of the conversation. Transcription and speaker detection start when you stop recording.",
+    "importHelp": "Choose audio files and how to process them. You can keep working while they transcribe.",
+    "meetingTitle": "Untitled meeting",
+    "microphone": "Microphone",
+    "defaultMicrophone": "System default",
+    "computerAudio": "Include computer audio",
+    "systemPermission": "macOS may request screen and system audio recording access.",
+    "removeFile": "Remove file",
+    "chooseFiles": "Choose audio files",
+    "processing": "Processing options",
+    "setupNeeded": "Some local processing components need setup. You can capture audio now and retry processing after installing them.",
+    "modelSetup": "Set up local models",
+    "working": "Working…",
+    "startRecording": "Start recording",
+    "startTranscription": "Start transcription",
+    "modelsLanguage": "Models & language",
+    "preferences": "Preferences",
+    "storage": "Storage & privacy",
+    "localIntelligence": "Local intelligence",
+    "localModelsHelp": "Download only what you need. Audio, transcripts, and notes are processed on your Mac. Larger models require more memory and processing time.",
+    "runtimeReady": "Local inference runtime is installed.",
+    "runtimeMissing": "This build does not include the local AI runtime yet. Model processing will be available after the runtime is packaged. Existing dictation models remain available.",
+    "unpublished": "Download bundle not published",
+    "downloading": "Downloading model",
+    "installed": "Installed",
+    "download": "Download",
+    "dropAudio": "Drop audio to transcribe",
+    "workspaceFirst": "Open transcription workspace",
+    "workspaceFirstHelp": "Import audio without microphone or accessibility permissions.",
+    "source": {
+      "dictation": "Dictation",
+      "meeting": "Meeting",
+      "file": "Audio file"
+    },
+    "filter": {
+      "all": "All",
+      "dictation": "Dictations",
+      "meeting": "Meetings",
+      "file": "Files",
+      "saved": "Saved"
+    },
+    "purpose": {
+      "asr": "Transcription",
+      "alignment": "Timestamp alignment",
+      "speakers": "Speaker separation",
+      "notes": "Summaries & action items"
+    },
+    "stage": {
+      "recording": "Recording",
+      "paused": "Paused",
+      "queued": "Queued",
+      "preparing": "Preparing audio",
+      "transcribing": "Transcribing",
+      "diarizing": "Identifying speakers",
+      "notes": "Writing notes",
+      "complete": "Ready",
+      "failed": "Needs attention",
+      "cancelled": "Cancelled",
+      "interrupted": "Interrupted"
+    },
+    "audio": "Audio",
+    "appearance": "Appearance",
+    "dictationProcessing": "Dictation cleanup",
+    "debug": "Developer",
+    "retentionHelp": "Meetings and imported files stay until you delete them. The retention controls below apply only to dictation recordings.",
+    "dictationRetention": "Dictation retention",
+    "activeCount": "{{count}} jobs in progress",
+    "skipToContent": "Skip to content",
+    "memoryGuidance": "Allow at least {{gb}} GB of memory (estimate; varies with recording length).",
+    "notesModel9": "Qwen3.5 · 9B",
+    "notesModel27": "Qwen3.6 · 27B"
   }
 }
