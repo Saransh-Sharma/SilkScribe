@@ -9,7 +9,7 @@ use log::{debug, error, info, warn};
 use serde::Serialize;
 use specta::Type;
 use std::panic::{catch_unwind, AssertUnwindSafe};
-use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
 use std::sync::{Arc, Condvar, Mutex, MutexGuard, OnceLock};
 use std::thread;
 use std::time::{Duration, SystemTime};
@@ -62,9 +62,20 @@ impl Drop for LoadingGuard {
     }
 }
 
+struct DictationPriority(Option<Arc<AtomicUsize>>);
+impl Drop for DictationPriority {
+    fn drop(&mut self) {
+        if let Some(waiters) = &self.0 {
+            waiters.fetch_sub(1, Ordering::SeqCst);
+        }
+    }
+}
+
 #[derive(Clone)]
 pub struct TranscriptionManager {
     engine: Arc<Mutex<Option<LoadedEngine>>>,
+    inference_lock: Arc<Mutex<()>>,
+    dictation_waiters: Arc<AtomicUsize>,
     model_manager: Arc<ModelManager>,
     app_handle: AppHandle,
     current_model_id: Arc<Mutex<Option<String>>>,
@@ -79,6 +90,8 @@ impl TranscriptionManager {
     pub fn new(app_handle: &AppHandle, model_manager: Arc<ModelManager>) -> Result<Self> {
         let manager = Self {
             engine: Arc::new(Mutex::new(None)),
+            inference_lock: Arc::new(Mutex::new(())),
+            dictation_waiters: Arc::new(AtomicUsize::new(0)),
             model_manager,
             app_handle: app_handle.clone(),
             current_model_id: Arc::new(Mutex::new(None)),
@@ -193,6 +206,37 @@ impl TranscriptionManager {
     }
 
     pub fn unload_model(&self) -> Result<()> {
+        let _inference = self
+            .inference_lock
+            .lock()
+            .unwrap_or_else(|e| e.into_inner());
+        self.unload_model_inner()
+    }
+
+    /// External workers share the same inference budget as shortcut dictation.
+    /// Keep this guard alive until the child has exited and released its models.
+    pub fn external_inference(&self, cancelled: &AtomicBool) -> Result<MutexGuard<'_, ()>> {
+        let guard = loop {
+            if cancelled.load(Ordering::Relaxed) {
+                anyhow::bail!("Cancelled");
+            }
+            if self.dictation_waiters.load(Ordering::SeqCst) > 0 {
+                thread::sleep(Duration::from_millis(50));
+                continue;
+            }
+            match self.inference_lock.try_lock() {
+                Ok(guard) => break guard,
+                Err(std::sync::TryLockError::Poisoned(error)) => break error.into_inner(),
+                Err(std::sync::TryLockError::WouldBlock) => {
+                    thread::sleep(Duration::from_millis(50))
+                }
+            }
+        };
+        self.unload_model_inner()?;
+        Ok(guard)
+    }
+
+    fn unload_model_inner(&self) -> Result<()> {
         let unload_start = std::time::Instant::now();
         debug!("Starting to unload model");
 
@@ -251,6 +295,14 @@ impl TranscriptionManager {
     }
 
     pub fn load_model(&self, model_id: &str) -> Result<()> {
+        let _inference = self
+            .inference_lock
+            .lock()
+            .unwrap_or_else(|e| e.into_inner());
+        self.load_model_inner(model_id)
+    }
+
+    fn load_model_inner(&self, model_id: &str) -> Result<()> {
         let load_start = std::time::Instant::now();
         debug!("Starting to load model: {}", model_id);
 
@@ -437,6 +489,39 @@ impl TranscriptionManager {
     }
 
     pub fn transcribe(&self, audio: Vec<f32>) -> Result<String> {
+        Ok(self.transcribe_detailed(audio)?.text)
+    }
+
+    pub fn transcribe_detailed(
+        &self,
+        audio: Vec<f32>,
+    ) -> Result<transcribe_rs::TranscriptionResult> {
+        self.transcribe_with_options(audio, None, None)
+    }
+    pub fn transcribe_with_options(
+        &self,
+        audio: Vec<f32>,
+        model: Option<&str>,
+        language: Option<&str>,
+    ) -> Result<transcribe_rs::TranscriptionResult> {
+        let _priority = if model.is_none() {
+            self.dictation_waiters.fetch_add(1, Ordering::SeqCst);
+            DictationPriority(Some(self.dictation_waiters.clone()))
+        } else {
+            DictationPriority(None)
+        };
+        // Loading callers may already own a LoadingGuard before waiting for inference.
+        // Wait before taking the engine operation lock to avoid a lock inversion.
+        {
+            let mut loading = self.is_loading.lock().unwrap();
+            while *loading {
+                loading = self.loading_condvar.wait(loading).unwrap();
+            }
+        }
+        let _inference = self
+            .inference_lock
+            .lock()
+            .unwrap_or_else(|e| e.into_inner());
         #[cfg(debug_assertions)]
         if std::env::var("HANDY_FORCE_TRANSCRIPTION_FAILURE").is_ok() {
             return Err(anyhow::anyhow!(
@@ -453,26 +538,27 @@ impl TranscriptionManager {
 
         if audio.is_empty() {
             debug!("Empty audio vector");
+            drop(_inference);
             self.maybe_unload_immediately("empty audio");
-            return Ok(String::new());
+            return Ok(transcribe_rs::TranscriptionResult {
+                text: String::new(),
+                segments: Some(vec![]),
+            });
         }
 
-        // Check if model is loaded, if not try to load it
+        let mut settings = get_settings(&self.app_handle);
+        if let Some(model) = model {
+            settings.selected_model = model.into();
+        }
+        if let Some(language) = language {
+            settings.selected_language = language.into();
+            settings.translate_to_english = false;
+        }
+        if self.get_current_model().as_deref() != Some(settings.selected_model.as_str())
+            || !self.is_model_loaded()
         {
-            // If the model is loading, wait for it to complete.
-            let mut is_loading = self.is_loading.lock().unwrap();
-            while *is_loading {
-                is_loading = self.loading_condvar.wait(is_loading).unwrap();
-            }
-
-            let engine_guard = self.lock_engine();
-            if engine_guard.is_none() {
-                return Err(anyhow::anyhow!("Model is not loaded for transcription."));
-            }
+            self.load_model_inner(&settings.selected_model)?;
         }
-
-        // Get current settings for configuration
-        let settings = get_settings(&self.app_handle);
 
         // Validate selected language against the model's supported languages.
         // If the language isn't supported, fall back to "auto" to prevent errors.
@@ -689,6 +775,7 @@ impl TranscriptionManager {
             .map(|info| matches!(info.engine_type, EngineType::Whisper))
             .unwrap_or(false);
 
+        let timed_segments = result.segments.clone();
         let corrected_result = if !settings.custom_words.is_empty() && !is_whisper {
             apply_custom_words(
                 &result.text,
@@ -726,9 +813,13 @@ impl TranscriptionManager {
             info!("Transcription result: {}", final_result);
         }
 
+        drop(_inference);
         self.maybe_unload_immediately("transcription");
 
-        Ok(final_result)
+        Ok(transcribe_rs::TranscriptionResult {
+            text: final_result,
+            segments: timed_segments,
+        })
     }
 }
 

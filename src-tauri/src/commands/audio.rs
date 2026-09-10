@@ -273,13 +273,23 @@ pub fn get_selected_output_device(app: AppHandle) -> Result<String, String> {
 pub async fn play_test_sound(app: AppHandle, sound_type: String) {
     let sound = match sound_type.as_str() {
         "start" => audio_feedback::SoundType::Start,
-        "stop" => audio_feedback::SoundType::Stop,
+        // "stop" is the pre-five-cue name for this moment; keep it accepted.
+        "transcribing" | "stop" => audio_feedback::SoundType::Transcribing,
+        "done" => audio_feedback::SoundType::Done,
+        "error" => audio_feedback::SoundType::Error,
+        "cancel" => audio_feedback::SoundType::Cancel,
         _ => {
             warn!("Unknown sound type: {}", sound_type);
             return;
         }
     };
-    audio_feedback::play_test_sound(&app, sound);
+    // `play_test_sound` blocks until the cue finishes. Left on the async
+    // runtime it would occupy a worker thread for the whole sound, which is
+    // noticeable now that the sound settings expose five preview buttons.
+    let _ = tauri::async_runtime::spawn_blocking(move || {
+        audio_feedback::play_test_sound(&app, sound);
+    })
+    .await;
 }
 
 #[tauri::command]

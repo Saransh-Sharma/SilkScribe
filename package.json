@@ -27,9 +27,13 @@
     "format:check": "prettier --check . && cd src-tauri && cargo fmt -- --check",
     "format:frontend": "prettier --write .",
     "format:backend": "cd src-tauri && cargo fmt",
+    "sounds:generate": "python3 scripts/generate-sounds/generate_sounds.py --verify",
     "test:playwright": "playwright test",
     "test:playwright:ui": "playwright test --ui",
-    "check:translations": "bun scripts/check-translations.ts"
+    "check:translations": "bun scripts/check-translations.ts",
+    "local:runtime": "python3.13 scripts/local-models/package-runtime.py --kind speech && python3.13 scripts/local-models/package-runtime.py --kind notes",
+    "local:manifest": "python3 scripts/local-models/manifest.py",
+    "test:workspace-worker": "python3 -m unittest discover -s src-tauri/workers -p \"test_*.py\""
   },
   "dependencies": {
     "@fontsource/cormorant-garamond": "^5.2.11",
