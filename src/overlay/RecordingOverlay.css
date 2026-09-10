@@ -1,3 +1,18 @@
+/* ============================================================================
+   Recording overlay
+   ----------------------------------------------------------------------------
+   One tactile object that morphs between every state of a dictation. It floats
+   over arbitrary desktop content, so it carries its own material and contrast
+   model rather than the app's surface tokens — but it derives its *hues* from
+   the same `--ss-*` palette so it still reads as part of SilkScribe.
+
+   Light is the base branch and dark is the override. The dark branch keys off
+   `.overlay-stage[data-overlay-theme]` rather than `:root[data-theme]` so a
+   single page can render both treatments side by side — that is what makes the
+   contact-sheet fixture possible. `src/overlay/index.html` still stamps
+   `data-theme` on the root before first paint to avoid a flash.
+   ========================================================================= */
+
 html,
 body,
 #root {
@@ -12,8 +27,9 @@ body {
 }
 
 /* ----------------------------------------------------------------------------
-   Stage: the fixed, transparent native window. It only centers the pill so the
-   visible surface can morph its width freely without touching the Rust window.
+   Stage: the fixed, transparent native window. It only centres the pill so the
+   visible surface can morph freely without touching the Rust window. The window
+   is deliberately larger than the pill so shadow and glow have room to render.
 ---------------------------------------------------------------------------- */
 .overlay-stage {
   width: 100%;
@@ -25,106 +41,210 @@ body {
 }
 
 /* ----------------------------------------------------------------------------
-   Pill: one tactile object for every state. Width morphs per state; the spine,
-   waveform and label live inside it permanently and transform between states.
+   Material tokens.
+
+   Deliberately NOT `backdrop-filter`: the native window is transparent with no
+   vibrancy view behind it, so there is nothing for the compositor to sample and
+   the blur would resolve to nothing. The frosted read is *painted* — a
+   high-alpha gradient, warm tints, an inner top highlight and a grain pass.
 ---------------------------------------------------------------------------- */
 .overlay-pill {
-  /* Scoped, theme-independent palette (overlay is always the dark instrument). */
-  --gold: #d9aa4b;
-  --berry: #c83b66;
-  --crimson: #b52a36;
-  --sand: #8b502f;
-  --parchment: #fff8f4;
+  /* Accents, shared by both themes but re-weighted below. */
+  --ov-gold: #d2a343;
+  --ov-berry: #c83b66;
+  --ov-danger: #b52a36;
+  --ov-earth: #9a7132;
+
+  /* Light branch (base). Warm ivory glass over an unknown desktop, so alpha
+     stays high enough to survive a light wallpaper behind it. */
+  --ov-surface-top: rgba(255, 253, 250, 0.97);
+  --ov-surface-bottom: rgba(244, 238, 230, 0.95);
+  --ov-tint-brand: rgba(165, 31, 72, 0.07);
+  --ov-tint-gold: rgba(210, 163, 67, 0.09);
+  --ov-rim: rgba(70, 48, 41, 0.15);
+  --ov-rim-light: rgba(255, 255, 255, 0.95);
+  --ov-rim-shade: rgba(70, 48, 41, 0.05);
+  --ov-ink: #211b19;
+  --ov-ink-dim: rgba(33, 27, 25, 0.62);
+  --ov-halo: rgba(210, 163, 67, 0.32);
+  --ov-shadow:
+    0 1px 2px rgba(55, 37, 32, 0.08), 0 8px 16px -10px rgba(55, 37, 32, 0.16),
+    0 22px 44px -22px rgba(55, 37, 32, 0.26);
+  --ov-grain-blend: multiply;
+  --ov-grain-opacity: 0.035;
+
+  /* Motion. Entry is fast on purpose — this is a latency-visible indicator. */
+  --ov-in: 200ms;
+  --ov-out: var(--ss-duration-overlay-out, 240ms);
+  --ov-morph: 320ms;
+  --ov-ease: var(--ss-ease-out-quint, cubic-bezier(0.22, 1, 0.36, 1));
+  --ov-ease-expo: var(--ss-ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+
+  /* Live mic energy, written straight to the element by RecordingOverlay.tsx
+     so the reactive border never costs a React render. */
   --overlay-energy: 0;
+
+  /* Travel distance for the scanning node, overridden per state so it always
+     stays inside the pill whatever width the pill has morphed to. */
+  --overlay-travel: 9px;
 
   position: relative;
   box-sizing: border-box;
-  width: 212px;
-  height: 60px;
-  border-radius: 30px;
+  width: 220px;
+  height: 62px;
+  border-radius: 999px;
   overflow: hidden;
-  color: var(--parchment);
+  contain: layout paint;
+  color: var(--ov-ink);
   background:
     radial-gradient(
-      ellipse 88% 150% at 42% 105%,
-      rgba(200, 59, 102, 0.18),
-      transparent 62%
+      ellipse 78% 150% at 26% 118%,
+      var(--ov-tint-brand),
+      transparent 66%
     ),
     radial-gradient(
-      ellipse 60% 100% at 76% -20%,
-      rgba(217, 170, 75, 0.1),
+      ellipse 62% 120% at 82% -28%,
+      var(--ov-tint-gold),
       transparent 64%
     ),
-    linear-gradient(180deg, rgba(38, 27, 31, 0.97), rgba(18, 14, 16, 0.98));
-  border: 1px solid rgba(255, 248, 244, 0.11);
-  box-shadow:
-    0 18px 46px -22px rgba(14, 8, 10, 0.82),
-    inset 0 1px 0 rgba(255, 248, 244, 0.08);
+    linear-gradient(180deg, var(--ov-surface-top), var(--ov-surface-bottom));
+  border: 1px solid var(--ov-rim);
+  box-shadow: var(--ov-shadow);
 
   opacity: 0;
-  transform: translateY(4px) scale(0.96);
+  transform: translateY(6px) scale(0.94);
   transform-origin: center;
   transition:
-    opacity 160ms ease,
-    transform 180ms cubic-bezier(0.25, 1, 0.5, 1),
-    width 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity var(--ov-out) ease,
+    transform var(--ov-out) var(--ov-ease),
+    width var(--ov-morph) var(--ov-ease),
+    height var(--ov-morph) var(--ov-ease),
     border-color 200ms ease;
 }
 
 .overlay-pill.is-visible {
   opacity: 1;
   transform: translateY(0) scale(1);
+  /* Pin a compositor layer only while the pill is actually on screen. */
+  will-change: opacity, transform, width;
   transition:
-    opacity 180ms ease,
-    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
-    width 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity var(--ov-in) ease,
+    transform var(--ov-in) var(--ov-ease-expo),
+    width var(--ov-morph) var(--ov-ease),
+    height var(--ov-morph) var(--ov-ease),
     border-color 200ms ease;
 }
 
-/* Per-state silhouette --------------------------------------------------- */
+/* Top-anchored overlays should drop in, bottom-anchored ones should rise. */
+.overlay-stage[data-position="top"] .overlay-pill {
+  transform: translateY(-6px) scale(0.94);
+}
+
+.overlay-stage[data-position="top"] .overlay-pill.is-visible {
+  transform: translateY(0) scale(1);
+}
+
+/* ---- Dark branch --------------------------------------------------------- */
+.overlay-stage[data-overlay-theme="dark"] .overlay-pill {
+  --ov-gold: #d9aa4b;
+  --ov-berry: #d94d75;
+  --ov-danger: #d1454f;
+  --ov-earth: #b5773c;
+
+  --ov-surface-top: rgba(39, 28, 32, 0.97);
+  --ov-surface-bottom: rgba(19, 15, 17, 0.98);
+  --ov-tint-brand: rgba(200, 59, 102, 0.2);
+  --ov-tint-gold: rgba(217, 170, 75, 0.12);
+  --ov-rim: rgba(255, 246, 240, 0.13);
+  --ov-rim-light: rgba(255, 243, 230, 0.14);
+  --ov-rim-shade: rgba(0, 0, 0, 0.34);
+  --ov-ink: #fff8f4;
+  --ov-ink-dim: rgba(255, 243, 230, 0.66);
+  --ov-halo: rgba(217, 170, 75, 0.42);
+  --ov-shadow:
+    0 2px 4px rgba(8, 5, 6, 0.4), 0 14px 28px -14px rgba(8, 5, 6, 0.6),
+    0 30px 64px -26px rgba(8, 5, 6, 0.78);
+  --ov-grain-blend: overlay;
+  --ov-grain-opacity: 0.05;
+}
+
+/* ----------------------------------------------------------------------------
+   Per-state silhouette.
+
+   Widths are chosen so each state's content sits comfortably; the terminal
+   states that carry a detail line grow taller as well as wider. Everything
+   stays inside the 400x116 native window with room for the shadow.
+---------------------------------------------------------------------------- */
 .overlay-pill[data-state="recording"] {
-  width: 288px;
+  width: 300px;
+  --overlay-travel: 9px;
 }
 
 .overlay-pill[data-state="transcribing"] {
-  width: 230px;
+  width: 236px;
+  --overlay-travel: 9px;
 }
 
 .overlay-pill[data-state="processing"] {
-  width: 238px;
+  width: 248px;
+  --overlay-travel: 9px;
 }
 
 .overlay-pill[data-state="success"] {
-  width: 154px;
-}
-
-.overlay-pill[data-state="error"] {
-  width: 244px;
-  height: 68px;
-  background:
-    radial-gradient(
-      ellipse 90% 130% at 50% 88%,
-      rgba(193, 19, 23, 0.1) 0%,
-      transparent 62%
-    ),
-    linear-gradient(180deg, #251410 0%, #18100a 55%, #120a06 100%);
-  border-color: rgba(193, 19, 23, 0.28);
+  width: 158px;
 }
 
 .overlay-pill[data-state="cancelled"] {
-  width: 232px;
-  height: 68px;
-  background:
-    radial-gradient(
-      ellipse 90% 130% at 50% 88%,
-      rgba(158, 95, 10, 0.12) 0%,
-      transparent 62%
-    ),
-    linear-gradient(180deg, #221811 0%, #171008 55%, #100a05 100%);
-  border-color: rgba(254, 191, 43, 0.18);
+  width: 240px;
 }
 
-/* Glass edge: top light catch + inner bottom shade for physical depth. */
+.overlay-pill[data-state="empty"] {
+  width: 252px;
+}
+
+.overlay-pill[data-state="error"] {
+  width: 264px;
+}
+
+/* A detail line — a transcript excerpt or a failure reason — needs a second
+   row and considerably more width than the bare state label. */
+.overlay-pill[data-has-detail="true"] {
+  height: 76px;
+}
+
+.overlay-pill[data-state="success"][data-has-detail="true"] {
+  width: 320px;
+}
+
+.overlay-pill[data-state="error"][data-has-detail="true"] {
+  width: 300px;
+}
+
+.overlay-pill[data-state="cancelled"][data-has-detail="true"],
+.overlay-pill[data-state="empty"][data-has-detail="true"] {
+  width: 268px;
+}
+
+/* Terminal states carry a wash of their own colour so the state reads before
+   the label is even parsed. */
+.overlay-pill[data-state="error"] {
+  --ov-tint-brand: color-mix(in srgb, var(--ov-danger) 14%, transparent);
+  border-color: color-mix(in srgb, var(--ov-danger) 34%, var(--ov-rim));
+}
+
+.overlay-pill[data-state="cancelled"],
+.overlay-pill[data-state="empty"] {
+  --ov-tint-brand: color-mix(in srgb, var(--ov-earth) 13%, transparent);
+  border-color: color-mix(in srgb, var(--ov-gold) 26%, var(--ov-rim));
+}
+
+.overlay-pill[data-state="success"] {
+  --ov-tint-gold: color-mix(in srgb, var(--ov-gold) 18%, transparent);
+  border-color: color-mix(in srgb, var(--ov-gold) 32%, var(--ov-rim));
+}
+
+/* Glass edge: top light catch + inner bottom shade, the two cues that make a
+   flat gradient read as a physical object. */
 .overlay-pill::before {
   content: "";
   position: absolute;
@@ -134,15 +254,15 @@ body {
   pointer-events: none;
   background: linear-gradient(
     180deg,
-    rgba(255, 243, 230, 0.1) 0%,
-    transparent 24%
+    color-mix(in srgb, var(--ov-rim-light) 55%, transparent) 0%,
+    transparent 26%
   );
   box-shadow:
-    inset 0 1px 0 rgba(255, 243, 230, 0.13),
-    inset 0 -12px 22px rgba(0, 0, 0, 0.34);
+    inset 0 1px 0 var(--ov-rim-light),
+    inset 0 -14px 24px -10px var(--ov-rim-shade);
 }
 
-/* Rim: resting hairline; breathes while recording, recolors per state. */
+/* Rim: resting hairline; breathes while recording, recolours per state. */
 .overlay-pill::after {
   content: "";
   position: absolute;
@@ -150,52 +270,79 @@ body {
   z-index: 5;
   border-radius: inherit;
   pointer-events: none;
-  box-shadow: inset 0 0 0 1px rgba(254, 191, 43, 0.1);
-  opacity: 0.6;
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--ov-gold) 18%, transparent);
+  opacity: 0.55;
   transition:
     box-shadow 240ms ease,
     opacity 240ms ease;
 }
 
-/* Recording: energy-reactive border + slow rim breath. */
+/* Recording: energy-reactive border and a slow rim breath, so the pill feels
+   alive even in a silent room. */
 .overlay-pill[data-state="recording"] {
-  border-color: rgba(217, 170, 75, calc(0.13 + 0.3 * var(--overlay-energy)));
+  border-color: color-mix(
+    in srgb,
+    var(--ov-gold) calc((0.18 + 0.5 * var(--overlay-energy)) * 100%),
+    var(--ov-rim)
+  );
 }
 
 .overlay-pill[data-state="recording"]::after {
-  box-shadow: inset 0 0 0 1px rgba(254, 191, 43, 0.2);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--ov-gold) 30%, transparent);
   animation: overlay-breath 2.4s ease-in-out infinite;
 }
 
 .overlay-pill[data-state="transcribing"]::after,
 .overlay-pill[data-state="processing"]::after {
-  box-shadow: inset 0 0 0 1px rgba(177, 32, 95, 0.26);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--ov-berry) 30%, transparent);
 }
 
 .overlay-pill[data-state="error"]::after {
-  box-shadow: inset 0 0 0 1px rgba(193, 19, 23, 0.34);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--ov-danger) 36%, transparent);
 }
 
-.overlay-pill[data-state="cancelled"]::after {
-  box-shadow: inset 0 0 0 1px rgba(254, 191, 43, 0.18);
+/* Sheen: a single soft highlight that sweeps once on entry. It is what sells
+   the surface as glass rather than paint. */
+.overlay-sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    104deg,
+    transparent 34%,
+    color-mix(in srgb, var(--ov-rim-light) 70%, transparent) 50%,
+    transparent 66%
+  );
 }
 
-/* Grain: faint tactile noise, only surfaced during processing. */
+.overlay-pill.is-visible .overlay-sheen {
+  animation: overlay-sheen-sweep 900ms var(--ov-ease-expo) 120ms 1;
+}
+
+/* Grain: faint tactile noise. Always present at a whisper — it is what keeps
+   the large flat gradient from banding — and lifted during processing. */
 .overlay-grain {
   position: absolute;
   inset: 0;
   z-index: 1;
   border-radius: inherit;
   pointer-events: none;
-  opacity: 0;
+  opacity: var(--ov-grain-opacity);
   transition: opacity 250ms ease;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.5'/></svg>");
   background-size: 120px 120px;
-  mix-blend-mode: overlay;
+  mix-blend-mode: var(--ov-grain-blend);
 }
 
 .overlay-pill[data-state="processing"] .overlay-grain {
-  opacity: 0.04;
+  opacity: calc(var(--ov-grain-opacity) * 2.2);
 }
 
 /* ----------------------------------------------------------------------------
@@ -203,12 +350,12 @@ body {
 ---------------------------------------------------------------------------- */
 .overlay-waveform-bay {
   position: absolute;
-  inset: 8px 14px;
+  inset: 9px 15px;
   z-index: 0;
   display: flex;
   align-items: center;
   opacity: 0;
-  transition: opacity 300ms ease;
+  transition: opacity 280ms ease;
 }
 
 .overlay-pill[data-state="recording"] .overlay-waveform-bay {
@@ -222,55 +369,64 @@ body {
 .overlay-spine {
   position: absolute;
   top: 50%;
-  inset-inline: 26px;
+  inset-inline-start: 20px;
+  width: 26px;
   height: 2px;
   z-index: 2;
-  border-radius: 999px;
   transform: translateY(-50%);
+}
+
+/* The track itself. Separate from `.overlay-spine` because the nodes and the
+   ring are its children — fading the container would fade them too. */
+.overlay-spine::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(254, 191, 43, 0.32) 18%,
-    rgba(254, 191, 43, 0.5) 50%,
-    rgba(177, 32, 95, 0.42) 82%,
+    color-mix(in srgb, var(--ov-gold) 40%, transparent) 18%,
+    color-mix(in srgb, var(--ov-gold) 62%, transparent) 50%,
+    color-mix(in srgb, var(--ov-berry) 50%, transparent) 82%,
     transparent 100%
   );
   opacity: 0;
-  transition:
-    opacity 240ms ease,
-    transform 240ms ease;
+  transition: opacity 240ms ease;
 }
 
-.overlay-pill[data-state="transcribing"] .overlay-spine,
-.overlay-pill[data-state="processing"] .overlay-spine {
-  opacity: 0.42;
+.overlay-pill[data-state="transcribing"] .overlay-spine::before,
+.overlay-pill[data-state="processing"] .overlay-spine::before {
+  opacity: 0.55;
 }
 
-.overlay-pill[data-state="error"] .overlay-spine {
+.overlay-pill[data-state="error"] .overlay-spine::before {
   opacity: 0.5;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(193, 19, 23, 0.34) 30%,
-    rgba(193, 19, 23, 0.5) 50%,
-    rgba(193, 19, 23, 0.34) 70%,
+    color-mix(in srgb, var(--ov-danger) 40%, transparent) 30%,
+    color-mix(in srgb, var(--ov-danger) 62%, transparent) 50%,
+    color-mix(in srgb, var(--ov-danger) 40%, transparent) 70%,
     transparent 100%
   );
 }
 
-.overlay-pill[data-state="cancelled"] .overlay-spine {
+.overlay-pill[data-state="cancelled"] .overlay-spine::before,
+.overlay-pill[data-state="empty"] .overlay-spine::before {
   opacity: 0.45;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(254, 191, 43, 0.26) 30%,
-    rgba(158, 95, 10, 0.4) 50%,
-    rgba(254, 191, 43, 0.26) 70%,
+    color-mix(in srgb, var(--ov-gold) 32%, transparent) 30%,
+    color-mix(in srgb, var(--ov-earth) 50%, transparent) 50%,
+    color-mix(in srgb, var(--ov-gold) 32%, transparent) 70%,
     transparent 100%
   );
 }
 
-.overlay-pill[data-state="success"] .overlay-spine {
+/* Success has no track — just the flare and the mark it leaves behind. */
+.overlay-pill[data-state="success"] .overlay-spine::before {
   opacity: 0;
 }
 
@@ -285,10 +441,10 @@ body {
   transform: translate(-50%, -50%);
   background: radial-gradient(
     circle at 50% 50%,
-    var(--gold) 0%,
-    var(--berry) 100%
+    var(--ov-gold) 0%,
+    var(--ov-berry) 100%
   );
-  box-shadow: 0 0 10px rgba(254, 191, 43, 0.55);
+  box-shadow: 0 0 10px var(--ov-halo);
   opacity: 0;
 }
 
@@ -309,33 +465,55 @@ body {
   filter: blur(1px);
 }
 
-/* Success: lead node snaps to center, flares gold, then fades. */
-.overlay-pill[data-state="success"] .overlay-node-lead {
-  left: 30px;
+/* Success: lead node snaps to the start, flares gold, then fades. */
+.overlay-pill[data-state="success"] .overlay-node-echo {
+  /* The flare fades to nothing, so the echo stays behind as the resting mark.
+     Without it `success` sits with an empty gutter next to its label. */
   opacity: 1;
-  background: radial-gradient(circle at 50% 50%, #fff3e6 0%, var(--gold) 70%);
-  animation: overlay-success-flare 600ms ease-out forwards;
+  width: 6px;
+  height: 6px;
+  background: var(--ov-gold);
+  box-shadow: 0 0 8px var(--ov-halo);
 }
 
-/* Error: lead node becomes a static crimson fault mark to the start side. */
+.overlay-pill[data-state="success"] .overlay-node-lead {
+  opacity: 1;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in srgb, var(--ov-gold) 30%, white) 0%,
+    var(--ov-gold) 70%
+  );
+  animation: overlay-success-flare 620ms ease-out forwards;
+}
+
+/* Error: lead node becomes a static fault mark to the start side. */
 .overlay-pill[data-state="error"] .overlay-node-lead {
   opacity: 1;
-  left: 30px;
+  left: 50%;
   width: 3px;
   height: 16px;
   border-radius: 2px;
-  background: var(--crimson);
-  box-shadow: 0 0 8px rgba(193, 19, 23, 0.55);
+  background: var(--ov-danger);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--ov-danger) 55%, transparent);
 }
 
-.overlay-pill[data-state="cancelled"] .overlay-node-lead {
+/* Cancelled and empty share a horizontal bar — a line drawn, not a fault. */
+.overlay-pill[data-state="cancelled"] .overlay-node-lead,
+.overlay-pill[data-state="empty"] .overlay-node-lead {
   opacity: 1;
-  left: 30px;
+  left: 50%;
   width: 16px;
   height: 3px;
   border-radius: 2px;
-  background: var(--gold);
-  box-shadow: 0 0 8px rgba(254, 191, 43, 0.42);
+  background: var(--ov-gold);
+  box-shadow: 0 0 8px var(--ov-halo);
+}
+
+.overlay-pill[data-state="empty"] .overlay-node-lead {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ov-earth) 80%, transparent);
 }
 
 /* Ring: success release pulse and the frozen error ping. */
@@ -352,32 +530,40 @@ body {
 }
 
 .overlay-pill[data-state="success"] .overlay-ring {
-  left: 30px;
-  border: 1.5px solid rgba(254, 191, 43, 0.7);
-  animation: overlay-ring-release 600ms ease-out forwards;
+  left: 50%;
+  border: 1.5px solid color-mix(in srgb, var(--ov-gold) 72%, transparent);
+  animation: overlay-ring-release 620ms ease-out forwards;
 }
 
 .overlay-pill[data-state="error"] .overlay-ring {
-  left: 30px;
+  left: 50%;
   width: 20px;
   height: 20px;
   opacity: 0.6;
-  border: 1.5px solid rgba(193, 19, 23, 0.5);
+  border: 1.5px solid color-mix(in srgb, var(--ov-danger) 52%, transparent);
 }
 
-.overlay-pill[data-state="cancelled"] .overlay-ring {
-  left: 30px;
+.overlay-pill[data-state="cancelled"] .overlay-ring,
+.overlay-pill[data-state="empty"] .overlay-ring {
+  left: 50%;
   width: 20px;
   height: 20px;
-  opacity: 0.38;
-  border: 1.5px solid rgba(254, 191, 43, 0.36);
+  opacity: 0.34;
+  border: 1.5px solid color-mix(in srgb, var(--ov-gold) 38%, transparent);
 }
 
-/* State copy remains visually present for every non-recording state. */
+/* ----------------------------------------------------------------------------
+   Copy. Remounted per state by React (`key={state}`) so each transition gets a
+   real cross-fade instead of a hard text swap.
+---------------------------------------------------------------------------- */
 .overlay-copy {
   position: absolute;
-  inset: 11px 18px 10px 56px;
+  inset: 0 18px 0 56px;
   z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
   opacity: 0;
   pointer-events: none;
   transition: opacity 200ms ease;
@@ -389,58 +575,85 @@ body {
   white-space: nowrap;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--parchment);
+  color: var(--ov-ink);
 }
 
 .overlay-detail {
-  margin-top: 3px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 10.5px;
-  font-weight: 600;
+  font-size: 11.5px;
+  font-weight: 500;
   letter-spacing: 0;
-  color: rgba(255, 243, 230, 0.72);
+  line-height: 1.35;
+  color: var(--ov-ink-dim);
+}
+
+/* A transcript excerpt is the user's own words, so it is set in italics and
+   quoted to distinguish it from the app's own voice. */
+.overlay-detail[data-quoted="true"] {
+  font-style: italic;
+}
+
+.overlay-detail[data-quoted="true"]::before {
+  content: "\201C";
+}
+
+.overlay-detail[data-quoted="true"]::after {
+  content: "\201D";
 }
 
 .overlay-pill[data-state="transcribing"] .overlay-copy,
 .overlay-pill[data-state="processing"] .overlay-copy,
 .overlay-pill[data-state="success"] .overlay-copy,
 .overlay-pill[data-state="error"] .overlay-copy,
-.overlay-pill[data-state="cancelled"] .overlay-copy {
-  opacity: 0.92;
+.overlay-pill[data-state="cancelled"] .overlay-copy,
+.overlay-pill[data-state="empty"] .overlay-copy {
+  opacity: 1;
+  animation: overlay-copy-in 220ms var(--ov-ease) both;
 }
 
 .overlay-pill[data-state="transcribing"] .overlay-label,
 .overlay-pill[data-state="processing"] .overlay-label {
-  color: rgba(255, 243, 230, 0.9);
+  color: var(--ov-ink-dim);
 }
 
 .overlay-pill[data-state="success"] .overlay-label {
-  color: var(--gold);
+  color: color-mix(in srgb, var(--ov-earth) 82%, var(--ov-ink));
+}
+
+.overlay-stage[data-overlay-theme="dark"]
+  .overlay-pill[data-state="success"]
+  .overlay-label {
+  color: var(--ov-gold);
+}
+
+.overlay-pill[data-state="error"] .overlay-label {
+  color: var(--ov-danger);
 }
 
 .overlay-timer {
   position: absolute;
   top: 50%;
-  inset-inline-end: 18px;
+  inset-inline-end: 16px;
   z-index: 3;
   transform: translateY(-50%);
   border-radius: 999px;
-  border: 1px solid rgba(254, 191, 43, 0.12);
-  background: rgba(18, 14, 16, 0.64);
-  padding: 3px 7px;
+  border: 1px solid color-mix(in srgb, var(--ov-gold) 22%, transparent);
+  background: color-mix(in srgb, var(--ov-surface-bottom) 82%, transparent);
+  padding: 3px 8px;
   font-variant-numeric: tabular-nums;
   font-size: 10.5px;
   font-weight: 700;
-  color: rgba(255, 243, 230, 0.78);
+  letter-spacing: 0.02em;
+  color: var(--ov-ink-dim);
+  animation: overlay-copy-in 220ms var(--ov-ease) both;
 }
 
 /* ----------------------------------------------------------------------------
-   Waveform internals (PixiJS canvas + CSS fallback). Preserved from the
-   original renderer; the bay simply scales/positions them now.
+   Waveform internals (PixiJS canvas + CSS fallback).
 ---------------------------------------------------------------------------- */
 .gpu-waveform-host {
   position: relative;
@@ -450,6 +663,22 @@ body {
   border-radius: 14px;
   pointer-events: none;
   isolation: isolate;
+  /* A well, not a panel: the bed has to sit visibly *below* the pill surface
+     or the waveform reads as a smear floating on nothing. */
+  background:
+    radial-gradient(
+      ellipse 55% 75% at 50% 50%,
+      rgba(70, 48, 41, 0.05) 0%,
+      transparent 68%
+    ),
+    linear-gradient(180deg, #e6ddd0 0%, #efe8dd 100%);
+  border: 1px solid rgba(70, 48, 41, 0.13);
+  box-shadow:
+    inset 0 2px 5px rgba(70, 48, 41, 0.14),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.overlay-stage[data-overlay-theme="dark"] .gpu-waveform-host {
   background:
     radial-gradient(
       ellipse 55% 75% at 50% 50%,
@@ -457,7 +686,7 @@ body {
       transparent 65%
     ),
     linear-gradient(180deg, #24171d 0%, #110c0e 100%);
-  border: 1px solid rgba(217, 170, 75, 0.1);
+  border-color: rgba(217, 170, 75, 0.1);
   box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -485,14 +714,14 @@ body {
   background:
     radial-gradient(
       circle at 50% 50%,
-      color-mix(in srgb, var(--berry) 16%, transparent) 0%,
+      color-mix(in srgb, var(--ov-berry) 16%, transparent) 0%,
       transparent 48%
     ),
     linear-gradient(
       90deg,
-      color-mix(in srgb, var(--sand) 28%, transparent) 0%,
-      color-mix(in srgb, var(--gold) 34%, transparent) 42%,
-      color-mix(in srgb, var(--berry) 30%, transparent) 100%
+      color-mix(in srgb, var(--ov-earth) 28%, transparent) 0%,
+      color-mix(in srgb, var(--ov-gold) 34%, transparent) 42%,
+      color-mix(in srgb, var(--ov-berry) 30%, transparent) 100%
     );
 }
 
@@ -502,9 +731,9 @@ body {
   border-radius: 999px;
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--sand) 42%, transparent) 0%,
-    color-mix(in srgb, var(--gold) 58%, transparent) 45%,
-    color-mix(in srgb, var(--berry) 56%, transparent) 100%
+    color-mix(in srgb, var(--ov-earth) 42%, transparent) 0%,
+    color-mix(in srgb, var(--ov-gold) 58%, transparent) 45%,
+    color-mix(in srgb, var(--ov-berry) 56%, transparent) 100%
   );
   filter: blur(10px);
   opacity: 0.34;
@@ -543,24 +772,24 @@ body {
 .gpu-waveform-fallback-bar.tone-ochre {
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--gold) 68%, white 32%) 0%,
-    var(--sand) 100%
+    color-mix(in srgb, var(--ov-gold) 68%, white 32%) 0%,
+    var(--ov-earth) 100%
   );
 }
 
 .gpu-waveform-fallback-bar.tone-gold {
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--gold) 88%, white 12%) 0%,
-    color-mix(in srgb, var(--gold) 66%, var(--sand) 34%) 100%
+    color-mix(in srgb, var(--ov-gold) 88%, white 12%) 0%,
+    color-mix(in srgb, var(--ov-gold) 66%, var(--ov-earth) 34%) 100%
   );
 }
 
 .gpu-waveform-fallback-bar.tone-pink {
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--berry) 68%, white 32%) 0%,
-    color-mix(in srgb, var(--berry) 76%, var(--gold) 24%) 100%
+    color-mix(in srgb, var(--ov-berry) 68%, white 32%) 0%,
+    color-mix(in srgb, var(--ov-berry) 76%, var(--ov-gold) 24%) 100%
   );
 }
 
@@ -570,22 +799,47 @@ body {
 @keyframes overlay-breath {
   0%,
   100% {
-    opacity: 0.45;
+    opacity: 0.42;
   }
   50% {
+    opacity: 0.88;
+  }
+}
+
+@keyframes overlay-sheen-sweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-64%);
+  }
+  22% {
     opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(64%);
+  }
+}
+
+@keyframes overlay-copy-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 @keyframes overlay-node-travel {
   0% {
-    transform: translate(calc(-50% - 62px), -50%) scale(0.85);
+    transform: translate(calc(-50% - var(--overlay-travel)), -50%) scale(0.85);
   }
   50% {
-    transform: translate(calc(-50% + 62px), -50%) scale(1.05);
+    transform: translate(calc(-50% + var(--overlay-travel)), -50%) scale(1.05);
   }
   100% {
-    transform: translate(calc(-50% - 62px), -50%) scale(0.85);
+    transform: translate(calc(-50% - var(--overlay-travel)), -50%) scale(0.85);
   }
 }
 
@@ -616,20 +870,34 @@ body {
 }
 
 /* ----------------------------------------------------------------------------
-   Reduced motion: keep state legible, drop the travel/flare/breath motion.
+   Reduced motion.
+
+   theme.css carries a blanket `*{animation-duration:1ms!important}` rule for the
+   app. The overlay opts out of it (its <body> is tagged `.ss-overlay-document`)
+   because a state indicator still needs to fade between states to stay legible
+   — it just drops the travel, flare, sheen and breath.
 ---------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   .overlay-pill,
   .overlay-pill.is-visible {
     transition:
-      opacity 120ms ease,
-      width 120ms ease;
+      opacity 140ms ease,
+      width 140ms ease,
+      height 140ms ease;
+    transform: none;
+  }
+
+  .overlay-stage[data-position="top"] .overlay-pill,
+  .overlay-stage[data-position="top"] .overlay-pill.is-visible {
     transform: none;
   }
 
   .overlay-pill::after,
   .overlay-node-lead,
-  .overlay-node-echo {
+  .overlay-node-echo,
+  .overlay-sheen,
+  .overlay-copy,
+  .overlay-timer {
     animation: none !important;
   }
 
@@ -644,25 +912,22 @@ body {
   }
 
   .overlay-pill[data-state="success"] .overlay-node-lead {
-    animation: none !important;
     opacity: 1;
     transform: translate(-50%, -50%) scale(1.6);
     transition: opacity 200ms ease;
   }
 
   .overlay-pill[data-state="success"] .overlay-ring {
-    animation: none !important;
     opacity: 0;
   }
 }
 
-/* RTL: mirror the start-anchored error fault and its ping. */
-[dir="rtl"] .overlay-pill[data-state="error"] .overlay-node-lead,
-[dir="rtl"] .overlay-pill[data-state="error"] .overlay-ring,
-[dir="rtl"] .overlay-pill[data-state="success"] .overlay-node-lead,
-[dir="rtl"] .overlay-pill[data-state="success"] .overlay-ring,
-[dir="rtl"] .overlay-pill[data-state="cancelled"] .overlay-node-lead,
-[dir="rtl"] .overlay-pill[data-state="cancelled"] .overlay-ring {
-  left: auto;
-  right: 30px;
+/* RTL: mirror the start-anchored marks and give the copy its gutter on the
+   other side. */
+[dir="rtl"] .overlay-copy {
+  inset: 0 56px 0 18px;
 }
+
+/* The marks all centre inside `.overlay-spine`, which is anchored with
+   `inset-inline-start`, so they mirror for free — only the copy gutter needs
+   flipping (handled above). */

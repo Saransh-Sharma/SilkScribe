@@ -16,19 +16,69 @@ const IDLE_FLOOR = 0.065;
 const SMOOTH_ALPHA = 0.85;
 const FEEDBACK_ALPHA = 0.82;
 
-const COLORS = {
-  forest: 0x1b1116,
-  magenta: 0xc83b66,
-  marigold: 0xd9aa4b,
-  crimson: 0xb52a36,
-  ochre: 0x8b502f,
-} as const;
+export type WaveformTheme = "light" | "dark";
+
+/**
+ * Waveform colours plus the alpha ranges the bed and aura are drawn at.
+ *
+ * The alphas are part of the palette rather than constants because the two
+ * themes need opposite treatments: on the dark bed the ribbon *glows* (additive
+ * highlights over near-black), while on the ivory bed it has to *darken* to stay
+ * legible. Reusing the dark alphas over a light bed reads as muddy grey.
+ */
+type WaveformPalette = {
+  /** Deepest tone, used for the bed and the edge falloff. */
+  bed: number;
+  /** Hottest accent, reserved for peaks. */
+  hot: number;
+  /** Mid accent. */
+  warm: number;
+  /** Coolest accent, the ribbon's far end. */
+  cool: number;
+  /** Secondary earth tone that anchors the gradient ends. */
+  earth: number;
+  bedAlpha: [number, number];
+  auraAlpha: [number, number];
+  edgeAlpha: number;
+};
+
+const DARK_PALETTE: WaveformPalette = {
+  bed: 0x1b1116,
+  hot: 0xb52a36,
+  warm: 0xd9aa4b,
+  cool: 0xc83b66,
+  earth: 0x8b502f,
+  bedAlpha: [0.24, 0.36],
+  auraAlpha: [0.08, 0.34],
+  edgeAlpha: 0.26,
+};
+
+const LIGHT_PALETTE: WaveformPalette = {
+  // Ivory bed: the ribbon darkens instead of glowing, so the accents are the
+  // app's saturated brand tones rather than their luminous counterparts.
+  bed: 0xf2ebe1,
+  hot: 0x8f1638,
+  warm: 0xc08628,
+  cool: 0xa51f48,
+  earth: 0x9a7132,
+  // Lower than dark's: the CSS bed underneath is already an opaque, recessed
+  // well, so the scene only needs to tint it rather than paint it.
+  bedAlpha: [0.28, 0.42],
+  auraAlpha: [0.05, 0.2],
+  edgeAlpha: 0.14,
+};
+
+const PALETTES: Record<WaveformTheme, WaveformPalette> = {
+  dark: DARK_PALETTE,
+  light: LIGHT_PALETTE,
+};
 
 export type WaveformSceneController = {
   updateLevels: (levels: number[]) => void;
   setActive: (active: boolean) => void;
   resize: (width: number, height: number) => void;
   setReducedMotion: (reduced: boolean) => void;
+  setTheme: (theme: WaveformTheme) => void;
   destroy: () => void;
 };
 
@@ -36,6 +86,7 @@ export type CreateWaveformSceneOptions = {
   width: number;
   height: number;
   reducedMotion: boolean;
+  theme: WaveformTheme;
 };
 
 type SamplePoint = {
@@ -292,6 +343,7 @@ export const createWaveformScene = async (
   let width = Math.max(options.width, 1);
   let height = Math.max(options.height, 1);
   let reducedMotion = options.reducedMotion;
+  let palette = PALETTES[options.theme] ?? DARK_PALETTE;
   let elapsed = 0;
   let lastEmission = 0;
   let usePrimaryTrailTarget = true;
@@ -308,30 +360,30 @@ export const createWaveformScene = async (
   const frontPoints = createPointBuffer();
 
   let backgroundGradient = createVerticalGradient(height, [
-    { offset: 0, color: COLORS.forest },
-    { offset: 0.36, color: COLORS.ochre },
-    { offset: 1, color: COLORS.forest },
+    { offset: 0, color: palette.bed },
+    { offset: 0.36, color: palette.earth },
+    { offset: 1, color: palette.bed },
   ]);
   let ribbonBackGradient = createHorizontalGradient(width, [
-    { offset: 0, color: COLORS.ochre },
-    { offset: 0.46, color: COLORS.marigold },
-    { offset: 1, color: COLORS.magenta },
+    { offset: 0, color: palette.earth },
+    { offset: 0.46, color: palette.warm },
+    { offset: 1, color: palette.cool },
   ]);
   let ribbonFrontGradient = createHorizontalGradient(width, [
-    { offset: 0, color: COLORS.ochre },
-    { offset: 0.4, color: COLORS.marigold },
-    { offset: 0.76, color: COLORS.magenta },
-    { offset: 1, color: COLORS.magenta },
+    { offset: 0, color: palette.earth },
+    { offset: 0.4, color: palette.warm },
+    { offset: 0.76, color: palette.cool },
+    { offset: 1, color: palette.cool },
   ]);
   let trailGradient = createHorizontalGradient(width, [
-    { offset: 0, color: COLORS.forest },
-    { offset: 0.38, color: COLORS.marigold },
-    { offset: 1, color: COLORS.magenta },
+    { offset: 0, color: palette.bed },
+    { offset: 0.38, color: palette.warm },
+    { offset: 1, color: palette.cool },
   ]);
   let peakGradient = createHorizontalGradient(width, [
-    { offset: 0, color: COLORS.marigold },
-    { offset: 0.52, color: COLORS.magenta },
-    { offset: 1, color: COLORS.crimson },
+    { offset: 0, color: palette.warm },
+    { offset: 0.52, color: palette.cool },
+    { offset: 1, color: palette.hot },
   ]);
 
   let trailTextureA = RenderTexture.create({ width, height });
@@ -342,30 +394,30 @@ export const createWaveformScene = async (
 
   const rebuildGradients = () => {
     backgroundGradient = createVerticalGradient(height, [
-      { offset: 0, color: COLORS.forest },
-      { offset: 0.36, color: COLORS.ochre },
-      { offset: 1, color: COLORS.forest },
+      { offset: 0, color: palette.bed },
+      { offset: 0.36, color: palette.earth },
+      { offset: 1, color: palette.bed },
     ]);
     ribbonBackGradient = createHorizontalGradient(width, [
-      { offset: 0, color: COLORS.ochre },
-      { offset: 0.46, color: COLORS.marigold },
-      { offset: 1, color: COLORS.magenta },
+      { offset: 0, color: palette.earth },
+      { offset: 0.46, color: palette.warm },
+      { offset: 1, color: palette.cool },
     ]);
     ribbonFrontGradient = createHorizontalGradient(width, [
-      { offset: 0, color: COLORS.ochre },
-      { offset: 0.4, color: COLORS.marigold },
-      { offset: 0.76, color: COLORS.magenta },
-      { offset: 1, color: COLORS.magenta },
+      { offset: 0, color: palette.earth },
+      { offset: 0.4, color: palette.warm },
+      { offset: 0.76, color: palette.cool },
+      { offset: 1, color: palette.cool },
     ]);
     trailGradient = createHorizontalGradient(width, [
-      { offset: 0, color: COLORS.forest },
-      { offset: 0.38, color: COLORS.marigold },
-      { offset: 1, color: COLORS.magenta },
+      { offset: 0, color: palette.bed },
+      { offset: 0.38, color: palette.warm },
+      { offset: 1, color: palette.cool },
     ]);
     peakGradient = createHorizontalGradient(width, [
-      { offset: 0, color: COLORS.marigold },
-      { offset: 0.52, color: COLORS.magenta },
-      { offset: 1, color: COLORS.crimson },
+      { offset: 0, color: palette.warm },
+      { offset: 0.52, color: palette.cool },
+      { offset: 1, color: palette.hot },
     ]);
   };
 
@@ -413,7 +465,12 @@ export const createWaveformScene = async (
     backgroundBase.roundRect(0, 0, width, height, STAGE_RADIUS);
     backgroundBase.fill({
       fill: backgroundGradient,
-      alpha: clamp(0.24 + averageEnergy * 0.08, 0.24, 0.36),
+      alpha: clamp(
+        palette.bedAlpha[0] +
+          averageEnergy * (palette.bedAlpha[1] - palette.bedAlpha[0]) * 0.67,
+        palette.bedAlpha[0],
+        palette.bedAlpha[1],
+      ),
     });
 
     edgeShadowLeft.clear();
@@ -423,7 +480,7 @@ export const createWaveformScene = async (
       width * 0.22,
       height * 0.7,
     );
-    edgeShadowLeft.fill({ color: COLORS.forest, alpha: 0.26 });
+    edgeShadowLeft.fill({ color: palette.bed, alpha: palette.edgeAlpha });
 
     edgeShadowRight.clear();
     edgeShadowRight.ellipse(
@@ -432,7 +489,7 @@ export const createWaveformScene = async (
       width * 0.22,
       height * 0.7,
     );
-    edgeShadowRight.fill({ color: COLORS.forest, alpha: 0.26 });
+    edgeShadowRight.fill({ color: palette.bed, alpha: palette.edgeAlpha });
 
     ambientAura.clear();
     ambientAura.ellipse(
@@ -443,7 +500,7 @@ export const createWaveformScene = async (
     );
     ambientAura.fill({
       fill: peakGradient,
-      alpha: clamp(auraAlpha, 0.08, 0.34),
+      alpha: clamp(auraAlpha, palette.auraAlpha[0], palette.auraAlpha[1]),
     });
   };
 
@@ -463,7 +520,7 @@ export const createWaveformScene = async (
 
     graphic.ellipse(centerX, centerY, radiusX, radiusY);
     graphic.fill({
-      color: intensity > 0.82 ? COLORS.crimson : COLORS.magenta,
+      color: intensity > 0.82 ? palette.hot : palette.cool,
       alpha: clamp(baseAlpha, 0, 1),
     });
   };
@@ -493,10 +550,10 @@ export const createWaveformScene = async (
 
       const isHot = hottestEnergy > 0.88 && count === spawnCount - 1;
       const color = isHot
-        ? COLORS.crimson
+        ? palette.hot
         : count % 2 === 0
-          ? COLORS.marigold
-          : COLORS.magenta;
+          ? palette.warm
+          : palette.cool;
 
       particle.active = true;
       particle.life = 0;
@@ -733,6 +790,14 @@ export const createWaveformScene = async (
       }
     },
     resize,
+    setTheme: (nextTheme: WaveformTheme) => {
+      const nextPalette = PALETTES[nextTheme] ?? DARK_PALETTE;
+      if (nextPalette === palette) return;
+      palette = nextPalette;
+      // Draw-time reads pick the new palette up on the next tick; the cached
+      // gradients have to be rebuilt explicitly.
+      rebuildGradients();
+    },
     setReducedMotion: (nextReducedMotion: boolean) => {
       reducedMotion = nextReducedMotion;
       applyMotionSettings();

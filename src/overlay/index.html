@@ -3,6 +3,26 @@
   <head>
     <meta charset="utf-8" />
     <title>Recording Overlay</title>
+    <script>
+      // Apply the theme before first paint to avoid a light/dark flash.
+      // The Rust store is the source of truth and re-asserts the resolved theme
+      // in every `show-overlay` payload; this only covers the very first frame,
+      // reading the same localStorage mirror App.tsx keeps in sync.
+      (function () {
+        try {
+          var pref = localStorage.getItem("ss-theme-preference") || "system";
+          var resolved =
+            pref === "light" || pref === "dark"
+              ? pref
+              : window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+          document.documentElement.dataset.theme = resolved;
+        } catch (e) {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
     <style>
       html,
       body {
@@ -20,7 +40,7 @@
       }
     </style>
   </head>
-  <body>
+  <body class="ss-overlay-document">
     <div id="root"></div>
     <script type="module" src="/src/overlay/main.tsx"></script>
   </body>
