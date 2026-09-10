@@ -157,26 +157,106 @@ test.describe("deterministic product states", () => {
     );
   });
 
-  for (const state of [
+  const OVERLAY_STATES = [
     "recording",
     "transcribing",
     "processing",
     "success",
     "error",
     "cancelled",
-  ]) {
-    test(`announces the ${state} overlay state`, async ({ page }) => {
-      await page.setViewportSize({ width: 420, height: 160 });
-      await page.goto(fixture(`view=overlay&state=${state}`));
+    "empty",
+  ] as const;
 
-      await expect(page.getByRole("status")).toBeVisible();
-      await expect(page.getByRole("status")).toHaveAttribute(
-        "aria-label",
-        /.+/,
-      );
-      if (state !== "recording") {
-        await expect(page.getByRole("status")).toContainText(/\S+/);
-      }
+  const STATE_LABELS: Record<string, string> = {
+    recording: "Recording",
+    transcribing: "Transcribing",
+    processing: "Processing",
+    success: "Done",
+    error: "Failed",
+    cancelled: "Cancelled",
+    empty: "Nothing heard",
+  };
+
+  /** Perceived brightness, for the light/dark ink assertion below. */
+  const luminance = (rgb: string) => {
+    const [r, g, b] = (rgb.match(/\d+(\.\d+)?/g) ?? ["0", "0", "0"]).map(
+      Number,
+    );
+    const channel = (value: number) => {
+      const v = value / 255;
+      return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+  };
+
+  for (const theme of ["light", "dark"] as const) {
+    for (const state of OVERLAY_STATES) {
+      test(`announces the ${state} overlay state (${theme})`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width: 460, height: 180 });
+        await page.goto(
+          fixture(`view=overlay&state=${state}&theme=${theme}&detail=1`),
+        );
+
+        const status = page.getByRole("status");
+        await expect(status).toBeVisible();
+        // The announcement must name the state, not merely be non-empty.
+        await expect(status).toHaveAttribute(
+          "aria-label",
+          new RegExp(STATE_LABELS[state]),
+        );
+        if (state !== "recording") {
+          await expect(status).toContainText(/\S+/);
+        }
+      });
+    }
+
+    test(`inverts the overlay ink for the ${theme} pill`, async ({ page }) => {
+      await page.setViewportSize({ width: 460, height: 180 });
+      // `cancelled` renders its label in plain ink; `error` is deliberately red
+      // in both themes, so it cannot carry this assertion.
+      await page.goto(fixture(`view=overlay&state=cancelled&theme=${theme}`));
+
+      // "It renders" would not catch a light variant that forgot to flip its
+      // ink, which is the most likely theming regression here.
+      const ink = await page
+        .locator(".overlay-label")
+        .evaluate((el) => getComputedStyle(el).color);
+      const expectsDarkInk = theme === "light";
+      expect(luminance(ink) < 0.5).toBe(expectsDarkInk);
     });
   }
+
+  test("keeps the pill inside the native overlay window", async ({ page }) => {
+    // There is no shared source of truth between the CSS pill size and
+    // OVERLAY_WIDTH/OVERLAY_HEIGHT in src-tauri/src/overlay.rs, so pin both
+    // here and let this fail loudly if either drifts.
+    const OVERLAY_WINDOW = { width: 400, height: 116 };
+
+    await page.setViewportSize(OVERLAY_WINDOW);
+    await page.goto(fixture("view=overlay&state=success&detail=1"));
+
+    const box = await page.getByRole("status").boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.width).toBeLessThanOrEqual(OVERLAY_WINDOW.width);
+    expect(box!.height).toBeLessThanOrEqual(OVERLAY_WINDOW.height);
+  });
+
+  test("keeps the overlay legible under reduced motion", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.setViewportSize({ width: 460, height: 180 });
+    await page.goto(fixture("view=overlay&state=transcribing"));
+
+    const node = page.locator(".overlay-node-lead");
+    await expect(node).toHaveCSS("animation-name", "none");
+
+    // ...but the pill must keep a real transition so states stay readable.
+    // This is what proves the overlay opts out of theme.css's blanket
+    // `*{transition-duration:1ms!important}` reduced-motion rule.
+    const duration = await page
+      .locator(".overlay-pill")
+      .evaluate((el) => getComputedStyle(el).transitionDuration);
+    expect(duration).not.toMatch(/^0\.001s/);
+  });
 });
