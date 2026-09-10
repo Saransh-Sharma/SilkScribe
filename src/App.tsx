@@ -8,13 +8,13 @@ import {
   checkMicrophonePermission,
 } from "tauri-plugin-macos-permissions-api";
 import "./App.css";
-import AccessibilityPermissions from "./components/AccessibilityPermissions";
+import Workspace from "./components/workspace/Workspace";
 import Onboarding, {
   OnboardingPractice,
   OnboardingSetup,
   PermissionStep,
 } from "./components/onboarding";
-import { Sidebar, SidebarSection, SECTIONS_CONFIG } from "./components/Sidebar";
+import { SidebarSection, SECTIONS_CONFIG } from "./components/Sidebar";
 import { ErrorBoundary } from "./components/ui";
 import { useSettings } from "./hooks/useSettings";
 import { useSettingsStore } from "./stores/settingsStore";
@@ -81,7 +81,6 @@ function App() {
     accessibility: false,
     microphone: false,
   });
-  const [currentSection, setCurrentSection] = useState<SidebarSection>("home");
   const { settings, updateSetting } = useSettings();
   const [systemTheme, setSystemTheme] = useState<ResolvedTheme>(getSystemTheme);
   const direction = getLanguageDirection(i18n.language);
@@ -250,6 +249,8 @@ function App() {
       onboardingStep !== "welcome" &&
       onboardingStep !== "microphone_permission" &&
       onboardingStep !== "accessibility_permission" &&
+      permissions.microphone &&
+      permissions.accessibility &&
       !hasCompletedPostOnboardingInit.current
     ) {
       hasCompletedPostOnboardingInit.current = true;
@@ -262,7 +263,7 @@ function App() {
       refreshAudioDevices();
       refreshOutputDevices();
     }
-  }, [onboardingStep, refreshAudioDevices, refreshOutputDevices]);
+  }, [onboardingStep, permissions, refreshAudioDevices, refreshOutputDevices]);
 
   // Handle keyboard shortcuts for debug mode toggle
   useEffect(() => {
@@ -306,9 +307,7 @@ function App() {
         return;
       }
 
-      setOnboardingStep(
-        getFirstMissingPermissionStep(currentPermissions) ?? "done",
-      );
+      setOnboardingStep("done");
     } catch (error) {
       console.error("Failed to check onboarding status:", error);
       const fallbackPermissions =
@@ -364,6 +363,13 @@ function App() {
       <>
         {toaster}
         <Onboarding
+          onOpenWorkspace={async () => {
+            const result = await commands.completeOnboarding();
+            if (result.status === "ok") {
+              setHasCompletedOnboarding(true);
+              setOnboardingStep("done");
+            }
+          }}
           onContinue={handleWelcomeContinue}
           stepLabels={onboardingStepLabels}
           activeStep={0}
@@ -445,47 +451,19 @@ function App() {
   return (
     <>
       {toaster}
-      <div
-        dir={direction}
-        data-theme={resolvedTheme}
-        className="ss-app-shell relative h-[100dvh] overflow-hidden select-none cursor-default bg-ss-bg-canvas text-ss-text-primary"
-      >
-        <a
-          href="#main-content"
-          className="fixed start-3 top-3 z-[var(--ss-layer-toast)] -translate-y-20 rounded-[var(--ss-radius-md)] bg-ss-action-primary px-4 py-2 text-sm font-semibold text-ss-brand-primary-ink shadow-[var(--ss-shadow-lift)] transition-transform focus:translate-y-0"
-        >
-          {t("sidebar.home")}
-        </a>
-        <div className="ss-app-frame relative flex h-full min-h-0 overflow-hidden">
-          <Sidebar
-            activeSection={currentSection}
-            onSectionChange={setCurrentSection}
+      <div dir={direction} data-theme={resolvedTheme}>
+        <ErrorBoundary>
+          <Workspace
+            renderSettings={(section, navigate) =>
+              renderSettingsContent(section, navigate, () => {
+                void handleStartPermissionRepair();
+              })
+            }
+            onSetupDictation={() => {
+              void handleStartPermissionRepair();
+            }}
           />
-          <main
-            id="main-content"
-            className="app-content-scroll ss-main-panel min-w-0 flex-1 overflow-y-auto"
-            tabIndex={-1}
-          >
-            <div className="ss-content-container mx-auto flex w-full max-w-[1160px] flex-col gap-5 px-7 py-7 2xl:px-9 2xl:py-8">
-              <ErrorBoundary>
-                <AccessibilityPermissions
-                  onStartRepair={() => {
-                    void handleStartPermissionRepair();
-                  }}
-                />
-                <div key={currentSection} className="ss-page-enter">
-                  {renderSettingsContent(
-                    currentSection,
-                    setCurrentSection,
-                    () => {
-                      void handleStartPermissionRepair();
-                    },
-                  )}
-                </div>
-              </ErrorBoundary>
-            </div>
-          </main>
-        </div>
+        </ErrorBoundary>
       </div>
     </>
   );

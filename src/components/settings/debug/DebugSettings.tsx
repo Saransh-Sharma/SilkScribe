@@ -7,7 +7,6 @@ import { PasteDelay } from "./PasteDelay";
 import { RecordingBuffer } from "./RecordingBuffer";
 import { SettingsGroup } from "../../ui/SettingsGroup";
 import { AlwaysOnMicrophone } from "../AlwaysOnMicrophone";
-import { SoundPicker } from "../SoundPicker";
 import { ClamshellMicrophoneSelector } from "../ClamshellMicrophoneSelector";
 import { ShortcutInput } from "../ShortcutInput";
 import { UpdateChecksToggle } from "../UpdateChecksToggle";
@@ -25,10 +24,6 @@ export const DebugSettings: React.FC = () => {
       <SettingsGroup>
         <LogLevelSelector grouped={true} />
         <UpdateChecksToggle descriptionMode="tooltip" grouped={true} />
-        <SoundPicker
-          label={t("settings.debug.soundTheme.label")}
-          description={t("settings.debug.soundTheme.description")}
-        />
         <WordCorrectionThreshold descriptionMode="tooltip" grouped={true} />
         <PasteDelay descriptionMode="tooltip" grouped={true} />
         <RecordingBuffer descriptionMode="tooltip" grouped={true} />

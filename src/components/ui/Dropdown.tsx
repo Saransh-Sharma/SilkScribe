@@ -16,6 +16,8 @@ interface DropdownProps {
   placeholder?: string;
   disabled?: boolean;
   onRefresh?: () => void;
+  /** Accessible name. Required wherever no visible <label> names the control. */
+  ariaLabel?: string;
 }
 
 interface DropdownMenuPosition {
@@ -38,6 +40,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
   className = "",
   placeholder = "Select an option...",
   disabled = false,
+  ariaLabel,
   onRefresh,
 }) => {
   const { t } = useTranslation();
@@ -269,6 +272,12 @@ export const Dropdown: React.FC<DropdownProps> = ({
           }
         }}
         disabled={disabled}
+        // Deliberately left as an implicit `button`, not `role="combobox"`:
+        // `combobox` takes its accessible name from the author only, so
+        // adopting it would silently strip the name from every Dropdown that
+        // relies on its visible trigger text. `ariaLabel` covers the cases with
+        // no visible label of their own.
+        aria-label={ariaLabel}
         aria-expanded={isOpen}
         aria-controls={isOpen ? listboxId : undefined}
         aria-haspopup="listbox"

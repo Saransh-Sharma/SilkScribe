@@ -8,6 +8,7 @@ import { SettingsGroup } from "../../ui/SettingsGroup";
 import { OutputDeviceSelector } from "../OutputDeviceSelector";
 import { PushToTalk } from "../PushToTalk";
 import { AudioFeedback } from "../AudioFeedback";
+import { SoundPicker } from "../SoundPicker";
 import { useSettings } from "../../../hooks/useSettings";
 import { VolumeSlider } from "../VolumeSlider";
 import { MuteWhileRecording } from "../MuteWhileRecording";
@@ -38,6 +39,12 @@ export const GeneralSettings: React.FC = () => {
         <AudioFeedback descriptionMode="inline" grouped={true} />
         {audioFeedbackEnabled ? (
           <>
+            <SoundPicker
+              label={t("settings.sound.soundTheme.title")}
+              description={t("settings.sound.soundTheme.description")}
+              descriptionMode="inline"
+              grouped={true}
+            />
             <OutputDeviceSelector descriptionMode="inline" grouped={true} />
             <VolumeSlider />
           </>

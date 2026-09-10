@@ -47,6 +47,12 @@ const direction = params.get("dir") === "rtl" ? "rtl" : "ltr";
 document.documentElement.dataset.theme = theme;
 document.documentElement.dir = direction;
 
+if (view === "overlay" || view === "overlay-sheet") {
+  // Mirrors src/overlay/index.html: tags this document as the overlay so
+  // theme.css's blanket reduced-motion rule steps aside for it.
+  document.body.classList.add("ss-overlay-document");
+}
+
 const mockModel: ModelInfo = {
   id: "parakeet-tdt-0.6b-v3",
   name: "Parakeet TDT 0.6B v3",
@@ -341,16 +347,112 @@ const DropdownFixture = () => (
   </div>
 );
 
+const OVERLAY_STATES: OverlayState[] = [
+  "recording",
+  "transcribing",
+  "processing",
+  "success",
+  "error",
+  "cancelled",
+  "empty",
+];
+
+/* Sample detail lines so the two-row terminal layouts are inspectable without
+   a running backend. `success` gets a transcript excerpt (quoted, italic);
+   everything else gets its translated reason. */
+const SAMPLE_DETAIL: Partial<
+  Record<OverlayState, Partial<{ detailCode: string; previewText: string }>>
+> = {
+  success: {
+    previewText:
+      "The quarterly numbers came in ahead of what we forecast in March",
+  },
+  error: { detailCode: "pasteCopied" },
+  cancelled: { detailCode: "cancelled" },
+  empty: { detailCode: "empty" },
+};
+
+/* The pill floats over whatever the user has on screen, so it has to hold up
+   against a busy light surface — that is the worst case for the painted-frost
+   light variant. */
+const BACKDROPS: Record<string, string> = {
+  light: "#f5efe7",
+  dark: "#28231f",
+  busy: "",
+};
+
+const backdropStyle = (name: string): React.CSSProperties =>
+  name === "busy"
+    ? {
+        backgroundColor: "#c9b9a4",
+        backgroundImage:
+          "radial-gradient(circle at 18% 24%, #f6e7cf 0%, transparent 46%), radial-gradient(circle at 78% 68%, #7c93a8 0%, transparent 52%), linear-gradient(126deg, #d8c5ab 0%, #8f7f74 100%)",
+      }
+    : { backgroundColor: BACKDROPS[name] ?? BACKDROPS.dark };
+
 const OverlayFixture = () => {
   const state = (params.get("state") ?? "recording") as OverlayState;
+  const withDetail = params.get("detail") === "1";
   return (
     <div
-      className={`h-[100dvh] ${params.get("backdrop") === "light" ? "bg-[#f5efe7]" : "bg-[#28231f]"}`}
+      className="h-[100dvh]"
+      style={backdropStyle(params.get("backdrop") ?? "dark")}
     >
-      <RecordingOverlay previewState={state} previewVisible />
+      <RecordingOverlay
+        previewState={state}
+        previewVisible
+        previewTheme={params.get("theme") === "dark" ? "dark" : "light"}
+        previewPayload={
+          withDetail
+            ? { canCancel: false, ...SAMPLE_DETAIL[state] }
+            : { canCancel: false }
+        }
+      />
     </div>
   );
 };
+
+/* Contact sheet: every state, both themes, over all three backdrops on one
+   page. Seeing the family together is the only way to catch a state that has
+   drifted out of the set. */
+const OverlaySheetFixture = () => (
+  <div className="min-h-[100dvh] bg-ss-bg-canvas p-6">
+    {(["light", "dark"] as const).map((sheetTheme) => (
+      <section key={sheetTheme} className="mb-8">
+        <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-ss-text-tertiary">
+          {sheetTheme}
+        </h2>
+        {Object.keys(BACKDROPS).map((backdrop) => (
+          <div
+            key={backdrop}
+            className="mb-3 grid grid-cols-2 gap-2 rounded-[var(--ss-radius-lg)] p-3"
+            style={backdropStyle(backdrop)}
+          >
+            {OVERLAY_STATES.map((sheetState) =>
+              ([false, true] as const).map((detail) => (
+                <div
+                  key={`${sheetState}-${String(detail)}`}
+                  className="relative h-[120px] w-full"
+                >
+                  <RecordingOverlay
+                    previewState={sheetState}
+                    previewVisible
+                    previewTheme={sheetTheme}
+                    previewPayload={
+                      detail
+                        ? { canCancel: false, ...SAMPLE_DETAIL[sheetState] }
+                        : { canCancel: false }
+                    }
+                  />
+                </div>
+              )),
+            )}
+          </div>
+        ))}
+      </section>
+    ))}
+  </div>
+);
 
 const fixture =
   view === "home" ? (
@@ -367,6 +469,8 @@ const fixture =
     <DropdownFixture />
   ) : view === "overlay" ? (
     <OverlayFixture />
+  ) : view === "overlay-sheet" ? (
+    <OverlaySheetFixture />
   ) : (
     <SystemFixture />
   );

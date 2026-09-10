@@ -312,10 +312,17 @@ select {
   -webkit-text-stroke: 2px var(--ss-text-inverse);
 }
 
+/* Reduced motion: flatten animation app-wide.
+ *
+ * The recording overlay is excluded because it does its own, more nuanced
+ * reduced-motion handling (see RecordingOverlay.css) — it still needs to fade
+ * between states to stay legible, it just drops the travel/flare/breath motion.
+ * `!important` beats specificity, so the exclusion has to live in the selector. */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  body:not(.ss-overlay-document),
+  body:not(.ss-overlay-document) *,
+  body:not(.ss-overlay-document) *::before,
+  body:not(.ss-overlay-document) *::after {
     animation-duration: 1ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;

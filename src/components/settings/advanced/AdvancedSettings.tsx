@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ShowOverlay } from "../ShowOverlay";
+import { OverlayAppearance } from "../OverlayAppearance";
 import { ModelUnloadTimeoutSetting } from "../ModelUnloadTimeout";
 import { CustomWords } from "../CustomWords";
 import { StartHidden } from "../StartHidden";
@@ -30,6 +31,9 @@ export const AdvancedSettings: React.FC = () => {
   const experimentalEnabled = getSetting("experimental_enabled") || false;
   const pasteMethod = getSetting("paste_method") || "ctrl_v";
   const showsInsertionControls = pasteMethod !== "none";
+  // No point offering to style an overlay the user has switched off.
+  const overlayEnabled =
+    (getSetting("overlay_position") || "bottom") !== "none";
   const usesClipboardMethod =
     pasteMethod === "ctrl_v" ||
     pasteMethod === "ctrl_shift_v" ||
@@ -51,6 +55,9 @@ export const AdvancedSettings: React.FC = () => {
           <AutostartToggle descriptionMode="inline" grouped={true} />
           <ShowTrayIcon descriptionMode="inline" grouped={true} />
           <ShowOverlay descriptionMode="inline" grouped={true} />
+          {overlayEnabled ? (
+            <OverlayAppearance descriptionMode="inline" grouped={true} />
+          ) : null}
           <ModelUnloadTimeoutSetting descriptionMode="inline" grouped={true} />
         </DisclosureSection>
 

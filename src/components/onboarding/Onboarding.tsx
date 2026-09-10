@@ -5,6 +5,7 @@ import { Button } from "../ui/Button";
 import OnboardingShell from "./OnboardingShell";
 
 interface OnboardingProps {
+  onOpenWorkspace?: () => void;
   onContinue: () => void;
   stepLabels: string[];
   activeStep: number;
@@ -14,6 +15,7 @@ const FEATURE_KEYS = ["permissions", "engine", "practice"] as const;
 
 const Onboarding: React.FC<OnboardingProps> = ({
   onContinue,
+  onOpenWorkspace,
   stepLabels,
   activeStep,
 }) => {
@@ -34,20 +36,35 @@ const Onboarding: React.FC<OnboardingProps> = ({
       description={t("onboarding.welcome.description")}
       compactHeader
       footer={
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <p className="max-w-2xl text-sm leading-relaxed text-ss-text-secondary">
-            {t("onboarding.welcome.permissionPromise")}
-          </p>
-          <Button
-            onClick={onContinue}
-            variant="primary"
-            size="lg"
-            className="shrink-0 rounded-[18px] px-6"
-          >
-            {t("onboarding.welcome.continue")}
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </div>
+        <>
+          {onOpenWorkspace && (
+            <div className="px-6 py-4">
+              <button
+                className="text-sm font-semibold text-ss-brand-primary underline"
+                onClick={onOpenWorkspace}
+              >
+                {t("workspace.workspaceFirst")}
+              </button>
+              <p className="mt-1 text-xs text-ss-text-secondary">
+                {t("workspace.workspaceFirstHelp")}
+              </p>
+            </div>
+          )}
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <p className="max-w-2xl text-sm leading-relaxed text-ss-text-secondary">
+              {t("onboarding.welcome.permissionPromise")}
+            </p>
+            <Button
+              onClick={onContinue}
+              variant="primary"
+              size="lg"
+              className="shrink-0 rounded-[18px] px-6"
+            >
+              {t("onboarding.welcome.continue")}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </>
       }
     >
       <div className="grid h-full gap-5 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)]">

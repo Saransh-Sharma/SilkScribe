@@ -3,6 +3,9 @@ import { subscribeWithSelector } from "zustand/middleware";
 import type { AppSettings as Settings, AudioDevice } from "@/bindings";
 import { commands } from "@/bindings";
 
+/** The five feedback cues a sound theme can provide. */
+export type SoundCue = "start" | "transcribing" | "done" | "error" | "cancel";
+
 interface SettingsStore {
   settings: Settings | null;
   defaultSettings: Settings | null;
@@ -28,7 +31,7 @@ interface SettingsStore {
   resetBinding: (id: string) => Promise<void>;
   getSetting: <K extends keyof Settings>(key: K) => Settings[K] | undefined;
   isUpdatingKey: (key: string) => boolean;
-  playTestSound: (soundType: "start" | "stop") => Promise<void>;
+  playTestSound: (soundType: SoundCue) => Promise<void>;
   checkCustomSounds: () => Promise<void>;
   setPostProcessProvider: (providerId: string) => Promise<void>;
   updatePostProcessSetting: (
@@ -107,6 +110,8 @@ const settingUpdaters: {
     commands.changeSelectedLanguageSetting(value as string),
   overlay_position: (value) =>
     commands.changeOverlayPositionSetting(value as string),
+  overlay_appearance: (value) =>
+    commands.changeOverlayAppearanceSetting(value as string),
   debug_mode: (value) => commands.changeDebugModeSetting(value as boolean),
   custom_words: (value) => commands.updateCustomWords(value as string[]),
   word_correction_threshold: (value) =>
@@ -244,7 +249,7 @@ export const useSettingsStore = create<SettingsStore>()(
     },
 
     // Play a test sound
-    playTestSound: async (soundType: "start" | "stop") => {
+    playTestSound: async (soundType: SoundCue) => {
       try {
         await commands.playTestSound(soundType);
       } catch (error) {

@@ -9,6 +9,16 @@ interface AudioPlayerProps {
   className?: string;
   autoPlay?: boolean;
   compact?: boolean;
+  /** Playback speed multiplier. */
+  playbackRate?: number;
+  /**
+   * Receives the underlying element so a host can drive playback itself —
+   * seeking to a transcript segment, for example. Prefer the props above when
+   * they cover the need; this is the escape hatch, not the front door.
+   */
+  mediaRef?: React.MutableRefObject<HTMLAudioElement | null>;
+  /** Fires as playback progresses and on every seek. */
+  onTimeChange?: (seconds: number) => void;
 }
 
 export const AudioPlayer: React.FC<AudioPlayerProps> = ({
@@ -17,6 +27,9 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   className = "",
   autoPlay = false,
   compact = false,
+  playbackRate,
+  mediaRef,
+  onTimeChange,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -26,6 +39,8 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
+  const onTimeChangeRef = useRef(onTimeChange);
+  onTimeChangeRef.current = onTimeChange;
   const src = loadedSrc;
   const animationRef = useRef<number>();
   const dragTimeRef = useRef<number>(0);
@@ -48,6 +63,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     if (audioRef.current && !isDraggingRef.current) {
       const time = audioRef.current.currentTime;
       setCurrentTime(time);
+      onTimeChangeRef.current?.(time);
     }
 
     if (isPlayingRef.current) {
@@ -108,6 +124,12 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       audio.removeEventListener("pause", handlePause);
     };
   }, []);
+
+  useEffect(() => {
+    if (audioRef.current && playbackRate) {
+      audioRef.current.playbackRate = playbackRate;
+    }
+  }, [playbackRate, src]);
 
   // Auto-play when src becomes available (via onLoadRequest or autoPlay prop)
   const prevLoadedSrc = useRef<string | null>(null);
@@ -198,6 +220,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     if (!isDragging && audioRef.current) {
       audioRef.current.currentTime = newTime;
     }
+    onTimeChange?.(newTime);
   };
 
   const handleSliderMouseDown = () => {
@@ -239,7 +262,16 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 
   return (
     <div className={`flex items-center ${containerGapClass} ${className}`}>
-      <audio ref={audioRef} src={src ?? undefined} preload="metadata" />
+      <audio
+        ref={(element) => {
+          (
+            audioRef as React.MutableRefObject<HTMLAudioElement | null>
+          ).current = element;
+          if (mediaRef) mediaRef.current = element;
+        }}
+        src={src ?? undefined}
+        preload="metadata"
+      />
 
       <button
         onClick={togglePlay}

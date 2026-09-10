@@ -7,6 +7,7 @@ export { Skeleton } from "./Skeleton";
 export { Slider } from "./Slider";
 export { Select } from "./Select";
 export { ToggleSwitch } from "./ToggleSwitch";
+export { Switch } from "./Switch";
 export { SettingContainer } from "./SettingContainer";
 export { SettingsGroup } from "./SettingsGroup";
 export { TextDisplay } from "./TextDisplay";
