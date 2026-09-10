@@ -2,6 +2,9 @@ fn main() {
     #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
     build_apple_intelligence_bridge();
 
+    #[cfg(target_os = "macos")]
+    build_meeting_bridge();
+
     generate_tray_translations();
 
     tauri_build::build()
@@ -235,5 +238,56 @@ fn build_apple_intelligence_bridge() {
         println!("cargo:rustc-link-arg=FoundationModels");
     }
 
+    println!("cargo:rustc-link-arg=-Wl,-rpath,/usr/lib/swift");
+}
+
+#[cfg(target_os = "macos")]
+fn build_meeting_bridge() {
+    use std::{env, path::PathBuf, process::Command};
+    println!("cargo:rerun-if-changed=swift/meeting_capture.swift");
+    let out = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let arch = if env::var("CARGO_CFG_TARGET_ARCH").unwrap() == "aarch64" {
+        "arm64"
+    } else {
+        "x86_64"
+    };
+    let object = out.join("meeting_capture.o");
+    let status = Command::new("xcrun")
+        .args([
+            "swiftc",
+            "-parse-as-library",
+            "-swift-version",
+            "5",
+            "-target",
+            &format!("{arch}-apple-macosx11.0"),
+            "-O",
+            "-c",
+            "swift/meeting_capture.swift",
+            "-o",
+        ])
+        .arg(&object)
+        .status()
+        .unwrap();
+    assert!(status.success(), "Failed to compile meeting capture bridge");
+    let status = Command::new("libtool")
+        .args(["-static", "-o"])
+        .arg(out.join("libmeeting_capture.a"))
+        .arg(object)
+        .status()
+        .unwrap();
+    assert!(status.success());
+    println!("cargo:rustc-link-search=native={}", out.display());
+    println!("cargo:rustc-link-lib=static=meeting_capture");
+    for framework in [
+        "AVFoundation",
+        "CoreAudio",
+        "AudioToolbox",
+        "CoreMedia",
+        "Foundation",
+    ] {
+        println!("cargo:rustc-link-lib=framework={framework}");
+    }
+    println!("cargo:rustc-link-arg=-weak_framework");
+    println!("cargo:rustc-link-arg=ScreenCaptureKit");
     println!("cargo:rustc-link-arg=-Wl,-rpath,/usr/lib/swift");
 }
