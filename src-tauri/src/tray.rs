@@ -175,6 +175,29 @@ pub fn update_tray_menu(app: &AppHandle, state: &TrayIconState, locale: Option<&
         .expect("failed to create menu"),
     };
 
+    let has_meeting = app
+        .try_state::<Arc<crate::workspace::Workspace>>()
+        .is_some_and(|w| w.recording.lock().unwrap().is_some());
+    if has_meeting {
+        if let Ok(item) = MenuItem::with_id(
+            app,
+            "meeting_pause",
+            &strings.meeting_pause,
+            true,
+            None::<&str>,
+        ) {
+            let _ = menu.insert(&item, 1);
+        }
+        if let Ok(item) = MenuItem::with_id(
+            app,
+            "meeting_stop",
+            &strings.meeting_stop,
+            true,
+            None::<&str>,
+        ) {
+            let _ = menu.insert(&item, 2);
+        }
+    }
     let tray = app.state::<TrayIcon>();
     let _ = tray.set_menu(Some(menu));
     let _ = tray.set_icon_as_template(true);

@@ -8,8 +8,8 @@ use crate::settings::{get_settings, AppSettings, APPLE_INTELLIGENCE_PROVIDER_ID}
 use crate::shortcut;
 use crate::tray::{change_tray_icon, TrayIconState};
 use crate::utils::{
-    self, show_error_overlay, show_processing_overlay, show_recording_overlay,
-    show_success_overlay, show_transcribing_overlay,
+    self, show_empty_overlay, show_error_overlay_with_reason, show_processing_overlay,
+    show_recording_overlay, show_success_overlay_with_preview, show_transcribing_overlay,
 };
 use crate::TranscriptionCoordinator;
 use ferrous_opencc::{config::BuiltinConfig, OpenCC};
@@ -34,8 +34,9 @@ impl Drop for FinishGuard {
 
 fn handle_recording_start_failure(app: &AppHandle) {
     change_tray_icon(app, TrayIconState::Idle);
-    show_error_overlay(app);
-    utils::hide_recording_overlay_after(app, 1500);
+    show_error_overlay_with_reason(app, "recordingFailed");
+    play_feedback_sound(app, SoundType::Error);
+    utils::hide_recording_overlay_after(app, 1600);
 }
 
 pub(crate) struct ProcessedTranscription {
@@ -467,8 +468,9 @@ impl ShortcutAction for TranscribeAction {
         // Unmute before playing audio feedback so the stop sound is audible
         rm.remove_mute();
 
-        // Play audio feedback for recording stop
-        play_feedback_sound(app, SoundType::Stop);
+        // Fires at the moment the pipeline takes the audio, so this is the
+        // "transcribing" cue (it was named `stop` before the cue set grew).
+        play_feedback_sound(app, SoundType::Transcribing);
 
         let binding_id = binding_id.to_string(); // Clone binding_id for the async task
         let post_process = self.post_process;
@@ -569,8 +571,12 @@ impl ShortcutAction for TranscribeAction {
                                             "Text pasted successfully in {:?}",
                                             paste_time.elapsed()
                                         );
-                                        show_success_overlay(&ah_clone);
-                                        utils::hide_recording_overlay_after(&ah_clone, 1100);
+                                        show_success_overlay_with_preview(
+                                            &ah_clone,
+                                            &paste_text,
+                                        );
+                                        play_feedback_sound(&ah_clone, SoundType::Done);
+                                        utils::hide_recording_overlay_after(&ah_clone, 1500);
                                     }
                                     Err(e) => {
                                         error!("Failed to paste transcription: {}", e);
@@ -599,20 +605,33 @@ impl ShortcutAction for TranscribeAction {
                                                 copied_to_clipboard,
                                             },
                                         );
-                                        show_error_overlay(&ah_clone);
-                                        utils::hide_recording_overlay_after(&ah_clone, 1500);
+                                        show_error_overlay_with_reason(
+                                            &ah_clone,
+                                            if copied_to_clipboard {
+                                                "pasteCopied"
+                                            } else {
+                                                "pasteFailed"
+                                            },
+                                        );
+                                        play_feedback_sound(&ah_clone, SoundType::Error);
+                                        utils::hide_recording_overlay_after(&ah_clone, 2000);
                                     }
                                 }
                                 change_tray_icon(&ah_clone, TrayIconState::Idle);
                             })
                             .unwrap_or_else(|e| {
                                 error!("Failed to run paste on main thread: {:?}", e);
-                                show_error_overlay(&ah);
-                                utils::hide_recording_overlay_after(&ah, 1500);
+                                show_error_overlay_with_reason(&ah, "pasteFailed");
+                                play_feedback_sound(&ah, SoundType::Error);
+                                utils::hide_recording_overlay_after(&ah, 1800);
                                 change_tray_icon(&ah, TrayIconState::Idle);
                             });
                         } else {
-                            utils::hide_recording_overlay(&ah);
+                            // Nothing came back. This used to vanish silently, which
+                            // left the user unsure whether they had been heard.
+                            show_empty_overlay(&ah);
+                            play_feedback_sound(&ah, SoundType::Cancel);
+                            utils::hide_recording_overlay_after(&ah, 1600);
                             change_tray_icon(&ah, TrayIconState::Idle);
                         }
                     }
@@ -630,14 +649,17 @@ impl ShortcutAction for TranscribeAction {
                         {
                             error!("Failed to save failed transcription to history: {}", e);
                         }
-                        show_error_overlay(&ah);
-                        utils::hide_recording_overlay_after(&ah, 1500);
+                        show_error_overlay_with_reason(&ah, "transcriptionFailed");
+                        play_feedback_sound(&ah, SoundType::Error);
+                        utils::hide_recording_overlay_after(&ah, 2000);
                         change_tray_icon(&ah, TrayIconState::Idle);
                     }
                 }
             } else {
                 debug!("No samples retrieved from recording stop");
-                utils::hide_recording_overlay(&ah);
+                show_empty_overlay(&ah);
+                play_feedback_sound(&ah, SoundType::Cancel);
+                utils::hide_recording_overlay_after(&ah, 1600);
                 change_tray_icon(&ah, TrayIconState::Idle);
             }
         });

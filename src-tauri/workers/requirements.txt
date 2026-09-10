@@ -1,0 +1,5 @@
+# Resolved to a hash-locked requirements file by scripts/local-models/package-runtime.py.
+pyannote.audio>=4.0,<5
+qwen-asr>=0.0.6,<0.1
+soundfile>=0.13,<0.14
+pyinstaller>=6.16,<7

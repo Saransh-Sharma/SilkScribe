@@ -159,6 +159,13 @@ impl TranscriptionCoordinator {
 }
 
 fn start(app: &AppHandle, stage: &mut Stage, binding_id: &str, hotkey_string: &str) {
+    let workspace = app.try_state::<Arc<crate::workspace::Workspace>>();
+    let capture_guard = workspace.as_ref().map(|w| w.recording.lock().unwrap());
+    if capture_guard.as_ref().is_some_and(|guard| guard.is_some()) {
+        use tauri::Emitter;
+        let _ = app.emit("workspace-recording-conflict", ());
+        return;
+    }
     let Some(action) = ACTION_MAP.get(binding_id) else {
         warn!("No action in ACTION_MAP for '{binding_id}'");
         return;
