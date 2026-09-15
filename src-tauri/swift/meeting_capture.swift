@@ -22,6 +22,8 @@ private final class MeetingCapture: NSObject, SCStreamOutput, SCStreamDelegate {
     var error: String?
     var microphoneLevel = 0.0
     var systemLevel = 0.0
+    var lastMicrophoneBuffer = ProcessInfo.processInfo.systemUptime
+    var lastSystemBuffer = ProcessInfo.processInfo.systemUptime
     let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 16000, channels: 1, interleaved: false)!
     var micFrames: AVAudioFramePosition = 0
     var systemFrames: AVAudioFramePosition = 0
@@ -81,6 +83,8 @@ private final class MeetingCapture: NSObject, SCStreamOutput, SCStreamDelegate {
     }
     func write(_ buffer: AVAudioPCMBuffer, microphone: Bool, time: Double) {
         guard !finished, pausedAt == nil, buffer.frameLength > 0, let data = buffer.floatChannelData?[0] else { return }
+        let received = ProcessInfo.processInfo.systemUptime
+        if microphone { lastMicrophoneBuffer = received } else { lastSystemBuffer = received }
         let level = sqrt((0..<Int(buffer.frameLength)).reduce(Float(0)) { $0 + data[$1]*data[$1] } / Float(buffer.frameLength))
         if microphone { microphoneLevel = Double(min(1,level*5)) } else { systemLevel = Double(min(1,level*5)) }
         let target = max(0, AVAudioFramePosition((time-started-pausedDuration)*16000) - AVAudioFramePosition(buffer.frameLength))
@@ -97,7 +101,11 @@ private final class MeetingCapture: NSObject, SCStreamOutput, SCStreamDelegate {
             }
             try file?.write(from:buffer)
             if microphone { micFrames = max(current,target)+AVAudioFramePosition(buffer.frameLength) } else { systemFrames = max(current,target)+AVAudioFramePosition(buffer.frameLength) }
-        } catch { self.error = error.localizedDescription }
+        } catch {
+            self.error = "Recording paused because audio could not be saved: " + error.localizedDescription
+            pausedAt = ProcessInfo.processInfo.systemUptime
+            microphoneLevel = 0; systemLevel = 0
+        }
     }
     func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of type: SCStreamOutputType) {
         guard type == .audio, sampleBuffer.isValid, let description = sampleBuffer.formatDescription else { return }
@@ -114,11 +122,11 @@ private final class MeetingCapture: NSObject, SCStreamOutput, SCStreamDelegate {
         converter.convert(to:output,error:&e) { _,status in if used {status.pointee = .noDataNow;return nil};used=true;status.pointee = .haveData;return input }
         if let e=e {error=e.localizedDescription} else {write(output,microphone:false,time:time)}
     }
-    func stream(_ stream: SCStream, didStopWithError error: Error) { self.error = "Computer audio stopped: " + error.localizedDescription }
+    func stream(_ stream: SCStream, didStopWithError error: Error) { queue.async { self.error = "Computer audio stopped: " + error.localizedDescription } }
     func stop() async throws {
-        if let stream=stream { do { try await stream.stopCapture() } catch { self.error=error.localizedDescription } }
+        if let stream=stream { do { try await stream.stopCapture() } catch { queue.sync { self.error=error.localizedDescription } } }
         engine.inputNode.removeTap(onBus:0); engine.stop()
-        queue.sync { finished=true; micFile=nil;systemFile=nil }
+        queue.sync { if pausedAt == nil { pausedAt=ProcessInfo.processInfo.systemUptime }; finished=true; micFile=nil;systemFile=nil }
         let mic = try AVAudioFile(forReading:URL(fileURLWithPath:path+".mic.wav"))
         let system = try AVAudioFile(forReading:URL(fileURLWithPath:path+".system.wav"))
         let output = try AVAudioFile(forWriting:URL(fileURLWithPath:path),settings:format.settings)
@@ -171,12 +179,24 @@ private var capture: AnyObject?
     }
     guard let instance=capture as? MeetingCapture else {return response(["seconds":0,"paused":false])}
     if operation=="pause" { instance.queue.sync {if instance.pausedAt==nil {instance.pausedAt=ProcessInfo.processInfo.systemUptime}} }
-    if operation=="resume" { instance.queue.sync {if let time=instance.pausedAt {instance.pausedDuration += ProcessInfo.processInfo.systemUptime-time;instance.pausedAt=nil}} }
+    if operation=="resume" { instance.queue.sync {if let time=instance.pausedAt {
+        let now = ProcessInfo.processInfo.systemUptime
+        instance.pausedDuration += now-time;instance.pausedAt=nil
+        instance.lastMicrophoneBuffer=now;instance.lastSystemBuffer=now;instance.error=nil
+    }} }
     if operation=="stop" {
         let semaphore=DispatchSemaphore(value:0);var failure:String?
         Task { do {try await instance.stop()} catch {failure=error.localizedDescription};semaphore.signal() };semaphore.wait();capture=nil
         if let failure=failure {return response(["error":failure])}
         return response(["ok":true])
     }
-    return instance.queue.sync { response(["seconds":instance.elapsed,"paused":instance.pausedAt != nil,"microphone_level":instance.microphoneLevel,"system_level":instance.systemLevel,"error":instance.error as Any? ?? NSNull()]) }
+    return instance.queue.sync {
+        let now = ProcessInfo.processInfo.systemUptime
+        let paused = instance.pausedAt != nil
+        let microphoneStalled = !paused && now-instance.lastMicrophoneBuffer > 3
+        let microphoneLevel = paused || microphoneStalled ? 0 : instance.microphoneLevel
+        let systemLevel = paused || now-instance.lastSystemBuffer > 3 ? 0 : instance.systemLevel
+        let error = instance.error ?? (microphoneStalled ? "The microphone stopped delivering audio. Check the selected input, then pause and resume or save the recording." : nil)
+        return response(["seconds":instance.elapsed,"paused":paused,"microphone_level":microphoneLevel,"system_level":systemLevel,"error":error as Any? ?? NSNull()])
+    }
 }
