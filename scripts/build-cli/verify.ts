@@ -1,4 +1,5 @@
 import path from "node:path";
+import fs from "node:fs";
 import type {
   BuildPlan,
   CommandResult,
@@ -49,6 +50,37 @@ export function verificationCommands(
         ),
       });
       if (plan.mode === "distribution") {
+        for (const kind of ["speech", "notes"]) {
+          const runtime = path.join(
+            app,
+            "Contents/Resources/resources/local-runtime",
+            `${kind}-worker`,
+          );
+          // Existing Intel-only distributions do not contain premium workers.
+          // If any worker directory is shipped, its manifest and dependencies
+          // must verify; an incomplete bundle cannot silently skip this gate.
+          if (fs.existsSync(runtime)) {
+            commands.push({
+              name: `Embedded ${kind} runtime`,
+              spec: command(
+                "python3",
+                [
+                  path.join(root, "scripts/local-models/verify-runtime.py"),
+                  runtime,
+                  "--signed-app",
+                  app,
+                  "--offline-health",
+                  "--output",
+                  path.join(
+                    plan.artifactDirectory,
+                    `${kind}-runtime-verification.json`,
+                  ),
+                ],
+                root,
+              ),
+            });
+          }
+        }
         commands.push({
           name: "macOS app stapling",
           spec: command("xcrun", ["stapler", "validate", app], root),

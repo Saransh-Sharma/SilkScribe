@@ -1,55 +1,39 @@
 # Implementation status
 
-## Implemented and exercised
+Updated 15 September 2026. See the [current implementation matrix](../../docs/product/workspace-implementation-status.md) for completed features and remaining acceptance work.
 
-- Home / Library / Settings workspace, persistent creation actions and status.
-- Search, source filters, saved state, editable transcript, speaker names/merges,
-  playback controls, evidence-linked editable notes, stale notes and exports.
-- SQLite migration/indexing of dictation history; durable job stages and retries.
-- Native decoder, copied imports, cancellation and managed audio deletion.
-- Pinned public model manifests, hashes, resumable downloads and atomic installs.
-- Separate packaged speech and MLX runtimes; basic Qwen ASR/aligner and 9B notes
-  inference passed with networking denied. Bundled MLX shader layout repaired.
-- Qwen and native-ASR atomic recovery checkpoints, with model selection frozen
-  for native jobs; Qwen chunk scheduling and dictation priority when
-  waiting for the shared inference lock. Current chunk completion is required.
+## Executed checks
 
-## Implemented, awaiting real-world validation
+- 108 Rust tests pass, including all five native audio decoders, interrupted recordings, durable import batches/receipts and drafts, original-text exports, note review, fallback language capabilities and memory observation invalidation.
+- 65 Playwright journeys pass, including five real audio playback containers, managed-draft recovery, batch recovery, bulk speaker corrections, section replacement, export previews, Arabic RTL and a four-hour transcript fixture.
+- Frontend build, lint and strict translation checks pass. Seven worker tests, four draft/save-queue/progress tests, five evaluation tests and a runtime-fingerprint test pass.
+- The isolated 6,000-turn editor fixture measured 26 ms p95 over 12 edits; this is browser rendering latency, not native storage or multi-hour audio processing performance.
+- Packaged Qwen ASR/aligner, Qwen3.5-9B and Qwen3.6-27B notes have passed basic inference with networking denied. The signed 27B worker also passes. These are tiny English smoke fixtures, not quality benchmarks.
+- Both workers were signed with Developer ID and passed dependency import checks. Runtime manifests fingerprint all dependency files and invalidate old memory observations when the runtime changes.
+- The final Developer ID app builds and passes outer deep/strict signature verification. Packaging corrects Python aliases that Tauri otherwise copies with invalid framework-bound signatures. App-contained notes verification passes: 89 nested signatures, 3,567 manifest records and dependency startup under network denial. App-contained speech verification also passes: 545 signatures, 7,088 manifest records and startup under network denial. Both inventories contain exactly the declared files.
+- The separate build-tool suite reports 27 passes and two command-runner output tests failing under Bun's test runner. The same runner succeeds in a standalone probe; this discrepancy remains unresolved and is not counted as a passing release check.
+- Notarization was skipped because the build environment lacks a configured app-specific password or App Store Connect API credentials. Signing identity is available; signing and notarization are separate checks.
 
-- ScreenCaptureKit plus microphone recording, meters, pause/resume, tray controls,
-  separate recovery tracks and microphone voice processing.
-- Community-1 adapter retaining overlapping and exclusive speaker assignments.
-- Hierarchical notes for long transcripts and all supported input/export formats.
-  Notes now checkpoint after each generation and unload between steps.
-- Development app packaging. Developer ID signing/notarization not exercised.
+Model settings now perform real packaged dependency checks with a 240-second process timeout, serialized inference admission and success caching by runtime fingerprint. Catalog rendering is independent of the check. A failed check reports its error; missing binaries retain the setup guidance. Checks are deferred until model settings are opened. The new browser journey covers failure and continued navigation.
 
-## Remaining implementation
+## Remaining
 
-- Yielding during long diarization stages without losing recording-wide
-  speaker identity.
-- Measured memory recommendations and current-memory-headroom admission.
-- Full translations for new workspace strings (English fallback currently works).
-- Broader automated import/export, crash, disk exhaustion and recording recovery
-  coverage; device-loss/sleep behavior needs hardware verification.
+Community-1 needs the owner's complete published offline bundle. Annotated meeting benchmarks, quantization/acceleration parity, real hardware capture fault tests, VoiceOver, native webview codec validation, clean-machine offline launch and preserved cross-platform functionality remain acceptance gates. Remaining software items are listed in the implementation matrix; the full goal is not complete.
 
-## External release dependencies
+Use [evaluation instructions](EVALUATION.md) to score saved local predictions without conflating valid source references with factual support.
 
-- Publish the complete Community-1 bundle and generated server manifest.
-- Annotated meeting corpus, multi-hour tests and full-precision/quantized parity
-  benchmarks, including accents, overlapping voices and mixed languages.
-- Signing credentials and clean-machine installation/notarization verification.
+Distribution verification now automatically gates shipped worker directories on full manifest/signature verification and offline dependency startup, using the outer app’s Developer ID team. Seven artifact-verification tests pass, including incomplete-worker directory coverage. The two separate command-runner tests remain unresolved; changing process APIs did not fix the descriptor failure and that experiment was removed.
 
-Do not equate successful smoke tests with completed quality benchmarking or
-claim the entire original plan is release-ready.
+Subtitle acceptance passes with ffprobe for SRT and VTT, including overlapping cues and hour-long offsets. Progress events now include version, stage and transcript revision; the frontend rejects stale/invalid updates and regressive within-stage percentages.
 
-## Latest continuation validation
+Draft staging coalesces superseded pending snapshots while preserving staging-before-commit order. Slow-storage tests exercise 100 rapid edits. Qwen speech and local notes checkpoints now include the packaged runtime fingerprint, so upgrades cannot mix worker/dependency versions within a resumed job. The workspace browser suite passes all 28 journeys after the draft change.
 
-80 Rust tests, six Python worker tests, all 29 Playwright tests, frontend build,
-and lint pass. The updated development macOS bundle builds. Rebuilt packaged
-speech inference passes with networking denied, including a fixture beginning
-at 120 seconds whose timestamps retain the original recording offset.
+Capture finalization/recovery and import runtime preflight are now hardened as described in the implementation matrix.
 
-The packaged notes worker also passes network-denied step-mode inference.
-A six-test worker suite covers checkpoint round trips and one-generation-per-step
-hierarchical reduction. Successful jobs discard checkpoints only after the final
-document is saved. Multi-hour note factuality remains unbenchmarked.
+Import cancellation now propagates into dependency-check worker execution and cancellable health-cache admission, instead of merely preventing the subsequent copy. A lock-contention regression test confirms cancellation completes without waiting for the existing health check.
+
+Home now surfaces a separate Needs attention group for failed/interrupted jobs and completed transcripts with optional-stage failures. It uses a dedicated Library query and filter, so recovery work does not depend on the recent-transcript page. Cancelled jobs remain available in Library without automatically demanding attention. Backend filter coverage and the Home-to-filtered-Library journey pass.
+
+Settings now has six primary workflow groups. Advanced output/transcription and experimental controls are embedded under Dictation; startup/overlay under Appearance; runtime acceleration/unloading under Models & language; and support under Storage & privacy. Processing/debug panels remain conditional disclosures. The 65-journey suite and a new six-group navigation test pass.
+
+The 15 September signed debug app was rebuilt with consolidated Settings, Home attention items and saved note evidence. Strict outer signature verification passes; embedded speech (545 signatures / 7,088 records) and notes (89 signatures / 3,567 records) pass hash/signature verification and network-denied dependency startup. This build remains unnotarized. Latest executed checks: 110 Rust tests, 67 browser journeys, four frontend units, seven worker tests, seven artifact verification tests and two smoke preparation tests pass. The separately documented command-runner test failures are not represented as resolved.

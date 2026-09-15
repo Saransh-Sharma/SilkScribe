@@ -2,9 +2,29 @@
 """Build the embedded, relocatable inference worker. Run with Python 3.11–3.13.
 Release builds require --identity. All nested Mach-O binaries are signed inside-out.
 """
-import argparse, json, os, pathlib, platform, shutil, subprocess, sys
+import argparse, hashlib, json, os, pathlib, platform, shutil, subprocess, sys
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 def run(*args, **kwargs): subprocess.run([str(a) for a in args], check=True, **kwargs)
+def write_manifest(bundle, kind):
+    """Fingerprint shipped bytes, including dependencies and symlink targets."""
+    files = []
+    for path in sorted(bundle.rglob('*')):
+        if path.name == 'runtime-manifest.json' and path.parent == bundle:
+            continue
+        relative = path.relative_to(bundle).as_posix()
+        if path.is_symlink():
+            files.append({'path': relative, 'symlink': os.readlink(path)})
+        elif path.is_file():
+            digest = hashlib.sha256()
+            with path.open('rb') as stream:
+                for block in iter(lambda: stream.read(1024 * 1024), b''):
+                    digest.update(block)
+            files.append({'path': relative, 'bytes': path.stat().st_size, 'sha256': digest.hexdigest()})
+    fingerprint = hashlib.sha256(json.dumps(files, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+    (bundle/'runtime-manifest.json').write_text(json.dumps({
+        'schema': 'silkscribe.runtime', 'version': 1, 'kind': kind,
+        'sha256': fingerprint, 'files': files,
+    }, indent=2) + '\n')
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--identity',default=os.environ.get('APPLE_SIGNING_IDENTITY','-'))
@@ -29,6 +49,21 @@ def main():
         run(python,'-m','PyInstaller','--noconfirm','--onedir','--name',args.kind+'-worker','--distpath',destination,'--workpath',work/'pyinstaller','--specpath',work,
             *collect, ROOT/'src-tauri/workers/worker.py')
     bundle=destination/(args.kind+'-worker')
+    # Tauri dereferences resource symlinks. Sign the top-level Python alias as
+    # a standalone binary: its framework signature binds a nearby Info.plist
+    # that does not exist beside the alias after copying into app resources.
+    python_alias = bundle/'_internal/Python'
+    if python_alias.is_symlink():
+        target = python_alias.resolve(strict=True)
+        python_alias.unlink()
+        shutil.copy2(target, python_alias)
+    # The worker loads the standalone Python above. Keep the canonical version
+    # and its metadata, but omit framework aliases that Tauri would flatten into
+    # additional incorrectly located signed binaries.
+    framework = bundle/'_internal/Python.framework'
+    for alias in framework.rglob('*'):
+        if alias.is_symlink():
+            alias.unlink()
     # Tauri dereferences the root libmlx symlink; MLX locates its shaders beside
     # the loaded dylib, so preserve a copy at both possible loading locations.
     if args.kind=='notes':
@@ -44,9 +79,14 @@ def main():
         command=['codesign','--force','--sign',args.identity,'--entitlements',str(entitlements)]
         if args.identity!='-':command.extend(['--options','runtime','--timestamp'])
         run(*command,path)
+        run('codesign','--verify','--strict',path)
     binary=bundle/(args.kind+'-worker')
     result=subprocess.run([str(binary)],input=json.dumps({'protocol':1,'task':'health','kind':args.kind})+'\n',text=True,capture_output=True,timeout=240)
     if result.returncode:raise SystemExit('Packaged worker health check failed:\n'+result.stdout+'\n'+result.stderr[-4000:])
+    response=json.loads(result.stdout)
+    if response.get('protocol')!=1 or response.get('result',{}).get('ready') is not True:
+        raise SystemExit('Packaged worker did not confirm runtime readiness')
+    write_manifest(bundle, args.kind)
     print(result.stdout)
     print('Runtime packaged at',bundle)
     if args.identity=='-':print('Ad-hoc development signature only. Rebuild with --identity for distribution.')

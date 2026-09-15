@@ -136,6 +136,38 @@ describe("artifacts and verification", () => {
     delete process.env.AZURE_CLIENT_SECRET;
   });
 
+  test("distribution verifies every embedded runtime even without a manifest", () => {
+    const { root } = fixture();
+    const plan = createBuildPlan({
+      root,
+      command: "build",
+      platform: "macos",
+      mode: "distribution",
+      arch: "aarch64",
+      version: "1.2.3",
+    });
+    const app = path.join(root, "SilkScribe.app");
+    for (const kind of ["speech", "notes"]) {
+      fs.mkdirSync(
+        path.join(
+          app,
+          "Contents/Resources/resources/local-runtime",
+          `${kind}-worker`,
+        ),
+        { recursive: true },
+      );
+    }
+    const checks = verificationCommands(plan, [app], root).filter((c) =>
+      c.name.startsWith("Embedded"),
+    );
+    expect(checks).toHaveLength(2);
+    for (const check of checks) {
+      expect(check.spec.args).toContain("--offline-health");
+      expect(check.spec.args).toContain("--signed-app");
+      expect(check.spec.args).toContain(app);
+    }
+  });
+
   test("writes manifest metadata", async () => {
     const { root, plan } = fixture();
     fs.mkdirSync(plan.artifactDirectory, { recursive: true });

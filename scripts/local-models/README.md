@@ -61,6 +61,8 @@ bun run lint
 bunx playwright test
 python3 scripts/local-models/smoke.py --task notes --download
 python3 scripts/local-models/smoke.py --task transcribe --audio /absolute/fixture.wav --download
+# After publishing and integrating the complete Community-1 manifest:
+python3 scripts/local-models/smoke.py --task diarize --audio /absolute/fixture.wav --download
 ```
 
 Smoke tests run the packaged executable under a macOS sandbox that denies all
@@ -92,19 +94,21 @@ capture, permission revocation, device removal, sleep, and loudspeaker echo on
 hardware. Apple's voice processing is enabled for microphone capture, but echo
 quality has not been certified. Validate multi-hour recordings, full-precision
 versus quantized accuracy, supported-language word error and diarization error,
-peak memory, and Developer ID notarized clean-machine startup. New workspace
-copy currently uses English fallback in other locales; existing translated UI
-remains available.
+peak memory, and Developer ID notarized clean-machine startup. Workspace and player copy now covers all 17 locales. Structural checks pass;
+native-language review is still required.
 
 ## Current validation (Apple Silicon development build)
 
-80 Rust tests and 29 Playwright journeys passed, along with frontend build,
-lint and translation-key checks. The packaged Qwen ASR + forced aligner
-transcribed a synthetic English fixture with network access denied. The
-packaged Qwen3.5-9B MLX worker generated valid evidence-linked notes under the
-same network restriction. This proves startup and basic inference, not meeting
-accuracy, quantization parity, or multi-hour performance. The 27B and Community-1
-artifacts have not been inference-benchmarked here.
+See [implementation status](IMPLEMENTATION-STATUS.md) for current counts. Packaged
+Qwen ASR/aligner, Qwen3.5-9B and Qwen3.6-27B notes pass basic inference with
+network access denied. These smoke tests do not establish meeting accuracy,
+quantization parity or multi-hour inference performance. Community-1 still needs
+the publisher's bundle. See [evaluation instructions](EVALUATION.md) for scoring
+annotated local results and recording provenance.
+
+```sh
+python3 scripts/local-models/smoke.py --task notes --notes-model qwen3.6-27b --step --download
+```
 
 Native and external inference share a lock and unload the native model before
 worker stages. Qwen transcription now releases the worker and inference lock
@@ -116,11 +120,41 @@ before processing so changing dictation settings does not mix models. A worker
 must finish its current chunk before yielding. Notes checkpoint and
 unload between each generation/consolidation step; diarization still holds the
 lock for its whole stage. Notes checkpoints include the transcript, speaker
-names, and installed model revision, so edits invalidate stale work. Memory
-guidance is not yet a measured recommendation.
+names, and installed model revision, so edits invalidate stale work. Local notes-worker peak-memory observations now inform admission against
+current available memory, with a 20% allowance. Unmeasured first runs are labeled
+as such. Observations are keyed to model installation and runtime metadata; they
+are not certified reference-hardware recommendations or guaranteed bounds.
 
 For a development app without updater credentials:
 
 ```sh
-CMAKE_POLICY_VERSION_MINIMUM=3.5 bunx tauri build --debug --bundles app --no-sign --config '{"bundle":{"createUpdaterArtifacts":false}}'
+CARGO_INCREMENTAL=0 CMAKE_POLICY_VERSION_MINIMUM=3.5 bunx tauri build --debug --bundles app --no-sign --config '{"bundle":{"createUpdaterArtifacts":false}}'
 ```
+
+## Verify signed embedded runtimes
+
+Packaging now writes `runtime-manifest.json` after signing, hashing every file
+and recording symlinks. It materializes the standalone Python alias before
+signing because Tauri dereferences resource symlinks. A framework-bound
+signature copied to that standalone path is invalid even when the outer app
+passes `codesign --deep`.
+
+Run this for both `notes-worker` and `speech-worker` in the built app, using the
+actual Developer ID team. It verifies hashes, nested signatures and dependency
+startup under network denial, and produces a machine-readable report:
+
+```sh
+python3 scripts/local-models/verify-runtime.py \
+  src-tauri/target/debug/bundle/macos/SilkScribe.app/Contents/Resources/resources/local-runtime/notes-worker \
+  --team YOUR_TEAM_ID --offline-health --output .build/bundled-notes-runtime-verification.json
+```
+
+This is a separate release check from outer app signing, notarization and
+clean-machine launch. Do not accept a package based solely on its outer signature.
+
+The distribution build CLI automatically runs embedded runtime verification for
+both worker directories when present. It derives the required team from the
+signed app, requires each manifest, checks every nested signature and executes
+offline health checks before accepting artifacts. Reports are saved beside the
+build manifest. Legacy packages without premium runtime directories retain their
+existing platform verification.
