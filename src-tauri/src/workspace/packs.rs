@@ -50,11 +50,21 @@ pub fn catalog(app: &tauri::AppHandle) -> Result<Vec<ModelPack>> {
             .ok()
             .and_then(|s| serde_json::from_slice::<ModelPack>(&s).ok())
             .is_some_and(|p| {
-                p.revision == pack.revision
+                p.id == pack.id
+                    && p.revision == pack.revision
                     && !p.artifacts.is_empty()
+                    && p.artifacts.len() == pack.artifacts.len()
                     && p.artifacts
                         .iter()
-                        .all(|a| root.join(&pack.id).join(&a.path).is_file())
+                        .zip(&pack.artifacts)
+                        .all(|(installed, expected)| {
+                            installed.path == expected.path
+                                && installed.sha256 == expected.sha256
+                                && installed.bytes == expected.bytes
+                                && valid_relative(&expected.path)
+                                && std::fs::metadata(root.join(&pack.id).join(&expected.path))
+                                    .is_ok_and(|m| m.is_file() && m.len() == expected.bytes)
+                        })
             });
     }
     Ok(packs)
@@ -75,7 +85,11 @@ pub fn model_path(app: &tauri::AppHandle, id: &str) -> Result<PathBuf> {
         .join("local-models")
         .join(id))
 }
-pub async fn install(app: tauri::AppHandle, id: String) -> Result<()> {
+pub async fn install(
+    app: tauri::AppHandle,
+    id: String,
+    cancelled: &std::sync::atomic::AtomicBool,
+) -> Result<()> {
     let pack = catalog(&app)?
         .into_iter()
         .find(|p| p.id == id)
@@ -106,6 +120,9 @@ pub async fn install(app: tauri::AppHandle, id: String) -> Result<()> {
 
     let mut complete = 0u64;
     for artifact in &pack.artifacts {
+        if cancelled.load(std::sync::atomic::Ordering::Relaxed) {
+            bail!("Download paused. Partial files are saved; choose Resume to continue.");
+        }
         if !valid_relative(&artifact.path)
             || artifact.path == "installed.json"
             || artifact.sha256.len() != 64
@@ -147,6 +164,10 @@ pub async fn install(app: tauri::AppHandle, id: String) -> Result<()> {
                 .truncate(!append)
                 .open(&path)?;
             while let Some(chunk) = response.chunk().await? {
+                if cancelled.load(std::sync::atomic::Ordering::Relaxed) {
+                    file.sync_all()?;
+                    bail!("Download paused. Partial files are saved; choose Resume to continue.");
+                }
                 file.write_all(&chunk)?;
                 offset += chunk.len() as u64;
                 if offset > artifact.bytes {
@@ -209,5 +230,72 @@ mod tests {
             assert!(!valid_relative(p));
         }
         assert!(valid_relative("embedding/model.safetensors"));
+    }
+}
+
+#[derive(Serialize, specta::Type)]
+pub struct PackVerification {
+    pub valid: bool,
+    pub damaged: Vec<String>,
+}
+pub fn verify_at(root: &Path, pack: &ModelPack) -> Result<PackVerification> {
+    let mut damaged = Vec::new();
+    for artifact in &pack.artifacts {
+        if !valid_relative(&artifact.path) {
+            bail!("Invalid model artifact path");
+        }
+        let valid = (|| -> Result<bool> {
+            let mut file = std::fs::File::open(root.join(&artifact.path))?;
+            if file.metadata()?.len() != artifact.bytes {
+                return Ok(false);
+            }
+            let mut hash = Sha256::new();
+            let mut buffer = [0u8; 65536];
+            loop {
+                let n = file.read(&mut buffer)?;
+                if n == 0 {
+                    break;
+                }
+                hash.update(&buffer[..n]);
+            }
+            Ok(format!("{:x}", hash.finalize()) == artifact.sha256.to_lowercase())
+        })()
+        .unwrap_or(false);
+        if !valid {
+            damaged.push(artifact.path.clone());
+        }
+    }
+    Ok(PackVerification {
+        valid: !pack.artifacts.is_empty() && damaged.is_empty(),
+        damaged,
+    })
+}
+#[cfg(test)]
+mod verification_tests {
+    use super::*;
+    #[test]
+    fn same_size_corruption_fails_verification() {
+        let dir = tempfile::tempdir().unwrap();
+        let artifact = Artifact {
+            path: "model.bin".into(),
+            url: "https://example.test/model.bin".into(),
+            sha256: format!("{:x}", Sha256::digest(b"good")),
+            bytes: 4,
+        };
+        let pack = ModelPack {
+            id: "test".into(),
+            name: "Test".into(),
+            purpose: "notes".into(),
+            revision: "one".into(),
+            license: "test".into(),
+            languages: vec![],
+            artifacts: vec![artifact],
+            minimum_memory_gb: 1,
+            installed: true,
+        };
+        std::fs::write(dir.path().join("model.bin"), b"good").unwrap();
+        assert!(verify_at(dir.path(), &pack).unwrap().valid);
+        std::fs::write(dir.path().join("model.bin"), b"oops").unwrap();
+        assert!(!verify_at(dir.path(), &pack).unwrap().valid);
     }
 }
