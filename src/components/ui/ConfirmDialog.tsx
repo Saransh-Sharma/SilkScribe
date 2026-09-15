@@ -10,6 +10,9 @@ interface ConfirmDialogProps {
   confirmLabel: string;
   cancelLabel: string;
   destructive?: boolean;
+  children?: React.ReactNode;
+  confirmDisabled?: boolean;
+  kind?: "alertdialog" | "dialog";
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -21,6 +24,9 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   confirmLabel,
   cancelLabel,
   destructive = false,
+  children,
+  confirmDisabled = false,
+  kind = "alertdialog",
   onConfirm,
   onCancel,
 }) => {
@@ -63,7 +69,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       if (event.key !== "Tab" || !dialogRef.current) return;
 
       const focusableElements = dialogRef.current.querySelectorAll<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])',
       );
       const firstElement = focusableElements[0];
       const lastElement = focusableElements[focusableElements.length - 1];
@@ -96,22 +102,24 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     >
       <div
         ref={dialogRef}
-        role="alertdialog"
+        role={kind}
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={descriptionId}
         className="ss-dialog-panel w-full max-w-[420px] rounded-[var(--ss-radius-lg)] border border-ss-border-default bg-ss-bg-surface p-5 text-ss-text-primary shadow-[var(--ss-shadow-lift)]"
       >
         <div className="flex items-start gap-3">
-          <div
-            className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--ss-radius-md)] border ${
-              destructive
-                ? "border-ss-state-danger/20 bg-ss-state-danger/10 text-ss-state-danger"
-                : "border-ss-state-warning/20 bg-ss-state-warning/10 text-ss-state-warning"
-            }`}
-          >
-            <AlertTriangle className="h-4 w-4" aria-hidden="true" />
-          </div>
+          {kind === "alertdialog" && (
+            <div
+              className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--ss-radius-md)] border ${
+                destructive
+                  ? "border-ss-state-danger/20 bg-ss-state-danger/10 text-ss-state-danger"
+                  : "border-ss-state-warning/20 bg-ss-state-warning/10 text-ss-state-warning"
+              }`}
+            >
+              <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+            </div>
+          )}
           <div className="min-w-0">
             <h2 id={titleId} className="text-base font-semibold">
               {title}
@@ -124,6 +132,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             </p>
           </div>
         </div>
+        {children}
         <div className="mt-5 flex justify-end gap-2">
           <Button
             ref={cancelButtonRef}
@@ -139,6 +148,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             variant={destructive ? "danger" : "primary"}
             size="sm"
             onClick={onConfirm}
+            disabled={confirmDisabled}
           >
             {confirmLabel}
           </Button>

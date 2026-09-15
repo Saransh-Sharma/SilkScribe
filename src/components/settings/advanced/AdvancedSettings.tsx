@@ -25,7 +25,16 @@ import { LazyStreamClose } from "../LazyStreamClose";
 import { LogDirectory } from "../debug";
 import { AppPage, DisclosureSection } from "../../ui";
 
-export const AdvancedSettings: React.FC = () => {
+export const AdvancedSettings: React.FC<{
+  group?:
+    | "app"
+    | "output"
+    | "transcription"
+    | "history"
+    | "support"
+    | "experimental"
+    | "runtime";
+}> = ({ group }) => {
   const { t } = useTranslation();
   const { getSetting } = useSettings();
   const experimentalEnabled = getSetting("experimental_enabled") || false;
@@ -39,13 +48,9 @@ export const AdvancedSettings: React.FC = () => {
     pasteMethod === "ctrl_shift_v" ||
     pasteMethod === "shift_insert";
 
-  return (
-    <AppPage
-      eyebrow={t("settings.advanced.eyebrow")}
-      title={t("settings.advanced.pageTitle")}
-      description={t("settings.advanced.pageDescription")}
-    >
-      <div className="space-y-4">
+  const content = (
+    <div className="space-y-4">
+      {(!group || group === "app") && (
         <DisclosureSection
           title={t("settings.advanced.groups.app")}
           description={t("settings.advanced.groupDescriptions.app")}
@@ -58,9 +63,10 @@ export const AdvancedSettings: React.FC = () => {
           {overlayEnabled ? (
             <OverlayAppearance descriptionMode="inline" grouped={true} />
           ) : null}
-          <ModelUnloadTimeoutSetting descriptionMode="inline" grouped={true} />
         </DisclosureSection>
+      )}
 
+      {(!group || group === "output") && (
         <DisclosureSection
           title={t("settings.advanced.groups.output")}
           description={t("settings.advanced.groupDescriptions.output")}
@@ -75,16 +81,25 @@ export const AdvancedSettings: React.FC = () => {
           ) : null}
           <TypingToolSetting descriptionMode="inline" grouped={true} />
         </DisclosureSection>
+      )}
 
+      {(!group || group === "transcription") && (
         <DisclosureSection
           title={t("settings.advanced.groups.transcription")}
           description={t("settings.advanced.groupDescriptions.transcription")}
         >
-          <AccelerationSelector descriptionMode="inline" grouped={true} />
           <CustomWords descriptionMode="inline" grouped />
           <AppendTrailingSpace descriptionMode="inline" grouped={true} />
         </DisclosureSection>
+      )}
 
+      {(!group || group === "runtime") && (
+        <DisclosureSection title={t("workspace.modelsLanguage")}>
+          <ModelUnloadTimeoutSetting descriptionMode="inline" grouped />
+          <AccelerationSelector descriptionMode="inline" grouped />
+        </DisclosureSection>
+      )}
+      {(!group || group === "history") && (
         <DisclosureSection
           title={t("settings.advanced.groups.history")}
           description={t("settings.advanced.groupDescriptions.history")}
@@ -95,7 +110,9 @@ export const AdvancedSettings: React.FC = () => {
             grouped={true}
           />
         </DisclosureSection>
+      )}
 
+      {(!group || group === "support") && (
         <DisclosureSection
           title={t("settings.advanced.groups.support")}
           description={t("settings.advanced.groupDescriptions.support")}
@@ -104,7 +121,9 @@ export const AdvancedSettings: React.FC = () => {
           <AppDataDirectory descriptionMode="inline" grouped={true} />
           <LogDirectory descriptionMode="inline" grouped={true} />
         </DisclosureSection>
+      )}
 
+      {(!group || group === "experimental") && (
         <DisclosureSection
           title={t("settings.advanced.groups.experimental")}
           description={t("settings.advanced.groupDescriptions.experimental")}
@@ -122,7 +141,18 @@ export const AdvancedSettings: React.FC = () => {
             </>
           ) : null}
         </DisclosureSection>
-      </div>
+      )}
+    </div>
+  );
+  return group ? (
+    content
+  ) : (
+    <AppPage
+      eyebrow={t("settings.advanced.eyebrow")}
+      title={t("settings.advanced.pageTitle")}
+      description={t("settings.advanced.pageDescription")}
+    >
+      {content}
     </AppPage>
   );
 };

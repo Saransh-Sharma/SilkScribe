@@ -1,3 +1,4 @@
+import { AdvancedSettings } from "../settings/advanced/AdvancedSettings";
 import { useTranslation } from "react-i18next";
 import { SettingsGroup } from "../ui/SettingsGroup";
 import { ShortcutInput } from "../settings/ShortcutInput";
@@ -9,7 +10,6 @@ import { ThemeSelector } from "../settings/ThemeSelector";
 import { AppLanguageSelector } from "../settings/AppLanguageSelector";
 import { HistoryLimit } from "../settings/HistoryLimit";
 import { RecordingRetentionPeriodSelector } from "../settings/RecordingRetentionPeriod";
-import { AppDataDirectory } from "../settings/AppDataDirectory";
 import { useSettings } from "@/hooks/useSettings";
 export function Preferences({
   page,
@@ -51,10 +51,18 @@ export function Preferences({
               descriptionMode="inline"
               grouped
             />
-            <AppDataDirectory descriptionMode="inline" grouped />
           </SettingsGroup>
         </>
       )}
+      {page === "general" && (
+        <>
+          <AdvancedSettings group="output" />
+          <AdvancedSettings group="transcription" />
+          <AdvancedSettings group="experimental" />
+        </>
+      )}
+      {page === "appearance" && <AdvancedSettings group="app" />}
+      {page === "history" && <AdvancedSettings group="support" />}
     </div>
   );
 }

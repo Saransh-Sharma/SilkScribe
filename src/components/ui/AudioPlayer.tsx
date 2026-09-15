@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { Play, Pause } from "lucide-react";
 
 interface AudioPlayerProps {
@@ -31,6 +32,12 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   mediaRef,
   onTimeChange,
 }) => {
+  const { t } = useTranslation();
+  const [error, setError] = useState(false);
+  useEffect(() => {
+    setLoadedSrc(initialSrc ?? null);
+    setError(false);
+  }, [initialSrc]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -111,6 +118,14 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 
     const handlePlay = () => setIsPlaying(true);
     const handlePause = () => setIsPlaying(false);
+    const handleError = () => {
+      setError(true);
+      setIsPlaying(false);
+      setIsLoading(false);
+    };
+    const handleTime = () => onTimeChangeRef.current?.(audio.currentTime);
+    audio.addEventListener("error", handleError);
+    audio.addEventListener("seeked", handleTime);
 
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);
     audio.addEventListener("ended", handleEnded);
@@ -118,6 +133,8 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     audio.addEventListener("pause", handlePause);
 
     return () => {
+      audio.removeEventListener("error", handleError);
+      audio.removeEventListener("seeked", handleTime);
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
       audio.removeEventListener("ended", handleEnded);
       audio.removeEventListener("play", handlePlay);
@@ -262,6 +279,19 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 
   return (
     <div className={`flex items-center ${containerGapClass} ${className}`}>
+      {error && (
+        <span role="alert">
+          {t("audioPlayer.error")}{" "}
+          <button
+            onClick={() => {
+              setError(false);
+              audioRef.current?.load();
+            }}
+          >
+            {t("audioPlayer.retry")}
+          </button>
+        </span>
+      )}
       <audio
         ref={(element) => {
           (
@@ -277,7 +307,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
         onClick={togglePlay}
         disabled={isLoading}
         className={`inline-flex ${buttonSizeClass} items-center justify-center rounded-full border border-transparent text-ss-text-secondary transition-[background-color,border-color,color,transform] duration-150 hover:-translate-y-0.5 hover:border-ss-brand-secondary/25 hover:bg-ss-brand-secondary/10 hover:text-ss-brand-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/40 disabled:cursor-not-allowed disabled:opacity-50`}
-        aria-label={isPlaying ? "Pause" : "Play"}
+        aria-label={t(isPlaying ? "audioPlayer.pause" : "audioPlayer.play")}
       >
         {isPlaying ? (
           <Pause
@@ -305,6 +335,8 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 
         <input
           type="range"
+          aria-label={t("audioPlayer.seek")}
+          aria-valuetext={`${formatTime(currentTime)} / ${formatTime(duration)}`}
           min="0"
           max={duration || 0}
           step="0.01"
