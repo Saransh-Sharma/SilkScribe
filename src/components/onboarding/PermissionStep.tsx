@@ -1,12 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  ArrowUp,
-  Check,
-  Keyboard,
-  Loader2,
-  Mic,
-  ShieldCheck,
-} from "lucide-react";
+import { Check, Keyboard, Loader2, Mic, ShieldCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   checkAccessibilityPermission,
@@ -49,10 +42,13 @@ const REQUESTERS = {
   accessibility: requestAccessibilityPermission,
 } as const;
 
-const isActiveGuidanceState = (status: PermissionStatus) =>
-  status === "needed" ||
-  status === "requesting" ||
-  status === "waiting_for_user";
+const STEP_COUNTS = {
+  microphone: 2,
+  accessibility: 3,
+} as const;
+
+const showsManualHint = (status: PermissionStatus) =>
+  status === "needed" || status === "error" || status === "waiting_for_user";
 
 export const getErrorMessage = (error: unknown) =>
   error instanceof Error ? error.message : String(error);
@@ -64,34 +60,26 @@ interface PermissionVisualProps {
 
 const PermissionValuePanel = ({
   permission,
-  status,
-}: PermissionVisualProps) => {
+}: {
+  permission: PermissionKind;
+}) => {
   const { t } = useTranslation();
   const Icon = ICONS[permission];
+  const steps = Array.from(
+    { length: STEP_COUNTS[permission] },
+    (_, index) => index + 1,
+  );
 
   return (
     <section className="flex min-h-0 flex-col p-2 lg:p-4">
-      <div className="flex items-start gap-4">
-        <div className="ss-onboarding-float flex h-14 w-14 shrink-0 items-center justify-center rounded-[20px] bg-ss-brand-highlight/16 text-ss-brand-primary shadow-[var(--ss-shadow-card)]">
-          <Icon className="h-6 w-6" />
-        </div>
-        <div className="min-w-0">
-          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-ss-brand-secondary">
-            {t(`onboarding.permissions.${permission}.needLabel`)}
-          </p>
-          <p className="mt-2 text-lg font-semibold leading-tight text-ss-text-primary">
-            {t(`onboarding.permissions.${permission}.whyItMattersTitle`)}
-          </p>
-          <p className="mt-2 text-sm leading-relaxed text-ss-text-secondary">
-            {t(`onboarding.permissions.${permission}.whyItMattersBody`)}
-          </p>
-        </div>
+      <div className="ss-onboarding-float flex h-14 w-14 shrink-0 items-center justify-center rounded-[20px] bg-ss-brand-highlight/16 text-ss-brand-primary shadow-[var(--ss-shadow-card)]">
+        <Icon className="h-6 w-6" />
       </div>
 
-      <div className="mt-6 grid gap-3">
-        {[1, 2, 3].map((index) => (
-          <article
-            key={`${permission}-value-${index}`}
+      <ol className="mt-6 grid gap-3">
+        {steps.map((index) => (
+          <li
+            key={`${permission}-step-${index}`}
             className="border-b border-ss-border-subtle py-3.5 last:border-b-0"
           >
             <div className="flex items-start gap-3">
@@ -102,16 +90,17 @@ const PermissionValuePanel = ({
                 {t(`onboarding.permissions.${permission}.steps.step${index}`)}
               </p>
             </div>
-          </article>
+          </li>
         ))}
-      </div>
+      </ol>
 
       <div className="mt-auto pt-5">
-        <div className="rounded-[var(--ss-radius-lg)] bg-ss-bg-surface-alt p-4 shadow-[var(--ss-shadow-hairline)]">
-          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-ss-brand-primary">
-            {t("onboarding.permissions.shared.privateLabel")}
-          </p>
-          <p className="mt-2 text-sm leading-relaxed text-ss-text-secondary">
+        <div className="flex items-start gap-3 rounded-[var(--ss-radius-lg)] bg-ss-bg-surface-alt p-4 shadow-[var(--ss-shadow-hairline)]">
+          <ShieldCheck
+            className="mt-0.5 h-4 w-4 shrink-0 text-ss-brand-primary"
+            aria-hidden="true"
+          />
+          <p className="text-sm leading-relaxed text-ss-text-secondary">
             {t(`onboarding.permissions.${permission}.privateNote`)}
           </p>
         </div>
@@ -127,7 +116,6 @@ const PermissionGuidePreview = ({
   const { t } = useTranslation();
   const Icon = ICONS[permission];
   const isGranted = status === "granted";
-  const showGuidance = isActiveGuidanceState(status);
 
   return (
     <section className="ss-permission-helper-enter relative flex min-h-[420px] flex-col overflow-hidden border-s border-ss-border-subtle ps-5">
@@ -149,10 +137,7 @@ const PermissionGuidePreview = ({
 
         <div className="mt-5 flex items-center justify-between gap-4">
           <div className="min-w-0">
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-ss-brand-secondary">
-              {t("onboarding.permissions.shared.guidedHelper")}
-            </p>
-            <h2 className="mt-2 text-xl font-semibold leading-tight text-ss-text-primary">
+            <h2 className="text-xl font-semibold leading-tight text-ss-text-primary">
               {t(`onboarding.permissions.${permission}.guide.title`)}
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-ss-text-secondary">
@@ -190,24 +175,6 @@ const PermissionGuidePreview = ({
               <AccessibilityPreview status={status} />
             )}
           </div>
-        </div>
-
-        <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="inline-flex min-w-0 items-center gap-2 rounded-full border border-ss-brand-primary/16 bg-ss-brand-primary/8 px-3.5 py-2 text-sm font-semibold text-ss-text-primary">
-            <ShieldCheck className="h-4 w-4 shrink-0 text-ss-brand-primary" />
-            <span className="truncate">
-              {t(`onboarding.permissions.shared.statuses.${status}`)}
-            </span>
-          </div>
-          {showGuidance ? (
-            <div className="inline-flex items-center gap-2 text-sm font-semibold text-ss-brand-secondary">
-              <ArrowUp
-                className="ss-permission-arrow-pulse h-5 w-5"
-                aria-hidden="true"
-              />
-              <span>{t(`onboarding.permissions.${permission}.guide.cue`)}</span>
-            </div>
-          ) : null}
         </div>
       </div>
     </section>
@@ -275,9 +242,6 @@ const AccessibilityPreview = ({ status }: { status: PermissionStatus }) => {
             <p className="truncate text-sm font-semibold text-ss-text-primary">
               {t("onboarding.permissions.shared.appName")}
             </p>
-            <p className="truncate text-xs text-ss-text-tertiary">
-              {t("onboarding.permissions.accessibility.guide.rowHelp")}
-            </p>
           </div>
         </div>
         <span
@@ -333,7 +297,7 @@ export const PermissionStatusCard = ({
         )}
         <div className="min-w-0">
           <p className="text-base font-semibold text-ss-text-primary">
-            {t("onboarding.permissions.shared.statusLabel")}
+            {t(`onboarding.permissions.shared.statuses.${status}`)}
           </p>
           <p className="mt-1 text-sm leading-relaxed text-ss-text-secondary">
             {t(`onboarding.permissions.${permission}.statusHelp.${status}`)}
@@ -518,18 +482,20 @@ const PermissionStep = ({
     <OnboardingShell
       stepLabels={stepLabels}
       activeStep={activeStep}
-      eyebrow={t(
+      eyebrow={
         mode === "repair"
-          ? "onboarding.permissions.shared.repairEyebrow"
-          : "onboarding.permissions.shared.eyebrow",
-      )}
+          ? t("onboarding.permissions.shared.repairEyebrow")
+          : undefined
+      }
       title={t(`onboarding.permissions.${permission}.title`)}
       description={t(`onboarding.permissions.${permission}.description`)}
       compactHeader
       footer={
         <div className="flex flex-wrap items-center justify-between gap-4">
           <p className="max-w-2xl text-sm leading-relaxed text-ss-text-secondary">
-            {t(`onboarding.permissions.${permission}.manualHint`)}
+            {showsManualHint(status)
+              ? t(`onboarding.permissions.${permission}.manualHint`)
+              : null}
           </p>
           <div className="flex flex-wrap items-center justify-end gap-3">
             {footerActions}
@@ -538,7 +504,7 @@ const PermissionStep = ({
       }
     >
       <div className="grid h-full min-h-[520px] gap-5 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)]">
-        <PermissionValuePanel permission={permission} status={status} />
+        <PermissionValuePanel permission={permission} />
         <div className="grid min-h-0 content-start gap-4">
           <PermissionGuidePreview permission={permission} status={status} />
           <PermissionStatusCard

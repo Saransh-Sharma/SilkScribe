@@ -336,7 +336,6 @@ const OnboardingSetup: React.FC<OnboardingSetupProps> = ({
     <OnboardingShell
       stepLabels={stepLabels}
       activeStep={activeStep}
-      eyebrow={t("onboarding.setup.eyebrow")}
       title={t("onboarding.setup.title")}
       description={t("onboarding.setup.description", { language: localeLabel })}
       compactHeader
@@ -344,22 +343,17 @@ const OnboardingSetup: React.FC<OnboardingSetupProps> = ({
     >
       <div className="h-full">
         <section className="flex h-full flex-col rounded-[var(--ss-radius-xl)] border border-ss-border-default bg-ss-bg-surface p-5 shadow-[var(--ss-shadow-hairline)] lg:p-6">
-          <div className="flex items-start justify-between gap-5">
+          <div className="flex items-start gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[16px] bg-ss-brand-highlight/16 text-ss-brand-primary">
+              <Sparkles className="h-[18px] w-[18px]" />
+            </div>
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-ss-brand-highlight/20 bg-ss-brand-highlight/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-ss-brand-primary">
-                <Sparkles className="h-3.5 w-3.5" />
-                {t("onboarding.setup.autoLabel")}
-              </div>
-              <p className="mt-5 text-2xl font-semibold leading-tight text-ss-text-primary">
+              <p className="text-2xl font-semibold leading-tight text-ss-text-primary">
                 {t("onboarding.setup.engineTitle")}
               </p>
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ss-text-secondary">
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ss-text-secondary">
                 {t("onboarding.setup.engineBody", { language: localeLabel })}
               </p>
-            </div>
-
-            <div className="rounded-[22px] border border-ss-brand-secondary/20 bg-ss-brand-secondary/10 px-4 py-3 text-sm font-semibold text-ss-brand-secondary">
-              {t(`onboarding.setup.states.${setupState}`)}
             </div>
           </div>
 

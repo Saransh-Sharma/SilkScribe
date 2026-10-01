@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRight, ShieldCheck, Sparkles, Waves } from "lucide-react";
+import { ArrowRight, Keyboard, Mic, Waves } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "../ui/Button";
 import OnboardingShell from "./OnboardingShell";
@@ -11,7 +11,11 @@ interface OnboardingProps {
   activeStep: number;
 }
 
-const FEATURE_KEYS = ["permissions", "engine", "practice"] as const;
+const PLAN_STEPS = [
+  { step: 1, icon: Mic },
+  { step: 2, icon: Keyboard },
+  { step: 3, icon: Waves },
+] as const;
 
 const Onboarding: React.FC<OnboardingProps> = ({
   onContinue,
@@ -21,24 +25,17 @@ const Onboarding: React.FC<OnboardingProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const iconMap = {
-    permissions: ShieldCheck,
-    engine: Sparkles,
-    practice: Waves,
-  } as const;
-
   return (
     <OnboardingShell
       stepLabels={stepLabels}
       activeStep={activeStep}
-      eyebrow={t("onboarding.welcome.eyebrow")}
       title={t("onboarding.welcome.title")}
       description={t("onboarding.welcome.description")}
       compactHeader
       footer={
-        <>
-          {onOpenWorkspace && (
-            <div className="px-6 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          {onOpenWorkspace ? (
+            <div>
               <button
                 className="text-sm font-semibold text-ss-brand-primary underline"
                 onClick={onOpenWorkspace}
@@ -49,97 +46,42 @@ const Onboarding: React.FC<OnboardingProps> = ({
                 {t("workspace.workspaceFirstHelp")}
               </p>
             </div>
+          ) : (
+            <span />
           )}
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <p className="max-w-2xl text-sm leading-relaxed text-ss-text-secondary">
-              {t("onboarding.welcome.permissionPromise")}
-            </p>
-            <Button
-              onClick={onContinue}
-              variant="primary"
-              size="lg"
-              className="shrink-0 rounded-[18px] px-6"
-            >
-              {t("onboarding.welcome.continue")}
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </>
+          <Button
+            onClick={onContinue}
+            variant="primary"
+            size="lg"
+            className="shrink-0 rounded-[18px] px-6"
+          >
+            {t("onboarding.welcome.continue")}
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
       }
     >
-      <div className="grid h-full gap-5 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)]">
-        <section className="flex h-full flex-col justify-between p-2 lg:p-4">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-ss-brand-secondary/20 bg-ss-brand-secondary/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-ss-brand-secondary">
-              <Sparkles className="h-3.5 w-3.5" />
-              {t("onboarding.welcome.badge")}
-            </div>
-
-            <div className="mt-6 grid gap-4">
-              {FEATURE_KEYS.map((featureKey) => {
-                const Icon = iconMap[featureKey];
-                return (
-                  <article
-                    key={featureKey}
-                    className="border-b border-ss-border-subtle py-3.5 last:border-b-0"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="ss-onboarding-float flex h-11 w-11 shrink-0 items-center justify-center rounded-[16px] bg-ss-brand-highlight/16 text-ss-brand-primary">
-                        <Icon className="h-[18px] w-[18px]" />
-                      </div>
-                      <div>
-                        <h3 className="text-base font-semibold text-ss-text-primary">
-                          {t(`onboarding.welcome.features.${featureKey}.title`)}
-                        </h3>
-                        <p className="mt-1.5 text-sm leading-relaxed text-ss-text-secondary">
-                          {t(
-                            `onboarding.welcome.features.${featureKey}.description`,
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="rounded-[var(--ss-radius-lg)] bg-ss-bg-surface-alt p-4 shadow-[var(--ss-shadow-hairline)]">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ss-text-tertiary">
-              {t("onboarding.welcome.outcomeLabel")}
-            </p>
-            <p className="mt-2.5 max-w-2xl text-[clamp(1.08rem,1rem+0.35vw,1.42rem)] font-semibold leading-tight text-ss-text-primary">
-              {t("onboarding.welcome.outcome")}
-            </p>
-          </div>
-        </section>
-
-        <aside className="border-s border-ss-border-subtle p-4 lg:p-6">
-          <div className="rounded-[var(--ss-radius-lg)] bg-ss-bg-surface-alt p-5 shadow-[var(--ss-shadow-hairline)]">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ss-text-tertiary">
-              {t("onboarding.welcome.planLabel")}
-            </p>
-            <ol className="mt-4 space-y-4">
-              {[1, 2, 3].map((stepNumber) => (
-                <li key={stepNumber} className="flex items-start gap-4">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ss-brand-primary text-sm font-bold text-ss-brand-primary-ink shadow-[var(--ss-shadow-card)]">
-                    {stepNumber}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-ss-text-primary">
-                      {t(`onboarding.welcome.plan.step${stepNumber}.title`)}
-                    </p>
-                    <p className="mt-1 text-sm leading-relaxed text-ss-text-secondary">
-                      {t(
-                        `onboarding.welcome.plan.step${stepNumber}.description`,
-                      )}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </aside>
+      <div className="flex h-full items-center p-2 lg:p-4">
+        <ol className="w-full max-w-xl space-y-4">
+          {PLAN_STEPS.map(({ step, icon: Icon }) => (
+            <li
+              key={step}
+              className="flex items-start gap-4 border-b border-ss-border-subtle py-3.5 last:border-b-0"
+            >
+              <div className="ss-onboarding-float flex h-11 w-11 shrink-0 items-center justify-center rounded-[16px] bg-ss-brand-highlight/16 text-ss-brand-primary">
+                <Icon className="h-[18px] w-[18px]" />
+              </div>
+              <div>
+                <p className="text-base font-semibold text-ss-text-primary">
+                  {t(`onboarding.welcome.plan.step${step}.title`)}
+                </p>
+                <p className="mt-1 text-sm leading-relaxed text-ss-text-secondary">
+                  {t(`onboarding.welcome.plan.step${step}.description`)}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </div>
     </OnboardingShell>
   );

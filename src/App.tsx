@@ -45,6 +45,8 @@ interface PasteFailedPayload {
 
 type ResolvedTheme = "light" | "dark";
 
+const DICTATION_OFF_TOAST_ID = "dictation-off";
+
 const getSystemTheme = (): ResolvedTheme => {
   if (
     typeof window !== "undefined" &&
@@ -159,6 +161,8 @@ function App() {
             "flex items-center gap-3 rounded-[var(--ss-radius-lg)] border border-ss-border-default bg-ss-bg-surface px-4 py-3 text-sm text-ss-text-primary shadow-[var(--ss-shadow-lift)]",
           title: "font-semibold text-ss-text-primary",
           description: "text-ss-text-tertiary",
+          actionButton:
+            "shrink-0 rounded-[var(--ss-radius-md)] bg-ss-brand-primary px-3 py-1.5 text-xs font-semibold text-ss-brand-primary-ink",
         },
       }}
     />
@@ -254,6 +258,7 @@ function App() {
       !hasCompletedPostOnboardingInit.current
     ) {
       hasCompletedPostOnboardingInit.current = true;
+      toast.dismiss(DICTATION_OFF_TOAST_ID);
       Promise.all([
         commands.initializeEnigo(),
         commands.initializeShortcuts(),
@@ -264,6 +269,38 @@ function App() {
       refreshOutputDevices();
     }
   }, [onboardingStep, permissions, refreshAudioDevices, refreshOutputDevices]);
+
+  // Permissions can be granted in System Settings while the app is open, or
+  // lost when a rebuilt app gets a new signature. Until shortcuts are running,
+  // re-check whenever the window comes back so dictation starts without a
+  // relaunch.
+  useEffect(() => {
+    if (onboardingStep !== "done" || hasCompletedPostOnboardingInit.current) {
+      return;
+    }
+
+    const recheck = () => {
+      if (hasCompletedPostOnboardingInit.current) return;
+      void loadPermissionSnapshot().then((snapshot) => {
+        setPermissions((current) =>
+          current.microphone === snapshot.microphone &&
+          current.accessibility === snapshot.accessibility
+            ? current
+            : snapshot,
+        );
+      });
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") recheck();
+    };
+
+    window.addEventListener("focus", recheck);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      window.removeEventListener("focus", recheck);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [onboardingStep, permissions]);
 
   // Handle keyboard shortcuts for debug mode toggle
   useEffect(() => {
@@ -308,6 +345,13 @@ function App() {
       }
 
       setOnboardingStep("done");
+
+      if (
+        settingsResult.status === "ok" &&
+        (!currentPermissions.microphone || !currentPermissions.accessibility)
+      ) {
+        void warnIfDictationOff(settingsResult.data.selected_model);
+      }
     } catch (error) {
       console.error("Failed to check onboarding status:", error);
       const fallbackPermissions =
@@ -317,6 +361,26 @@ function App() {
       setPermissions(fallbackPermissions);
       setOnboardingStep("welcome");
     }
+  };
+
+  // Dictation was set up (its engine is installed) but macOS no longer allows
+  // the microphone or pasting, e.g. after installing a differently signed
+  // build. Say so instead of leaving the shortcut silently dead. People who
+  // only transcribe files never installed an engine, so they aren't nagged.
+  const warnIfDictationOff = async (selectedModel: string | undefined) => {
+    if (!selectedModel) return;
+    const modelInfo = await commands.getModelInfo(selectedModel);
+    if (modelInfo.status !== "ok" || !modelInfo.data?.is_downloaded) return;
+
+    toast.warning(t("feedback.dictationOff.title"), {
+      id: DICTATION_OFF_TOAST_ID,
+      description: t("feedback.dictationOff.description"),
+      duration: Infinity,
+      action: {
+        label: t("feedback.dictationOff.action"),
+        onClick: () => void handleStartPermissionRepair(),
+      },
+    });
   };
 
   const handleWelcomeContinue = async () => {

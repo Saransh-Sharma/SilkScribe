@@ -5,7 +5,7 @@ import SilkScribeWordmark from "../icons/SilkScribeWordmark";
 interface OnboardingShellProps {
   stepLabels: string[];
   activeStep: number;
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   description: string;
   footer?: React.ReactNode;
@@ -119,10 +119,12 @@ const OnboardingShell: React.FC<OnboardingShellProps> = ({
           <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-5 pt-4 md:px-6 md:pb-6">
             <div className="flex h-full flex-col gap-4">
               <div className="shrink-0">
-                <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-ss-brand-secondary">
-                  {eyebrow}
-                </p>
-                <h1 className="mt-2 max-w-4xl text-[clamp(1.8rem,1.5rem+1.2vw,2.65rem)] font-semibold leading-[1.05] tracking-[-0.035em] text-ss-text-primary">
+                {eyebrow ? (
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.22em] text-ss-brand-secondary">
+                    {eyebrow}
+                  </p>
+                ) : null}
+                <h1 className="max-w-4xl text-[clamp(1.8rem,1.5rem+1.2vw,2.65rem)] font-semibold leading-[1.05] tracking-[-0.035em] text-ss-text-primary">
                   {title}
                 </h1>
                 <p className="mt-2 max-w-[68ch] text-sm leading-relaxed text-ss-text-secondary md:text-[15px]">

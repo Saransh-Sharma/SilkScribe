@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Check, Mic, Sparkles, Wand2 } from "lucide-react";
+import { Check, Mic, Wand2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { commands } from "@/bindings";
@@ -54,16 +54,15 @@ const OnboardingPractice: React.FC<OnboardingPracticeProps> = ({
     <OnboardingShell
       stepLabels={stepLabels}
       activeStep={activeStep}
-      eyebrow={t("onboarding.practice.eyebrow")}
       title={t("onboarding.practice.title")}
-      description={t("onboarding.practice.description")}
+      description={t("onboarding.practice.description", {
+        shortcut: shortcutLabel,
+      })}
       compactHeader
       footer={
         <div className="flex flex-wrap items-center justify-between gap-4">
           <p className="max-w-2xl text-sm leading-relaxed text-ss-text-secondary">
-            {trialCompleted
-              ? t("onboarding.practice.readyToFinish")
-              : t("onboarding.practice.prompt")}
+            {trialCompleted ? t("onboarding.practice.readyToFinish") : null}
           </p>
 
           <Button
@@ -84,14 +83,9 @@ const OnboardingPractice: React.FC<OnboardingPracticeProps> = ({
     >
       <div className="grid h-full gap-5 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)]">
         <aside className="p-3 lg:p-5">
-          <div className="inline-flex items-center gap-2 rounded-full border border-ss-brand-secondary/18 bg-ss-brand-secondary/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-ss-brand-secondary">
-            <Sparkles className="h-3.5 w-3.5" />
-            {t("onboarding.practice.badge")}
-          </div>
-
-          <div className="mt-5 space-y-3">
+          <ol className="space-y-3">
             {[1, 2, 3].map((step) => (
-              <div
+              <li
                 key={step}
                 className="border-b border-ss-border-subtle py-3.5 last:border-b-0"
               >
@@ -105,14 +99,9 @@ const OnboardingPractice: React.FC<OnboardingPracticeProps> = ({
                     })}
                   </p>
                 </div>
-                <p className="mt-3 text-sm leading-relaxed text-ss-text-secondary">
-                  {t(`onboarding.practice.steps.step${step}.description`, {
-                    shortcut: shortcutLabel,
-                  })}
-                </p>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
 
           <div className="mt-4 rounded-[var(--ss-radius-lg)] bg-ss-bg-surface-alt p-4 shadow-[var(--ss-shadow-hairline)]">
             <div className="flex items-center gap-3">
@@ -139,15 +128,6 @@ const OnboardingPractice: React.FC<OnboardingPracticeProps> = ({
                 {t("onboarding.practice.success")}
               </div>
             )}
-          </div>
-
-          <div className="mt-4 rounded-[var(--ss-radius-lg)] bg-ss-bg-surface-alt p-4 shadow-[var(--ss-shadow-hairline)]">
-            <p className="text-sm font-semibold text-ss-text-primary">
-              {t("onboarding.practice.helperTitle")}
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-ss-text-secondary">
-              {t("onboarding.practice.helper")}
-            </p>
           </div>
 
           <div className="mt-4 min-h-0 flex-1">
