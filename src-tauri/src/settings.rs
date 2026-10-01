@@ -448,7 +448,19 @@ pub struct AppSettings {
     /// usable height from the top (its centre).
     #[serde(default = "default_meeting_orb_y")]
     pub meeting_orb_y: f64,
+    /// Schema version for one-time migrations. Stores written before this field
+    /// existed read as 0; new installs start at `CURRENT_SETTINGS_VERSION`.
+    #[serde(default)]
+    pub settings_version: u32,
 }
+
+/// Bump when adding a one-time migration to `apply_settings_migrations`.
+///
+/// 1: raised the default history limit from 5 to `default_history_limit()`.
+const CURRENT_SETTINGS_VERSION: u32 = 1;
+
+/// The history limit every install shipped with before version 1.
+const LEGACY_DEFAULT_HISTORY_LIMIT: usize = 5;
 
 fn default_model() -> String {
     "".to_string()
@@ -517,8 +529,10 @@ fn default_auto_submit() -> bool {
     false
 }
 
+/// Unsaved dictations kept before the oldest are deleted. Recordings are 16 kHz
+/// mono, so this caps audio at roughly 150 MB for typical 10 s dictations.
 fn default_history_limit() -> usize {
-    5
+    500
 }
 
 fn default_recording_retention_period() -> RecordingRetentionPeriod {
@@ -787,6 +801,16 @@ fn apply_settings_migrations(
         updated = true;
     }
 
+    if settings.settings_version < 1 {
+        // The limit was only adjustable from Debug, so 5 is almost always the
+        // untouched default rather than a deliberate choice.
+        if settings.history_limit == LEGACY_DEFAULT_HISTORY_LIMIT {
+            settings.history_limit = default_history_limit();
+        }
+        settings.settings_version = 1;
+        updated = true;
+    }
+
     let normalized_paste_method = normalize_paste_method_for_platform(settings.paste_method);
     if settings.paste_method != normalized_paste_method {
         settings.paste_method = normalized_paste_method;
@@ -901,6 +925,7 @@ pub fn get_default_settings() -> AppSettings {
         whisper_gpu_device: default_whisper_gpu_device(),
         extra_recording_buffer_ms: 0,
         meeting_orb_y: default_meeting_orb_y(),
+        settings_version: CURRENT_SETTINGS_VERSION,
     }
 }
 
@@ -1112,5 +1137,37 @@ mod tests {
         settings.post_process_selected_prompt_id = None;
         apply_settings_migrations(&mut settings, None);
         assert_eq!(settings.post_process_selected_prompt_id, None);
+    }
+
+    /// A store written before `settings_version` existed, as JSON.
+    fn legacy_settings(history_limit: usize) -> AppSettings {
+        let mut value = serde_json::to_value(get_default_settings()).unwrap();
+        let object = value.as_object_mut().unwrap();
+        object.remove("settings_version");
+        object.insert("history_limit".into(), history_limit.into());
+        serde_json::from_value(value).unwrap()
+    }
+
+    #[test]
+    fn migration_raises_the_legacy_default_history_limit_once() {
+        let mut settings = legacy_settings(LEGACY_DEFAULT_HISTORY_LIMIT);
+        assert_eq!(settings.settings_version, 0);
+
+        assert!(apply_settings_migrations(&mut settings, None));
+        assert_eq!(settings.history_limit, default_history_limit());
+        assert_eq!(settings.settings_version, CURRENT_SETTINGS_VERSION);
+
+        // A user who deliberately goes back to 5 afterwards keeps it.
+        settings.history_limit = LEGACY_DEFAULT_HISTORY_LIMIT;
+        assert!(!apply_settings_migrations(&mut settings, None));
+        assert_eq!(settings.history_limit, LEGACY_DEFAULT_HISTORY_LIMIT);
+    }
+
+    #[test]
+    fn migration_keeps_a_custom_history_limit() {
+        let mut settings = legacy_settings(42);
+        apply_settings_migrations(&mut settings, None);
+        assert_eq!(settings.history_limit, 42);
+        assert_eq!(settings.settings_version, CURRENT_SETTINGS_VERSION);
     }
 }

@@ -1168,7 +1168,12 @@ export type AppSettings = { bindings: Partial<{ [key in string]: ShortcutBinding
  * Where the meeting orb sits on the right screen edge, as a fraction of the
  * usable height from the top (its centre).
  */
-meeting_orb_y?: number }
+meeting_orb_y?: number; 
+/**
+ * Schema version for one-time migrations. Stores written before this field
+ * existed read as 0; new installs start at `CURRENT_SETTINGS_VERSION`.
+ */
+settings_version?: number }
 export type Artifact = { path: string; url: string; sha256: string; bytes: number }
 export type AudioDevice = { index: string; name: string; is_default: boolean }
 export type AutoSubmitKey = "enter" | "ctrl_enter" | "cmd_enter"
