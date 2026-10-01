@@ -833,6 +833,7 @@
       "empty": "No speech detected",
       "pasteCopied": "Copied instead — paste it yourself",
       "pasteFailed": "Couldn’t paste or copy",
+      "cleanupSkipped": "Pasted without AI cleanup",
       "transcriptionFailed": "Transcription didn’t finish",
       "recordingFailed": "Couldn’t start recording"
     }

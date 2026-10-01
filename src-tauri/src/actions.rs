@@ -9,7 +9,8 @@ use crate::shortcut;
 use crate::tray::{change_tray_icon, TrayIconState};
 use crate::utils::{
     self, show_empty_overlay, show_error_overlay_with_reason, show_processing_overlay,
-    show_recording_overlay, show_success_overlay_with_preview, show_transcribing_overlay,
+    show_recording_overlay, show_success_overlay_with_notice, show_success_overlay_with_preview,
+    show_transcribing_overlay,
 };
 use crate::TranscriptionCoordinator;
 use ferrous_opencc::{config::BuiltinConfig, OpenCC};
@@ -523,6 +524,9 @@ impl ShortcutAction for TranscribeAction {
                             } else {
                                 None
                             };
+                            // The raw text still goes in, but the user asked for
+                            // cleanup and should know they didn't get it.
+                            let cleanup_skipped = post_process && processed.is_none();
                             if let Some(processed_text) = processed {
                                 post_processed_text = Some(processed_text.clone());
                                 final_text = processed_text;
@@ -571,12 +575,23 @@ impl ShortcutAction for TranscribeAction {
                                             "Text pasted successfully in {:?}",
                                             paste_time.elapsed()
                                         );
-                                        show_success_overlay_with_preview(
-                                            &ah_clone,
-                                            &paste_text,
-                                        );
+                                        if cleanup_skipped {
+                                            show_success_overlay_with_notice(
+                                                &ah_clone,
+                                                "cleanupSkipped",
+                                            );
+                                        } else {
+                                            show_success_overlay_with_preview(
+                                                &ah_clone,
+                                                &paste_text,
+                                            );
+                                        }
                                         play_feedback_sound(&ah_clone, SoundType::Done);
-                                        utils::hide_recording_overlay_after(&ah_clone, 1500);
+                                        // A notice needs a beat longer to read than an excerpt.
+                                        utils::hide_recording_overlay_after(
+                                            &ah_clone,
+                                            if cleanup_skipped { 2500 } else { 1500 },
+                                        );
                                     }
                                     Err(e) => {
                                         error!("Failed to paste transcription: {}", e);

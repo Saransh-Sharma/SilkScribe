@@ -670,6 +670,36 @@ fn default_post_process_prompts() -> Vec<LLMPrompt> {
     }]
 }
 
+fn default_post_process_selected_prompt_id() -> Option<String> {
+    default_post_process_prompts()
+        .first()
+        .map(|prompt| prompt.id.clone())
+}
+
+/// AI cleanup is skipped when no prompt is selected, and nothing ever selected
+/// one by default — so the AI cleanup shortcut pasted raw text until the user
+/// found the prompt picker. Point a missing or dangling selection at the first
+/// prompt; with no prompts left there is nothing to select.
+fn ensure_selected_prompt(settings: &mut AppSettings) -> bool {
+    let selection_is_valid = settings
+        .post_process_selected_prompt_id
+        .as_ref()
+        .is_some_and(|id| settings.post_process_prompts.iter().any(|p| &p.id == id));
+    if selection_is_valid {
+        return false;
+    }
+
+    let fallback = settings
+        .post_process_prompts
+        .first()
+        .map(|prompt| prompt.id.clone());
+    if settings.post_process_selected_prompt_id == fallback {
+        return false;
+    }
+    settings.post_process_selected_prompt_id = fallback;
+    true
+}
+
 fn default_typing_tool() -> TypingTool {
     TypingTool::Auto
 }
@@ -750,6 +780,10 @@ fn apply_settings_migrations(
     }
 
     if ensure_post_process_defaults(settings) {
+        updated = true;
+    }
+
+    if ensure_selected_prompt(settings) {
         updated = true;
     }
 
@@ -849,7 +883,7 @@ pub fn get_default_settings() -> AppSettings {
         post_process_api_keys: default_post_process_api_keys(),
         post_process_models: default_post_process_models(),
         post_process_prompts: default_post_process_prompts(),
-        post_process_selected_prompt_id: None,
+        post_process_selected_prompt_id: default_post_process_selected_prompt_id(),
         mute_while_recording: false,
         append_trailing_space: false,
         app_language: default_app_language(),
@@ -1015,5 +1049,68 @@ mod tests {
         let settings = get_default_settings();
         assert!(!settings.auto_submit);
         assert_eq!(settings.auto_submit_key, AutoSubmitKey::Enter);
+    }
+
+    #[test]
+    fn default_settings_select_the_cleanup_prompt() {
+        let settings = get_default_settings();
+        assert_eq!(
+            settings.post_process_selected_prompt_id.as_deref(),
+            Some("default_improve_transcriptions")
+        );
+    }
+
+    #[test]
+    fn default_settings_need_no_migration() {
+        let mut settings = get_default_settings();
+        assert!(!apply_settings_migrations(&mut settings, None));
+        assert_eq!(settings.history_limit, default_history_limit());
+    }
+
+    #[test]
+    fn migration_selects_a_prompt_when_none_is_selected() {
+        let mut settings = get_default_settings();
+        settings.post_process_selected_prompt_id = None;
+        assert!(apply_settings_migrations(&mut settings, None));
+        assert_eq!(
+            settings.post_process_selected_prompt_id.as_deref(),
+            Some("default_improve_transcriptions")
+        );
+    }
+
+    #[test]
+    fn migration_repairs_a_dangling_prompt_selection() {
+        let mut settings = get_default_settings();
+        settings.post_process_selected_prompt_id = Some("deleted".into());
+        apply_settings_migrations(&mut settings, None);
+        assert_eq!(
+            settings.post_process_selected_prompt_id.as_deref(),
+            Some("default_improve_transcriptions")
+        );
+    }
+
+    #[test]
+    fn migration_keeps_a_valid_prompt_selection() {
+        let mut settings = get_default_settings();
+        settings.post_process_prompts.push(LLMPrompt {
+            id: "mine".into(),
+            name: "Mine".into(),
+            prompt: "${output}".into(),
+        });
+        settings.post_process_selected_prompt_id = Some("mine".into());
+        apply_settings_migrations(&mut settings, None);
+        assert_eq!(
+            settings.post_process_selected_prompt_id.as_deref(),
+            Some("mine")
+        );
+    }
+
+    #[test]
+    fn migration_leaves_selection_empty_without_prompts() {
+        let mut settings = get_default_settings();
+        settings.post_process_prompts.clear();
+        settings.post_process_selected_prompt_id = None;
+        apply_settings_migrations(&mut settings, None);
+        assert_eq!(settings.post_process_selected_prompt_id, None);
     }
 }

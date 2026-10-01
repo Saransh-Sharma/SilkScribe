@@ -430,6 +430,13 @@ pub fn show_success_overlay_with_preview(app_handle: &AppHandle, transcript: &st
     show_overlay_state(app_handle, "success", None, build_preview(transcript));
 }
 
+/// Shows the success state with a notice in place of the excerpt, for deliveries
+/// the user should know about (e.g. the raw text went in because AI cleanup
+/// didn't run). `code` is a key suffix under `overlay.detail.*`.
+pub fn show_success_overlay_with_notice(app_handle: &AppHandle, code: &str) {
+    show_overlay_state(app_handle, "success", Some(code), None);
+}
+
 /// Shows the error overlay with a reason the webview will translate.
 ///
 /// `code` is a key suffix under `overlay.detail.*` in the i18n bundle.
