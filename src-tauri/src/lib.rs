@@ -134,6 +134,49 @@ fn should_force_show_permissions_window(_app: &AppHandle) -> bool {
     false
 }
 
+/// Engines this small are cheap enough to keep warm for everyone.
+const PRELOAD_ALWAYS_MAX_MB: u64 = 600;
+/// Larger engines are only kept warm for people who dictate regularly: the
+/// default unload timeout is Never, so preloading them would hold gigabytes for
+/// someone who only records meetings.
+const PRELOAD_RECENT_DICTATION_SECS: i64 = 7 * 24 * 60 * 60;
+
+/// Loads the dictation engine in the background at launch, so the first
+/// shortcut press after starting the app doesn't wait for it to load.
+fn preload_dictation_engine(
+    app_handle: &AppHandle,
+    model_manager: &ModelManager,
+    transcription_manager: &TranscriptionManager,
+    history_manager: &HistoryManager,
+) {
+    let settings = get_settings(app_handle);
+    if !settings.has_completed_onboarding
+        || settings.model_unload_timeout == settings::ModelUnloadTimeout::Immediately
+    {
+        return;
+    }
+    let Some(model) = model_manager.get_model_info(&settings.selected_model) else {
+        return;
+    };
+    if !model.is_downloaded {
+        return;
+    }
+
+    let dictated_recently = || {
+        history_manager
+            .get_latest_entry()
+            .ok()
+            .flatten()
+            .is_some_and(|entry| {
+                chrono::Utc::now().timestamp() - entry.timestamp <= PRELOAD_RECENT_DICTATION_SECS
+            })
+    };
+    if model.size_mb <= PRELOAD_ALWAYS_MAX_MB || dictated_recently() {
+        log::info!("Preloading dictation engine '{}'", model.id);
+        transcription_manager.initiate_model_load();
+    }
+}
+
 fn initialize_core_logic(app_handle: &AppHandle) {
     // Note: Enigo (keyboard/mouse simulation) is NOT initialized here.
     // The frontend is responsible for calling the `initialize_enigo` command
@@ -162,6 +205,13 @@ fn initialize_core_logic(app_handle: &AppHandle) {
     let workspace = workspace::Workspace::new(app_handle).expect("Failed to initialize workspace");
     app_handle.manage(workspace.clone());
     workspace.start_queue(app_handle.clone());
+
+    preload_dictation_engine(
+        app_handle,
+        &model_manager,
+        &transcription_manager,
+        &history_manager,
+    );
 
     // Note: Shortcuts are NOT initialized here.
     // The frontend is responsible for calling the `initialize_shortcuts` command
