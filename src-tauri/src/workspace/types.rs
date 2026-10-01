@@ -117,7 +117,10 @@ impl Default for JobOptions {
         Self {
             model: "qwen3-asr".into(),
             language: "auto".into(),
-            speakers: true,
+            // Off until the speakers pack ("community-1") is published: asking
+            // for it by default only produced a failed stage. The setup presets
+            // already default to off.
+            speakers: false,
             notes_model: None,
         }
     }
