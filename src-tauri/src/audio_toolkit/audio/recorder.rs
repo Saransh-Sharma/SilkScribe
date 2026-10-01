@@ -374,6 +374,25 @@ impl AudioRecorder {
     fn get_preferred_config(
         device: &cpal::Device,
     ) -> Result<cpal::SupportedStreamConfig, Box<dyn std::error::Error>> {
+        // On macOS, asking for a rate the device isn't running at changes its
+        // nominal rate for every app using it: a Zoom or Meet call, or a meeting
+        // recording. Open at the current rate instead, with the fewest channels;
+        // frames are mixed to mono and resampled to 16 kHz downstream.
+        if cfg!(target_os = "macos") {
+            let current = device.default_input_config()?;
+            let rate = current.sample_rate();
+            let best = device
+                .supported_input_configs()?
+                .filter(|range| range.min_sample_rate() <= rate && range.max_sample_rate() >= rate)
+                .min_by_key(|range| {
+                    (
+                        range.channels(),
+                        std::cmp::Reverse(Self::format_score(range.sample_format())),
+                    )
+                });
+            return Ok(best.map_or(current, |range| range.with_sample_rate(rate)));
+        }
+
         let supported_configs = device.supported_input_configs()?;
         let mut best_config: Option<cpal::SupportedStreamConfigRange> = None;
 
@@ -385,15 +404,9 @@ impl AudioRecorder {
                 match best_config {
                     None => best_config = Some(config_range),
                     Some(ref current) => {
-                        // Prioritize F32 > I16 > I32 > others
-                        let score = |fmt: cpal::SampleFormat| match fmt {
-                            cpal::SampleFormat::F32 => 4,
-                            cpal::SampleFormat::I16 => 3,
-                            cpal::SampleFormat::I32 => 2,
-                            _ => 1,
-                        };
-
-                        if score(config_range.sample_format()) > score(current.sample_format()) {
+                        if Self::format_score(config_range.sample_format())
+                            > Self::format_score(current.sample_format())
+                        {
                             best_config = Some(config_range);
                         }
                     }
@@ -407,6 +420,16 @@ impl AudioRecorder {
 
         // If no config supports 16kHz, fall back to default
         Ok(device.default_input_config()?)
+    }
+
+    /// Prefer F32 > I16 > I32 > others.
+    fn format_score(format: cpal::SampleFormat) -> u8 {
+        match format {
+            cpal::SampleFormat::F32 => 4,
+            cpal::SampleFormat::I16 => 3,
+            cpal::SampleFormat::I32 => 2,
+            _ => 1,
+        }
     }
 
     fn wait_for_worker_init(
