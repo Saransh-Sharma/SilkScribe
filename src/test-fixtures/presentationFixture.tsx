@@ -28,6 +28,7 @@ import SilkScribeWordmark from "@/components/icons/SilkScribeWordmark";
 import RecordingOverlay, {
   type OverlayState,
 } from "@/overlay/RecordingOverlay";
+import MeetingOrb, { type MeetingOrbPreview } from "@/meeting-orb/MeetingOrb";
 import "@/theme.css";
 import "@/App.css";
 
@@ -47,7 +48,7 @@ const direction = params.get("dir") === "rtl" ? "rtl" : "ltr";
 document.documentElement.dataset.theme = theme;
 document.documentElement.dir = direction;
 
-if (view === "overlay" || view === "overlay-sheet") {
+if (view === "overlay" || view === "overlay-sheet" || view === "meeting-orb") {
   // Mirrors src/overlay/index.html: tags this document as the overlay so
   // theme.css's blanket reduced-motion rule steps aside for it.
   document.body.classList.add("ss-overlay-document");
@@ -454,6 +455,106 @@ const OverlaySheetFixture = () => (
   </div>
 );
 
+/* Native panel sizes from src-tauri/src/meeting_orb.rs. */
+const ORB_PANEL = {
+  collapsed: { width: 64, height: 64 },
+  expanded: { width: 384, height: 520 },
+} as const;
+
+const ORB_SEGMENTS: MeetingOrbPreview["segments"] = [
+  {
+    id: "1",
+    source: "system",
+    start: 2,
+    end: 6,
+    text: "Thanks for joining. Let’s start with the launch checklist.",
+  },
+  {
+    id: "2",
+    source: "system",
+    start: 6,
+    end: 11,
+    text: "Design signed off yesterday, so we’re waiting on the pricing page.",
+  },
+  {
+    id: "3",
+    source: "mic",
+    start: 12,
+    end: 16,
+    text: "I can have pricing copy ready by Thursday.",
+  },
+  {
+    id: "4",
+    source: "mic",
+    start: 16,
+    end: 19,
+    text: "Legal wants one more pass on the terms.",
+  },
+  {
+    id: "5",
+    source: "system",
+    start: 20,
+    end: 26,
+    text: "Great. Let’s keep the launch date and check in on Friday.",
+  },
+];
+
+const ORB_STATES: Record<string, Omit<MeetingOrbPreview, "mode">> = {
+  recording: {
+    status: { seconds: 754, microphone_level: 0.42, system_level: 0.63 },
+    segments: ORB_SEGMENTS,
+  },
+  paused: {
+    status: { seconds: 754, paused: true },
+    segments: ORB_SEGMENTS,
+  },
+  gated: {
+    status: { seconds: 812, mic_gated: true, system_level: 0.4 },
+    segments: ORB_SEGMENTS,
+    pinned: true,
+  },
+  empty: { status: { seconds: 4, microphone_level: 0.2 } },
+  unavailable: { status: { seconds: 31 }, unavailable: true },
+  behind: {
+    status: { seconds: 1200, system_level: 0.5 },
+    segments: ORB_SEGMENTS,
+    behind: true,
+  },
+  error: {
+    status: {
+      seconds: 402,
+      error:
+        "The microphone stopped sending audio. Check your input, then pause and resume.",
+    },
+    segments: ORB_SEGMENTS,
+  },
+};
+
+const MeetingOrbFixture = () => {
+  const mode = params.get("mode") === "expanded" ? "expanded" : "collapsed";
+  const state = params.get("state") ?? "recording";
+  const panel = ORB_PANEL[mode];
+  return (
+    <div
+      className="flex h-[100dvh] items-start justify-end p-4"
+      style={backdropStyle(params.get("backdrop") ?? "busy")}
+    >
+      <div
+        data-testid="orb-panel"
+        style={{ width: panel.width, height: panel.height, flex: "none" }}
+      >
+        <MeetingOrb
+          preview={{
+            mode,
+            title: "Weekly launch sync",
+            ...(ORB_STATES[state] ?? ORB_STATES.recording),
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
 const fixture =
   view === "home" ? (
     <HomeFixture />
@@ -471,6 +572,8 @@ const fixture =
     <OverlayFixture />
   ) : view === "overlay-sheet" ? (
     <OverlaySheetFixture />
+  ) : view === "meeting-orb" ? (
+    <MeetingOrbFixture />
   ) : (
     <SystemFixture />
   );

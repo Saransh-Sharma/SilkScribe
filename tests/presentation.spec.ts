@@ -168,13 +168,13 @@ test.describe("deterministic product states", () => {
   ] as const;
 
   const STATE_LABELS: Record<string, string> = {
-    recording: "Recording",
+    recording: "Listening",
     transcribing: "Transcribing",
-    processing: "Processing",
+    processing: "Cleaning up",
     success: "Done",
-    error: "Failed",
+    error: "Didn’t work",
     cancelled: "Cancelled",
-    empty: "Nothing heard",
+    empty: "Didn’t catch that",
   };
 
   /** Perceived brightness, for the light/dark ink assertion below. */
@@ -258,5 +258,93 @@ test.describe("deterministic product states", () => {
       .locator(".overlay-pill")
       .evaluate((el) => getComputedStyle(el).transitionDuration);
     expect(duration).not.toMatch(/^0\.001s/);
+  });
+});
+
+test.describe("meeting orb", () => {
+  const ORB_STATES = [
+    "recording",
+    "paused",
+    "gated",
+    "empty",
+    "unavailable",
+    "behind",
+    "error",
+  ] as const;
+
+  const expectInsidePanel = async (
+    page: import("@playwright/test").Page,
+    selector: string,
+  ) => {
+    const panel = await page.getByTestId("orb-panel").boundingBox();
+    const box = await page.locator(selector).boundingBox();
+    expect(panel).not.toBeNull();
+    expect(box).not.toBeNull();
+    expect(box!.x).toBeGreaterThanOrEqual(panel!.x);
+    expect(box!.y).toBeGreaterThanOrEqual(panel!.y);
+    expect(box!.x + box!.width).toBeLessThanOrEqual(panel!.x + panel!.width);
+    expect(box!.y + box!.height).toBeLessThanOrEqual(panel!.y + panel!.height);
+  };
+
+  for (const theme of ["light", "dark"] as const) {
+    test(`fits the collapsed orb in its panel (${theme})`, async ({ page }) => {
+      await page.goto(
+        fixture(`view=meeting-orb&mode=collapsed&theme=${theme}`),
+      );
+      await expect(
+        page.getByRole("button", { name: /Meeting recording, Recording/ }),
+      ).toBeVisible();
+      await expectInsidePanel(page, ".orb");
+    });
+
+    for (const state of ORB_STATES) {
+      test(`fits the expanded ${state} card in its panel (${theme})`, async ({
+        page,
+      }) => {
+        await page.goto(
+          fixture(
+            `view=meeting-orb&mode=expanded&state=${state}&theme=${theme}`,
+          ),
+        );
+        await expect(page.locator(".orb-card")).toBeVisible();
+        await expectInsidePanel(page, ".orb-card");
+        await expectInsidePanel(page, ".orb");
+      });
+    }
+  }
+
+  test("labels who is speaking", async ({ page }) => {
+    await page.goto(fixture("view=meeting-orb&mode=expanded&state=recording"));
+    const transcript = page.getByRole("list", { name: "Transcript so far" });
+    await expect(transcript.getByText("You", { exact: true })).toBeVisible();
+    await expect(transcript.getByText("Others", { exact: true })).toHaveCount(
+      2,
+    );
+  });
+
+  test("says when dictation is left out of the meeting", async ({ page }) => {
+    await page.goto(fixture("view=meeting-orb&mode=expanded&state=gated"));
+    await expect(page.getByRole("status").first()).toContainText(
+      "left out of the meeting",
+    );
+    await expect(
+      page.getByRole("button", { name: /Meeting recording/ }),
+    ).toHaveAttribute("aria-pressed", "true");
+  });
+
+  test("names the paused state on the orb", async ({ page }) => {
+    await page.goto(fixture("view=meeting-orb&mode=collapsed&state=paused"));
+    await expect(
+      page.getByRole("button", { name: "Meeting recording, Paused" }),
+    ).toBeVisible();
+  });
+
+  test("offers the controls a live meeting needs", async ({ page }) => {
+    await page.goto(fixture("view=meeting-orb&mode=expanded&state=recording"));
+    for (const name of ["Pause", "Stop and transcribe", "Open"]) {
+      await expect(
+        page.getByRole("button", { name, exact: true }),
+      ).toBeVisible();
+    }
   });
 });
