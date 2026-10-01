@@ -477,7 +477,10 @@ impl ShortcutAction for TranscribeAction {
         let post_process = self.post_process;
 
         tauri::async_runtime::spawn(async move {
-            let _guard = FinishGuard(ah.clone());
+            // Signals the coordinator when this dictation is fully done. It moves
+            // into the paste closure below so a dictation queued behind this one
+            // can't start until the text has landed.
+            let finish_guard = FinishGuard(ah.clone());
             let binding_id = binding_id.clone(); // Clone for the inner async task
             debug!(
                 "Starting async transcription task for binding: {}",
@@ -569,6 +572,7 @@ impl ShortcutAction for TranscribeAction {
                             let paste_text = final_text.clone();
                             let paste_time = Instant::now();
                             ah.run_on_main_thread(move || {
+                                let _finish_guard = finish_guard;
                                 match utils::paste(final_text, ah_clone.clone()) {
                                     Ok(()) => {
                                         debug!(

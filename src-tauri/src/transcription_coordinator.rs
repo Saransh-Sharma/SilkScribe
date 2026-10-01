@@ -9,6 +9,13 @@ use tauri::{AppHandle, Manager};
 
 const DEBOUNCE: Duration = Duration::from_millis(30);
 
+/// A press that arrives while the previous dictation is still being transcribed
+/// is held and started once that one finishes, instead of being dropped. In
+/// toggle mode, past this age the intent is stale and a surprise recording would
+/// be worse. Push-to-talk needs no limit: release withdraws the press, so one
+/// still queued means the key is still held.
+const QUEUED_PRESS_MAX_AGE: Duration = Duration::from_secs(5);
+
 /// Commands processed sequentially by the coordinator thread.
 enum Command {
     Input {
@@ -30,6 +37,14 @@ enum Stage {
     Processing,
 }
 
+/// A start request held until the pipeline is free again.
+struct QueuedPress {
+    binding_id: String,
+    hotkey_string: String,
+    push_to_talk: bool,
+    at: Instant,
+}
+
 /// Serialises all transcription lifecycle events through a single thread
 /// to eliminate race conditions between keyboard shortcuts, signals, and
 /// the async transcribe-paste pipeline.
@@ -49,6 +64,7 @@ impl TranscriptionCoordinator {
             let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                 let mut stage = Stage::Idle;
                 let mut last_press: Option<Instant> = None;
+                let mut queued: Option<QueuedPress> = None;
 
                 while let Ok(cmd) = rx.recv() {
                     match cmd {
@@ -69,13 +85,25 @@ impl TranscriptionCoordinator {
                                 last_press = Some(now);
                             }
 
+                            let is_queued =
+                                queued.as_ref().is_some_and(|q| q.binding_id == binding_id);
+
                             if push_to_talk {
                                 if is_pressed && matches!(stage, Stage::Idle) {
                                     start(&app, &mut stage, &binding_id, &hotkey_string);
+                                } else if is_pressed && matches!(stage, Stage::Processing) {
+                                    queued = Some(queue_press(
+                                        &binding_id,
+                                        &hotkey_string,
+                                        push_to_talk,
+                                    ));
                                 } else if !is_pressed
                                     && matches!(&stage, Stage::Recording(id) if id == &binding_id)
                                 {
                                     stop(&app, &mut stage, &binding_id, &hotkey_string);
+                                } else if !is_pressed && is_queued {
+                                    debug!("Released '{binding_id}' before its queued dictation started");
+                                    queued = None;
                                 }
                             } else if is_pressed {
                                 match &stage {
@@ -84,6 +112,18 @@ impl TranscriptionCoordinator {
                                     }
                                     Stage::Recording(id) if id == &binding_id => {
                                         stop(&app, &mut stage, &binding_id, &hotkey_string);
+                                    }
+                                    // Toggling again before it started takes the request back.
+                                    Stage::Processing if is_queued => {
+                                        debug!("Withdrew queued dictation for '{binding_id}'");
+                                        queued = None;
+                                    }
+                                    Stage::Processing => {
+                                        queued = Some(queue_press(
+                                            &binding_id,
+                                            &hotkey_string,
+                                            push_to_talk,
+                                        ));
                                     }
                                     _ => {
                                         debug!("Ignoring press for '{binding_id}': pipeline busy")
@@ -94,6 +134,7 @@ impl TranscriptionCoordinator {
                         Command::Cancel {
                             recording_was_active,
                         } => {
+                            queued = None;
                             // Don't reset during processing — wait for the pipeline to finish.
                             if !matches!(stage, Stage::Processing)
                                 && (recording_was_active || matches!(stage, Stage::Recording(_)))
@@ -103,6 +144,23 @@ impl TranscriptionCoordinator {
                         }
                         Command::ProcessingFinished => {
                             stage = Stage::Idle;
+                            if let Some(press) = queued.take() {
+                                if press.push_to_talk || press.at.elapsed() <= QUEUED_PRESS_MAX_AGE
+                                {
+                                    debug!("Starting queued dictation for '{}'", press.binding_id);
+                                    start(
+                                        &app,
+                                        &mut stage,
+                                        &press.binding_id,
+                                        &press.hotkey_string,
+                                    );
+                                } else {
+                                    debug!(
+                                        "Dropped stale queued dictation for '{}'",
+                                        press.binding_id
+                                    );
+                                }
+                            }
                         }
                     }
                 }
@@ -155,6 +213,16 @@ impl TranscriptionCoordinator {
         if self.tx.send(Command::ProcessingFinished).is_err() {
             warn!("Transcription coordinator channel closed");
         }
+    }
+}
+
+fn queue_press(binding_id: &str, hotkey_string: &str, push_to_talk: bool) -> QueuedPress {
+    debug!("Queued press for '{binding_id}' until the current dictation finishes");
+    QueuedPress {
+        binding_id: binding_id.to_string(),
+        hotkey_string: hotkey_string.to_string(),
+        push_to_talk,
+        at: Instant::now(),
     }
 }
 
