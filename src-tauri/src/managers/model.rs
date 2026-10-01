@@ -786,18 +786,12 @@ impl ModelManager {
                     model_id, expected, actual
                 );
                 let _ = fs::remove_file(path);
-                Err(anyhow::anyhow!(
-                    "Download verification failed for model {}: file is corrupt. Please retry.",
-                    model_id
-                ))
+                Err(anyhow::anyhow!("The download was damaged. Try again."))
             }
             Err(e) => {
+                warn!("Failed to verify download for model {}: {}", model_id, e);
                 let _ = fs::remove_file(path);
-                Err(anyhow::anyhow!(
-                    "Failed to verify download for model {}: {}. Please retry.",
-                    model_id,
-                    e
-                ))
+                Err(anyhow::anyhow!("The download was damaged. Try again."))
             }
         }
     }
@@ -1048,9 +1042,14 @@ impl ModelManager {
                     model.is_downloading = false;
                 }
             }
-            return Err(anyhow::anyhow!(
-                "Failed to download model: HTTP {}",
+            warn!(
+                "Failed to download model {}: HTTP {}",
+                model_id,
                 response.status()
+            );
+            return Err(anyhow::anyhow!(
+                "Download failed (HTTP {}). Try again.",
+                response.status().as_u16()
             ));
         }
 
@@ -1182,11 +1181,11 @@ impl ModelManager {
                         model.is_downloading = false;
                     }
                 }
-                return Err(anyhow::anyhow!(
-                    "Download incomplete: expected {} bytes, got {} bytes",
-                    total_size,
-                    actual_size
-                ));
+                warn!(
+                    "Download incomplete for model {}: expected {} bytes, got {} bytes",
+                    model_id, total_size, actual_size
+                );
+                return Err(anyhow::anyhow!("The download was cut short. Try again."));
             }
         }
 

@@ -724,7 +724,7 @@ export default function Workspace({
         open={!!removePack}
         title={t("workspace.removeModel")}
         description={t("workspace.removeModelHelp")}
-        confirmLabel={t("workspace.removeModel")}
+        confirmLabel={t("workspace.remove")}
         cancelLabel={t("workspace.cancel")}
         destructive
         onCancel={() => setRemovePack(null)}

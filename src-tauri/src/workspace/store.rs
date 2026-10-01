@@ -66,8 +66,9 @@ impl Store {
             if doc.stage.active() || matches!(doc.stage, Stage::Recording | Stage::Paused) {
                 doc.failed_stage = Some(doc.stage.clone());
                 doc.stage = Stage::Interrupted;
-                doc.error =
-                    Some("Processing was interrupted. Retry to continue from saved audio.".into());
+                doc.error = Some(
+                    "Processing was interrupted. Try again to pick up from the saved audio.".into(),
+                );
                 store.put(&doc)?;
             }
         }
@@ -92,7 +93,7 @@ impl Store {
             doc.stage = Stage::Interrupted;
             doc.failed_stage = Some(Stage::Preparing);
             doc.error = Some(
-                "Your audio was saved before the import was interrupted. Retry to transcribe it."
+                "Your audio was saved before the import stopped. Try again to transcribe it."
                     .into(),
             );
             self.put(&doc)?;
@@ -146,7 +147,7 @@ impl Store {
         let body: String = tx.query_row("SELECT coalesce(d.body,r.body) FROM workspace_import_receipts r LEFT JOIN workspace_documents d ON d.id=r.document_id WHERE r.request_key=?1",
             [request_key], |row| row.get(0))?;
         if body == "null" {
-            bail!("This import was deleted. Choose the file in a new batch to import it again.");
+            bail!("This import was deleted. Import the file again to start over.");
         }
         let doc = serde_json::from_str(&body)?;
         tx.commit()?;
@@ -390,12 +391,12 @@ impl Store {
         )?;
         let mut doc: Document = serde_json::from_str(&body)?;
         if doc.revision != expected_revision {
-            bail!("This transcript changed. Reload it before reviewing notes.");
+            bail!("This transcript changed. Reload it and try again.");
         }
         if doc.stage.active()
             || matches!(doc.stage, Stage::Queued | Stage::Recording | Stage::Paused)
         {
-            bail!("Wait for processing to finish before reviewing notes.");
+            bail!("Wait for processing to finish.");
         }
         let candidate = doc
             .notes_candidate
@@ -403,7 +404,9 @@ impl Store {
             .ok_or_else(|| anyhow::anyhow!("No new notes to review."))?;
         if accept {
             if candidate.transcript_revision != doc.revision {
-                bail!("The transcript changed since these notes were generated. Generate new notes before replacing the current version.");
+                bail!(
+                    "The transcript changed since these notes were made. Generate new notes first."
+                );
             }
             validate_notes(&candidate, &doc.segments)?;
             let section = match candidate.generated_section {
@@ -458,15 +461,15 @@ impl Store {
         )?;
         let mut doc: Document = serde_json::from_str(&body)?;
         if doc.revision != edit.expected_revision {
-            bail!("This transcript changed. Reload it before saving.");
+            bail!("This transcript changed. Reload it and try again.");
         }
         if doc.stage.active()
             || matches!(doc.stage, Stage::Queued | Stage::Recording | Stage::Paused)
         {
-            bail!("Wait for processing to finish before editing.");
+            bail!("Wait for processing to finish.");
         }
         if edit.title.trim().is_empty() {
-            bail!("A title is required.");
+            bail!("Add a title.");
         }
         if edit.segments.len() != doc.segments.len() {
             bail!("Transcript segments cannot be removed.");

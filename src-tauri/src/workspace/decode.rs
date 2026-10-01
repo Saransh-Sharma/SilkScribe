@@ -24,12 +24,12 @@ pub fn inspect(input: &Path) -> Result<(u64, Option<f64>)> {
         .unwrap_or("")
         .to_lowercase();
     if !["wav", "mp3", "m4a", "flac", "ogg"].contains(&extension.as_str()) {
-        bail!("Unsupported audio format");
+        bail!("This audio format isn't supported.");
     }
     let file = File::open(input)?;
     let metadata = file.metadata()?;
     if !metadata.is_file() || metadata.len() == 0 {
-        bail!("Choose a nonempty audio file");
+        bail!("This file is empty.");
     }
     let source = MediaSourceStream::new(Box::new(file), Default::default());
     let mut hint = Hint::new();
@@ -44,7 +44,7 @@ pub fn inspect(input: &Path) -> Result<(u64, Option<f64>)> {
         .format;
     let track = reader
         .default_track()
-        .ok_or_else(|| anyhow::anyhow!("No audio track was found"))?;
+        .ok_or_else(|| anyhow::anyhow!("No audio found in this file."))?;
     symphonia::default::get_codecs().make(&track.codec_params, &DecoderOptions::default())?;
     let duration = track
         .codec_params
@@ -71,7 +71,7 @@ pub fn decode(input: &Path, output: &Path, cancelled: &AtomicBool) -> Result<f64
         .format;
     let track = reader
         .default_track()
-        .ok_or_else(|| anyhow::anyhow!("No audio track was found"))?;
+        .ok_or_else(|| anyhow::anyhow!("No audio found in this file."))?;
     let track_id = track.id;
     let mut decoder =
         symphonia::default::get_codecs().make(&track.codec_params, &DecoderOptions::default())?;
@@ -171,7 +171,7 @@ pub fn decode(input: &Path, output: &Path, cancelled: &AtomicBool) -> Result<f64
     }
     writer.finalize()?;
     if count == 0 {
-        bail!("This file contains no decodable audio");
+        bail!("Couldn't read any audio in this file.");
     }
     Ok(count as f64 / 16000.0)
 }
@@ -315,7 +315,7 @@ pub fn copy_audio(
         || source.metadata()?.len() != source_length
         || source.metadata()?.modified()? != source_modified
     {
-        bail!("The original file changed during import. Retry after it finishes saving.");
+        bail!("The file changed while importing. Try again once it's saved.");
     }
     Ok(())
 }

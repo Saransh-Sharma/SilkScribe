@@ -9,7 +9,7 @@ interface AutostartToggleProps {
 }
 
 export const AutostartToggle: React.FC<AutostartToggleProps> = React.memo(
-  ({ descriptionMode = "tooltip", grouped = false }) => {
+  ({ descriptionMode = "inline", grouped = false }) => {
     const { t } = useTranslation();
     const { getSetting, updateSetting, isUpdating } = useSettings();
 
@@ -21,7 +21,6 @@ export const AutostartToggle: React.FC<AutostartToggleProps> = React.memo(
         onChange={(enabled) => updateSetting("autostart_enabled", enabled)}
         isUpdating={isUpdating("autostart_enabled")}
         label={t("settings.advanced.autostart.label")}
-        description={t("settings.advanced.autostart.description")}
         descriptionMode={descriptionMode}
         grouped={grouped}
       />

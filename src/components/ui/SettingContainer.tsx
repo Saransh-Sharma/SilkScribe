@@ -5,7 +5,7 @@ import { Tooltip } from "./Tooltip";
 
 interface SettingContainerProps {
   title: string;
-  description: string;
+  description?: string;
   children: React.ReactNode;
   descriptionMode?: "inline" | "tooltip";
   grouped?: boolean;
@@ -18,7 +18,7 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
   title,
   description,
   children,
-  descriptionMode = "tooltip",
+  descriptionMode = "inline",
   grouped = false,
   layout = "horizontal",
   disabled = false,
@@ -95,7 +95,7 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
         <div className={containerClasses}>
           <div className={`mb-3 flex items-center gap-2 ${titleBlockClasses}`}>
             <h3 className={titleClasses}>{title}</h3>
-            {tooltipTrigger}
+            {description ? tooltipTrigger : null}
           </div>
           <div className="w-full text-ss-text-primary">{children}</div>
         </div>
@@ -106,7 +106,9 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
       <div className={containerClasses}>
         <div className={`mb-3 ${titleBlockClasses}`}>
           <h3 className={titleClasses}>{title}</h3>
-          <p className={`mt-1 ${descriptionClasses}`}>{description}</p>
+          {description ? (
+            <p className={`mt-1 ${descriptionClasses}`}>{description}</p>
+          ) : null}
         </div>
         <div className="w-full text-ss-text-primary">{children}</div>
       </div>
@@ -123,7 +125,7 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
         <div className={`min-w-0 flex-1 ${titleBlockClasses}`}>
           <div className="flex items-center gap-2">
             <h3 className={titleClasses}>{title}</h3>
-            {tooltipTrigger}
+            {description ? tooltipTrigger : null}
           </div>
         </div>
         <div className="relative min-w-0 justify-self-end text-ss-text-primary max-[760px]:w-full max-[760px]:justify-self-stretch">
@@ -137,7 +139,9 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
     <div className={horizontalContainerClasses}>
       <div className={`min-w-0 flex-1 ${titleBlockClasses}`}>
         <h3 className={titleClasses}>{title}</h3>
-        <p className={`mt-1 ${descriptionClasses}`}>{description}</p>
+        {description ? (
+          <p className={`mt-1 ${descriptionClasses}`}>{description}</p>
+        ) : null}
       </div>
       <div className="relative min-w-0 justify-self-end text-ss-text-primary max-[760px]:w-full max-[760px]:justify-self-stretch">
         {children}

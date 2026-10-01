@@ -81,6 +81,8 @@ All user-facing strings must use i18next translations. ESLint enforces this (no 
 1. Add key to `src/i18n/locales/en/translation.json`
 2. Use in component: `const { t } = useTranslation(); t('key.path')`
 
+Write copy to [docs/copy-style-guide.md](docs/copy-style-guide.md) (voice, rules, glossary). After changing English text, run `bun scripts/prune-locale-keys.ts` so other locales fall back to the new English.
+
 **File structure:**
 
 ```

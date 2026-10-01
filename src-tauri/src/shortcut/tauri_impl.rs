@@ -41,7 +41,7 @@ pub fn init_shortcuts(app: &AppHandle) {
 /// Tauri requires at least one non-modifier key and doesn't support the fn key.
 pub fn validate_shortcut(raw: &str) -> Result<(), String> {
     if raw.trim().is_empty() {
-        return Err("Shortcut cannot be empty".into());
+        return Err("Press a shortcut first.".into());
     }
 
     let modifiers = [
@@ -53,7 +53,7 @@ pub fn validate_shortcut(raw: &str) -> Result<(), String> {
     let parts: Vec<String> = raw.split('+').map(|p| p.trim().to_lowercase()).collect();
     for part in &parts {
         if part == "fn" || part == "function" {
-            return Err("The 'fn' key is not supported by Tauri global shortcuts".into());
+            return Err("The fn key can't be used with this shortcut backend. Switch to Native Keys in Settings → Dictation → Experimental.".into());
         }
     }
 
@@ -63,7 +63,7 @@ pub fn validate_shortcut(raw: &str) -> Result<(), String> {
     if has_non_modifier {
         Ok(())
     } else {
-        Err("Tauri shortcuts must include a main key (letter, number, F-key, etc.) in addition to modifiers".into())
+        Err("Add a letter, number, or F-key to your shortcut.".into())
     }
 }
 
@@ -93,7 +93,10 @@ pub fn register_shortcut(app: &AppHandle, binding: ShortcutBinding) -> Result<()
 
     // Prevent duplicate registrations that would silently shadow one another
     if app.global_shortcut().is_registered(shortcut) {
-        let error_msg = format!("Shortcut '{}' is already in use", binding.current_binding);
+        let error_msg = format!(
+            "{} is already used by another shortcut.",
+            binding.current_binding
+        );
         warn!("register_tauri_shortcut duplicate error: {}", error_msg);
         return Err(error_msg);
     }

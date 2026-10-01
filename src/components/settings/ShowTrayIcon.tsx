@@ -9,7 +9,7 @@ interface ShowTrayIconProps {
 }
 
 export const ShowTrayIcon: React.FC<ShowTrayIconProps> = React.memo(
-  ({ descriptionMode = "tooltip", grouped = false }) => {
+  ({ descriptionMode = "inline", grouped = false }) => {
     const { t } = useTranslation();
     const { getSetting, updateSetting, isUpdating } = useSettings();
 
@@ -21,7 +21,6 @@ export const ShowTrayIcon: React.FC<ShowTrayIconProps> = React.memo(
         onChange={(enabled) => updateSetting("show_tray_icon", enabled)}
         isUpdating={isUpdating("show_tray_icon")}
         label={t("settings.advanced.showTrayIcon.label")}
-        description={t("settings.advanced.showTrayIcon.description")}
         descriptionMode={descriptionMode}
         grouped={grouped}
         tooltipPosition="bottom"

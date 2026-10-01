@@ -14,7 +14,7 @@ ALIGN_LANGUAGES = {'Chinese','English','Cantonese','French','German','Italian','
 def local_model(path):
     root = pathlib.Path(path).resolve(strict=True)
     if not (root / 'installed.json').is_file():
-        raise ValueError('Model installation is incomplete: ' + root.name)
+        raise ValueError('Engine files are incomplete: ' + root.name)
     return str(root)
 
 def validate_notes(notes, ids, section=None):
@@ -73,7 +73,7 @@ def transcribe(request):
                 stamps = model.forced_aligner.align(audio=(samples,rate),text=result.text,language=result.language)[0]
                 if hasattr(stamps, 'items') and not isinstance(stamps, dict): stamps = stamps.items
                 if stamps is None:
-                    if result.text.strip(): raise ValueError('The model returned text without timestamps. Retry with Whisper.')
+                    if result.text.strip(): raise ValueError("This engine didn't return timestamps. Try again with Whisper.")
                     continue
                 for word in stamps:
                     value = word if isinstance(word, dict) else vars(word)
@@ -122,7 +122,7 @@ def notes(request):
     for segment in segments:
         line=json.dumps({'id':segment['id'],'text':segment['text'],'speaker':segment.get('speaker')},ensure_ascii=False)
         size=len(tokenizer.encode(line))
-        if size>10000: raise ValueError('A transcript segment is too large for local notes. Shorten the edited segment.')
+        if size>10000: raise ValueError("A segment is too long for AI notes. Shorten it and try again.")
         if tokens+size>10000 and current: chunks.append(current); current=[]; tokens=0
         current.append(line); tokens+=size
     if current: chunks.append(current)
@@ -140,7 +140,7 @@ def notes(request):
             cursor += 1
         elif len(partial)>1:
             content=json.dumps(partial[:2],ensure_ascii=False)
-            if len(tokenizer.encode(content))>16000: raise ValueError('Generated notes exceed the local context budget. Retry with a shorter transcript.')
+            if len(tokenizer.encode(content))>16000: raise ValueError("This transcript is too long for AI notes. Try a shorter one.")
             evidence_ids = {source for note in partial[:2] for section in ('summary','decisions','actions') for item in note[section] for source in item['sources']}
             merged=validate_notes(run('Consolidate these evidence-backed notes, preserving source IDs:\n'+content),evidence_ids,section)
             # FIFO reduction keeps the tree balanced, with bounded pairwise context.

@@ -74,10 +74,10 @@ pub fn model_path(app: &tauri::AppHandle, id: &str) -> Result<PathBuf> {
     let pack = packs
         .iter()
         .find(|p| p.id == id)
-        .context("Unknown model pack")?;
+        .context("Unknown engine.")?;
     if !pack.installed {
         bail!(
-            "Download {} in Settings → Models & language first.",
+            "Download {} in Settings → Engines & language first.",
             pack.name
         );
     }
@@ -93,9 +93,13 @@ pub async fn install(
     let pack = catalog(&app)?
         .into_iter()
         .find(|p| p.id == id)
-        .context("Unknown model pack")?;
+        .context("Unknown engine.")?;
     if pack.artifacts.is_empty() {
-        bail!("This model bundle has not been published yet. Publish the generated model manifest with its download URLs first.");
+        log::warn!(
+            "Model pack {} has no artifacts. Publish the generated model manifest with its download URLs first.",
+            pack.id
+        );
+        bail!("This engine isn't available for download yet.");
     }
     let root = crate::portable::app_data_dir(&app)?.join("local-models");
     std::fs::create_dir_all(&root)?;
@@ -115,13 +119,13 @@ pub async fn install(
         })
         .sum::<u64>();
     if fs4::available_space(&root)? < total.saturating_sub(existing) + 512 * 1024 * 1024 {
-        bail!("Not enough disk space for this model. Free space and retry; partial downloads are kept.");
+        bail!("Not enough disk space. Free some up and try again — your progress is saved.");
     }
 
     let mut complete = 0u64;
     for artifact in &pack.artifacts {
         if cancelled.load(std::sync::atomic::Ordering::Relaxed) {
-            bail!("Download paused. Partial files are saved; choose Resume to continue.");
+            bail!("Download paused. Resume anytime.");
         }
         if !valid_relative(&artifact.path)
             || artifact.path == "installed.json"
@@ -166,7 +170,7 @@ pub async fn install(
             while let Some(chunk) = response.chunk().await? {
                 if cancelled.load(std::sync::atomic::Ordering::Relaxed) {
                     file.sync_all()?;
-                    bail!("Download paused. Partial files are saved; choose Resume to continue.");
+                    bail!("Download paused. Resume anytime.");
                 }
                 file.write_all(&chunk)?;
                 offset += chunk.len() as u64;
@@ -194,7 +198,7 @@ pub async fn install(
             || format!("{:x}", hash.finalize()) != artifact.sha256.to_lowercase()
         {
             std::fs::remove_file(&path)?;
-            bail!("Model checksum failed. Retry the download.");
+            bail!("The download was damaged. Try again.");
         }
         complete += offset;
     }

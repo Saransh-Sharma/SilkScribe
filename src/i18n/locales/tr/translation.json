@@ -1,13 +1,6 @@
 {
   "tray": {
-    "settings": "Ayarlar...",
-    "checkUpdates": "Güncellemeleri Kontrol Et...",
-    "copyLastTranscript": "Son transkripti kopyala",
-    "unloadModel": "Modeli boşalt",
-    "quit": "Çıkış",
-    "cancel": "İptal",
-    "meetingPause": "Pause / resume meeting",
-    "meetingStop": "Stop & transcribe meeting"
+    "copyLastTranscript": "Son transkripti kopyala"
   },
   "sidebar": {
     "home": "Ana Sayfa",
@@ -21,217 +14,90 @@
     "developer": "Geliştirici"
   },
   "onboarding": {
-    "subtitle": "Başlamak için bir transkripsiyon modeli seçin",
     "recommended": "Önerilen",
     "download": "İndir",
-    "downloading": "İndiriliyor...",
-    "customModelDescription": "Resmi olarak desteklenmiyor",
-    "downloadFailed": "İndirme başarısız oldu. Lütfen tekrar deneyin.",
     "modelCard": {
       "accuracy": "doğruluk",
       "speed": "hız"
     },
     "models": {
       "small": {
-        "name": "Whisper Small",
-        "description": "Hızlı ve oldukça doğru."
+        "name": "Whisper Small"
       },
       "medium": {
-        "name": "Whisper Medium",
-        "description": "İyi doğruluk, orta hız."
+        "name": "Whisper Medium"
       },
       "turbo": {
-        "name": "Whisper Turbo",
-        "description": "Dengeli doğruluk ve hız."
+        "name": "Whisper Turbo"
       },
       "large": {
-        "name": "Whisper Large",
-        "description": "İyi doğruluk, ancak yavaş."
+        "name": "Whisper Large"
       },
       "parakeet-tdt-0.6b-v2": {
-        "name": "Parakeet V2",
-        "description": "Yalnızca İngilizce. İngilizce konuşanlar için en iyi model."
+        "name": "Parakeet V2"
       },
       "parakeet-tdt-0.6b-v3": {
-        "name": "Parakeet V3",
-        "description": "Hızlı ve doğru."
+        "name": "Parakeet V3"
       },
       "moonshine-base": {
-        "name": "Moonshine Base",
-        "description": "Çok hızlı, yalnızca İngilizce. Aksanları iyi işler."
+        "name": "Moonshine Base"
       },
       "moonshine-tiny-streaming-en": {
-        "name": "Moonshine V2 Tiny",
-        "description": "Ultra hızlı, yalnızca İngilizce"
+        "name": "Moonshine V2 Tiny"
       },
       "moonshine-small-streaming-en": {
-        "name": "Moonshine V2 Small",
-        "description": "Hızlı, yalnızca İngilizce. Hız ve doğruluk arasında iyi denge."
+        "name": "Moonshine V2 Small"
       },
       "moonshine-medium-streaming-en": {
-        "name": "Moonshine V2 Medium",
-        "description": "Yalnızca İngilizce. Yüksek kalite."
+        "name": "Moonshine V2 Medium"
       },
       "breeze-asr": {
-        "name": "Breeze ASR",
-        "description": "Tayvan Mandarin Çincesi için optimize edilmiş. Dil değiştirme desteği."
+        "name": "Breeze ASR"
       },
       "sense-voice-int8": {
-        "name": "SenseVoice",
-        "description": "Çok hızlı. Çince, İngilizce, Japonca, Korece, Kantonca."
+        "name": "SenseVoice"
       }
     },
     "permissions": {
       "shared": {
-        "eyebrow": "İzinler",
-        "repairEyebrow": "İzin gerekli",
-        "stepByStep": "Ne yapmalısın",
-        "statusLabel": "Durum",
-        "openPrompt": "macOS penceresini aç",
-        "openingPrompt": "macOS penceresi açılıyor…",
-        "iEnabledIt": "Etkinleştirdim",
         "checkAgain": "Tekrar kontrol et",
         "continue": "Devam et",
         "repairAction": "Rehberli onarımı aç",
         "appName": "SilkScribe",
-        "guidedHelper": "Rehberli yardım",
-        "privateLabel": "Tasarımı gereği gizli",
         "statuses": {
-          "checking": "Kontrol ediliyor",
-          "needed": "Hâlâ gerekli",
-          "error": "İlgilenilmesi gerekiyor",
-          "requesting": "macOS açılıyor",
           "waiting_for_user": "Seni bekliyor",
           "granted": "İzin verildi"
         }
       },
       "microphone": {
-        "title": "Kayıt sırasında SilkScribe'ın sizi duymasına izin verin.",
-        "description": "Sesiniz böylece metne dönüşür. SilkScribe yalnızca bir dikte başlattığınızda dinler.",
-        "primaryAction": "Mikrofon istemini aç",
-        "needLabel": "Dinlemek için gerekli",
-        "whyItMattersTitle": "İlk dikteniz burada başlıyor",
-        "whyItMattersBody": "Mikrofon erişimi, seçtiğiniz kısayolla SilkScribe'ın sesinizi yakalamasını sağlar. O olmadan yazıya dökülecek bir şey yoktur.",
-        "breaksWithoutTitle": "Bu olmadan",
-        "breaksWithoutBody": "Kayıt başlayabilir ama SilkScribe sesini duyamaz.",
-        "afterGrantTitle": "İzin verdikten sonra",
-        "afterGrantBody": "SilkScribe sesini kaydedebilir ve kuruluma devam edebilir.",
-        "steps": {
-          "step1": "“macOS penceresini aç”a tıkla.",
-          "step2": "macOS sorduğunda “İzin Ver”i seç.",
-          "step3": "Pencere çıkmazsa Sistem Ayarları > Gizlilik ve Güvenlik > Mikrofon bölümünü aç.",
-          "step4": "SilkScribe’ı aç, sonra buraya dönüp tekrar kontrol et."
-        },
-        "manualHint": "Elle yol: Sistem Ayarları > Gizlilik ve Güvenlik > Mikrofon, ardından SilkScribe'ı açın.",
-        "privateNote": "Sesiniz bu Mac'te işlenir. SilkScribe'ın dinlemek ya da yazıya dökmek için buluta ihtiyacı yoktur.",
         "guide": {
           "windowLabel": "macOS istemi",
-          "title": "macOS sorduğunda İzin Ver'i seçin.",
-          "body": "Gerçek istem SilkScribe'ın dışında açılır. Bu önizleme, kuruluma devam etmek için doğru seçimi gösterir.",
-          "cue": "“İzin Ver”i arayın",
           "promptTitle": "“SilkScribe” mikrofona erişmek istiyor",
-          "promptBody": "macOS bunu bir kez sorar; böylece SilkScribe kayıt sırasında diktenizi duyabilir.",
           "deny": "İzin Verme",
           "allow": "İzin Ver",
-          "allowed": "İzin verildi",
-          "previewAlt": "İzin Ver düğmesinin vurgulandığı macOS mikrofon izni isteminin örneği."
-        },
-        "statusHelp": {
-          "checking": "Mikrofon erişiminin açık olup olmadığı kontrol ediliyor.",
-          "needed": "Mikrofon erişimi hâlâ kapalı.",
-          "error": "SilkScribe bunu henüz denetleyemedi. Yeniden deneyin ya da aşağıdaki elle yolu kullanın.",
-          "requesting": "macOS izin penceresi şimdi görünmelidir.",
-          "waiting_for_user": "Bunu macOS'te tamamlayın, sonra buraya dönün.",
-          "granted": "Tamam. SilkScribe devam edebilir."
+          "allowed": "İzin verildi"
         }
       },
       "accessibility": {
-        "title": "SilkScribe'ın metni imlecinizin olduğu yere yerleştirmesine izin verin.",
-        "description": "macOS metin eklemeyi korur. Bu izin, SilkScribe'ın bitmiş dikteyi kullandığınız uygulamaya yapıştırmasını sağlar.",
-        "primaryAction": "Erişilebilirlik ayarlarını aç",
-        "needLabel": "Metin eklemek için gerekli",
-        "whyItMattersTitle": "Bu, dikteyi uygulamalarınıza bağlar",
-        "whyItMattersBody": "Yazıya döktükten sonra SilkScribe'ın metni notlara, belgelere, tarayıcılara ve diğer metin alanlarına yerleştirmek için izne ihtiyacı vardır.",
-        "breaksWithoutTitle": "Bu olmadan",
-        "breaksWithoutBody": "SilkScribe yazıya dökebilir ama sonucu uygulamalarına güvenilir şekilde yazamaz.",
-        "afterGrantTitle": "İzin verdikten sonra",
-        "afterGrantBody": "SilkScribe uygulamalara yazabilir ve kurulumu normal şekilde tamamlayabilir.",
         "steps": {
-          "step1": "“macOS penceresini aç”a tıkla.",
-          "step2": "macOS seni Sistem Ayarları’na götürürse oradan devam et.",
-          "step3": "Gizlilik ve Güvenlik > Erişilebilirlik bölümünü aç ve SilkScribe’ı bul.",
-          "step4": "SilkScribe’ı aç, sonra buraya dönüp tekrar kontrol et."
+          "step2": "macOS seni Sistem Ayarları’na götürürse oradan devam et."
         },
-        "manualHint": "Elle yol: Sistem Ayarları > Gizlilik ve Güvenlik > Erişilebilirlik, ardından SilkScribe'ı açın.",
-        "privateNote": "Metin erişimi, transkriptinizi etkin alana yerleştirmek için kullanılır. Sesiniz ve metniniz yerel kalır.",
         "guide": {
-          "windowLabel": "Sistem Ayarları",
-          "title": "Erişilebilirlik'te SilkScribe'ı açın.",
-          "body": "macOS sizi Gizlilik ve Güvenlik'e götürebilir. Listede SilkScribe'ı bulun, açın ve buraya dönün.",
-          "cue": "SilkScribe'ı açın",
-          "rowHelp": "Metin eklemeye izin ver",
-          "promptTitle": "Erişilebilirlik",
-          "exampleApp1": "Finder",
-          "exampleApp2": "Mail",
-          "previewAlt": "SilkScribe'ın açık olduğu macOS Erişilebilirlik listesinin örneği."
-        },
-        "statusHelp": {
-          "checking": "Erişilebilirlik erişiminin açık olup olmadığı kontrol ediliyor.",
-          "needed": "Erişilebilirlik erişimi hâlâ kapalı.",
-          "error": "SilkScribe bunu henüz denetleyemedi. Yeniden deneyin ya da aşağıdaki elle yolu kullanın.",
-          "requesting": "macOS onay akışı şimdi açılmalıdır.",
-          "waiting_for_user": "Bunu macOS'te tamamlayın, sonra buraya dönün.",
-          "granted": "Tamam. SilkScribe devam edebilir."
+          "windowLabel": "Sistem Ayarları"
         }
       }
     },
     "setup": {
-      "eyebrow": "Hazırlanıyor",
-      "title": "SilkScribe hazırlanıyor.",
-      "description": "{{language}} için en iyi çevrimdışı konuşma motorunu hazırlıyoruz, sonra kısa bir test yapacaksın.",
       "defaultLanguage": "dilin",
-      "autoLabel": "Otomatik",
-      "engineTitle": "Kurulum seçimi gerekmiyor",
-      "engineBody": "SilkScribe {{language}} için en iyi seçeneği belirleyip yerel olarak kuruyor.",
       "progressLabel": "İlerleme",
-      "sizeLabel": "İndirme",
       "speedLabel": "Hız",
-      "etaLabel": "Kalan süre",
       "speedValue": "{{speed}} MB/s",
-      "notAvailable": "Henüz yok",
-      "preparingDetail": "Hazırlanıyor…",
       "shortcutTitle": "Kısayolun",
-      "shortcutBody": "Konuşmak için {{shortcut}} kısayolunu basılı tut. Yazıya dökmek için bırak.",
-      "prepBadge": "Neredeyse hazır",
-      "prepTitle": "Bu kısa sürmeli ve otomatik hissettirmeli",
-      "prepBody": "Kurulum sürerken SilkScribe bu makine için seçtiği konuşma motorunu indiriyor veya yüklüyor. Bir sonraki adım için burada bekleyebilirsin.",
       "retry": "Tekrar dene",
-      "ready": "Her şey hazır. Şimdi deneme adımı açılıyor.",
       "states": {
-        "resolving": "Seçiliyor",
         "downloading": "İndiriliyor",
         "preparing": "Hazırlanıyor",
-        "ready": "Hazır",
-        "error": "İlgilenmek gerekiyor"
-      },
-      "panelStates": {
-        "resolving": "En iyi motor seçiliyor",
-        "downloading": "Dosyalar indiriliyor",
-        "preparing": "Motor hazırlanıyor",
-        "ready": "Teste hazır",
-        "error": "Kurulum ilgilenmeyi gerektiriyor"
-      },
-      "panelHelp": {
-        "resolving": "SilkScribe nelerin mevcut olduğunu kontrol ediyor ve bu cihaz için en iyi motoru seçiyor.",
-        "downloading": "Gerekli dosyalar şimdi indiriliyor.",
-        "preparing": "İndirme tamamlandı. SilkScribe her şeyi yerel olarak yüklüyor.",
-        "ready": "Kurulum tamamlandı. Sırada kısa bir gerçek test var.",
-        "error": "Kurulum tamamlanmadı. Lütfen tekrar dene."
-      },
-      "errors": {
-        "loadModels": "SilkScribe kullanılabilir konuşma motorlarını yükleyemedi.",
-        "downloadModel": "SilkScribe indirmeyi tamamlayamadı.",
-        "selectModel": "SilkScribe konuşma motorunu hazırlayamadı."
+        "ready": "Hazır"
       },
       "tipsBadge": "Beklerken işine yarayacak",
       "previousCard": "Önceki ipucu",
@@ -287,96 +153,30 @@
     "progress": {
       "welcome": "Hoş geldin",
       "microphone": "Mikrofon",
-      "accessibility": "Metin Erişimi",
-      "setup": "Kurulum",
-      "practice": "Dene"
+      "setup": "Kurulum"
     },
     "welcome": {
-      "eyebrow": "Hazırlan",
-      "title": "SilkScribe’ı bir dakikada kur.",
-      "description": "Gerekli izinleri açacağız, kurulumu arka planda tamamlayacağız ve sana gerçek bir dikte denemesi yaptıracağız.",
-      "badge": "Hızlı kurulum",
-      "features": {
-        "permissions": {
-          "title": "Açık izin yardımı",
-          "description": "Tam olarak neye neden izin vermen gerektiğini gör."
-        },
-        "engine": {
-          "title": "Otomatik kurulum",
-          "description": "SilkScribe bu cihaz için doğru çevrimdışı motoru seçer."
-        },
-        "practice": {
-          "title": "Gerçek bir test",
-          "description": "Başlamadan önce her şeyin çalıştığından emin ol."
-        }
-      },
-      "outcomeLabel": "Kurulumdan sonra",
-      "outcome": "Kısayolunu basılı tut, konuş ve SilkScribe metni ihtiyacın olan yere yerleştirsin.",
-      "planLabel": "Neler olacak",
       "plan": {
         "step1": {
-          "title": "Mikrofonu izin ver",
-          "description": "Böylece SilkScribe seni duyabilir."
-        },
-        "step2": {
-          "title": "Metin erişimine izin ver",
-          "description": "Böylece SilkScribe uygulamalarına yazabilir."
+          "title": "Mikrofonu izin ver"
         },
         "step3": {
-          "title": "Bir kez dene",
-          "description": "Kurulum biter, sonra hızlı bir test yaparsın."
+          "title": "Bir kez dene"
         }
-      },
-      "permissionPromise": "Bu adımlar SilkScribe’ın düzgün çalışması için gereklidir.",
-      "continue": "Devam et"
+      }
     },
     "practice": {
-      "eyebrow": "Dene",
-      "title": "SilkScribe’ı bir kez dene",
-      "description": "Deneme kutusuna tıkla, kısayolunu basılı tut, kısa bir cümle söyle ve bırak.",
-      "badge": "Hızlı test",
-      "shortcutFallback": "Kısayol",
-      "steps": {
-        "step1": {
-          "title": "Deneme kutusuna odaklan",
-          "description": "SilkScribe’ın metni nereye yerleştireceğini bilmesi için bu kutuyu seçili tut."
-        },
-        "step2": {
-          "title": "{{shortcut}} kısayolunu basılı tut ve konuş",
-          "description": "Doğal bir ses tonuyla kısa bir cümle söyle."
-        },
-        "step3": {
-          "title": "Yazıya dökmek için bırak",
-          "description": "Metin burada görünürse SilkScribe hazır demektir."
-        }
-      },
-      "tipTitle": "Bunu dene",
-      "tipBody": "Şunu söyle: “SilkScribe bugün notlarım için hazır.”",
-      "helperTitle": "Burada dene",
-      "helper": "Bu kutuyu odakta tut ve sonra kısayolunu kullan. Söylediklerin burada görünmelidir.",
-      "placeholder": "Kısayolunu basılı tut, konuş ve bırak. Metnin burada görünecek…",
-      "success": "Bu işe yaradı",
-      "readyToFinish": "Testin çalıştı. SilkScribe’ı kullanmaya başlayabilirsin.",
-      "prompt": "İstersen bunu şimdilik atlayıp daha sonra test edebilirsin.",
       "finish": "SilkScribe kullanmaya başla",
-      "skip": "Şimdilik atla",
-      "finishing": "Kurulum tamamlanıyor…",
-      "finishFailed": "SilkScribe onboarding’i tamamlayamadı. Lütfen tekrar dene."
-    },
-    "shared": {
-      "stepCounter": "Adım {{current}} / {{total}}"
+      "skip": "Şimdilik atla"
     }
   },
   "modelSelector": {
     "custom": "Özel",
     "active": "Aktif",
     "statusLabel": "Model durumu: {{status}}",
-    "switching": "Değiştiriliyor...",
     "noModelsAvailable": "Kullanılabilir model yok",
     "extracting": "{{modelName}} çıkarılıyor...",
     "extractingMultiple": "{{count}} model çıkarılıyor...",
-    "extractingGeneric": "Çıkarılıyor...",
-    "downloading": "%{{percentage}} indiriliyor",
     "downloadingMultiple": "{{count}} model indiriliyor...",
     "modelReady": "Model Hazır",
     "loading": "{{modelName}} yükleniyor...",
@@ -389,8 +189,6 @@
     "downloadSpeed": "{{speed}} MB/s",
     "cancel": "İptal",
     "cancelDownload": "İndirmeyi iptal et",
-    "retryDownload": "İndirmeyi yeniden dene",
-    "downloadErrorTitle": "İndirme tamamlanamadı",
     "downloadProgress": {
       "downloadedOf": "{{total}} / {{downloaded}}",
       "speed": "{{speed}}/sn",
@@ -401,29 +199,18 @@
       "unknownEta": "Süre hesaplanıyor"
     },
     "capabilities": {
-      "languageSelection": "Birden fazla giriş dilini destekler",
-      "singleLanguage": "Yalnızca bu dili destekler",
-      "multiLanguage": "Çok dilli",
-      "languageOnly": "Yalnızca {{language}}",
-      "translation": "İngilizce'ye çevirebilir",
       "translate": "İngilizce'ye çevir"
     },
-    "diskSpaceCheckError": "SilkScribe indirmeden önce disk alanını kontrol edemedi: {{error}}",
-    "insufficientSpace": "Bu modeli indirmek için SilkScribe {{required}} boş alana ihtiyaç duyar. {{available}} kullanılabilir.",
-    "downloadFailed": "SilkScribe modeli indiremedi: {{error}}",
-    "extractionFailed": "SilkScribe modeli çıkaramadı: {{error}}",
     "downloadErrors": {
       "preflightFailed": "SilkScribe indirmeden önce disk alanını kontrol edemedi: {{detail}}",
       "insufficientSpace": "SilkScribe bu modeli indirmek için {{required}} boş alana ihtiyaç duyuyor. Kullanılabilir alan {{available}}.",
       "downloadFailed": "SilkScribe modeli indiremedi: {{detail}}",
-      "extractionFailed": "SilkScribe modeli çıkaramadı: {{detail}}",
-      "unknown": "SilkScribe indirmeyi tamamlayamadı."
+      "extractionFailed": "SilkScribe modeli çıkaramadı: {{detail}}"
     }
   },
   "settings": {
     "modelSettings": {
-      "title": "{{model}} Ayarları",
-      "noSettingsNeeded": "Bu model yapılandırma gerektirmeden otomatik olarak çalışır."
+      "title": "{{model}} Ayarları"
     },
     "general": {
       "eyebrow": "Günlük kurulum",
@@ -437,54 +224,14 @@
         "app": "Uygulama",
         "appDescription": "SilkScribe uygulamasının kendisinin nasıl hissettireceğini seç."
       },
-      "title": "Genel",
       "shortcut": {
-        "title": "SilkScribe Kısayolları",
-        "description": "Sesle yazma kaydını başlatmak için klavye kısayollarını yapılandırın",
-        "loading": "Kısayollar yükleniyor...",
-        "none": "Kısayol yapılandırılmadı",
         "notFound": "Kısayol bulunamadı",
-        "pressKeys": "Tuşlara basın...",
-        "reset": "Kısayolu sıfırla",
-        "bindings": {
-          "transcribe": {
-            "name": "Transkripsiyon Kısayolu",
-            "description": "Sesinizi kaydetmek ve metne dönüştürmek için klavye kısayolu."
-          },
-          "cancel": {
-            "name": "İptal Kısayolu",
-            "description": "Mevcut kaydı iptal etmek için klavye kısayolu."
-          },
-          "transcribe_with_post_process": {
-            "name": "Son İşlem Kısayolu",
-            "description": "İsteğe bağlı: Transkripsiyonunuza her zaman AI son işleme uygulayan özel bir kısayol tuşu."
-          }
-        },
-        "errors": {
-          "restore": "Orijinal kısayol geri yüklenemedi",
-          "set": "Kısayol ayarlanamadı: {{error}}",
-          "reset": "Kısayol orijinal değerine sıfırlanamadı"
-        },
         "success": {
           "saved": "Kısayol kaydedildi",
           "reset": "Kısayol sıfırlandı"
         }
       },
-      "language": {
-        "title": "Dil",
-        "description": "Konuşma tanıma dilini seçin. 'Otomatik' seçeneği dili kendisi belirler, ancak belirli bir dil seçmek o dildeki doğruluğu artırabilir.",
-        "descriptionUnsupported": "Parakeet modeli dili otomatik algılar. Manuel seçim gerekmez.",
-        "searchPlaceholder": "Dil ara...",
-        "noResults": "Dil bulunamadı",
-        "auto": "Otomatik"
-      },
-      "pushToTalk": {
-        "label": "Bas Konuş",
-        "description": "Kaydetmek için basılı tutun, durdurmak için bırakın"
-      },
       "theme": {
-        "title": "Görünüm",
-        "description": "macOS'i izle ya da sabit bir açık veya koyu arayüz seç.",
         "options": {
           "system": "Sistem",
           "light": "Açık",
@@ -492,51 +239,9 @@
         }
       }
     },
-    "models": {
-      "eyebrow": "Konuşma motorları",
-      "pageTitle": "SilkScribe'ın nasıl dinlediğini seç",
-      "pageDescription": "SilkScribe'ın kullanmasını istediğin modeli seç, kurulu modellerini düzenli tut ve gerektiğinde daha fazlasını indir.",
-      "title": "Transkripsiyon Modelleri",
-      "description": "Bir transkripsiyon modeli seçin veya ek modeller indirin. Farklı modeller değişen doğruluk ve hız seviyeleri sunar.",
-      "currentModel": "Geçerli model",
-      "currentModelSettings": "Geçerli model ayarları",
-      "currentModelSettingsDescription": "Burada yalnızca etkin modelin dil seçenekleri görünür kalır.",
-      "yourModels": "İndirilen modeller",
-      "availableModels": "İndirilebilir",
-      "downloaded": "İndirildi",
-      "available": "İndirilebilir",
-      "noActiveModelTitle": "Henüz etkin bir model yok.",
-      "noActiveModelDescription": "Aşağıdan bir model indir; SilkScribe onu bir sonraki transkripsiyonunda kullanır.",
-      "noExtraInstalled": "Şu anda yalnızca geçerli modelin kurulu.",
-      "deleteConfirm": "{{modelName}} modelini silmek istediğinizden emin misiniz? Kullanmak için tekrar indirmeniz gerekecek.",
-      "deleteActiveConfirm": "{{modelName}} aktif modelinizdir. Silmek, yeni bir model seçene kadar transkripsiyonları durduracaktır. Emin misiniz?",
-      "deleteTitle": "Modeli Sil",
-      "filters": {
-        "all": "Tümü",
-        "multiLanguage": "Çok dilli",
-        "translation": "Çeviri",
-        "allLanguages": "Tüm Diller"
-      },
-      "noModelsMatch": "Bu filtreyle eşleşen model yok.",
-      "deleteConfirmAction": "Modeli sil"
-    },
     "sound": {
-      "title": "Ses",
       "microphone": {
-        "title": "Mikrofon",
-        "description": "Tercih ettiğiniz mikrofon cihazını seçin",
-        "placeholder": "Mikrofon seçin...",
-        "loading": "Yükleniyor..."
-      },
-      "audioFeedback": {
-        "label": "Sesli Geri Bildirim",
-        "description": "Kayıt başladığında ve bittiğinde ses çalar"
-      },
-      "outputDevice": {
-        "title": "Çıkış Cihazı",
-        "description": "Geri bildirim sesleri için ses çıkış cihazını seçin",
-        "placeholder": "Çıkış cihazı seçin...",
-        "loading": "Yükleniyor..."
+        "title": "Mikrofon"
       },
       "volume": {
         "title": "Ses Seviyesi",
@@ -565,43 +270,23 @@
       "eyebrow": "İsteğe bağlı denetimler",
       "pageTitle": "Gelişmiş davranış ve destek",
       "pageDescription": "Çoğu kişi bunlara dokunmayabilir. SilkScribe'ın makinende farklı davranmasını istediğinde kullan.",
-      "title": "Gelişmiş",
       "groups": {
         "app": "Uygulama",
-        "output": "Çıktı",
         "transcription": "Transkripsiyon",
         "history": "Geçmiş",
-        "support": "Destek",
         "experimental": "Deneysel"
       },
       "groupDescriptions": {
-        "app": "Uygulamanın kendi başlatma ve yer paylaşımı davranışı.",
-        "output": "Tamamlanan metnin kullandığın uygulamaya nasıl yerleştirileceği.",
-        "transcription": "SilkScribe'ın metnini nasıl biçimlendireceğini değiştiren küçük ayarlamalar.",
-        "history": "Transkripsiyonlar ve kayıtlar için saklama ve temizleme ayarları.",
-        "support": "Sorun gidermeye yardımcı bakım araçları ve klasörler.",
-        "experimental": "Hâlâ gelişmekte olan ve değişebilecek özellikler."
-      },
-      "experimentalToggle": {
-        "label": "Deneysel Özellikler",
-        "description": "Hala geliştirme aşamasında olan deneysel özellikleri etkinleştir."
-      },
-      "lazyStreamClose": {
-        "label": "Transkripsiyonlar arasında mikrofonu açık tut",
-        "description": "Kayıt durduktan sonra gecikmeyi azaltmak için mikrofon akışını kısa süre açık tut."
+        "history": "Transkripsiyonlar ve kayıtlar için saklama ve temizleme ayarları."
       },
       "acceleration": {
         "whisper": {
-          "title": "Whisper hızlandırma",
-          "description": "Whisper modelleri için donanım hızlandırması seçin."
+          "title": "Whisper hızlandırma"
         },
         "ort": {
-          "title": "ONNX hızlandırma",
-          "description": "ONNX modelleri için donanım hızlandırması seçin."
+          "title": "ONNX hızlandırma"
         },
         "gpuDevice": {
-          "title": "GPU cihazı",
-          "description": "Whisper çıkarımı için GPU seçin.",
           "auto": "Otomatik"
         },
         "labels": {
@@ -612,59 +297,16 @@
           "rocm": "ROCm"
         }
       },
-      "startHidden": {
-        "label": "Gizli Başlat",
-        "description": "Pencereyi açmadan sistem tepsisinde başlatır."
-      },
-      "autostart": {
-        "label": "Başlangıçta Çalıştır",
-        "description": "Bilgisayara giriş yaptığınızda SilkScribe otomatik olarak başlatılır."
-      },
-      "showTrayIcon": {
-        "label": "Tepsi simgesini göster",
-        "description": "SilkScribe simgesini sistem tepsisinde göster."
-      },
       "overlay": {
-        "title": "Overlay Konumu",
-        "description": "Kayıt ve transkripsiyon sırasında görsel geri bildirim kaplamasını gösterir. Linux'ta 'Yok' önerilir.",
         "options": {
-          "none": "Yok",
           "bottom": "Alt",
           "top": "Üst"
         }
       },
       "pasteMethod": {
-        "title": "Yapıştırma Yöntemi",
-        "description": "Metnin nasıl ekleneceğini seçin. Doğrudan: sistem girişiyle yazmayı simüle eder. Yok: yapıştırmayı atlar, sadece geçmişi/panoyu günceller.",
-        "options": {
-          "clipboard": "Pano ({{modifier}}+V)",
-          "clipboardCtrlShiftV": "Pano (Ctrl+Shift+V)",
-          "clipboardShiftInsert": "Pano (Shift+Insert)",
-          "direct": "Doğrudan",
-          "none": "Yok",
-          "externalScript": "Harici Betik"
-        },
         "externalScriptPlaceholder": "/dosya/yolu/betik.sh"
       },
-      "typingTool": {
-        "title": "Yazma Aracı",
-        "description": "Doğrudan yapıştırma yöntemi için hangi Linux yazma aracının kullanılacağını seçin. Auto, sisteminiz için mevcut en iyi aracı otomatik olarak algılar ve kullanır.",
-        "options": {
-          "auto": "Auto (Önerilen)"
-        }
-      },
-      "clipboardHandling": {
-        "title": "Pano Yönetimi",
-        "description": "Panoyu Değiştirme, transkripsiyon sonrası mevcut pano içeriğini korur. Panoya Kopyala ise yapıştırma işleminden sonra transkripsiyon sonucunu panoda bırakır.",
-        "options": {
-          "dontModify": "Panoyu Değiştirme",
-          "copyToClipboard": "Panoya Kopyala"
-        },
-        "directInsertHint": "SilkScribe metni doğrudan buraya ekler, böylece panon değişmeden kalır."
-      },
       "autoSubmit": {
-        "title": "Otomatik Gönder",
-        "description": "Metin eklendikten sonra seçilen tuş kombinasyonunu otomatik olarak gönderir. macOS'ta Cmd+Enter, Windows/Linux'ta Super+Enter geçerlidir.",
         "options": {
           "off": "Kapalı",
           "enter": "Enter",
@@ -674,107 +316,48 @@
         }
       },
       "translateToEnglish": {
-        "label": "İngilizceye Çevir",
-        "description": "Transkripsiyon sırasında diğer dillerden İngilizceye otomatik olarak çevirir.",
-        "descriptionUnsupported": "Çeviri {{model}} modeli tarafından desteklenmiyor."
+        "label": "İngilizceye Çevir"
       },
       "modelUnload": {
-        "title": "Modeli Boşalt",
-        "description": "Belirtilen süre boyunca kullanılmadığında modelin GPU/CPU belleğini otomatik olarak serbest bırakır.",
         "options": {
           "never": "Asla",
-          "immediately": "Hemen",
           "min2": "2 dakika sonra",
           "min5": "5 dakika sonra",
           "min10": "10 dakika sonra",
           "min15": "15 dakika sonra",
-          "hour1": "1 saat sonra",
-          "sec5": "5 saniye sonra (Debug)"
+          "hour1": "1 saat sonra"
         }
       },
       "customWords": {
-        "title": "Özel Kelimeler",
-        "description": "Transkripsiyon sırasında sıkça yanlış duyulan veya yanlış yazılan kelimeleri ekleyin. Sistem, benzer sesli kelimeleri listenize göre otomatik olarak düzeltir.",
-        "placeholder": "Kelime ekle",
         "add": "Ekle",
-        "remove": "{{word}} Kaldır",
-        "duplicate": "\"{{word}}\" zaten mevcut"
-      },
-      "overlayAppearance": {
-        "title": "Örtü görünümü",
-        "description": "Kayıt örtüsünün uygulama temasına uyup uymayacağını veya açık/koyu kalacağını seçin.",
-        "options": {
-          "auto": "Uygama temasına eşleş",
-          "light": "Her zaman açık",
-          "dark": "Her zaman koyu"
-        }
+        "remove": "{{word}} Kaldır"
       }
     },
     "postProcessing": {
-      "title": "Son İşlem",
-      "hotkey": {
-        "title": "Kısayol Tuşu"
-      },
       "api": {
-        "title": "API (OpenAI Uyumlu)",
         "provider": {
-          "title": "Sağlayıcı",
-          "description": "OpenAI uyumlu bir sağlayıcı seçin."
-        },
-        "appleIntelligence": {
-          "title": "Apple Intelligence",
-          "description": "Tamamen cihaz üzerinde çalışır. API anahtarı veya ağ erişimi gerekmez.",
-          "requirements": "macOS Tahoe (26.0) veya üzeri çalıştıran bir Apple Silicon Mac gerektirir. Sistem Ayarları'nda Apple Intelligence etkin olmalıdır.",
-          "unavailable": "Apple Intelligence bu cihazda kullanılamıyor. macOS Tahoe (26.0) veya üzeri ve Sistem Ayarları'nda Apple Intelligence etkin olan bir Apple Silicon Mac gerektirir."
+          "title": "Sağlayıcı"
         },
         "baseUrl": {
           "title": "Temel URL",
-          "description": "Seçili sağlayıcı için API temel URL'si. Yalnızca özel sağlayıcı düzenlenebilir.",
           "placeholder": "https://api.openai.com/v1"
         },
         "apiKey": {
-          "title": "API Anahtarı",
-          "description": "Seçili sağlayıcı için API anahtarı.",
           "placeholder": "sk-..."
         },
         "model": {
           "title": "Model",
-          "descriptionApple": "İsteğe bağlı bir sayısal token sınırı belirleyin veya varsayılan cihaz içi ön ayarı kullanın.",
-          "descriptionCustom": "Özel uç noktanızın beklediği model tanımlayıcısını girin.",
-          "descriptionDefault": "Seçili sağlayıcının sunduğu bir modeli seçin.",
-          "placeholderApple": "Apple Intelligence",
-          "placeholderWithOptions": "Model ara veya seç",
-          "placeholderNoOptions": "Model adı yazın",
-          "refreshModels": "Modelleri Yenile"
+          "placeholderNoOptions": "Model adı yazın"
         }
       },
       "prompts": {
-        "title": "Prompt",
-        "selectedPrompt": {
-          "title": "Seçili Prompt",
-          "description": "Transkripsiyonları iyileştirmek için bir şablon seçin veya yeni bir tane oluşturun. Yakalanan transkripte referans vermek için prompt metni içinde ${output} kullanın."
-        },
-        "noPrompts": "Kullanılabilir prompt yok",
-        "selectPrompt": "Prompt Seç",
-        "createNew": "Yeni Prompt Oluştur",
-        "promptLabel": "Prompt Etiketi",
-        "promptLabelPlaceholder": "Prompt adı girin",
-        "promptInstructions": "Prompt Talimatları",
-        "promptInstructionsPlaceholder": "Transkripsiyondan sonra çalıştırılacak talimatları yazın. Örnek: Aşağıdaki metnin dilbilgisini ve açıklığını iyileştir: ${output}",
-        "promptTip": "İpucu: Transkribe edilen metni promptunuza eklemek için <code>${output}</code> kullanın.",
-        "updatePrompt": "Promptu Güncelle",
-        "deletePrompt": "Promptu Sil",
-        "createPrompt": "Prompt Oluştur",
-        "cancel": "İptal",
-        "selectToEdit": "Ayrıntılarını görüntülemek ve düzenlemek için yukarıdan bir prompt seçin.",
-        "createFirst": "İlk son işlem prompt'unuzu oluşturmak için yukarıdaki “Yeni Prompt Oluştur” seçeneğine tıklayın."
+        "cancel": "İptal"
       }
     },
     "history": {
       "eyebrow": "Transkripsiyon arşivi",
       "pageTitle": "Son transkripsiyonlarını gözden geçir",
       "pageDescription": "SilkScribe'ın yakaladıklarına göz at, sesi yeniden çal ve yakında tutmak istediğin her şeyi kaydet.",
-      "title": "Geçmiş",
       "openFolder": "Kayıtlar Klasörünü Aç",
       "exportMarkdown": "Markdown olarak dışa aktar",
       "exportJson": "JSON olarak dışa aktar",
@@ -782,7 +365,6 @@
       "exportEmpty": "Dışa aktarılacak geçmiş yok.",
       "exportSuccess": "Geçmiş dışa aktarıldı",
       "exportError": "SilkScribe geçmişi dışa aktaramadı.",
-      "loading": "Geçmiş yükleniyor...",
       "empty": "Henüz transkripsiyon yok. Geçmişinizi oluşturmak için kayda başlayın!",
       "emptyDescription": "Kaydettiğin transkripsiyonlar ve kayıtlar ilk diktenden sonra burada görünecek.",
       "emptyFiltered": "Eşleşen transkripsiyon yok.",
@@ -813,68 +395,19 @@
       "retry": "Yeniden dene"
     },
     "debug": {
-      "title": "Hata Ayıklama",
-      "logDirectory": {
-        "title": "Log Dizini",
-        "description": "Log dosyalarının saklandığı konum"
-      },
-      "logLevel": {
-        "title": "Log Seviyesi",
-        "description": "Loglamanın ayrıntı düzeyini ayarla"
-      },
-      "updateChecks": {
-        "label": "Güncellemeleri Kontrol Et",
-        "description": "SilkScribe için yeni sürümleri otomatik olarak kontrol eder"
-      },
-      "soundTheme": {
-        "label": "Ses Teması",
-        "description": "Kayıt başlangıç ve bitişi için sesli geri bildirim temasını seçin"
-      },
-      "wordCorrectionThreshold": {
-        "title": "Kelime Düzeltme Eşiği",
-        "description": "Özel kelime düzeltmeleri için hassasiyet"
-      },
-      "historyLimit": {
-        "title": "Geçmiş Limiti",
-        "description": "Saklanacak maksimum geçmiş kaydı sayısı",
-        "entries": "kayıt"
-      },
       "recordingRetention": {
-        "title": "Kayıtları Otomatik Sil",
-        "description": "Alan tasarrufu için eski kayıtları otomatik olarak siler",
         "never": "Asla",
         "preserveLimit": "Son {{count}} kaydı tut",
         "days3": "3 gün sonra",
         "weeks2": "2 hafta sonra",
-        "months3": "3 ay sonra",
-        "placeholder": "Saklama süresi seçin..."
-      },
-      "alwaysOnMicrophone": {
-        "label": "Mikrofon Her Zaman Açık",
-        "description": "Daha hızlı yanıt için mikrofonu aktif tutar"
-      },
-      "clamshellMicrophone": {
-        "title": "Kapalı Kapak Mikrofonu",
-        "description": "Dizüstü bilgisayar kapağı kapalıyken kullanılacak mikrofon"
-      },
-      "postProcessingToggle": {
-        "label": "Son İşlem",
-        "description": "Transkripsiyon sonrası yapay zekâ destekli metin iyileştirmeyi etkinleştirir"
+        "months3": "3 ay sonra"
       },
       "muteWhileRecording": {
         "label": "Kayıt Sırasında Sessize Al",
         "description": "Kayıt sırasında sistem sesini kapatır"
       },
-      "appendTrailingSpace": {
-        "label": "Sonuna Boşluk Ekle",
-        "description": "Yapıştırılan transkripsiyondan sonra boşluk ekler"
-      },
       "keyboardImplementation": {
-        "title": "Keyboard Implementation",
-        "description": "Choose the keyboard shortcut backend.",
-        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
         "backends": {
-          "tauri": "Tauri genel kısayol",
           "nativeKeys": "Yerel tuşlar"
         }
       },
@@ -882,14 +415,6 @@
         "appData": "Uygulama Verileri:",
         "models": "Modeller:",
         "settings": "Ayarlar:"
-      },
-      "pasteDelay": {
-        "title": "Yapıştırma gecikmesi",
-        "description": "Yapıştırma tuşu göndermeden önce gecikme (milisaniye cinsinden). Yanlış metin yapıştırılıyorsa artırın."
-      },
-      "recordingBuffer": {
-        "title": "Ek kayıt tamponu",
-        "description": "Tuşu bıraktıktan sonra kısa süre daha kaydet."
       }
     },
     "about": {
@@ -897,10 +422,6 @@
       "version": {
         "title": "Sürüm",
         "description": "SilkScribe'nin mevcut sürümü"
-      },
-      "appDataDirectory": {
-        "title": "Uygulama Veri Dizini",
-        "description": "SilkScribe'nin verilerini sakladığı konum"
       }
     }
   },
@@ -924,67 +445,24 @@
     }
   },
   "common": {
-    "loading": "Yükleniyor...",
     "versionLabel": "v{{version}}",
-    "save": "Kaydet",
     "cancel": "İptal",
-    "reset": "Sıfırla",
-    "add": "Ekle",
-    "remove": "Kaldır",
     "delete": "Sil",
-    "edit": "Düzenle",
-    "create": "Oluştur",
-    "update": "Güncelle",
-    "close": "Kapat",
     "open": "Aç",
     "default": "Varsayılan",
-    "enabled": "Etkin",
-    "disabled": "Devre Dışı",
-    "on": "Açık",
-    "off": "Kapalı",
-    "yes": "Evet",
-    "no": "Hayır",
-    "noOptionsFound": "Seçenek bulunamadı",
-    "moreInformation": "Daha fazla bilgi",
     "errorBoundary": {
-      "description": "SilkScribe bu görünümü oluşturamadı. Ayarların ve kayıtların hâlâ yerel olarak saklanıyor.",
       "reload": "Yeniden yükle",
       "openLogs": "Günlükleri aç"
     }
   },
-  "errors": {
-    "loadDirectory": "Dizin yüklenirken hata oluştu: {{error}}"
-  },
-  "appLanguage": {
-    "title": "Uygulama Dili",
-    "description": "SilkScribe arayüzünün dilini değiştirin"
-  },
   "overlay": {
-    "listening": "Kayıt",
     "transcribing": "Transkripsiyon",
-    "processing": "İşleniyor",
     "success": "Tamam",
-    "failed": "Başarısız",
-    "cancelled": "İptal edildi",
-    "cancelledDetail": "Senin tarafından durduruldu",
-    "empty": "Hiçbir şey duyulmadı",
-    "detail": {
-      "cancelled": "Siz tarafından durduruldu",
-      "empty": "Hiç konuşma algılanmadı",
-      "pasteCopied": "Yapıştırılamadı — panoya kopyalandı",
-      "pasteFailed": "Metin yapıştırılamadı veya kopyalanamadı",
-      "transcriptionFailed": "Transkripsiyon tamamlanmadı",
-      "recordingFailed": "Kayıt başlatılamadı"
-    }
+    "cancelled": "İptal edildi"
   },
   "feedback": {
     "pasteFailed": {
-      "copiedTitle": "Panoya kopyalandı",
-      "copiedDescription": "SilkScribe etkin uygulamaya yapıştıramadı.",
-      "failedTitle": "SilkScribe yapıştıramadı",
-      "failedDescription": "Metin yapıştırılamadı veya kopyalanamadı.",
-      "copyFailedTitle": "SilkScribe metni kopyalayamadı",
-      "copyFailedDescription": "Yapıştırma başarısız oldu ve yedek kopyalama tamamlanmadı."
+      "copiedTitle": "Panoya kopyalandı"
     }
   },
   "home": {
@@ -997,14 +475,7 @@
       "readyDescription": "Her şey hazır görünüyor. Kısayolunu basılı tut, doğal konuş; SilkScribe metni ihtiyaç duyduğun yere yerleştirir.",
       "setupDescription": "Temelleri bir kez tamamla; sonra SilkScribe yolundan çekilir ve hızlı dikte gerektiğinde her zaman hazırdır.",
       "primaryReady": "Kayıt kurulumunu gözden geçir",
-      "primarySetup": "Kurulumu tamamla",
-      "secondaryAction": "Modellere göz at"
-    },
-    "setup": {
-      "title": "Birkaç temel öğe hâlâ ilgilenilmeyi bekliyor.",
-      "description": "Kısayolun, modelin ve izinlerin hazır olduğunda SilkScribe günlük dikte için hazırdır.",
-      "modelAction": "Bir model seç",
-      "generalAction": "Genel kurulumu aç"
+      "primarySetup": "Kurulumu tamamla"
     },
     "readiness": {
       "shortcut": {
@@ -1060,115 +531,51 @@
     "home": "Ana Sayfa",
     "library": "Kütüphane",
     "settings": "Ayarlar",
-    "navigation": "Çalışma alanı gezgini",
     "recordMeeting": "Toplantı kaydı",
     "importAudio": "Ses dosyası içe aktar",
     "localOnly": "Her şey bu cihazda kalır",
-    "onDevice": "Cihazda işleme",
-    "yourWorkspace": "Çalışma alanınız",
-    "allYourWords": "Tüm sözleriniz, tek bir yerde",
-    "homeTitle": "Konuşmaya yer açın.",
-    "homeDescription": "Bir toplantı kaydedin, bir kaydı ekleyin veya kaldığınız yerden devam edin.",
-    "libraryDescription": "Sözlendirmeleriniz, toplantılarınız ve ses dosyalarınızın tek bir aranan yerde.",
-    "meetingShort": "Mikrofonunuzu ve bilgisayar sesinizi kaydedin.",
-    "importShort": "Ses dosyalarını düzenlenebilir metinlere dönüştürün.",
     "dictation": "Sözlendirme",
-    "dictationHelp": "Kısayoluza ayarlayın ve herhangi bir uygulamaya konuşun.",
     "inProgress": "Devam ediyor",
-    "recent": "Son metinler",
-    "viewLibrary": "Kütüphaneyi görüntüle",
     "transcripts": "Metinler",
-    "searchLibrary": "Başlıkları ve metinleri ara",
     "clearSearch": "Aramayı temizle",
     "loading": "Metinleriniz yükleniyor…",
-    "emptyTitle": "Sizin bir sonraki konuşmanız burada başlıyor",
-    "emptyDescription": "Bir toplantı kaydedin veya ses dosyası içe aktarın. Sözleriniz, konuşmacılarınız ve notlarınız burada görünecek.",
-    "noResults": "Eşleşen metin yok",
     "trySearch": "Farklı bir arama veya filtre deneyin.",
     "loadMore": "Daha fazlasını yükle",
     "back": "Geri",
     "title": "Başlık",
     "saved": "Kaydedildi",
     "saving": "Kaydediliyor…",
-    "saveFailed": "Değişiklikler kaydedilemedi",
     "export": "Dışa Aktar",
-    "exported": "Transkript dışa aktarıldı",
     "delete": "Transkripti sil",
-    "deleteHelp": "Bu transkripti, notlarını ve yönetilen ses dosyalarını silmek istiyor musunuz? Orijinal ithal dosyanız dokunulmaz kalacaktır.",
     "deleteAudio": "Sesi sil",
-    "deleteAudioHelp": "Yönetilen sesi sil ve transkript ile notları koru? Oynatma ve ses işleme artık kullanılamayacak.",
     "cancel": "İptal",
-    "retry": "Tekrar Dene",
-    "speed": "Oynatma hızı",
-    "documentViews": "Transkript görünümleri",
     "transcript": "Transkript",
     "notes": "Notlar",
     "speakers": "Konuşmacılar",
-    "searchTranscript": "Transkriptte ara",
-    "transcriptPending": "İşlem tamamlandıktan sonra transkript burada görünecektir.",
     "speaker": "Konuşmacı",
-    "unknownSpeaker": "Atanmamış",
     "segment": "Transkript konumunda",
-    "restoreOriginal": "Orijinal metni geri yükle",
-    "speakerHelp": "İsimler yalnızca bu kaydı için geçerlidir. Bir konuşmacıyı yeniden adlandırın veya aynı kişiye ait etiketleri birleştirin.",
-    "noSpeakers": "Bu kayıt için konuşmacı etiketi yok.",
     "speakerName": "Konuşmacı adı",
     "mergeSpeaker": "Birleştir…",
-    "notesStale": "Bu özet değişti. Düzenlemelerinizi içerecek şekilde özetleri yeniden oluşturun.",
-    "noNotes": "Henüz not yok. Bir özet oluştururken yerel bir not modeli etkinleştirin.",
-    "regenerate": "Özeti yeniden oluştur",
     "summary": "Özet",
     "decisions": "Kararlar",
     "actions": "Eylem maddeleri",
     "action": "Eylem maddesi",
-    "done": "Tamamlandı",
     "owner": "Sahip",
-    "due": "Son tarih",
-    "audioFiles": "Ses dosyaları",
-    "recordingConflict": "Bir toplantı kaydediliyor. Dikteye başlamadan önce durdurun.",
     "cancelJob": "{{title}}'i iptal et",
-    "transcriptionModel": "Dinleme modeli",
-    "currentDictationModel": "Mevcut dikte modeli (Whisper / Parakeet)",
     "language": "Dil",
-    "autoLanguage": "Otomatik olarak algıla",
     "detectSpeakers": "Konuşmacıları tanı",
-    "localNotes": "Yerel yapay zeka notları",
-    "noAutomaticNotes": "Otomatik not yok",
-    "microphoneLevel": "Mikrofon seviyesi",
     "systemLevel": "Bilgisayar sesi seviyesi",
     "resume": "Devam et",
     "pause": "Duraklat",
-    "stopTranscribe": "Durdur ve dinle",
-    "newTranscript": "Yeni özet",
-    "meetingHelp": "Konuşmanın her iki tarafını kaydedin. Kaydı durdurduğunuzda dinleme ve konuşmacı algılama başlar.",
-    "importHelp": "Ses dosyalarını seçin ve nasıl işleneceğini belirleyin. Dışarı aktarım sırasında çalışmaya devam edebilirsiniz.",
     "meetingTitle": "Başlıksız toplantı",
     "microphone": "Mikrofon",
     "defaultMicrophone": "Sistem varsayılanı",
     "computerAudio": "Bilgisayar sesini dahil et",
-    "systemPermission": "macOS, ekran ve sistem sesini kaydetme erişimi isteyebilir.",
-    "removeFile": "Dosyayı kaldır",
-    "chooseFiles": "Ses dosyalarını seç",
-    "processing": "İşleme seçenekleri",
-    "setupNeeded": "Bazı yerel işleme bileşenleri kurulum gerektiriyor. Ses kaydı alabilir ve bunları kurduktan sonra tekrar işleme deneyebilirsiniz.",
-    "modelSetup": "Yerel modelleri ayarla",
     "working": "İşleniyor…",
     "startRecording": "Kaydı başlat",
-    "startTranscription": "Dışarı aktarımı başlat",
-    "modelsLanguage": "Modeller ve dil",
-    "preferences": "Tercihler",
     "storage": "Depolama ve gizlilik",
-    "localIntelligence": "Yerel zeka",
-    "localModelsHelp": "Sadece ihtiyacınız olanları indirin. Ses, dışarı aktarımlar ve notlar Mac'inizde işlenir. Daha büyük modeller daha fazla bellek ve işlem süresi gerektirir.",
-    "runtimeReady": "Yerel çıkarım zamanlaması yüklendi.",
-    "runtimeMissing": "Bu derleme henüz yerel yapay zeka zamanlamasını içermez. Model işleme, zamanlama paketlendikten sonra kullanılabilir olacak. Mevcut dışarı aktarma modelleri hala kullanılabilir.",
-    "unpublished": "İndirilen paket yayınlanmadı",
-    "downloading": "Model indiriliyor",
     "installed": "Yüklendi",
     "download": "İndir",
-    "dropAudio": "Dışarı aktarmak için sesi buraya bırakın",
-    "workspaceFirst": "Dışarı aktarma çalışma alanını aç",
-    "workspaceFirstHelp": "Mikrofon veya erişilebilirlik izinleri olmadan ses dosyasını içe aktarın.",
     "source": {
       "dictation": "Dikte",
       "meeting": "Toplantı",
@@ -1183,17 +590,13 @@
     },
     "purpose": {
       "asr": "Transkripsiyon",
-      "alignment": "Zaman damgası hizalama",
-      "speakers": "Konuşmacı ayırma",
       "notes": "Özetler ve aksiyon maddeleri"
     },
     "stage": {
       "recording": "Kayıt",
       "paused": "Duraklatıldı",
       "queued": "Sıraya alındı",
-      "preparing": "Ses dosyası hazırlanıyor",
       "transcribing": "Transkribe ediliyor",
-      "diarizing": "Konuşmacılar tanımlanıyor",
       "notes": "Notlar yazılıyor",
       "complete": "Hazır",
       "failed": "Dikkat gerektiriyor",
@@ -1202,117 +605,35 @@
     },
     "audio": "Ses",
     "appearance": "Görünüm",
-    "dictationProcessing": "Dikte temizliği",
     "debug": "Geliştirici",
-    "retentionHelp": "Toplantılar ve içe aktarılan dosyalar silinene kadar kalır. Aşağıdaki saklama süresi kontrolleri yalnızca dikte kayıtlarına uygulanır.",
-    "dictationRetention": "Dikte bekleme süresi",
-    "activeCount": "{{count}} işi devam ediyor",
     "skipToContent": "İçeriğe git",
-    "memoryGuidance": "En az {{gb}} GB bellek ayırın (tahmini; kayıt uzunluğuna göre değişir).",
     "notesModel9": "Qwen3.5 · 9B",
     "notesModel27": "Qwen3.6 · 27B",
-    "draftConflict": "Daha önceki bir versiyondan kayıtlı taslak bulundu. Transkript metnini geri yükleyin veya kayıtlı versiyonu kullanın.",
-    "recoverDraft": "Taslak metnini geri yükle",
-    "keepSaved": "Kayıtlı versiyonu kullan",
-    "transcriptReadyWarning": "Transkript hazır · Dikkat gerektiriyor",
-    "retryEnhancement": "Bu adımı tekrar dene",
-    "withoutEnhancements": "Konuşmacısız veya notsuz devam et",
     "recordForLater": "Şimdi kaydet, daha sonra transkribe et",
-    "returnToSetup": "Kurulum sayfasına dön",
-    "advancedDictationModels": "Gelişmiş dikte modelleri",
     "activity": "Aktivite",
     "close": "Kapat",
-    "noActiveJobs": "İşlemde aktif iş yok.",
     "presetFast": "Hızlı transkript",
     "presetDetailed": "Detaylı transkript",
     "presetNotes": "Transkript + notlar",
-    "processingDetails": "Modeller ve işlem seçenekleri",
-    "stopSave": "Durdur ve kaydet",
-    "finishEditing": "Düzenleme tamamlandı",
     "editTranscript": "Transkripti düzenle",
     "followPlayback": "Oynatmayı takip et",
-    "matchCount": "{{count}} eşleşme",
     "previous": "Önceki",
     "next": "Sonraki",
-    "undoMerge": "Konuşmacı birleştirmesini geri al",
-    "evidence": "Destekleyen metin",
-    "playEvidence": "Bu bölümü oynat",
-    "mergePreview": "{{from}} kişisine ait {{count}} konuşma bölümünü {{to}} kişisine atayın. Bu birleştirmeyi geri alabilirsiniz.",
-    "pauseDownload": "İndirmeyi durdur",
-    "removeModel": "Modeli kaldır",
-    "removeModelHelp": "Bu cihazdan indirilen modeli kaldırmak istiyor musunuz? Metinler hala kullanılabilir. Modeli tekrar indirebilirsiniz.",
-    "storageUsage": "Cihazdaki depolama alanı",
-    "audioStorage": "Kayıtlar ve çalışma sesi",
-    "modelStorage": "İndirilen modeller",
-    "freeStorage": "Kullanılabilir alan",
-    "setupModels": "Modelleri ayarla",
-    "skipEnhancement": "İsteğe bağlı işleme atla",
     "generateNotes": "Notları oluştur",
     "addItem": "Öğe ekle",
     "removeItem": "Öğe kaldır",
     "newSpeaker": "Konuşmacı ekle",
-    "speakerSample": "Konuşmacı örneğini oynat",
-    "exportPreview": "Önizlemeyi dışa aktar",
-    "exportContent": "Dışa aktarma, mevcut metni ve gerçek zaman damgalarını içerir. Markdown ve JSON ayrıca notları da içerir.",
-    "confirmExport": "Hedefi seç",
-    "readiness": {
-      "download": "Bu iş akışını etkinleştirmek için {{model}}'ı indirin.",
-      "unpublished": "{{model}} henüz indirilebilir durumda değil.",
-      "unavailable": "{{model}} bu sürümde kullanılamıyor.",
-      "native_download": "Dikteleme modelini seçin veya indirin: {{model}}.",
-      "runtime": "Bu sürüm, gerekli yerel işleme zamanlamayı içermez.",
-      "fallback_download": "Qwen hizalaması olmayan diller için otomatik dil algılama Whisper large-v3'e ihtiyaç duyar. İndirin veya desteklenen bir dil seçin.",
-      "language": "{{model}} seçilen model tarafından desteklenmiyor. Başka bir dil veya model seçin.",
-      "memory": "{{model}} için bellek açmak için diğer uygulamaları kapatın veya açıkça başka bir not modeli seçin."
-    },
-    "newNotesReview": "Yeni notları gözden geçir",
-    "newNotesHelp": "Mevcut notlarınız aşağıda saklanmaktadır. Onları değiştirmeden önce yeni sürümünü ve kaynaklarını kontrol edin.",
-    "replaceNotes": "Mevcut notları değiştir",
-    "keepCurrentNotes": "Mevcut notları koru",
     "speakerCount_one": "{{count}} konuşmacı",
     "speakerCount_other": "{{count}} konuşmacı",
-    "timing": {
-      "aligned": "Düzenli zaman damgaları ile Qwen transkripsiyonu.",
-      "aligned_or_segments": "Desteklenen dillerde düzenli zaman damgaları ile Qwen; diğer algılanan dillerde parça zaman damgaları ile Whisper large-v3.",
-      "segments": "Parça zaman damgaları ile {{model}} transkripsiyonu."
-    },
-    "memoryAvailable": "Kullanılabilir bellek: yaklaşık {{gb}} GB.",
-    "memoryObserved": "Bu model yerel çalışmalarda en fazla {{gb}} GB kullanmıştır. Daha uzun girişler daha fazla bellek gerekebilir.",
-    "memoryUnmeasured": "Bu model bu makine üzerinde henüz ölçülmemiştir.",
-    "checkingFiles": "Ses dosyaları kontrol ediliyor…",
-    "durationUnknown": "Süre bilinmiyor",
-    "importProblems": "Bazı dosyalar içe aktarılamadı",
     "dismiss": "Kapat",
-    "verifyModel": "Modeli doğrula",
-    "modelVerified": "Model dosyaları doğrulandı",
-    "modelDamaged": "Bozuk dosyalar · Yeniden indir",
-    "finishingAudio": "Ses kaydı tamamlanıyor…",
     "selectedTurns": "Seçilen konuşmalar",
-    "selectPage": "Bu sayfayı seç",
     "clearSelection": "Seçimi temizle",
-    "assignSelectedSpeaker": "Seçili konuşmacıları ata",
     "selectTurn": "{{time}} çevirisini seç",
-    "exportOriginalText": "Orijinal metni kullan",
-    "notesReviewed": "Bu notları çeviriyle karşılaştırdım",
-    "unfinishedImports": "Tamamlanmamış içe aktarmalar",
-    "resumeImport": "İçe aktarma ayarlarını devam ettir",
-    "discardImport": "Tamamlanmamış kopyayı reddet",
-    "captureUnsupported": "Kayıt, macOS gerektir. Ses dosyalarını yine de içe aktarabilirsiniz.",
-    "microphoneReady": "Mikrofon izni verildi",
-    "microphonePermissionNeeded": "Sesinizi kaydetmek için mikrofon erişimine izin verin.",
-    "allowMicrophone": "Mikrofon erişimine izin ver",
-    "computerAudioReady": "Bilgisayar sesi izni verildi",
-    "computerPermissionNeeded": "Bilgisayar sesini kaydetmek için ekran kaydı erişimine izin verin.",
-    "allowComputerAudio": "Bilgisayar sesi erişimine izin ver",
-    "microphoneUnavailable": "Seçilen mikrofon kullanımda değil. Başka bir giriş seçin.",
-    "replaceOnlySection": "Sadece bu bölümü değiştir",
-    "sectionReplacementHelp": "Notlarınızın diğer kısımlarını korumak için bir bölümü uygulayın. Kullanılmayan oluşturulan bölümler atılacaktır."
+    "unfinishedImports": "Tamamlanmamış içe aktarmalar"
   },
   "audioPlayer": {
     "play": "Oynat",
     "pause": "Durdur",
-    "seek": "Oynatma konumu",
-    "error": "Bu ses dosyası oynatılamadı.",
-    "retry": "Sesi yeniden yükle"
+    "seek": "Oynatma konumu"
   }
 }

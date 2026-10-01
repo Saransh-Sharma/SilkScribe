@@ -33,13 +33,13 @@ private final class MeetingCapture: NSObject, SCStreamOutput, SCStreamDelegate {
     init(path: String) { self.path = path }
     var elapsed: Double { max(0, (pausedAt ?? ProcessInfo.processInfo.systemUptime) - started - pausedDuration) }
     func start(system: Bool, device: AudioDeviceID?) async throws {
-        guard await AVCaptureDevice.requestAccess(for: .audio) else { throw NSError(domain:"SilkScribe",code:1,userInfo:[NSLocalizedDescriptionKey:"Microphone access is required. Enable it in System Settings → Privacy & Security."]) }
+        guard await AVCaptureDevice.requestAccess(for: .audio) else { throw NSError(domain:"SilkScribe",code:1,userInfo:[NSLocalizedDescriptionKey:"Allow microphone access in System Settings → Privacy & Security → Microphone."]) }
         micFile = try AVAudioFile(forWriting: URL(fileURLWithPath: path + ".mic.wav"), settings: format.settings)
         systemFile = try AVAudioFile(forWriting: URL(fileURLWithPath: path + ".system.wav"), settings: format.settings)
         let input = engine.inputNode
         if var device = device, let unit = input.audioUnit {
             let status = AudioUnitSetProperty(unit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0, &device, UInt32(MemoryLayout<AudioDeviceID>.size))
-            if status != noErr { throw NSError(domain:NSOSStatusErrorDomain,code:Int(status),userInfo:[NSLocalizedDescriptionKey:"The selected microphone is unavailable."]) }
+            if status != noErr { throw NSError(domain:NSOSStatusErrorDomain,code:Int(status),userInfo:[NSLocalizedDescriptionKey:"That microphone isn't available."]) }
         }
         // Apple's voice processing input provides echo/noise suppression on supported devices.
         try input.setVoiceProcessingEnabled(true)
@@ -63,7 +63,7 @@ private final class MeetingCapture: NSObject, SCStreamOutput, SCStreamDelegate {
         if system {
             do {
                 let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
-                guard let display = content.displays.first else { throw NSError(domain:"SilkScribe",code:3,userInfo:[NSLocalizedDescriptionKey:"No display is available for computer audio capture."]) }
+                guard let display = content.displays.first else { throw NSError(domain:"SilkScribe",code:3,userInfo:[NSLocalizedDescriptionKey:"No display found for capturing computer audio."]) }
                 let config = SCStreamConfiguration()
                 config.capturesAudio = true
                 config.excludesCurrentProcessAudio = true
@@ -102,7 +102,7 @@ private final class MeetingCapture: NSObject, SCStreamOutput, SCStreamDelegate {
             try file?.write(from:buffer)
             if microphone { micFrames = max(current,target)+AVAudioFramePosition(buffer.frameLength) } else { systemFrames = max(current,target)+AVAudioFramePosition(buffer.frameLength) }
         } catch {
-            self.error = "Recording paused because audio could not be saved: " + error.localizedDescription
+            self.error = "Recording paused — couldn't save audio: " + error.localizedDescription
             pausedAt = ProcessInfo.processInfo.systemUptime
             microphoneLevel = 0; systemLevel = 0
         }
@@ -149,7 +149,7 @@ private final class MeetingCapture: NSObject, SCStreamOutput, SCStreamDelegate {
 private var capture: AnyObject?
 @_cdecl("ss_capture_call") public func ssCaptureCall(_ json: UnsafePointer<CChar>) -> UnsafeMutablePointer<CChar>? {
     guard let data=String(cString:json).data(using:.utf8),let request=(try? JSONSerialization.jsonObject(with:data)) as? [String:Any] else {return response(["error":"Invalid capture request"])}
-    guard #available(macOS 13.0, *) else {return response(["error":"Meeting recording requires macOS 13 or later."])}
+    guard #available(macOS 13.0, *) else {return response(["error":"Meeting recording needs macOS 13 or later."])}
     let operation=request["operation"] as? String ?? "status"
     if operation=="devices" {
         var size:UInt32=0

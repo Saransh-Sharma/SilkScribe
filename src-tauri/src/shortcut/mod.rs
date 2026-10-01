@@ -176,12 +176,12 @@ pub fn change_binding(
 
     // Register the new binding
     if let Err(e) = register_shortcut(&app, updated_binding.clone()) {
-        let error_msg = format!("Failed to register shortcut: {}", e);
-        error!("change_binding error: {}", error_msg);
+        error!("change_binding error: Failed to register shortcut: {}", e);
+        // The UI already says "Couldn't save shortcut", so pass on only the reason.
         return Ok(BindingResponse {
             success: false,
             binding: None,
-            error: Some(error_msg),
+            error: Some(e),
         });
     }
 
@@ -481,7 +481,7 @@ fn initialize_native_keys_with_rollback(app: &AppHandle) -> Result<bool, String>
         settings::write_settings(app, settings);
         tauri_impl::init_shortcuts(app);
         return Err(format!(
-            "Failed to initialize NativeKeys: {}. Reverted to Tauri.",
+            "Native Keys couldn't start, so we switched back to the default. ({})",
             e
         ));
     }
@@ -1009,7 +1009,7 @@ pub fn delete_post_process_prompt(app: AppHandle, id: String) -> Result<(), Stri
 
     // Don't allow deleting the last prompt
     if settings.post_process_prompts.len() <= 1 {
-        return Err("Cannot delete the last prompt".to_string());
+        return Err("You need at least one prompt.".to_string());
     }
 
     // Find and remove the prompt
@@ -1053,7 +1053,10 @@ pub async fn fetch_post_process_models(
 
         #[cfg(not(all(target_os = "macos", target_arch = "aarch64")))]
         {
-            return Err("Apple Intelligence is only available on Apple silicon Macs running macOS 15 or later.".to_string());
+            return Err(
+                "Apple Intelligence needs a Mac with Apple silicon running macOS 26 or later."
+                    .to_string(),
+            );
         }
     }
 
@@ -1067,7 +1070,7 @@ pub async fn fetch_post_process_models(
     // Skip fetching if no API key for providers that typically need one
     if api_key.trim().is_empty() && provider.id != "custom" {
         return Err(format!(
-            "API key is required for {}. Please add an API key to list available models.",
+            "Add an API key for {} to see its models.",
             provider.label
         ));
     }

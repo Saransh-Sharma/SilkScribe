@@ -600,7 +600,7 @@ impl TranscriptionManager {
                 Some(e) => e,
                 None => {
                     return Err(anyhow::anyhow!(
-                        "Model failed to load after auto-load attempt. Please check your model settings."
+                        "Couldn't load the engine. Check it in Settings → Engines & language."
                     ));
                 }
             };
@@ -760,8 +760,7 @@ impl TranscriptionManager {
                     );
 
                     return Err(anyhow::anyhow!(
-                        "Transcription engine panicked: {}. The model has been unloaded and will reload on next attempt.",
-                        panic_msg
+                        "The engine crashed and was reset. Try again."
                     ));
                 }
             }
@@ -873,6 +872,7 @@ fn cached_gpu_devices() -> &'static [GpuDeviceOption] {
     GPU_DEVICES.get_or_init(|| {
         // ggml's Vulkan backend uses FMA3 instructions internally.
         // On older CPUs without FMA3 (e.g. Sandy Bridge Xeons) this causes
+                    // The panic detail is logged above.
         // a SIGILL crash that cannot be caught. Skip enumeration entirely
         // on those CPUs — GPU-accelerated whisper won't work there anyway.
         #[cfg(target_arch = "x86_64")]

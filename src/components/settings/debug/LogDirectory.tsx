@@ -10,7 +10,7 @@ interface LogDirectoryProps {
 }
 
 export const LogDirectory: React.FC<LogDirectoryProps> = ({
-  descriptionMode = "tooltip",
+  descriptionMode = "inline",
   grouped = false,
 }) => {
   const { t } = useTranslation();
@@ -31,7 +31,7 @@ export const LogDirectory: React.FC<LogDirectoryProps> = ({
         const errorMessage =
           err && typeof err === "object" && "message" in err
             ? String(err.message)
-            : "Failed to load log directory";
+            : String(err);
         setError(errorMessage);
       } finally {
         setLoading(false);
@@ -53,7 +53,6 @@ export const LogDirectory: React.FC<LogDirectoryProps> = ({
   return (
     <SettingContainer
       title={t("settings.debug.logDirectory.title")}
-      description={t("settings.debug.logDirectory.description")}
       descriptionMode={descriptionMode}
       grouped={grouped}
       layout="stacked"

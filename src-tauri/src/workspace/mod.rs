@@ -141,7 +141,9 @@ impl Workspace {
         };
         for path in paths {
             if self.import_cancelled.load(Ordering::Relaxed) {
-                result.errors.push("Import cancelled. Files already copied remain in your Library; unprocessed original files are unchanged.".into());
+                result
+                    .errors
+                    .push("Import cancelled. Files already copied are in your Library.".into());
                 break;
             }
             let input = Path::new(&path);
@@ -157,10 +159,10 @@ impl Workspace {
                     .unwrap_or("")
                     .to_lowercase();
                 if !["wav", "mp3", "m4a", "flac", "ogg"].contains(&ext.as_str()) {
-                    bail!("Unsupported audio format");
+                    bail!("This audio format isn't supported.");
                 }
                 if !input.is_file() {
-                    bail!("The selected file is unavailable");
+                    bail!("This file isn't available.");
                 }
                 let (bytes, duration) = decode::inspect(input)?;
                 use sha2::{Digest, Sha256};
@@ -214,7 +216,7 @@ impl Workspace {
                     .saturating_add((duration.unwrap_or(0.0) * 64000.0) as u64)
                     .saturating_add(64 * 1024 * 1024);
                 if fs4::available_space(&self.store.media)? < needed {
-                    bail!("Not enough disk space for the original and playback audio. Free space and retry.");
+                    bail!("Not enough disk space. Free some up and try again.");
                 }
                 let mut last_progress = std::time::Instant::now();
                 let copied =
@@ -271,7 +273,7 @@ impl Workspace {
         let _lock = self.lock.lock().unwrap();
         let mut doc = self.store.get(id)?;
         if matches!(doc.stage, Stage::Recording | Stage::Paused) {
-            bail!("Stop the meeting before cancelling transcription");
+            bail!("Stop the meeting first.");
         }
         if self.active.lock().unwrap().as_deref() == Some(id) {
             self.cancelled.store(true, Ordering::Relaxed);
@@ -290,11 +292,11 @@ impl Workspace {
     ) -> Result<()> {
         let _lock = self.lock.lock().unwrap();
         if self.active.lock().unwrap().as_deref() == Some(id) {
-            bail!("Wait for the current job to stop");
+            bail!("Wait for the current job to finish.");
         }
         let mut doc = self.store.get(id)?;
         if matches!(doc.stage, Stage::Recording | Stage::Paused) {
-            bail!("Stop recording first");
+            bail!("Stop recording first.");
         }
         if only_stage
             .as_ref()
@@ -309,7 +311,7 @@ impl Workspace {
         };
         let notes_only = doc.retry_stage == Some(Stage::Notes);
         if doc.retry_stage == Some(Stage::Diarizing) && doc.segments.is_empty() {
-            bail!("Transcribe audio before identifying speakers");
+            bail!("Transcribe the audio before identifying speakers.");
         }
         if notes_section.is_some() && !notes_only {
             bail!("A notes section requires notes-only processing");
@@ -321,19 +323,19 @@ impl Workspace {
                 doc.notes_section = notes_section;
             }
             if doc.notes_candidate.is_some() {
-                bail!("Review the generated notes before generating another version");
+                bail!("Review the new notes before generating more.");
             }
             if doc.segments.is_empty() {
-                bail!("A transcript is required before generating notes");
+                bail!("Transcribe the audio before generating notes.");
             }
             if let Some(model) = notes_model {
                 if !matches!(model.as_str(), "qwen3.5-9b" | "qwen3.6-27b") {
-                    bail!("Unknown notes model");
+                    bail!("Unknown notes engine.");
                 }
                 doc.options.notes_model = Some(model);
             }
             if doc.options.notes_model.is_none() {
-                bail!("Choose a local notes model first");
+                bail!("Choose a notes engine first.");
             }
             doc.failed_stage = Some(Stage::Notes);
         }
@@ -347,7 +349,7 @@ impl Workspace {
         if self.active.lock().unwrap().as_deref() == Some(id)
             || matches!(doc.stage, Stage::Recording | Stage::Paused | Stage::Queued)
         {
-            bail!("Stop or cancel this job before deleting it");
+            bail!("Stop this job before deleting it.");
         }
         if let Some(path) = &doc.audio_path {
             let path = Path::new(path);
@@ -444,7 +446,7 @@ impl Workspace {
             if doc.options.model == "native" {
                 doc.options.model = crate::settings::get_settings(app).selected_model;
                 if doc.options.model.is_empty() {
-                    bail!("Choose a transcription model in Settings first");
+                    bail!("Choose an engine in Settings first.");
                 }
             }
             doc.options.model = readiness::transcription_model(&doc.options).to_string();
@@ -452,7 +454,7 @@ impl Workspace {
             let source = doc
                 .audio_path
                 .as_ref()
-                .context("The recording has no audio to transcribe")?;
+                .context("This recording has no audio.")?;
             let normalized = self.store.media.join(format!("{}.pcm.wav", doc.id));
             if (!Path::new(source).exists() || doc.failed_stage == Some(Stage::Recording))
                 && matches!(doc.source, Source::Meeting)
@@ -527,7 +529,7 @@ impl Workspace {
                 let models = app.state::<Arc<crate::managers::model::ModelManager>>();
                 let info = models
                     .get_model_info(&doc.options.model)
-                    .context("Unknown transcription model")?;
+                    .context("Unknown engine.")?;
                 let model_file = models.get_model_path(&doc.options.model)?;
                 let metadata = std::fs::metadata(&model_file)?;
                 let checkpoint_path = self
@@ -583,7 +585,7 @@ impl Workspace {
                         manager.transcribe_with_options(chunk, selected, Some(language))?;
                     let segments = result.segments.unwrap_or_default();
                     if segments.is_empty() && !result.text.trim().is_empty() {
-                        bail!("The selected model did not return timestamps. Select Whisper or Parakeet in Settings.");
+                        bail!("This engine doesn't give timestamps. Pick Whisper or Parakeet in Settings.");
                     }
                     for s in segments {
                         doc.segments.push(Segment {
@@ -616,7 +618,7 @@ impl Workspace {
                     || s.end < s.start
                     || s.end > doc.duration + 1.0
                 {
-                    bail!("The model returned invalid timestamps");
+                    bail!("The engine returned broken timestamps. Try again.");
                 }
             }
             if !doc.options.speakers {
@@ -646,7 +648,7 @@ impl Workspace {
                         || turn.end > doc.duration + 1.0
                         || turn.speaker.is_empty()
                     {
-                        bail!("Speaker analysis returned invalid time intervals. Retry speaker detection.");
+                        bail!("Speaker detection went wrong. Try again.");
                     }
                 }
                 doc.turns = turns;

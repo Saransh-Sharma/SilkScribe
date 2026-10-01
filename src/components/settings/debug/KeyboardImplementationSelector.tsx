@@ -5,6 +5,7 @@ import { Dropdown, type DropdownOption } from "../../ui/Dropdown";
 import { useSettings } from "../../../hooks/useSettings";
 import { commands } from "@/bindings";
 import { toast } from "sonner";
+import { toastError } from "@/lib/utils/toastError";
 
 interface KeyboardImplementationSelectorProps {
   descriptionMode?: "tooltip" | "inline";
@@ -13,7 +14,7 @@ interface KeyboardImplementationSelectorProps {
 
 export const KeyboardImplementationSelector: React.FC<
   KeyboardImplementationSelectorProps
-> = ({ descriptionMode = "tooltip", grouped = false }) => {
+> = ({ descriptionMode = "inline", grouped = false }) => {
   const { t } = useTranslation();
   const { getSetting, isUpdating, refreshSettings } = useSettings();
   const currentImplementation =
@@ -40,7 +41,10 @@ export const KeyboardImplementationSelector: React.FC<
           "Failed to update keyboard implementation:",
           result.error,
         );
-        toast.error(String(result.error));
+        toastError(
+          t("settings.debug.keyboardImplementation.error"),
+          result.error,
+        );
         return;
       }
 
@@ -52,14 +56,13 @@ export const KeyboardImplementationSelector: React.FC<
       await refreshSettings();
     } catch (error) {
       console.error("Failed to update keyboard implementation:", error);
-      toast.error(String(error));
+      toastError(t("settings.debug.keyboardImplementation.error"), error);
     }
   };
 
   return (
     <SettingContainer
       title={t("settings.debug.keyboardImplementation.title")}
-      description={t("settings.debug.keyboardImplementation.description")}
       descriptionMode={descriptionMode}
       grouped={grouped}
       layout="horizontal"

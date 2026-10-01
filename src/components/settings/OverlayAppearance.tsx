@@ -16,7 +16,7 @@ interface OverlayAppearanceProps {
  * overlay actually floats over.
  */
 export const OverlayAppearance: React.FC<OverlayAppearanceProps> = React.memo(
-  ({ descriptionMode = "tooltip", grouped = false }) => {
+  ({ descriptionMode = "inline", grouped = false }) => {
     const { t } = useTranslation();
     const { getSetting, updateSetting, isUpdating } = useSettings();
 
@@ -41,7 +41,6 @@ export const OverlayAppearance: React.FC<OverlayAppearanceProps> = React.memo(
     return (
       <SettingContainer
         title={t("settings.advanced.overlayAppearance.title")}
-        description={t("settings.advanced.overlayAppearance.description")}
         descriptionMode={descriptionMode}
         grouped={grouped}
       >

@@ -38,12 +38,13 @@ export const Dropdown: React.FC<DropdownProps> = ({
   selectedValue,
   onSelect,
   className = "",
-  placeholder = "Select an option...",
+  placeholder: placeholderProp,
   disabled = false,
   ariaLabel,
   onRefresh,
 }) => {
   const { t } = useTranslation();
+  const placeholder = placeholderProp ?? t("common.choose");
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);

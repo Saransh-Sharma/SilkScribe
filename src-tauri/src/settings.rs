@@ -657,7 +657,7 @@ fn default_post_process_models() -> HashMap<String, String> {
 fn default_post_process_prompts() -> Vec<LLMPrompt> {
     vec![LLMPrompt {
         id: "default_improve_transcriptions".to_string(),
-        name: "Improve Transcriptions".to_string(),
+        name: "Clean up".to_string(),
         prompt: "Clean this transcript:\n1. Fix spelling, capitalization, and punctuation errors\n2. Convert number words to digits (twenty-five → 25, ten percent → 10%, five dollars → $5)\n3. Replace spoken punctuation with symbols (period → ., comma → ,, question mark → ?)\n4. Remove filler words (um, uh, like as filler)\n5. Keep the language in the original version (if it was french, keep it in french for example)\n\nPreserve exact meaning and word order. Do not paraphrase or reorder content.\n\nReturn only the cleaned transcript.\n\nTranscript:\n${output}".to_string(),
     }]
 }
@@ -769,8 +769,8 @@ pub fn get_default_settings() -> AppSettings {
         "transcribe".to_string(),
         ShortcutBinding {
             id: "transcribe".to_string(),
-            name: "Transcribe".to_string(),
-            description: "Converts your speech into text.".to_string(),
+            name: "Dictate".to_string(),
+            description: "Start and stop dictation".to_string(),
             default_binding: default_shortcut.to_string(),
             current_binding: default_shortcut.to_string(),
         },
@@ -788,9 +788,8 @@ pub fn get_default_settings() -> AppSettings {
         "transcribe_with_post_process".to_string(),
         ShortcutBinding {
             id: "transcribe_with_post_process".to_string(),
-            name: "Transcribe with Post-Processing".to_string(),
-            description: "Converts your speech into text and applies AI post-processing."
-                .to_string(),
+            name: "Dictate with AI cleanup".to_string(),
+            description: "Always runs AI cleanup on the result".to_string(),
             default_binding: default_post_process_shortcut.to_string(),
             current_binding: default_post_process_shortcut.to_string(),
         },
@@ -800,7 +799,7 @@ pub fn get_default_settings() -> AppSettings {
         ShortcutBinding {
             id: "cancel".to_string(),
             name: "Cancel".to_string(),
-            description: "Cancels the current recording.".to_string(),
+            description: "Stop without transcribing".to_string(),
             default_binding: "escape".to_string(),
             current_binding: "escape".to_string(),
         },

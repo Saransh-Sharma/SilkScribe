@@ -26,7 +26,7 @@ interface NativeKeysEvent {
 export const NativeKeysShortcutInput: React.FC<
   NativeKeysShortcutInputProps
 > = ({
-  descriptionMode = "tooltip",
+  descriptionMode = "inline",
   grouped = false,
   shortcutId,
   disabled = false,
@@ -218,7 +218,6 @@ export const NativeKeysShortcutInput: React.FC<
     return (
       <SettingContainer
         title={t("settings.general.shortcut.title")}
-        description={t("settings.general.shortcut.description")}
         descriptionMode={descriptionMode}
         grouped={grouped}
       >
@@ -234,7 +233,6 @@ export const NativeKeysShortcutInput: React.FC<
     return (
       <SettingContainer
         title={t("settings.general.shortcut.title")}
-        description={t("settings.general.shortcut.description")}
         descriptionMode={descriptionMode}
         grouped={grouped}
       >

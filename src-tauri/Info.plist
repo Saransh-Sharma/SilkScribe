@@ -7,6 +7,6 @@
     <key>LSApplicationCategoryType</key>
     <string>public.app-category.productivity</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Request microphone access to transcribe audio locally</string>
+    <string>SilkScribe turns your voice into text on this Mac. It only listens while you're dictating or recording.</string>
 </dict>
 </plist>

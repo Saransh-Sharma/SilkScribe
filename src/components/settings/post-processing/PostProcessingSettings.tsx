@@ -32,7 +32,7 @@ const PostProcessingSettingsApiComponent: React.FC = () => {
       <SettingContainer
         title={t("settings.postProcessing.api.provider.title")}
         description={t("settings.postProcessing.api.provider.description")}
-        descriptionMode="tooltip"
+        descriptionMode="inline"
         layout="horizontal"
         grouped={true}
       >
@@ -57,7 +57,7 @@ const PostProcessingSettingsApiComponent: React.FC = () => {
             <SettingContainer
               title={t("settings.postProcessing.api.baseUrl.title")}
               description={t("settings.postProcessing.api.baseUrl.description")}
-              descriptionMode="tooltip"
+              descriptionMode="inline"
               layout="horizontal"
               grouped={true}
             >
@@ -77,8 +77,7 @@ const PostProcessingSettingsApiComponent: React.FC = () => {
 
           <SettingContainer
             title={t("settings.postProcessing.api.apiKey.title")}
-            description={t("settings.postProcessing.api.apiKey.description")}
-            descriptionMode="tooltip"
+            descriptionMode="inline"
             layout="horizontal"
             grouped={true}
           >
@@ -103,9 +102,9 @@ const PostProcessingSettingsApiComponent: React.FC = () => {
           description={
             state.isCustomProvider
               ? t("settings.postProcessing.api.model.descriptionCustom")
-              : t("settings.postProcessing.api.model.descriptionDefault")
+              : undefined
           }
-          descriptionMode="tooltip"
+          descriptionMode="inline"
           layout="stacked"
           grouped={true}
         >
@@ -251,10 +250,7 @@ const PostProcessingSettingsPromptsComponent: React.FC = () => {
   return (
     <SettingContainer
       title={t("settings.postProcessing.prompts.selectedPrompt.title")}
-      description={t(
-        "settings.postProcessing.prompts.selectedPrompt.description",
-      )}
-      descriptionMode="tooltip"
+      descriptionMode="inline"
       layout="stacked"
       grouped={true}
     >
@@ -428,11 +424,11 @@ export const PostProcessingSettings: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <AppPage title={t("settings.postProcessing.title")}>
+    <AppPage>
       <SettingsGroup title={t("settings.postProcessing.hotkey.title")}>
         <ShortcutInput
           shortcutId="transcribe_with_post_process"
-          descriptionMode="tooltip"
+          descriptionMode="inline"
           grouped={true}
         />
       </SettingsGroup>

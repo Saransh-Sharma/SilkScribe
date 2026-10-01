@@ -20,15 +20,15 @@ export const DebugSettings: React.FC = () => {
   const isLinux = type() === "linux";
 
   return (
-    <AppPage title={t("settings.debug.title")}>
+    <AppPage>
       <SettingsGroup>
         <LogLevelSelector grouped={true} />
-        <UpdateChecksToggle descriptionMode="tooltip" grouped={true} />
-        <WordCorrectionThreshold descriptionMode="tooltip" grouped={true} />
-        <PasteDelay descriptionMode="tooltip" grouped={true} />
-        <RecordingBuffer descriptionMode="tooltip" grouped={true} />
-        <AlwaysOnMicrophone descriptionMode="tooltip" grouped={true} />
-        <ClamshellMicrophoneSelector descriptionMode="tooltip" grouped={true} />
+        <UpdateChecksToggle descriptionMode="inline" grouped={true} />
+        <WordCorrectionThreshold descriptionMode="inline" grouped={true} />
+        <PasteDelay descriptionMode="inline" grouped={true} />
+        <RecordingBuffer descriptionMode="inline" grouped={true} />
+        <AlwaysOnMicrophone descriptionMode="inline" grouped={true} />
+        <ClamshellMicrophoneSelector descriptionMode="inline" grouped={true} />
         {/* Cancel shortcut is disabled on Linux due to instability with dynamic shortcut registration */}
         {!isLinux && (
           <ShortcutInput

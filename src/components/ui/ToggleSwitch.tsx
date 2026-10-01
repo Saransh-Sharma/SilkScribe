@@ -8,7 +8,7 @@ interface ToggleSwitchProps {
   disabled?: boolean;
   isUpdating?: boolean;
   label: string;
-  description: string;
+  description?: string;
   descriptionMode?: "inline" | "tooltip";
   grouped?: boolean;
   tooltipPosition?: "top" | "bottom";
@@ -21,7 +21,7 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   isUpdating = false,
   label,
   description,
-  descriptionMode = "tooltip",
+  descriptionMode = "inline",
   grouped = false,
   tooltipPosition = "top",
 }) => {

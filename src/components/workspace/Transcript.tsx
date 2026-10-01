@@ -1398,13 +1398,13 @@ export function Transcript({
       </ConfirmDialog>
       <ConfirmDialog
         open={!!merge}
-        title={t("workspace.mergeSpeaker")}
+        title={t("workspace.mergeTitle")}
         description={t("workspace.mergePreview", {
           from: doc.speakers.find((s) => s.id === merge?.from)?.name,
           to: doc.speakers.find((s) => s.id === merge?.to)?.name,
           count: doc.segments.filter((s) => s.speaker === merge?.from).length,
         })}
-        confirmLabel={t("workspace.mergeSpeaker")}
+        confirmLabel={t("workspace.merge")}
         cancelLabel={t("workspace.cancel")}
         onCancel={() => setMerge(null)}
         onConfirm={() => {
@@ -1429,7 +1429,9 @@ export function Transcript({
       <ConfirmDialog
         open={remove !== null}
         title={t(
-          remove === "audio" ? "workspace.deleteAudio" : "workspace.delete",
+          remove === "audio"
+            ? "workspace.deleteAudioTitle"
+            : "workspace.deleteTitle",
         )}
         description={t(
           remove === "audio"

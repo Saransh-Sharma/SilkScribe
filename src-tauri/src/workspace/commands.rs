@@ -48,7 +48,7 @@ pub async fn workspace_discard_import_batch(
     tauri::async_runtime::spawn_blocking(move || {
         let ws = ws(&app);
         if ws.importing.swap(true, Ordering::SeqCst) {
-            return Err("Wait for the current import to stop.".into());
+            return Err("Wait for the current import to finish.".into());
         }
         let result = (|| -> anyhow::Result<()> {
             if let Some(batch) = ws
@@ -125,12 +125,12 @@ pub async fn workspace_import(
             );
         }
         if ws.importing.swap(true, Ordering::SeqCst) {
-            return Err("Another audio import is already in progress.".into());
+            return Err("Another import is already running.".into());
         }
         ws.import_cancelled.store(false, Ordering::SeqCst);
         let result = (|| {
             super::readiness::verify_runtimes(&app, &options, &ws.import_cancelled)
-                .map_err(|error| format!("Local model runtime is not ready: {error}"))?;
+                .map_err(|error| format!("Engines aren't ready yet: {error}"))?;
             if ws.import_cancelled.load(Ordering::SeqCst) {
                 return Err("Import cancelled before copying audio.".into());
             }
@@ -194,7 +194,7 @@ pub async fn workspace_retry(
     .map_err(|e| e.to_string())?;
     if !assessment.can_process {
         return Err(
-            "Set up the selected models in Settings → Models & language before retrying.".into(),
+            "Set up these engines in Settings → Engines & language, then try again.".into(),
         );
     }
     ws.retry(&id, notes_only, notes_model, only_stage, notes_section)
@@ -251,12 +251,10 @@ pub async fn workspace_install_pack(app: AppHandle, id: String) -> Result<(), St
     {
         let _guard = ws.lock.lock().unwrap();
         if ws.active.lock().unwrap().is_some() {
-            return Err(
-                "Wait for processing to finish before installing or repairing models.".into(),
-            );
+            return Err("Wait for processing to finish before changing engines.".into());
         }
         if ws.installing.swap(true, Ordering::SeqCst) {
-            return Err("Another model download is in progress".into());
+            return Err("Another engine is downloading.".into());
         }
         ws.download_cancelled.store(false, Ordering::SeqCst);
     }
@@ -367,14 +365,14 @@ fn remove_pack(app: &AppHandle, id: String) -> Result<(), String> {
     let workspace = ws(&app);
     let _guard = workspace.lock.lock().unwrap();
     if workspace.active.lock().unwrap().is_some() || workspace.installing.load(Ordering::SeqCst) {
-        return Err("Stop processing and downloads before removing a model.".into());
+        return Err("Stop processing and downloads before removing an engine.".into());
     }
     if !packs::catalog(&app)
         .map_err(|e| e.to_string())?
         .iter()
         .any(|p| p.id == id)
     {
-        return Err("Unknown model pack".into());
+        return Err("Unknown engine.".into());
     }
     let root = crate::portable::app_data_dir(&app)
         .map_err(|e| e.to_string())?
@@ -448,7 +446,9 @@ pub async fn workspace_configure_job(
     if !doc.segments.is_empty()
         && (options.model != doc.options.model || options.language != doc.options.language)
     {
-        return Err("Existing transcript text is preserved. Change only speaker and notes options for this job.".into());
+        return Err(
+            "The transcript is kept. You can only change speaker and notes options.".into(),
+        );
     }
     doc.options = options;
     doc.stage_errors.retain(|error| match error.stage {
@@ -492,7 +492,7 @@ pub async fn workspace_inspect_files(
     paths: Vec<String>,
 ) -> Result<Vec<super::decode::FileInspection>, String> {
     if paths.len() > 500 {
-        return Err("Select at most 500 files in one batch.".into());
+        return Err("You can import up to 500 files at a time.".into());
     }
     tauri::async_runtime::spawn_blocking(move || {
         paths
@@ -531,15 +531,13 @@ pub async fn workspace_verify_pack(
         let _guard = workspace.lock.lock().unwrap();
         if workspace.installing.load(Ordering::SeqCst) || workspace.active.lock().unwrap().is_some()
         {
-            return Err(
-                "Wait for processing and downloads to finish before verifying models.".into(),
-            );
+            return Err("Wait for processing and downloads to finish first.".into());
         }
         let pack = packs::catalog(&app)
             .map_err(|e| e.to_string())?
             .into_iter()
             .find(|pack| pack.id == id)
-            .ok_or("Unknown model pack")?;
+            .ok_or("Unknown engine.")?;
         let root = crate::portable::app_data_dir(&app)
             .map_err(|e| e.to_string())?
             .join("local-models")
@@ -563,7 +561,7 @@ pub async fn workspace_discard_partial_import(app: AppHandle, path: String) -> R
     tauri::async_runtime::spawn_blocking(move || {
         let ws = ws(&app);
         if ws.importing.swap(true, Ordering::SeqCst) {
-            return Err("Wait for the current import to stop before removing a file.".into());
+            return Err("Wait for the import to finish before removing a file.".into());
         }
         let result = (|| -> anyhow::Result<()> {
             let partial =

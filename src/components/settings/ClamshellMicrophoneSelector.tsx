@@ -12,7 +12,7 @@ interface ClamshellMicrophoneSelectorProps {
 }
 
 export const ClamshellMicrophoneSelector: React.FC<ClamshellMicrophoneSelectorProps> =
-  React.memo(({ descriptionMode = "tooltip", grouped = false }) => {
+  React.memo(({ descriptionMode = "inline", grouped = false }) => {
     const { t } = useTranslation();
     const {
       getSetting,
@@ -64,13 +64,15 @@ export const ClamshellMicrophoneSelector: React.FC<ClamshellMicrophoneSelectorPr
 
     const microphoneOptions = audioDevices.map((device) => ({
       value: device.name,
-      label: device.name,
+      label:
+        device.name === "Default"
+          ? t("workspace.defaultMicrophone")
+          : device.name,
     }));
 
     return (
       <SettingContainer
         title={t("settings.debug.clamshellMicrophone.title")}
-        description={t("settings.debug.clamshellMicrophone.description")}
         descriptionMode={descriptionMode}
         grouped={grouped}
       >

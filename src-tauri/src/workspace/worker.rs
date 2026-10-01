@@ -78,7 +78,7 @@ pub fn fingerprint(runtime: &std::path::Path) -> Result<String> {
 }
 pub fn binary(app: &tauri::AppHandle, notes: bool) -> Result<std::path::PathBuf> {
     if !cfg!(all(target_os = "macos", target_arch = "aarch64")) {
-        bail!("The premium local AI runtime currently requires Apple Silicon macOS. Existing dictation models remain available.");
+        bail!("These engines need a Mac with Apple silicon. Dictation still works.");
     }
     let name = if notes {
         "notes-worker"
@@ -90,7 +90,12 @@ pub fn binary(app: &tauri::AppHandle, notes: bool) -> Result<std::path::PathBuf>
         tauri::path::BaseDirectory::Resource,
     )?;
     if !path.is_file() {
-        bail!("The local AI runtime is not installed in this build. Package it with bun run local:runtime before distributing the app.");
+        // Called on every readiness check, so keep this at debug level.
+        log::debug!(
+            "Local AI runtime missing at {}. Package it with `bun run local:runtime` before distributing the app.",
+            path.display()
+        );
+        bail!("This build doesn't include these engines.");
     }
     Ok(path)
 }

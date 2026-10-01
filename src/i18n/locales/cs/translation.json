@@ -1,13 +1,6 @@
 {
   "tray": {
-    "settings": "Nastavení...",
-    "checkUpdates": "Zkontrolovat aktualizace...",
-    "copyLastTranscript": "Zkopírovat poslední přepis",
-    "unloadModel": "Uvolnit model",
-    "quit": "Ukončit",
-    "cancel": "Zrušit",
-    "meetingPause": "Pause / resume meeting",
-    "meetingStop": "Stop & transcribe meeting"
+    "copyLastTranscript": "Zkopírovat poslední přepis"
   },
   "sidebar": {
     "home": "Home",
@@ -21,217 +14,90 @@
     "developer": "Vývojář"
   },
   "onboarding": {
-    "subtitle": "Pro začátek vyberte model pro přepis",
     "recommended": "Doporučeno",
     "download": "Stáhnout",
-    "downloading": "Stahování...",
-    "customModelDescription": "Oficiálně nepodporováno",
-    "downloadFailed": "Stahování se nezdařilo. Zkuste to prosím znovu.",
     "modelCard": {
       "accuracy": "přesnost",
       "speed": "rychlost"
     },
     "models": {
       "small": {
-        "name": "Whisper Small",
-        "description": "Rychlý a poměrně přesný."
+        "name": "Whisper Small"
       },
       "medium": {
-        "name": "Whisper Medium",
-        "description": "Dobrá přesnost, střední rychlost"
+        "name": "Whisper Medium"
       },
       "turbo": {
-        "name": "Whisper Turbo",
-        "description": "Vyvážená přesnost a rychlost."
+        "name": "Whisper Turbo"
       },
       "large": {
-        "name": "Whisper Large",
-        "description": "Dobrá přesnost, ale pomalý."
+        "name": "Whisper Large"
       },
       "parakeet-tdt-0.6b-v2": {
-        "name": "Parakeet V2",
-        "description": "Pouze angličtina. Nejlepší model pro anglicky mluvící."
+        "name": "Parakeet V2"
       },
       "parakeet-tdt-0.6b-v3": {
-        "name": "Parakeet V3",
-        "description": "Rychlý a přesný"
+        "name": "Parakeet V3"
       },
       "moonshine-base": {
-        "name": "Moonshine Base",
-        "description": "Velmi rychlý, pouze angličtina. Dobře zvládá přízvuky."
+        "name": "Moonshine Base"
       },
       "moonshine-tiny-streaming-en": {
-        "name": "Moonshine V2 Tiny",
-        "description": "Ultrarychlý, pouze angličtina"
+        "name": "Moonshine V2 Tiny"
       },
       "moonshine-small-streaming-en": {
-        "name": "Moonshine V2 Small",
-        "description": "Rychlý, pouze angličtina. Dobrý poměr rychlosti a přesnosti."
+        "name": "Moonshine V2 Small"
       },
       "moonshine-medium-streaming-en": {
-        "name": "Moonshine V2 Medium",
-        "description": "Pouze angličtina. Vysoká kvalita."
+        "name": "Moonshine V2 Medium"
       },
       "breeze-asr": {
-        "name": "Breeze ASR",
-        "description": "Optimalizováno pro tchajwanskou mandarínštinu. Podpora přepínání jazyků."
+        "name": "Breeze ASR"
       },
       "sense-voice-int8": {
-        "name": "SenseVoice",
-        "description": "Velmi rychlý. Čínština, angličtina, japonština, korejština, kantonština."
+        "name": "SenseVoice"
       }
     },
     "permissions": {
       "shared": {
-        "eyebrow": "Oprávnění",
-        "repairEyebrow": "Vyžadováno oprávnění",
-        "stepByStep": "Co udělat",
-        "statusLabel": "Stav",
-        "openPrompt": "Otevřít výzvu macOS",
-        "openingPrompt": "Otevírá se výzva macOS…",
-        "iEnabledIt": "Zapnuto",
         "checkAgain": "Zkontrolovat znovu",
         "continue": "Pokračovat",
         "repairAction": "Otevřít průvodce opravou",
         "appName": "SilkScribe",
-        "guidedHelper": "Průvodce",
-        "privateLabel": "Soukromí už v návrhu",
         "statuses": {
-          "checking": "Kontroluje se",
-          "needed": "Stále chybí",
-          "error": "Vyžaduje pozornost",
-          "requesting": "Otevírá se macOS",
           "waiting_for_user": "Čeká se na vás",
           "granted": "Povoleno"
         }
       },
       "microphone": {
-        "title": "Nechte SilkScribe, aby vás při nahrávání slyšel.",
-        "description": "Takto se váš hlas mění na text. SilkScribe poslouchá jen tehdy, když spustíte diktování.",
-        "primaryAction": "Otevřít výzvu mikrofonu",
-        "needLabel": "Potřebné k poslechu",
-        "whyItMattersTitle": "Vaše první diktování začíná zde",
-        "whyItMattersBody": "Přístup k mikrofonu umožňuje SilkScribe zachytit váš hlas pomocí zvolené zkratky. Bez něj není co přepisovat.",
-        "breaksWithoutTitle": "Bez něj",
-        "breaksWithoutBody": "Nahrávání se může spustit, ale SilkScribe váš hlas neslyší.",
-        "afterGrantTitle": "Po povolení",
-        "afterGrantBody": "SilkScribe může nahrávat váš hlas a pokračovat v nastavení.",
-        "steps": {
-          "step1": "Klikněte na „Otevřít výzvu macOS“.",
-          "step2": "Až se macOS zeptá, zvolte „Povolit“.",
-          "step3": "Pokud se výzva neobjeví, otevřete Nastavení systému > Soukromí a zabezpečení > Mikrofon.",
-          "step4": "Zapněte SilkScribe, vraťte se sem a zkontrolujte znovu."
-        },
-        "manualHint": "Ruční cesta: Nastavení systému > Soukromí a zabezpečení > Mikrofon, poté zapněte SilkScribe.",
-        "privateNote": "Zvuk se zpracovává na tomto Macu. SilkScribe nepotřebuje cloud, aby poslouchal nebo přepisoval.",
         "guide": {
           "windowLabel": "Výzva macOS",
-          "title": "Až se macOS zeptá, zvolte Povolit.",
-          "body": "Skutečná výzva se otevře mimo SilkScribe. Tento náhled ukazuje správnou volbu pro pokračování v nastavení.",
-          "cue": "Hledejte „Povolit“",
           "promptTitle": "„SilkScribe“ žádá o přístup k mikrofonu",
-          "promptBody": "macOS se ptá jen jednou, aby SilkScribe mohl při nahrávání slyšet vaše diktování.",
           "deny": "Nepovolit",
           "allow": "Povolit",
-          "allowed": "Povoleno",
-          "previewAlt": "Příklad výzvy k oprávnění mikrofonu v macOS se zvýrazněným tlačítkem Povolit."
-        },
-        "statusHelp": {
-          "checking": "Kontroluje se, zda je přístup k mikrofonu už zapnutý.",
-          "needed": "Přístup k mikrofonu je stále vypnutý.",
-          "error": "SilkScribe to zatím nedokázal ověřit. Zkuste to znovu nebo použijte ruční cestu níže.",
-          "requesting": "Výzva macOS by se měla objevit právě teď.",
-          "waiting_for_user": "Dokončete to v macOS a pak se vraťte sem.",
-          "granted": "Hotovo. SilkScribe může pokračovat."
+          "allowed": "Povoleno"
         }
       },
       "accessibility": {
-        "title": "Nechte SilkScribe vkládat text tam, kde je váš kurzor.",
-        "description": "macOS chrání vkládání textu. Toto oprávnění umožňuje SilkScribe vložit hotové diktování do aplikace, kterou používáte.",
-        "primaryAction": "Otevřít nastavení Zpřístupnění",
-        "needLabel": "Potřebné k vkládání textu",
-        "whyItMattersTitle": "Tohle propojí diktování s vašimi aplikacemi",
-        "whyItMattersBody": "Po přepisu potřebuje SilkScribe oprávnění, aby text umístil do poznámek, dokumentů, prohlížečů a dalších textových polí.",
-        "breaksWithoutTitle": "Bez něj",
-        "breaksWithoutBody": "SilkScribe může přepisovat, ale výsledek nedokáže spolehlivě zapsat do vašich aplikací.",
-        "afterGrantTitle": "Po povolení",
-        "afterGrantBody": "SilkScribe může psát do aplikací a normálně dokončit nastavení.",
         "steps": {
-          "step1": "Klikněte na „Otevřít výzvu macOS“.",
-          "step2": "Pokud vás macOS pošle do Nastavení systému, pokračujte tam.",
-          "step3": "Otevřete Soukromí a zabezpečení > Zpřístupnění a najděte SilkScribe.",
-          "step4": "Zapněte SilkScribe, vraťte se sem a zkontrolujte znovu."
+          "step2": "Pokud vás macOS pošle do Nastavení systému, pokračujte tam."
         },
-        "manualHint": "Ruční cesta: Nastavení systému > Soukromí a zabezpečení > Zpřístupnění, poté zapněte SilkScribe.",
-        "privateNote": "Přístup k textu slouží k vložení přepisu do aktivního pole. Váš hlas i text zůstávají v zařízení.",
         "guide": {
-          "windowLabel": "Nastavení systému",
-          "title": "Zapněte SilkScribe v sekci Zpřístupnění.",
-          "body": "macOS vás může přesměrovat do Soukromí a zabezpečení. Najděte SilkScribe v seznamu, zapněte ho a vraťte se sem.",
-          "cue": "Zapněte SilkScribe",
-          "rowHelp": "Povolit vkládání textu",
-          "promptTitle": "Zpřístupnění",
-          "exampleApp1": "Finder",
-          "exampleApp2": "Mail",
-          "previewAlt": "Příklad seznamu Zpřístupnění v macOS se zapnutým SilkScribe."
-        },
-        "statusHelp": {
-          "checking": "Kontroluje se, zda je přístup Zpřístupnění už zapnutý.",
-          "needed": "Přístup Zpřístupnění je stále vypnutý.",
-          "error": "SilkScribe to zatím nedokázal ověřit. Zkuste to znovu nebo použijte ruční cestu níže.",
-          "requesting": "Schvalovací proces macOS by se měl otevřít právě teď.",
-          "waiting_for_user": "Dokončete to v macOS a pak se vraťte sem.",
-          "granted": "Hotovo. SilkScribe může pokračovat."
+          "windowLabel": "Nastavení systému"
         }
       }
     },
     "setup": {
-      "eyebrow": "Setting things up",
-      "title": "SilkScribe is getting ready.",
-      "description": "We’re preparing the best offline speech engine for {{language}}, then you’ll try a quick test.",
       "defaultLanguage": "your language",
-      "autoLabel": "Automatic",
-      "engineTitle": "No setup choices needed",
-      "engineBody": "SilkScribe is choosing the best fit for {{language}} and setting it up locally.",
       "progressLabel": "Progress",
-      "sizeLabel": "Download",
       "speedLabel": "Speed",
-      "etaLabel": "ETA",
       "speedValue": "{{speed}} MB/s",
-      "notAvailable": "Not yet",
-      "preparingDetail": "Preparing…",
       "shortcutTitle": "Your shortcut",
-      "shortcutBody": "Hold {{shortcut}} to speak. Release it to transcribe.",
-      "prepBadge": "Almost ready",
-      "prepTitle": "This should stay short and feel automatic",
-      "prepBody": "While setup runs, SilkScribe is downloading or loading the speech engine it picked for this machine. You can just wait here for the next step.",
       "retry": "Try again",
-      "ready": "Everything is ready. Opening the practice step now.",
       "states": {
-        "resolving": "Choosing",
         "downloading": "Downloading",
         "preparing": "Preparing",
-        "ready": "Ready",
-        "error": "Needs attention"
-      },
-      "panelStates": {
-        "resolving": "Choosing the best engine",
-        "downloading": "Downloading files",
-        "preparing": "Preparing the engine",
-        "ready": "Ready to test",
-        "error": "Setup needs attention"
-      },
-      "panelHelp": {
-        "resolving": "SilkScribe is checking what’s available and choosing the best engine for this device.",
-        "downloading": "The required files are downloading now.",
-        "preparing": "The download is done. SilkScribe is loading everything locally.",
-        "ready": "Setup is done. Next: one quick real test.",
-        "error": "Setup didn’t finish. Try again."
-      },
-      "errors": {
-        "loadModels": "SilkScribe couldn’t load the available speech engines.",
-        "downloadModel": "SilkScribe couldn’t finish the download.",
-        "selectModel": "SilkScribe couldn’t prepare your speech engine."
+        "ready": "Ready"
       },
       "tipsBadge": "Helpful while you wait",
       "previousCard": "Previous tip",
@@ -287,96 +153,30 @@
     "progress": {
       "welcome": "Welcome",
       "microphone": "Microphone",
-      "accessibility": "Text Access",
-      "setup": "Setup",
-      "practice": "Try It"
+      "setup": "Setup"
     },
     "welcome": {
-      "eyebrow": "Get set up",
-      "title": "Set up SilkScribe in a minute.",
-      "description": "We’ll turn on the permissions it needs, finish setup in the background, and let you try one real dictation.",
-      "badge": "Quick setup",
-      "features": {
-        "permissions": {
-          "title": "Clear permission help",
-          "description": "See exactly what to allow and why."
-        },
-        "engine": {
-          "title": "Automatic setup",
-          "description": "SilkScribe picks the right offline engine for this device."
-        },
-        "practice": {
-          "title": "One real test",
-          "description": "Make sure everything works before you start."
-        }
-      },
-      "outcomeLabel": "After setup",
-      "outcome": "Hold your shortcut, speak, and SilkScribe will place the text where you need it.",
-      "planLabel": "What happens",
       "plan": {
         "step1": {
-          "title": "Allow the microphone",
-          "description": "So SilkScribe can hear you."
-        },
-        "step2": {
-          "title": "Allow text access",
-          "description": "So SilkScribe can type into your apps."
+          "title": "Allow the microphone"
         },
         "step3": {
-          "title": "Try it once",
-          "description": "Setup finishes, then you run one quick test."
+          "title": "Try it once"
         }
-      },
-      "permissionPromise": "These steps are required for SilkScribe to work properly.",
-      "continue": "Continue"
+      }
     },
     "practice": {
-      "eyebrow": "Try it",
-      "title": "Try SilkScribe once",
-      "description": "Click the practice box, hold your shortcut, say a short sentence, then release.",
-      "badge": "Quick test",
-      "shortcutFallback": "Shortcut",
-      "steps": {
-        "step1": {
-          "title": "Focus the practice box",
-          "description": "Keep this box selected so SilkScribe knows where to place the text."
-        },
-        "step2": {
-          "title": "Hold {{shortcut}} and speak",
-          "description": "Say one short sentence in a natural voice."
-        },
-        "step3": {
-          "title": "Release to transcribe",
-          "description": "If the text appears here, SilkScribe is ready."
-        }
-      },
-      "tipTitle": "Try this",
-      "tipBody": "Say: “SilkScribe is ready for my notes today.”",
-      "helperTitle": "Try here",
-      "helper": "Keep this box focused, then use your shortcut. Your words should appear here.",
-      "placeholder": "Hold your shortcut, speak, then release. Your text will appear here…",
-      "success": "That worked",
-      "readyToFinish": "Your test worked. You can start using SilkScribe.",
-      "prompt": "You can skip this for now and test it later.",
       "finish": "Start using SilkScribe",
-      "skip": "Skip for now",
-      "finishing": "Finishing setup…",
-      "finishFailed": "SilkScribe couldn’t finish onboarding. Please try again."
-    },
-    "shared": {
-      "stepCounter": "Step {{current}} / {{total}}"
+      "skip": "Skip for now"
     }
   },
   "modelSelector": {
     "custom": "Vlastní",
     "active": "Aktivní",
     "statusLabel": "Stav modelu: {{status}}",
-    "switching": "Přepínání...",
     "noModelsAvailable": "Nejsou dostupné žádné modely",
     "extracting": "Rozbaluji {{modelName}}...",
     "extractingMultiple": "Rozbaluji {{count}} modelů...",
-    "extractingGeneric": "Rozbalování...",
-    "downloading": "Stahování {{percentage}}%",
     "downloadingMultiple": "Stahování {{count}} modelů...",
     "modelReady": "Model připraven",
     "loading": "Načítám {{modelName}}...",
@@ -389,8 +189,6 @@
     "downloadSpeed": "{{speed}} MB/s",
     "cancel": "Zrušit",
     "cancelDownload": "Zrušit stahování",
-    "retryDownload": "Zopakovat stahování",
-    "downloadErrorTitle": "Stahování se nepodařilo dokončit",
     "downloadProgress": {
       "downloadedOf": "{{downloaded}} z {{total}}",
       "speed": "{{speed}}/s",
@@ -401,29 +199,18 @@
       "unknownEta": "Výpočet času"
     },
     "capabilities": {
-      "languageSelection": "Podporuje více vstupních jazyků",
-      "singleLanguage": "Podporuje pouze tento jazyk",
-      "multiLanguage": "Vícejazyčný",
-      "languageOnly": "Pouze {{language}}",
-      "translation": "Umí překládat do angličtiny",
       "translate": "Přeložit do angličtiny"
     },
-    "diskSpaceCheckError": "SilkScribe nedokázal před stažením zkontrolovat místo na disku: {{error}}",
-    "insufficientSpace": "Ke stažení tohoto modelu potřebuje SilkScribe {{required}} volného místa. K dispozici je {{available}}.",
-    "downloadFailed": "SilkScribe nedokázal model stáhnout: {{error}}",
-    "extractionFailed": "SilkScribe nedokázal model rozbalit: {{error}}",
     "downloadErrors": {
       "preflightFailed": "SilkScribe nemohl před stažením zkontrolovat místo na disku: {{detail}}",
       "insufficientSpace": "SilkScribe potřebuje pro stažení tohoto modelu {{required}} volného místa. K dispozici je {{available}}.",
       "downloadFailed": "SilkScribe nemohl stáhnout model: {{detail}}",
-      "extractionFailed": "SilkScribe nemohl model rozbalit: {{detail}}",
-      "unknown": "SilkScribe nemohl dokončit stahování."
+      "extractionFailed": "SilkScribe nemohl model rozbalit: {{detail}}"
     }
   },
   "settings": {
     "modelSettings": {
-      "title": "Nastavení {{model}}",
-      "noSettingsNeeded": "Tento model funguje automaticky bez nutnosti konfigurace."
+      "title": "Nastavení {{model}}"
     },
     "general": {
       "eyebrow": "Každodenní nastavení",
@@ -437,54 +224,14 @@
         "app": "Aplikace",
         "appDescription": "Zvolte, jak má působit samotná aplikace SilkScribe."
       },
-      "title": "Obecné",
       "shortcut": {
-        "title": "Zkratky SilkScribe",
-        "description": "Nastavte klávesové zkratky pro spuštění nahrávání řeči na text",
-        "loading": "Načítám zkratky...",
-        "none": "Žádné zkratky nejsou nastavené",
         "notFound": "Zkratka nenalezena",
-        "pressKeys": "Stiskněte klávesy...",
-        "reset": "Obnovit zkratku",
-        "bindings": {
-          "transcribe": {
-            "name": "Zkratka přepisu",
-            "description": "Klávesová zkratka pro nahrávání a přepis vašeho hlasu."
-          },
-          "cancel": {
-            "name": "Zkratka zrušení",
-            "description": "Klávesová zkratka pro zrušení aktuálního nahrávání."
-          },
-          "transcribe_with_post_process": {
-            "name": "Klávesa pro následné zpracování",
-            "description": "Volitelné: Vyhrazená klávesová zkratka, která vždy použije AI následné zpracování na váš přepis."
-          }
-        },
-        "errors": {
-          "restore": "Nepodařilo se obnovit původní zkratku",
-          "set": "Nepodařilo se nastavit zkratku: {{error}}",
-          "reset": "Nepodařilo se vrátit zkratku na původní hodnotu"
-        },
         "success": {
           "saved": "Zkratka uložena",
           "reset": "Zkratka obnovena"
         }
       },
-      "language": {
-        "title": "Jazyk",
-        "description": "Vyberte jazyk rozpoznávání řeči. Auto jazyk určí automaticky, zatímco výběr konkrétního jazyka může zlepšit přesnost.",
-        "descriptionUnsupported": "Model Parakeet rozpozná jazyk automaticky. Ruční výběr není potřeba.",
-        "searchPlaceholder": "Hledat jazyky...",
-        "noResults": "Žádné jazyky nenalezeny",
-        "auto": "Auto"
-      },
-      "pushToTalk": {
-        "label": "Stisk a mluv",
-        "description": "Podržte pro nahrávání, uvolněte pro zastavení"
-      },
       "theme": {
-        "title": "Vzhled",
-        "description": "Řiďte se podle macOS nebo zvolte pevné světlé či tmavé rozhraní.",
         "options": {
           "system": "Systém",
           "light": "Světlý",
@@ -492,51 +239,9 @@
         }
       }
     },
-    "models": {
-      "eyebrow": "Řečové enginy",
-      "pageTitle": "Vyberte, jak SilkScribe poslouchá",
-      "pageDescription": "Vyberte model, který má SilkScribe používat, udržujte nainstalované modely uklizené a stáhněte další, když je potřebujete.",
-      "title": "Modely přepisu",
-      "description": "Vyberte model přepisu nebo stáhněte další modely. Různé modely nabízejí různé úrovně přesnosti a rychlosti.",
-      "currentModel": "Aktuální model",
-      "currentModelSettings": "Nastavení aktuálního modelu",
-      "currentModelSettingsDescription": "Zde zůstávají viditelné pouze jazykové možnosti aktivního modelu.",
-      "yourModels": "Stažené modely",
-      "availableModels": "Dostupné ke stažení",
-      "downloaded": "Staženo",
-      "available": "K dispozici ke stažení",
-      "noActiveModelTitle": "Zatím není aktivní žádný model.",
-      "noActiveModelDescription": "Stáhněte model níže a SilkScribe jej použije při vašem příštím přepisu.",
-      "noExtraInstalled": "Momentálně máte nainstalovaný pouze svůj aktuální model.",
-      "deleteConfirm": "Opravdu chcete smazat {{modelName}}? Pro opětovné použití jej budete muset znovu stáhnout.",
-      "deleteActiveConfirm": "{{modelName}} je váš aktivní model. Jeho smazáním se zastaví přepisy, dokud nevyberete nový model. Opravdu chcete pokračovat?",
-      "deleteTitle": "Smazat model",
-      "filters": {
-        "all": "Vše",
-        "multiLanguage": "Vícejazyčný",
-        "translation": "Překlad",
-        "allLanguages": "Všechny jazyky"
-      },
-      "noModelsMatch": "Tomuto filtru neodpovídají žádné modely.",
-      "deleteConfirmAction": "Smazat model"
-    },
     "sound": {
-      "title": "Zvuk",
       "microphone": {
-        "title": "Mikrofon",
-        "description": "Vyberte preferované zařízení mikrofonu",
-        "placeholder": "Vyberte mikrofon...",
-        "loading": "Načítání..."
-      },
-      "audioFeedback": {
-        "label": "Zvuková odezva",
-        "description": "Přehrát zvuk při zahájení a ukončení nahrávání"
-      },
-      "outputDevice": {
-        "title": "Výstupní zařízení",
-        "description": "Vyberte preferované výstupní zařízení pro zvuky odezvy",
-        "placeholder": "Vyberte výstupní zařízení...",
-        "loading": "Načítání..."
+        "title": "Mikrofon"
       },
       "volume": {
         "title": "Hlasitost",
@@ -565,43 +270,23 @@
       "eyebrow": "Volitelné ovládací prvky",
       "pageTitle": "Pokročilé chování a podpora",
       "pageDescription": "Většina lidí je může nechat být. Použijte je, když potřebujete, aby se SilkScribe na vašem zařízení choval jinak.",
-      "title": "Pokročilé",
       "groups": {
         "app": "Aplikace",
-        "output": "Výstup",
         "transcription": "Přepis",
         "history": "Historie",
-        "support": "Podpora",
         "experimental": "Experimentální"
       },
       "groupDescriptions": {
-        "app": "Chování spuštění a překryvné vrstvy samotné aplikace.",
-        "output": "Jak se hotový text vloží do aplikace, kterou používáte.",
-        "transcription": "Drobné úpravy měnící způsob, jakým SilkScribe utváří váš text.",
-        "history": "Nastavení uchovávání a čištění přepisů a nahrávek.",
-        "support": "Nástroje údržby a složky, které pomáhají při řešení potíží.",
-        "experimental": "Funkce, které se stále vyvíjejí a mohou se změnit."
-      },
-      "experimentalToggle": {
-        "label": "Experimentální funkce",
-        "description": "Povolit experimentální funkce, které jsou stále ve vývoji."
-      },
-      "lazyStreamClose": {
-        "label": "Ponechat mikrofon otevřený mezi přepisy",
-        "description": "Ponechat stream mikrofonu krátce otevřený po zastavení nahrávání."
+        "history": "Nastavení uchovávání a čištění přepisů a nahrávek."
       },
       "acceleration": {
         "whisper": {
-          "title": "Akcelerace Whisper",
-          "description": "Vyberte hardwarovou akceleraci pro modely Whisper."
+          "title": "Akcelerace Whisper"
         },
         "ort": {
-          "title": "Akcelerace ONNX",
-          "description": "Vyberte hardwarovou akceleraci pro modely ONNX."
+          "title": "Akcelerace ONNX"
         },
         "gpuDevice": {
-          "title": "GPU zařízení",
-          "description": "Vyberte GPU pro inferenci Whisper.",
           "auto": "Automaticky"
         },
         "labels": {
@@ -612,59 +297,16 @@
           "rocm": "ROCm"
         }
       },
-      "startHidden": {
-        "label": "Spouštět skrytě",
-        "description": "Spustit do systémové lišty bez otevření okna."
-      },
-      "autostart": {
-        "label": "Spouštět při startu",
-        "description": "Automaticky spustit SilkScribe po přihlášení do počítače."
-      },
-      "showTrayIcon": {
-        "label": "Zobrazit ikonu v systémové liště",
-        "description": "Zobrazit ikonu SilkScribe v systémové liště."
-      },
       "overlay": {
-        "title": "Pozice překryvu",
-        "description": "Zobrazovat vizuální překryv během nahrávání a přepisu. Na Linuxu je doporučeno 'Žádné'.",
         "options": {
-          "none": "Žádné",
           "bottom": "Dole",
           "top": "Nahoře"
         }
       },
       "pasteMethod": {
-        "title": "Způsob vložení",
-        "description": "Vyberte, jak se text vkládá. Přímé: simuluje psaní přes systémový vstup. Žádné: přeskočí vložení a aktualizuje pouze historii/schránku.",
-        "options": {
-          "clipboard": "Schránka ({{modifier}}+V)",
-          "clipboardCtrlShiftV": "Schránka (Ctrl+Shift+V)",
-          "clipboardShiftInsert": "Schránka (Shift+Insert)",
-          "direct": "Přímé",
-          "none": "Žádné",
-          "externalScript": "Externí skript"
-        },
         "externalScriptPlaceholder": "/cesta/k/vasemu/skriptu.sh"
       },
-      "typingTool": {
-        "title": "Nástroj pro psaní",
-        "description": "Vyberte, který linuxový nástroj pro psaní použít pro metodu přímého vložení. Auto automaticky zjistí a použije nejlepší dostupný nástroj pro váš systém.",
-        "options": {
-          "auto": "Auto (Doporučeno)"
-        }
-      },
-      "clipboardHandling": {
-        "title": "Práce se schránkou",
-        "description": "'Neměnit schránku' zachová po přepisu aktuální obsah schránky. 'Kopírovat do schránky' ponechá po vložení výsledek přepisu ve schránce.",
-        "options": {
-          "dontModify": "Neměnit schránku",
-          "copyToClipboard": "Kopírovat do schránky"
-        },
-        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
-      },
       "autoSubmit": {
-        "title": "Automatické odeslání",
-        "description": "Automaticky odešle vybranou kombinaci kláves po vložení textu. Cmd+Enter platí pro macOS, zatímco Windows/Linux používají Super+Enter.",
         "options": {
           "off": "Vypnuto",
           "enter": "Enter",
@@ -674,107 +316,48 @@
         }
       },
       "translateToEnglish": {
-        "label": "Překládat do angličtiny",
-        "description": "Během přepisu automaticky překládat řeč z jiných jazyků do angličtiny.",
-        "descriptionUnsupported": "Překlad není podporován modelem {{model}}."
+        "label": "Překládat do angličtiny"
       },
       "modelUnload": {
-        "title": "Uvolnění modelu",
-        "description": "Automaticky uvolnit paměť GPU/CPU, když model nebyl použit po zadanou dobu",
         "options": {
           "never": "Nikdy",
-          "immediately": "Okamžitě",
           "min2": "Po 2 minutách",
           "min5": "Po 5 minutách",
           "min10": "Po 10 minutách",
           "min15": "Po 15 minutách",
-          "hour1": "Po 1 hodině",
-          "sec5": "Po 5 sekundách (Debug)"
+          "hour1": "Po 1 hodině"
         }
       },
       "customWords": {
-        "title": "Vlastní slova",
-        "description": "Přidejte slova, která jsou při přepisu často špatně rozpoznána nebo napsána. Systém automaticky opraví podobně znějící slova podle vašeho seznamu.",
-        "placeholder": "Přidat slovo",
         "add": "Přidat",
-        "remove": "Odebrat {{word}}",
-        "duplicate": "\"{{word}}\" již existuje"
-      },
-      "overlayAppearance": {
-        "title": "Vzhled překrytí",
-        "description": "Zvolte, zda překrytí nahrávání odpovídá tématu aplikace, nebo zůstane světlé nebo tmavé.",
-        "options": {
-          "auto": "Shodovat s tématem aplikace",
-          "light": "Vždy světlé",
-          "dark": "Vždy tmavé"
-        }
+        "remove": "Odebrat {{word}}"
       }
     },
     "postProcessing": {
-      "title": "Následné zpracování",
-      "hotkey": {
-        "title": "Klávesová zkratka"
-      },
       "api": {
-        "title": "API (kompatibilní s OpenAI)",
         "provider": {
-          "title": "Poskytovatel",
-          "description": "Vyberte poskytovatele kompatibilního s OpenAI."
-        },
-        "appleIntelligence": {
-          "title": "Apple Intelligence",
-          "description": "Běží plně na zařízení. Není potřeba API klíč ani síťové připojení.",
-          "requirements": "Vyžaduje Mac s Apple Silicon a macOS Tahoe (26.0) nebo novější. Apple Intelligence musí být povoleno v Nastavení systému.",
-          "unavailable": "Apple Intelligence není na tomto zařízení k dispozici. Vyžaduje Mac s Apple Silicon a macOS Tahoe (26.0) nebo novější a povolené Apple Intelligence v Nastavení systému."
+          "title": "Poskytovatel"
         },
         "baseUrl": {
           "title": "Základní URL",
-          "description": "Základní URL API pro vybraného poskytovatele. Upravitelné je pouze u vlastního poskytovatele.",
           "placeholder": "https://api.openai.com/v1"
         },
         "apiKey": {
-          "title": "API klíč",
-          "description": "API klíč pro vybraného poskytovatele.",
           "placeholder": "sk-..."
         },
         "model": {
           "title": "Model",
-          "descriptionApple": "Zadejte volitelný číselný limit tokenů nebo ponechte výchozí předvolbu na zařízení.",
-          "descriptionCustom": "Zadejte identifikátor modelu očekávaný vaším vlastním endpointem.",
-          "descriptionDefault": "Vyberte model dostupný u vybraného poskytovatele.",
-          "placeholderApple": "Apple Intelligence",
-          "placeholderWithOptions": "Vyhledejte nebo vyberte model",
-          "placeholderNoOptions": "Zadejte název modelu",
-          "refreshModels": "Obnovit modely"
+          "placeholderNoOptions": "Zadejte název modelu"
         }
       },
       "prompts": {
-        "title": "Prompt",
-        "selectedPrompt": {
-          "title": "Vybraný prompt",
-          "description": "Vyberte šablonu pro zpřesnění přepisu nebo vytvořte novou. V textu promptu použijte ${output} pro vložení zachyceného přepisu."
-        },
-        "noPrompts": "Nejsou k dispozici žádné prompty",
-        "selectPrompt": "Vyberte prompt",
-        "createNew": "Vytvořit nový prompt",
-        "promptLabel": "Název promptu",
-        "promptLabelPlaceholder": "Zadejte název promptu",
-        "promptInstructions": "Instrukce promptu",
-        "promptInstructionsPlaceholder": "Napište instrukce, které se mají spustit po přepisu. Příklad: Zlepšete gramatiku a srozumitelnost následujícího textu: ${output}",
-        "promptTip": "Tip: Použijte <code>${output}</code> pro vložení přepsaného textu do promptu.",
-        "updatePrompt": "Aktualizovat prompt",
-        "deletePrompt": "Smazat prompt",
-        "createPrompt": "Vytvořit prompt",
-        "cancel": "Zrušit",
-        "selectToEdit": "Vyberte výše prompt, abyste zobrazili a upravili jeho podrobnosti.",
-        "createFirst": "Klikněte nahoře na 'Vytvořit nový prompt' a vytvořte svůj první prompt pro následné zpracování."
+        "cancel": "Zrušit"
       }
     },
     "history": {
       "eyebrow": "Archiv přepisů",
       "pageTitle": "Prohlédněte si své nedávné přepisy",
       "pageDescription": "Procházejte, co SilkScribe zachytil, přehrávejte zvuk a uložte vše, co si chcete nechat po ruce.",
-      "title": "Historie",
       "openFolder": "Otevřít složku nahrávek",
       "exportMarkdown": "Exportovat Markdown",
       "exportJson": "Exportovat JSON",
@@ -782,7 +365,6 @@
       "exportEmpty": "Není žádná historie k exportu.",
       "exportSuccess": "Historie exportována",
       "exportError": "SilkScribe nedokázal exportovat historii.",
-      "loading": "Načítám historii...",
       "empty": "Zatím žádné přepisy. Začněte nahrávat a vytvořte si historii!",
       "emptyDescription": "Vaše uložené přepisy a nahrávky se zde objeví po prvním diktování.",
       "emptyFiltered": "Žádné odpovídající přepisy.",
@@ -813,68 +395,19 @@
       "retry": "Opakovat"
     },
     "debug": {
-      "title": "Ladění",
-      "logDirectory": {
-        "title": "Složka protokolů",
-        "description": "Umístění, kde jsou uloženy soubory protokolu"
-      },
-      "logLevel": {
-        "title": "Úroveň logování",
-        "description": "Nastavte úroveň podrobnosti logování"
-      },
-      "updateChecks": {
-        "label": "Kontrolovat aktualizace",
-        "description": "Automaticky kontrolovat nové verze SilkScribe"
-      },
-      "soundTheme": {
-        "label": "Zvukový motiv",
-        "description": "Vyberte zvukový motiv pro odezvu při startu a ukončení nahrávání"
-      },
-      "wordCorrectionThreshold": {
-        "title": "Práh korekce slov",
-        "description": "Citlivost pro opravy vlastních slov"
-      },
-      "historyLimit": {
-        "title": "Limit historie",
-        "description": "Maximální počet záznamů historie k uchování",
-        "entries": "záznamů"
-      },
       "recordingRetention": {
-        "title": "Automatické mazání nahrávek",
-        "description": "Automaticky mazat staré nahrávky pro úsporu místa",
         "never": "Nikdy",
         "preserveLimit": "Ponechat posledních {{count}}",
         "days3": "Po 3 dnech",
         "weeks2": "Po 2 týdnech",
-        "months3": "Po 3 měsících",
-        "placeholder": "Vyberte dobu uchování..."
-      },
-      "alwaysOnMicrophone": {
-        "label": "Vždy zapnutý mikrofon",
-        "description": "Udržovat mikrofon aktivní pro rychlejší odezvu"
-      },
-      "clamshellMicrophone": {
-        "title": "Mikrofon při zavřeném víku",
-        "description": "Mikrofon, který se použije při zavřeném víku notebooku"
-      },
-      "postProcessingToggle": {
-        "label": "Následné zpracování",
-        "description": "Povolit AI vylepšení textu po přepisu"
+        "months3": "Po 3 měsících"
       },
       "muteWhileRecording": {
         "label": "Ztlumit při nahrávání",
         "description": "Ztlumit systémový zvuk během nahrávání"
       },
-      "appendTrailingSpace": {
-        "label": "Přidat koncovou mezeru",
-        "description": "Přidat mezeru po vloženém přepisu"
-      },
       "keyboardImplementation": {
-        "title": "Keyboard Implementation",
-        "description": "Choose the keyboard shortcut backend.",
-        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
         "backends": {
-          "tauri": "Globální zkratka Tauri",
           "nativeKeys": "Nativní klávesy"
         }
       },
@@ -882,14 +415,6 @@
         "appData": "Data aplikace:",
         "models": "Modely:",
         "settings": "Nastavení:"
-      },
-      "pasteDelay": {
-        "title": "Zpoždění vložení",
-        "description": "Zpoždění před odesláním klávesy pro vložení (v milisekundách). Zvyšte, pokud se vkládá špatný text."
-      },
-      "recordingBuffer": {
-        "title": "Extra buffer nahrávání",
-        "description": "Pokračovat v nahrávání krátce po uvolnění klávesy."
       }
     },
     "about": {
@@ -897,10 +422,6 @@
       "version": {
         "title": "Verze",
         "description": "Aktuální verze SilkScribe"
-      },
-      "appDataDirectory": {
-        "title": "Adresář dat aplikace",
-        "description": "Umístění, kde SilkScribe ukládá data"
       }
     }
   },
@@ -924,67 +445,24 @@
     }
   },
   "common": {
-    "loading": "Načítání...",
     "versionLabel": "v{{version}}",
-    "save": "Uložit",
     "cancel": "Zrušit",
-    "reset": "Obnovit",
-    "add": "Přidat",
-    "remove": "Odebrat",
     "delete": "Smazat",
-    "edit": "Upravit",
-    "create": "Vytvořit",
-    "update": "Aktualizovat",
-    "close": "Zavřít",
     "open": "Otevřít",
     "default": "Výchozí",
-    "enabled": "Zapnuto",
-    "disabled": "Vypnuto",
-    "on": "Zapnuto",
-    "off": "Vypnuto",
-    "yes": "Ano",
-    "no": "Ne",
-    "noOptionsFound": "Nenalezeny žádné možnosti",
-    "moreInformation": "Více informací",
     "errorBoundary": {
-      "description": "SilkScribe nedokázal vykreslit toto zobrazení. Vaše nastavení a nahrávky jsou stále uloženy lokálně.",
       "reload": "Znovu načíst",
       "openLogs": "Otevřít protokoly"
     }
   },
-  "errors": {
-    "loadDirectory": "Chyba při načítání adresáře: {{error}}"
-  },
-  "appLanguage": {
-    "title": "Jazyk aplikace",
-    "description": "Změňte jazyk rozhraní SilkScribe"
-  },
   "overlay": {
-    "listening": "Nahrávání",
     "transcribing": "Přepis",
-    "processing": "Zpracování",
     "success": "Hotovo",
-    "failed": "Selhalo",
-    "cancelled": "Zrušeno",
-    "cancelledDetail": "Zastaveno vámi",
-    "empty": "Nic slyšet",
-    "detail": {
-      "cancelled": "Zastaveno vámi",
-      "empty": "Nebyla detekována řeč",
-      "pasteCopied": "Nelze vložit – zkopírováno do schránky",
-      "pasteFailed": "Nelze vložit nebo zkopírovat text",
-      "transcriptionFailed": "Přepisování nebylo dokončeno",
-      "recordingFailed": "Nelze spustit nahrávání"
-    }
+    "cancelled": "Zrušeno"
   },
   "feedback": {
     "pasteFailed": {
-      "copiedTitle": "Zkopírováno do schránky",
-      "copiedDescription": "SilkScribe nedokázal vložit do aktivní aplikace.",
-      "failedTitle": "SilkScribe nedokázal vložit",
-      "failedDescription": "Text se nepodařilo vložit ani zkopírovat.",
-      "copyFailedTitle": "SilkScribe nemohl text zkopírovat",
-      "copyFailedDescription": "Vložení selhalo a záložní kopírování se nedokončilo."
+      "copiedTitle": "Zkopírováno do schránky"
     }
   },
   "home": {
@@ -997,14 +475,7 @@
       "readyDescription": "Vypadá to, že je vše připraveno. Podržte svou zkratku, mluvte přirozeně a SilkScribe umístí text tam, kam potřebujete.",
       "setupDescription": "Základy nastavte jednou a poté vám SilkScribe nepřekáží a je připraven, kdykoli potřebujete rychlé diktování.",
       "primaryReady": "Zkontrolovat nastavení nahrávání",
-      "primarySetup": "Dokončit nastavení",
-      "secondaryAction": "Procházet modely"
-    },
-    "setup": {
-      "title": "Několik základních věcí ještě vyžaduje pozornost.",
-      "description": "Jakmile budou zkratka, model a oprávnění na místě, je SilkScribe připraven na každodenní diktování.",
-      "modelAction": "Vybrat model",
-      "generalAction": "Otevřít obecné nastavení"
+      "primarySetup": "Dokončit nastavení"
     },
     "readiness": {
       "shortcut": {
@@ -1060,115 +531,51 @@
     "home": "Domů",
     "library": "Knihovna",
     "settings": "Nastavení",
-    "navigation": "Navigace pracovní plochy",
     "recordMeeting": "Záznam schůzky",
     "importAudio": "Importovat audio",
     "localOnly": "Všechno zůstává na tomto zařízení",
-    "onDevice": "Zpracování na zařízení",
-    "yourWorkspace": "Vaše pracovní plocha",
-    "allYourWords": "Všechny vaše slova, společně",
-    "homeTitle": "Uvolněte prostor pro konverzaci.",
-    "homeDescription": "Zachyťte schůzku, přiveďte nahrávku nebo pokračujte tam, kde jste přestali.",
-    "libraryDescription": "Vaše dikty, schůzky a audio soubory na jednom vyhledatelném místě.",
-    "meetingShort": "Zachyťte zvuk mikrofonu a počítače.",
-    "importShort": "Převeďte audio soubory na úpravitelné přepisy.",
     "dictation": "Diktování",
-    "dictationHelp": "Nastavte si zkratku a mluvěte do jakéhokoliv programu.",
     "inProgress": "Probíhá",
-    "recent": "Nedávné přepisy",
-    "viewLibrary": "Zobrazit knihovnu",
     "transcripts": "Přepisy",
-    "searchLibrary": "Vyhledat názvy a přepisy",
     "clearSearch": "Vymazat vyhledávání",
     "loading": "Načítám vaše přepisy…",
-    "emptyTitle": "Vaše další konverzace začíná zde",
-    "emptyDescription": "Zaznamněte schůzku nebo importujte audio soubor. Vaše slova, řečníci a poznámky se zde objeví.",
-    "noResults": "Žádné shodné přepisy",
     "trySearch": "Zkuste jiné vyhledávání nebo filtr.",
     "loadMore": "Zobrazit více",
     "back": "Zpět",
     "title": "Nadpis",
     "saved": "Uloženo",
     "saving": "Ukládání…",
-    "saveFailed": "Změny se nepodařilo uložit",
     "export": "Exportovat",
-    "exported": "Přepis exportován",
     "delete": "Smazat přepis",
-    "deleteHelp": "Smazat tento přepis, jeho poznámky a řízené audio soubory? Váš původní importovaný soubor zůstane nedotčen.",
     "deleteAudio": "Smazat audio",
-    "deleteAudioHelp": "Smazat řízené audio a ponechat přepis a poznámky? Přehrávání a zpracování audio již nebudou k dispozici.",
     "cancel": "Zrušit",
-    "retry": "Zkusit znovu",
-    "speed": "Rychlost přehrávání",
-    "documentViews": "Zobrazení přepisu",
     "transcript": "Přepis",
     "notes": "Poznámky",
     "speakers": "Mluvíci",
-    "searchTranscript": "Hledat v přepisu",
-    "transcriptPending": "Přepis se zde objeví po zpracování.",
     "speaker": "Mluvící",
-    "unknownSpeaker": "Nepřiřazen",
     "segment": "Přepis v",
-    "restoreOriginal": "Obnovit původní text",
-    "speakerHelp": "Jména platí pouze pro toto nahrání. Přejmenujte mluvčího nebo sloučte štítky, které patří stejné osobě.",
-    "noSpeakers": "Pro toto nahrání nejsou k dispozici štítky mluvících.",
     "speakerName": "Jméno mluvícího",
     "mergeSpeaker": "Sloučit do…",
-    "notesStale": "Tento přepis byl změněn. Regenerujte poznámky pro zahrnutí vašich úprav.",
-    "noNotes": "Zatím žádné poznámky. Povolte lokální model pro poznámky při vytváření přepisu.",
-    "regenerate": "Regenerovat poznámky",
     "summary": "Shrnutí",
     "decisions": "Rozhodnutí",
     "actions": "Úkoly",
     "action": "Úkol",
-    "done": "Dokončeno",
     "owner": "Vlastník",
-    "due": "Termín",
-    "audioFiles": "Zvukové soubory",
-    "recordingConflict": "Probíhá nahrávání schůzky. Před začátkem dikce ji zastavte.",
     "cancelJob": "Zrušit {{title}}",
-    "transcriptionModel": "Model přepisu",
-    "currentDictationModel": "Aktuální model dikce (Whisper / Parakeet)",
     "language": "Jazyk",
-    "autoLanguage": "Automaticky detekovat",
     "detectSpeakers": "Identifikovat řečníky",
-    "localNotes": "Lokální AI poznámky",
-    "noAutomaticNotes": "Žádné automatické poznámky",
-    "microphoneLevel": "Úroveň mikrofonu",
     "systemLevel": "Úroveň počítačového zvuku",
     "resume": "Pokračovat",
     "pause": "Pauza",
-    "stopTranscribe": "Zastavit a přepsat",
-    "newTranscript": "Nový přepis",
-    "meetingHelp": "Nahrajte obě strany konverzace. Přepis a detekce řečníků začnou po zastavení nahrávání.",
-    "importHelp": "Vyberte audio soubory a způsob jejich zpracování. Můžete pokračovat v práci, zatímco se transkribují.",
     "meetingTitle": "Nejmenované schůzky",
     "microphone": "Mikrofon",
     "defaultMicrophone": "Výchozí systémový",
     "computerAudio": "Zahrnout zvuk počítače",
-    "systemPermission": "macOS může vyžádat přístup k nahrávání obrazovky a systémového zvuku.",
-    "removeFile": "Odebrat soubor",
-    "chooseFiles": "Vybrat audio soubory",
-    "processing": "Možnosti zpracování",
-    "setupNeeded": "Některé komponenty pro lokální zpracování vyžadují nastavení. Můžete nyní zachytit zvuk a zpracování zkusit znovu po instalaci.",
-    "modelSetup": "Nastavit lokální modely",
     "working": "Práce…",
     "startRecording": "Začít nahrávat",
-    "startTranscription": "Začít transkripci",
-    "modelsLanguage": "Modely a jazyk",
-    "preferences": "Nastavení",
     "storage": "Úložiště a soukromí",
-    "localIntelligence": "Lokální inteligence",
-    "localModelsHelp": "Stáhněte pouze to, co potřebujete. Zvuk, transkripty a poznámky jsou zpracovány na vašem Macu. Větší modely vyžadují více paměti a času na zpracování.",
-    "runtimeReady": "Lokální runtime pro inferenci je nainstalován.",
-    "runtimeMissing": "Tato verze ještě neobsahuje lokální runtime pro AI. Zpracování modelů bude k dispozici po balení runtime. Existující diktační modely zůstávají dostupné.",
-    "unpublished": "Balík pro stažení nebyl publikován",
-    "downloading": "Stahování modelu",
     "installed": "Nainstalováno",
     "download": "Stáhnout",
-    "dropAudio": "Přetáhnout audio pro transkripci",
-    "workspaceFirst": "Otevřít pracovní prostor transkripce",
-    "workspaceFirstHelp": "Importujte audio bez povolení mikrofonu nebo přístupnosti.",
     "source": {
       "dictation": "Přepis",
       "meeting": "Schůze",
@@ -1183,17 +590,13 @@
     },
     "purpose": {
       "asr": "Přepis",
-      "alignment": "Synchronizace časových razítek",
-      "speakers": "Rozlišení řečníků",
       "notes": "Shrnutí a úkoly"
     },
     "stage": {
       "recording": "Záznam",
       "paused": "Pauza",
       "queued": "V frontě",
-      "preparing": "Příprava audio",
       "transcribing": "Přepis",
-      "diarizing": "Identifikace řečníků",
       "notes": "Psaní poznámek",
       "complete": "Hotovo",
       "failed": "Vyžaduje pozornost",
@@ -1202,117 +605,35 @@
     },
     "audio": "Audio",
     "appearance": "Vzhled",
-    "dictationProcessing": "Uklidnění přepisu",
     "debug": "Vývojář",
-    "retentionHelp": "Schůze a importované soubory zůstávají, dokud je neodeberete. Ovládání retence níže platí pouze pro záznamy přepisu.",
-    "dictationRetention": "Doba uchování dikce",
-    "activeCount": "{{count}} probíhajících úloh",
     "skipToContent": "Přejít na obsah",
-    "memoryGuidance": "Vyhraďte alespoň {{gb}} GB paměti (odhad; závisí na délce nahrávky).",
     "notesModel9": "Qwen3.5 · 9B",
     "notesModel27": "Qwen3.6 · 27B",
-    "draftConflict": "Byla nalezena neuložená náčrtová verze z předchozí verze. Obnovit její přepis nebo ponechat uloženou verzi.",
-    "recoverDraft": "Obnovit text náčrtu",
-    "keepSaved": "Ponechat uloženou verzi",
-    "transcriptReadyWarning": "Přepis připraven · Vyžaduje pozornost",
-    "retryEnhancement": "Zkusit tento krok znovu",
-    "withoutEnhancements": "Pokračovat bez řečníků nebo poznámek",
     "recordForLater": "Nahrát nyní, přepsat později",
-    "returnToSetup": "Vrátit se k nastavení",
-    "advancedDictationModels": "Pokročilé modely dikce",
     "activity": "Aktivita",
     "close": "Zavřít",
-    "noActiveJobs": "Není spuštěno žádné zpracovávací úloha.",
     "presetFast": "Rychlý přepis",
     "presetDetailed": "Podrobný přepis",
     "presetNotes": "Přepis + poznámky",
-    "processingDetails": "Modely a možnosti zpracování",
-    "stopSave": "Zastavit a uložit zvuk",
-    "finishEditing": "Hotovo s úpravou",
     "editTranscript": "Upravit přepis",
     "followPlayback": "Sledovat přehrávání",
-    "matchCount": "{{count}} shod",
     "previous": "Předchozí",
     "next": "Další",
-    "undoMerge": "Vrátit se spojení řečníků",
-    "evidence": "Podpůrný přepis",
-    "playEvidence": "Přehrát tento úryvek",
-    "mergePreview": "Přiřadit {{count}} toky od {{from}} do {{to}}. Spojení lze vrátit.",
-    "pauseDownload": "Pausovat stahování",
-    "removeModel": "Odstranit model",
-    "removeModelHelp": "Odstranit tento stažený model z tohoto zařízení? Přepisy zůstanou dostupné. Model lze stáhnout znovu.",
-    "storageUsage": "Úložiště na tomto zařízení",
-    "audioStorage": "Záznamy a pracovní audio",
-    "modelStorage": "Stažené modely",
-    "freeStorage": "Dostupné místo",
-    "setupModels": "Nastavit modely",
-    "skipEnhancement": "Přeskočit volitelnou úpravu",
     "generateNotes": "Vytvořit poznámky",
     "addItem": "Přidat položku",
     "removeItem": "Odstranit položku",
     "newSpeaker": "Přidat řečníka",
-    "speakerSample": "Přehrát vzorek řečníka",
-    "exportPreview": "Exportovat náhled",
-    "exportContent": "Export obsahuje aktuální přepis a jeho skutečné časové razítky. Markdown a JSON také obsahují poznámky.",
-    "confirmExport": "Zvolit cíl",
-    "readiness": {
-      "download": "Stáhnout {{model}} pro aktivaci tohoto pracovního postupu.",
-      "unpublished": "{{model}} zatím není k dispozici ke stažení.",
-      "unavailable": "{{model}} není v této verzi dostupný.",
-      "native_download": "Zvolit nebo stáhnout model pro dikci: {{model}}.",
-      "runtime": "Tato verze neobsahuje vyžadované runtime pro lokální zpracování.",
-      "fallback_download": "Automatické rozpoznání jazyka vyžaduje Whisper large-v3 pro jazyky bez zarovnání Qwen. Stáhněte ho nebo vyberte podporovaný jazyk.",
-      "language": "{{model}} není podporován vybraným modelem. Vyberte jiný jazyk nebo model.",
-      "memory": "Zavřete jiné aplikace pro uvolnění paměti pro {{model}}, nebo explicitně vyberte jiný model poznámek."
-    },
-    "newNotesReview": "Zkontrolovat nové poznámky",
-    "newNotesHelp": "Vaše současné poznámky jsou uloženy níže. Zkontrolujte novou verzi a její zdroje před jejich nahrazením.",
-    "replaceNotes": "Nahradit současné poznámky",
-    "keepCurrentNotes": "Ponechat současné poznámky",
     "speakerCount_one": "{{count}} řečník",
     "speakerCount_other": "{{count}} řečníků",
-    "timing": {
-      "aligned": "Transkripce Qwen se zarovnanými časovými razátky.",
-      "aligned_or_segments": "Qwen se zarovnanými časovými razátky, kde je to podporováno; Whisper large-v3 s časovými segmenty pro ostatní detekované jazyky.",
-      "segments": "Transkripce {{model}} s časovými segmenty."
-    },
-    "memoryAvailable": "Dostupná paměť: přibližně {{gb}} GB.",
-    "memoryObserved": "Tento model spotřebuje až {{gb}} GB při lokálním běhu. Delší vstupy mohou vyžadovat více.",
-    "memoryUnmeasured": "Tento model ještě nebyl změřen na tomto počítači.",
-    "checkingFiles": "Kontrola audio souborů…",
-    "durationUnknown": "Délka není k dispozici",
-    "importProblems": "Některé soubory se nepodařilo importovat",
     "dismiss": "Zamítnout",
-    "verifyModel": "Ověřit model",
-    "modelVerified": "Soubory modelu ověřeny",
-    "modelDamaged": "Poškozené soubory · Stáhnout znovu",
-    "finishingAudio": "Dokončování zvuku…",
-    "selectPage": "Vybrat tuto stránku",
     "clearSelection": "Vymazat výběr",
     "selectedTurns": "Vybrané promluvy",
-    "assignSelectedSpeaker": "Přiřadit vybrané promluvy",
     "selectTurn": "Vybrat promluvu na {{time}}",
-    "exportOriginalText": "Použít původní přepis",
-    "notesReviewed": "Prohlédl jsem si tyto poznámky proti přepisu",
-    "unfinishedImports": "Dokončené importy",
-    "resumeImport": "Obnovit nastavení importu",
-    "discardImport": "Zahodit nedokončenou kopii",
-    "captureUnsupported": "Záznam schůzky vyžaduje macOS. Stejně tak můžete importovat audio soubory.",
-    "microphoneReady": "Povoleno použití mikrofonu",
-    "microphonePermissionNeeded": "Povolte přístup k mikrofonu pro nahrávání vašeho hlasu.",
-    "allowMicrophone": "Povolit přístup k mikrofonu",
-    "computerAudioReady": "Povoleno zachycení zvuku z počítače",
-    "computerPermissionNeeded": "Povolte přístup k nahrávání obrazovky pro zachycení zvuku z počítače.",
-    "allowComputerAudio": "Povolit přístup k zvuku z počítače",
-    "microphoneUnavailable": "Vybraný mikrofon není k dispozici. Vyberte jiný vstup.",
-    "replaceOnlySection": "Nahradit pouze tuto sekci",
-    "sectionReplacementHelp": "Použijte jednu sekci pro zachování vašich jiných poznámek. Nepoužité generované sekce budou smazány."
+    "unfinishedImports": "Dokončené importy"
   },
   "audioPlayer": {
     "play": "Přehrát",
     "pause": "Pausa",
-    "seek": "Pozice přehrávání",
-    "error": "Toto audio se nepodařilo přehrát.",
-    "retry": "Načíst audio znovu"
+    "seek": "Pozice přehrávání"
   }
 }

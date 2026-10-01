@@ -11,7 +11,7 @@ interface AppLanguageSelectorProps {
 }
 
 export const AppLanguageSelector: React.FC<AppLanguageSelectorProps> =
-  React.memo(({ descriptionMode = "tooltip", grouped = false }) => {
+  React.memo(({ descriptionMode = "inline", grouped = false }) => {
     const { t, i18n } = useTranslation();
     const { settings, updateSetting } = useSettings();
 
@@ -31,7 +31,6 @@ export const AppLanguageSelector: React.FC<AppLanguageSelectorProps> =
     return (
       <SettingContainer
         title={t("appLanguage.title")}
-        description={t("appLanguage.description")}
         descriptionMode={descriptionMode}
         grouped={grouped}
       >

@@ -55,7 +55,7 @@ pub fn start(
         bail!("Another recording is active. Stop it before starting a meeting.");
     }
     if fs4::available_space(&ws.store.media)? < 64 * 1024 * 1024 {
-        bail!("Free disk space before starting a meeting recording.");
+        bail!("Free up disk space to keep recording.");
     }
     let mut doc = ws.create(
         if options.title.trim().is_empty() {
@@ -124,7 +124,7 @@ pub fn control(
         bail!("Unknown recording operation");
     }
     if operation == "resume" && fs4::available_space(&ws.store.media)? < 64 * 1024 * 1024 {
-        bail!("Free disk space before resuming the meeting recording.");
+        bail!("Free up disk space to keep recording.");
     }
     let mut recording = ws.recording.lock().unwrap();
     let Some(r) = recording.as_ref() else {
@@ -169,8 +169,7 @@ pub fn control(
     };
     if operation == "stop" || operation == "save" {
         if operation == "save" || !can_process {
-            doc.error =
-                Some("Recording saved. Choose processing options to transcribe when ready.".into());
+            doc.error = Some("Recording saved. Choose how to process it when you're ready.".into());
         }
         *recording = None;
     }

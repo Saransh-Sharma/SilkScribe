@@ -53,7 +53,6 @@ export const AdvancedSettings: React.FC<{
       {(!group || group === "app") && (
         <DisclosureSection
           title={t("settings.advanced.groups.app")}
-          description={t("settings.advanced.groupDescriptions.app")}
           defaultOpen
         >
           <StartHidden descriptionMode="inline" grouped={true} />
@@ -69,7 +68,6 @@ export const AdvancedSettings: React.FC<{
       {(!group || group === "output") && (
         <DisclosureSection
           title={t("settings.advanced.groups.output")}
-          description={t("settings.advanced.groupDescriptions.output")}
           defaultOpen
         >
           <PasteMethodSetting descriptionMode="inline" grouped={true} />
@@ -84,17 +82,14 @@ export const AdvancedSettings: React.FC<{
       )}
 
       {(!group || group === "transcription") && (
-        <DisclosureSection
-          title={t("settings.advanced.groups.transcription")}
-          description={t("settings.advanced.groupDescriptions.transcription")}
-        >
+        <DisclosureSection title={t("settings.advanced.groups.transcription")}>
           <CustomWords descriptionMode="inline" grouped />
           <AppendTrailingSpace descriptionMode="inline" grouped={true} />
         </DisclosureSection>
       )}
 
       {(!group || group === "runtime") && (
-        <DisclosureSection title={t("workspace.modelsLanguage")}>
+        <DisclosureSection title={t("settings.advanced.groups.runtime")}>
           <ModelUnloadTimeoutSetting descriptionMode="inline" grouped />
           <AccelerationSelector descriptionMode="inline" grouped />
         </DisclosureSection>
@@ -113,10 +108,7 @@ export const AdvancedSettings: React.FC<{
       )}
 
       {(!group || group === "support") && (
-        <DisclosureSection
-          title={t("settings.advanced.groups.support")}
-          description={t("settings.advanced.groupDescriptions.support")}
-        >
+        <DisclosureSection title={t("settings.advanced.groups.support")}>
           <UpdateChecksToggle descriptionMode="inline" grouped={true} />
           <AppDataDirectory descriptionMode="inline" grouped={true} />
           <LogDirectory descriptionMode="inline" grouped={true} />

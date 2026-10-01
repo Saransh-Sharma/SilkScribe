@@ -207,11 +207,7 @@ export const ModelsSettings: React.FC = () => {
   }
 
   return (
-    <AppPage
-      eyebrow={t("settings.models.eyebrow")}
-      title={t("settings.models.pageTitle")}
-      description={t("settings.models.pageDescription")}
-    >
+    <AppPage>
       <div className="space-y-6">
         <div className="space-y-3">
           <div className="px-1">
@@ -237,9 +233,6 @@ export const ModelsSettings: React.FC = () => {
               {supportsLanguageSelection || supportsTranslation ? (
                 <SettingsGroup
                   title={t("settings.models.currentModelSettings")}
-                  description={t(
-                    "settings.models.currentModelSettingsDescription",
-                  )}
                 >
                   {supportsLanguageSelection ? (
                     <LanguageSelector
@@ -336,7 +329,9 @@ export const ModelsSettings: React.FC = () => {
       </div>
       <ConfirmDialog
         open={modelPendingDelete !== null}
-        title={t("settings.models.deleteTitle")}
+        title={t("settings.models.deleteTitle", {
+          modelName: modelPendingDelete?.name ?? "",
+        })}
         description={
           modelPendingDelete
             ? modelPendingDelete.isActive

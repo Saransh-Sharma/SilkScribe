@@ -30,7 +30,7 @@ pub fn render_content(
     if !content.transcript
         && (!content.notes || doc.notes.is_none() || !matches!(format, "md" | "json"))
     {
-        bail!("Choose content to export.");
+        bail!("Choose what to export.");
     }
     let mut selected = doc.clone();
     if content.original_text {
@@ -155,9 +155,7 @@ fn render_with_evidence(
                 .as_ref()
                 .is_some_and(|notes| notes.transcript_revision != doc.revision)
             {
-                out.push_str(
-                    "> These notes were generated from an earlier transcript revision.\n\n",
-                );
+                out.push_str("> These notes are from an earlier version of the transcript.\n\n");
             }
             if let Some(notes) = &doc.notes {
                 for (title, items) in [("Summary", &notes.summary), ("Decisions", &notes.decisions)]
@@ -218,9 +216,7 @@ fn render_with_evidence(
         }
         "srt" | "vtt" => {
             if doc.history_id.is_some() {
-                bail!(
-                    "This older dictation has no segment timestamps. Export as text or Markdown."
-                );
+                bail!("This dictation has no timestamps. Export as text or Markdown instead.");
             }
             let mut out = if format == "vtt" {
                 "WEBVTT\n\n".to_string()
@@ -236,7 +232,7 @@ fn render_with_evidence(
             if cues.iter().any(|s| {
                 !s.start.is_finite() || !s.end.is_finite() || s.start < 0.0 || s.end < s.start
             }) {
-                bail!("Subtitle timestamps are invalid. Repair the transcript timing before exporting.");
+                bail!("Timestamps are broken. Fix the transcript timing, then export.");
             }
             // Subtitle precision cannot represent a shorter interval. Do not
             // invent an end time to make a collapsed cue parse successfully.

@@ -42,7 +42,9 @@ pub fn admit(observed: Option<&MemoryObservation>, headroom: u64) -> Result<()> 
     if let Some(observed) = observed {
         // Keep a 20% allowance above the largest observed worker allocation.
         if headroom > 0 && observed.peak_bytes.saturating_mul(6) / 5 > headroom {
-            bail!("Available memory is below this model's observed requirement. Close other apps and retry, or explicitly choose another model.");
+            bail!(
+                "Not enough free memory for this engine. Close some apps, or pick a smaller one."
+            );
         }
     }
     Ok(())

@@ -14,7 +14,7 @@ interface OutputDeviceSelectorProps {
 
 export const OutputDeviceSelector: React.FC<OutputDeviceSelectorProps> =
   React.memo(
-    ({ descriptionMode = "tooltip", grouped = false, disabled = false }) => {
+    ({ descriptionMode = "inline", grouped = false, disabled = false }) => {
       const { t } = useTranslation();
       const {
         getSetting,
@@ -41,13 +41,15 @@ export const OutputDeviceSelector: React.FC<OutputDeviceSelectorProps> =
 
       const outputDeviceOptions = outputDevices.map((device: AudioDevice) => ({
         value: device.name,
-        label: device.name,
+        label:
+          device.name === "Default"
+            ? t("workspace.defaultMicrophone")
+            : device.name,
       }));
 
       return (
         <SettingContainer
           title={t("settings.sound.outputDevice.title")}
-          description={t("settings.sound.outputDevice.description")}
           descriptionMode={descriptionMode}
           grouped={grouped}
           disabled={disabled}
