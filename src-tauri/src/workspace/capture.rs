@@ -1,16 +1,27 @@
-use super::{types::*, Workspace};
+use super::{live::LiveSession, types::*, Workspace};
 use anyhow::{bail, Result};
 use serde_json::{json, Value};
-use std::sync::Arc;
-use tauri::Manager;
+use std::sync::atomic::Ordering;
+use std::sync::{Arc, TryLockError};
+use std::time::Duration;
+use tauri::{Emitter, Manager};
 pub struct Recording {
     pub document_id: String,
     pub last_status: RecordingStatus,
 }
+/// How long a stopped meeting waits for its last live lines before saving.
+const LIVE_FLUSH_DEADLINE: Duration = Duration::from_secs(5);
 #[cfg(target_os = "macos")]
 unsafe extern "C" {
     fn ss_capture_call(json: *const std::ffi::c_char) -> *mut std::ffi::c_char;
     fn ss_capture_free(json: *mut std::ffi::c_char);
+    fn ss_capture_set_mic_gate(gated: bool);
+    fn ss_capture_read_live(
+        source: i32,
+        out: *mut f32,
+        capacity: isize,
+        start_frame: *mut i64,
+    ) -> isize;
 }
 pub fn call(request: Value) -> Result<Value> {
     #[cfg(target_os = "macos")]
@@ -38,7 +49,43 @@ pub fn call(request: Value) -> Result<Value> {
     #[cfg(not(target_os = "macos"))]
     {
         let _ = request;
-        bail!("Meeting recording is currently available on macOS.")
+        bail!("Meeting recording is Mac-only for now.")
+    }
+}
+/// Silence the meeting's mic track while dictation records, so dictated words
+/// stay out of the meeting. Safe from any thread; does nothing without a meeting.
+pub fn set_mic_gate(gated: bool) {
+    #[cfg(target_os = "macos")]
+    unsafe {
+        ss_capture_set_mic_gate(gated)
+    }
+    #[cfg(not(target_os = "macos"))]
+    let _ = gated;
+}
+/// Drain aligned 16 kHz samples captured from `source` since the last read.
+/// Returns the timeline frame of the first sample and the count written.
+pub fn read_live(source: LiveSource, buffer: &mut [f32]) -> Option<(i64, usize)> {
+    #[cfg(target_os = "macos")]
+    {
+        let source = match source {
+            LiveSource::Mic => 0,
+            LiveSource::System => 1,
+        };
+        let mut start = 0i64;
+        let count = unsafe {
+            ss_capture_read_live(
+                source,
+                buffer.as_mut_ptr(),
+                buffer.len() as isize,
+                &mut start,
+            )
+        };
+        (count > 0).then_some((start, count as usize))
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        let _ = (source, buffer);
+        None
     }
 }
 pub fn start(
@@ -47,12 +94,9 @@ pub fn start(
     options: RecordingOptions,
 ) -> Result<RecordingStatus> {
     let mut recording = ws.recording.lock().unwrap();
-    if recording.is_some()
-        || app
-            .state::<Arc<crate::managers::audio::AudioRecordingManager>>()
-            .is_recording()
-    {
-        bail!("Another recording is active. Stop it before starting a meeting.");
+    // Dictation may be running; it coexists with meetings.
+    if recording.is_some() {
+        bail!("A meeting is already recording. Stop it first.");
     }
     if fs4::available_space(&ws.store.media)? < 64 * 1024 * 1024 {
         bail!("Free up disk space to keep recording.");
@@ -70,7 +114,7 @@ pub fn start(
     doc.audio_path = Some(path.to_string_lossy().into());
     doc.stage = Stage::Recording;
     ws.store.put(&doc)?;
-    // Reserve microphone ownership before crossing the native bridge.
+    // Reserve the meeting slot before crossing the native bridge.
     *recording = Some(Recording {
         document_id: doc.id.clone(),
         last_status: RecordingStatus::default(),
@@ -86,14 +130,57 @@ pub fn start(
         return Err(e);
     }
     drop(recording);
-    if app.try_state::<tauri::tray::TrayIcon>().is_some() {
-        crate::tray::update_tray_menu(app, &crate::tray::TrayIconState::Idle, None);
-    }
+    begin_meeting(app, ws, &doc);
     ws.emit(app);
     status(ws)
 }
+/// Marks a meeting as live: dictation checks this to leave the call audio alone,
+/// the tray shows the meeting controls, and the orb and live transcript start.
+fn begin_meeting(app: &tauri::AppHandle, ws: &Arc<Workspace>, doc: &Document) {
+    ws.meeting_active.store(true, Ordering::SeqCst);
+    crate::tray::set_tray_meeting(app, Some(false));
+    let session = LiveSession::start(
+        app,
+        ws.clone(),
+        doc.id.clone(),
+        super::language_code(&doc.options.language).to_string(),
+    );
+    *ws.live.lock().unwrap() = Some(session);
+    crate::meeting_orb::show(app, &doc.id, &doc.title);
+}
+/// Clears live-meeting state. Runs on every way a meeting ends, including failures.
+fn end_meeting(app: &tauri::AppHandle, ws: &Arc<Workspace>) {
+    ws.meeting_active.store(false, Ordering::SeqCst);
+    crate::tray::set_tray_meeting(app, None);
+    crate::meeting_orb::hide(app);
+    let _ = app.emit("meeting-status", RecordingStatus::default());
+    if let Some(manager) =
+        app.try_state::<Arc<crate::managers::transcription::TranscriptionManager>>()
+    {
+        manager.maybe_unload_immediately("meeting ended");
+    }
+}
+/// Stop transcribing queued audio, keeping the lines already made, so stopping
+/// the meeting doesn't wait for them (e.g. on quit).
+pub fn abandon_live_transcript(ws: &Workspace) {
+    if let Some(session) = ws.live.lock().unwrap().as_ref() {
+        session.cancel_pending();
+    }
+}
 pub fn status(ws: &Workspace) -> Result<RecordingStatus> {
     let mut recording = ws.recording.lock().unwrap();
+    status_locked(&mut recording)
+}
+/// Like [`status`], but returns `None` instead of waiting when a pause, resume,
+/// or stop holds the capture lock (a stop holds it for the whole mixdown).
+pub fn try_status(ws: &Workspace) -> Option<Result<RecordingStatus>> {
+    match ws.recording.try_lock() {
+        Ok(mut recording) => Some(status_locked(&mut recording)),
+        Err(TryLockError::Poisoned(e)) => Some(status_locked(&mut e.into_inner())),
+        Err(TryLockError::WouldBlock) => None,
+    }
+}
+fn status_locked(recording: &mut Option<Recording>) -> Result<RecordingStatus> {
     let Some(r) = recording.as_mut() else {
         return Ok(RecordingStatus::default());
     };
@@ -106,6 +193,7 @@ pub fn status(ws: &Workspace) -> Result<RecordingStatus> {
                 microphone_level: v["microphone_level"].as_f64().unwrap_or(0.0),
                 system_level: v["system_level"].as_f64().unwrap_or(0.0),
                 error: v["error"].as_str().map(String::from),
+                mic_gated: v["mic_gated"].as_bool().unwrap_or(false),
             }
         }
         Err(e) => {
@@ -126,16 +214,47 @@ pub fn control(
     if operation == "resume" && fs4::available_space(&ws.store.media)? < 64 * 1024 * 1024 {
         bail!("Free up disk space to keep recording.");
     }
+    let stopping = matches!(operation, "stop" | "save");
+    // Take the live session before locking capture: its status check needs that
+    // lock, and a stop holds it through the whole mixdown.
+    let live = if stopping {
+        let session = ws.live.lock().unwrap().take();
+        if let Some(session) = &session {
+            session.stop_polling();
+        }
+        crate::meeting_orb::set_finishing(app);
+        session
+    } else {
+        None
+    };
     let mut recording = ws.recording.lock().unwrap();
     let Some(r) = recording.as_ref() else {
-        if matches!(operation, "stop" | "save") {
+        if stopping {
+            drop(recording);
+            end_meeting(app, ws);
             return Ok(RecordingStatus::default());
         }
-        bail!("No meeting is recording");
+        bail!("No meeting is recording.");
     };
-    let mut doc = ws.store.get(&r.document_id)?;
-    if let Err(error) = call(json!({"operation":if operation=="save" {"stop"} else {operation}})) {
-        if operation == "stop" || operation == "save" {
+    let mut doc = match ws.store.get(&r.document_id) {
+        Ok(doc) => doc,
+        Err(e) => {
+            if stopping {
+                // Put the session back so a retry can still stop it cleanly.
+                *ws.live.lock().unwrap() = live;
+            }
+            return Err(e);
+        }
+    };
+    // Capture has stopped once this returns, so the live ring holds every sample.
+    let stopped = call(json!({"operation":if operation=="save" {"stop"} else {operation}}));
+    if stopping {
+        doc.live_segments = live
+            .map(|session| session.finish(LIVE_FLUSH_DEADLINE))
+            .unwrap_or_default();
+    }
+    if let Err(error) = stopped {
+        if stopping {
             doc.duration = doc.duration.max(r.last_status.seconds);
             *recording = None;
             doc.stage = Stage::Interrupted;
@@ -143,9 +262,7 @@ pub fn control(
             doc.error = Some(format!("Audio finalization needs recovery: {error}"));
             ws.store.put(&doc)?;
             drop(recording);
-            if app.try_state::<tauri::tray::TrayIcon>().is_some() {
-                crate::tray::update_tray_menu(app, &crate::tray::TrayIconState::Idle, None);
-            }
+            end_meeting(app, ws);
             ws.emit(app);
         }
         return Err(error);
@@ -167,16 +284,26 @@ pub fn control(
         _ if can_process => Stage::Queued,
         _ => Stage::Interrupted,
     };
-    if operation == "stop" || operation == "save" {
+    if matches!(operation, "pause" | "resume") {
+        // Keep the cached state current so the tray shows Pause or Resume.
+        if let Some(r) = recording.as_mut() {
+            r.last_status.paused = operation == "pause";
+        }
+    }
+    if stopping {
         if operation == "save" || !can_process {
             doc.error = Some("Recording saved. Choose how to process it when you're ready.".into());
         }
         *recording = None;
     }
+    // One write carries both the final stage and the live lines: the queue may
+    // pick the document up as soon as it's Queued and re-save its own copy.
     ws.store.put(&doc)?;
     drop(recording);
-    if app.try_state::<tauri::tray::TrayIcon>().is_some() {
-        crate::tray::update_tray_menu(app, &crate::tray::TrayIconState::Idle, None);
+    if stopping {
+        end_meeting(app, ws);
+    } else {
+        crate::tray::set_tray_meeting(app, Some(operation == "pause"));
     }
     ws.emit(app);
     if operation == "stop" && can_process {

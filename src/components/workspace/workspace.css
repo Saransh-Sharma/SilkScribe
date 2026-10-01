@@ -236,6 +236,15 @@
 .ws-dictation-strip > svg:last-child {
   margin-inline-start: auto;
 }
+/* Dictation isn't usable yet (missing engine or permission): make it read as
+   something to fix, not as instructions. */
+.ws-dictation-strip.is-attention {
+  color: var(--ss-text-primary);
+  font-weight: 600;
+}
+.ws-dictation-strip.is-attention > svg:first-child {
+  color: var(--ss-state-warning);
+}
 .ws-section-heading {
   display: flex;
   align-items: center;
@@ -412,6 +421,49 @@
 .ws-load-more {
   display: flex;
   margin: 24px auto;
+}
+.ws-live-transcript {
+  margin-top: 22px;
+  user-select: text;
+}
+.ws-live-note {
+  margin: 0 0 14px;
+  padding: 10px 14px;
+  border-radius: var(--ss-radius-sm);
+  background: var(--ss-bg-surface-alt);
+  color: var(--ss-text-secondary);
+  font-size: 13px;
+}
+.ws-live-note strong {
+  color: var(--ss-text-primary);
+}
+.ws-live-transcript ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ws-live-transcript li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 8px;
+  line-height: 1.7;
+  font-size: 14px;
+}
+.ws-live-speaker {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--ss-text-tertiary);
+}
+.ws-live-transcript li[data-source="mic"] .ws-live-speaker {
+  color: var(--ss-brand-primary);
+}
+.ws-live-speaker time {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
 }
 .ws-alert {
   padding: 14px 16px;

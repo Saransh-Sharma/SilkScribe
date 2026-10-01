@@ -300,6 +300,7 @@ mod tests {
             history_id: None,
             diarized: false,
             stage_errors: vec![],
+            live_segments: vec![],
         }
     }
     #[test]

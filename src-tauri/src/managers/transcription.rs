@@ -76,6 +76,11 @@ pub struct TranscriptionManager {
     engine: Arc<Mutex<Option<LoadedEngine>>>,
     inference_lock: Arc<Mutex<()>>,
     dictation_waiters: Arc<AtomicUsize>,
+    /// Serialises out-of-process background jobs (meeting ASR, speakers, notes).
+    background_lock: Arc<Mutex<()>>,
+    /// Set while a memory-heavy background job has the engine unloaded, so
+    /// background transcription waits instead of loading it back.
+    engine_evicted: Arc<AtomicBool>,
     model_manager: Arc<ModelManager>,
     app_handle: AppHandle,
     current_model_id: Arc<Mutex<Option<String>>>,
@@ -92,6 +97,8 @@ impl TranscriptionManager {
             engine: Arc::new(Mutex::new(None)),
             inference_lock: Arc::new(Mutex::new(())),
             dictation_waiters: Arc::new(AtomicUsize::new(0)),
+            background_lock: Arc::new(Mutex::new(())),
+            engine_evicted: Arc::new(AtomicBool::new(false)),
             model_manager,
             app_handle: app_handle.clone(),
             current_model_id: Arc::new(Mutex::new(None)),
@@ -127,12 +134,12 @@ impl TranscriptionManager {
                         continue;
                     }
 
-                    // While recording, keep the idle timer fresh so the
-                    // model is never unloaded mid-session.
+                    // While dictating or in a meeting (which transcribes live),
+                    // keep the idle timer fresh so the model stays loaded.
                     let is_recording = app_handle_cloned
                         .try_state::<Arc<AudioRecordingManager>>()
                         .map_or(false, |a| a.is_recording());
-                    if is_recording {
+                    if is_recording || manager_cloned.meeting_active() {
                         manager_cloned.touch_activity();
                         continue;
                     }
@@ -213,18 +220,36 @@ impl TranscriptionManager {
         self.unload_model_inner()
     }
 
-    /// External workers share the same inference budget as shortcut dictation.
-    /// Keep this guard alive until the child has exited and released its models.
-    pub fn external_inference(&self, cancelled: &AtomicBool) -> Result<MutexGuard<'_, ()>> {
+    fn meeting_active(&self) -> bool {
+        self.app_handle
+            .try_state::<Arc<crate::workspace::Workspace>>()
+            .is_some_and(|ws| ws.meeting_active.load(Ordering::SeqCst))
+    }
+
+    /// Dictation is recording or waiting for the engine.
+    fn dictation_active(&self) -> bool {
+        self.dictation_waiters.load(Ordering::SeqCst) > 0
+            || self
+                .app_handle
+                .try_state::<Arc<AudioRecordingManager>>()
+                .is_some_and(|audio| audio.is_recording())
+    }
+
+    /// Start an out-of-process background job. Jobs run one at a time and never
+    /// hold the inference lock, so dictation isn't stuck behind a long job.
+    /// `evict` unloads the in-process engine first to free memory for a large
+    /// model; until the job ends, background transcription waits rather than
+    /// loading it back. Dictation still loads it when needed.
+    pub fn external_job(&self, cancelled: &AtomicBool, evict: bool) -> Result<ExternalJob<'_>> {
         let guard = loop {
             if cancelled.load(Ordering::Relaxed) {
                 anyhow::bail!("Cancelled");
             }
-            if self.dictation_waiters.load(Ordering::SeqCst) > 0 {
+            if self.dictation_active() {
                 thread::sleep(Duration::from_millis(50));
                 continue;
             }
-            match self.inference_lock.try_lock() {
+            match self.background_lock.try_lock() {
                 Ok(guard) => break guard,
                 Err(std::sync::TryLockError::Poisoned(error)) => break error.into_inner(),
                 Err(std::sync::TryLockError::WouldBlock) => {
@@ -232,8 +257,17 @@ impl TranscriptionManager {
                 }
             }
         };
-        self.unload_model_inner()?;
-        Ok(guard)
+        if evict {
+            self.engine_evicted.store(true, Ordering::SeqCst);
+            if let Err(e) = self.unload_model() {
+                self.engine_evicted.store(false, Ordering::SeqCst);
+                return Err(e);
+            }
+        }
+        Ok(ExternalJob {
+            _guard: guard,
+            evicted: evict.then(|| self.engine_evicted.clone()),
+        })
     }
 
     fn unload_model_inner(&self) -> Result<()> {
@@ -283,6 +317,10 @@ impl TranscriptionManager {
 
     /// Unloads the model immediately if the setting is enabled and the model is loaded
     pub fn maybe_unload_immediately(&self, context: &str) {
+        // A live meeting keeps using the engine; unload once it ends.
+        if self.meeting_active() {
+            return;
+        }
         let settings = get_settings(&self.app_handle);
         if settings.model_unload_timeout == ModelUnloadTimeout::Immediately
             && self.is_model_loaded()
@@ -299,6 +337,21 @@ impl TranscriptionManager {
             .inference_lock
             .lock()
             .unwrap_or_else(|e| e.into_inner());
+        self.load_model_inner(model_id)
+    }
+
+    /// Load unless the model is already in place. A background transcription may
+    /// have had the engine checked out when the caller looked, which made it seem
+    /// unloaded; checking again under the inference lock avoids a full reload on
+    /// every dictation during a meeting.
+    fn load_model_if_needed(&self, model_id: &str) -> Result<()> {
+        let _inference = self
+            .inference_lock
+            .lock()
+            .unwrap_or_else(|e| e.into_inner());
+        if self.is_model_loaded() && self.get_current_model().as_deref() == Some(model_id) {
+            return Ok(());
+        }
         self.load_model_inner(model_id)
     }
 
@@ -477,7 +530,7 @@ impl TranscriptionManager {
         thread::spawn(move || {
             let _loading_guard = loading_guard;
             let settings = get_settings(&self_clone.app_handle);
-            if let Err(e) = self_clone.load_model(&settings.selected_model) {
+            if let Err(e) = self_clone.load_model_if_needed(&settings.selected_model) {
                 error!("Failed to load model: {}", e);
             }
         });
@@ -518,10 +571,73 @@ impl TranscriptionManager {
                 loading = self.loading_condvar.wait(loading).unwrap();
             }
         }
-        let _inference = self
+        let waiting_since = std::time::Instant::now();
+        let inference = self
             .inference_lock
             .lock()
             .unwrap_or_else(|e| e.into_inner());
+        let waited = waiting_since.elapsed();
+        if model.is_none() && waited > Duration::from_millis(100) {
+            debug!("Dictation waited {}ms for the engine", waited.as_millis());
+        }
+        let result = self.transcribe_locked(&inference, audio, model, language);
+        drop(inference);
+        if result.is_ok() {
+            self.maybe_unload_immediately("transcription");
+        }
+        result
+    }
+
+    /// Transcribe for meetings and other background work. Waits while dictation
+    /// is recording or waiting, so push-to-talk never queues behind it; at most
+    /// it waits for one background inference already running. Returns `Ok(None)`
+    /// without transcribing while a memory-heavy job has the engine unloaded.
+    pub fn transcribe_background(
+        &self,
+        audio: Vec<f32>,
+        model: Option<&str>,
+        language: Option<&str>,
+        cancelled: &AtomicBool,
+    ) -> Result<Option<transcribe_rs::TranscriptionResult>> {
+        loop {
+            if cancelled.load(Ordering::Relaxed) {
+                anyhow::bail!("Cancelled");
+            }
+            if self.engine_evicted.load(Ordering::SeqCst) {
+                return Ok(None);
+            }
+            let loading = *self.is_loading.lock().unwrap();
+            if loading || self.dictation_active() {
+                thread::sleep(Duration::from_millis(50));
+                continue;
+            }
+            match self.inference_lock.try_lock() {
+                Ok(guard) => {
+                    return self
+                        .transcribe_locked(&guard, audio, model, language)
+                        .map(Some)
+                }
+                Err(std::sync::TryLockError::Poisoned(error)) => {
+                    let guard = error.into_inner();
+                    return self
+                        .transcribe_locked(&guard, audio, model, language)
+                        .map(Some);
+                }
+                Err(std::sync::TryLockError::WouldBlock) => {
+                    thread::sleep(Duration::from_millis(50))
+                }
+            }
+        }
+    }
+
+    /// The transcription itself. The caller holds the inference lock.
+    fn transcribe_locked(
+        &self,
+        _inference: &MutexGuard<'_, ()>,
+        audio: Vec<f32>,
+        model: Option<&str>,
+        language: Option<&str>,
+    ) -> Result<transcribe_rs::TranscriptionResult> {
         #[cfg(debug_assertions)]
         if std::env::var("HANDY_FORCE_TRANSCRIPTION_FAILURE").is_ok() {
             return Err(anyhow::anyhow!(
@@ -538,8 +654,6 @@ impl TranscriptionManager {
 
         if audio.is_empty() {
             debug!("Empty audio vector");
-            drop(_inference);
-            self.maybe_unload_immediately("empty audio");
             return Ok(transcribe_rs::TranscriptionResult {
                 text: String::new(),
                 segments: Some(vec![]),
@@ -759,6 +873,7 @@ impl TranscriptionManager {
                         },
                     );
 
+                    // The panic detail is logged above.
                     return Err(anyhow::anyhow!(
                         "The engine crashed and was reset. Try again."
                     ));
@@ -812,13 +927,25 @@ impl TranscriptionManager {
             info!("Transcription result: {}", final_result);
         }
 
-        drop(_inference);
-        self.maybe_unload_immediately("transcription");
-
         Ok(transcribe_rs::TranscriptionResult {
             text: final_result,
             segments: timed_segments,
         })
+    }
+}
+
+/// An out-of-process background job's turn, from [`TranscriptionManager::external_job`].
+/// Keep it alive until the child has exited and released its models.
+pub struct ExternalJob<'a> {
+    _guard: MutexGuard<'a, ()>,
+    evicted: Option<Arc<AtomicBool>>,
+}
+
+impl Drop for ExternalJob<'_> {
+    fn drop(&mut self) {
+        if let Some(evicted) = &self.evicted {
+            evicted.store(false, Ordering::SeqCst);
+        }
     }
 }
 
@@ -872,7 +999,6 @@ fn cached_gpu_devices() -> &'static [GpuDeviceOption] {
     GPU_DEVICES.get_or_init(|| {
         // ggml's Vulkan backend uses FMA3 instructions internally.
         // On older CPUs without FMA3 (e.g. Sandy Bridge Xeons) this causes
-                    // The panic detail is logged above.
         // a SIGILL crash that cannot be caught. Skip enumeration entirely
         // on those CPUs — GPU-accelerated whisper won't work there anyway.
         #[cfg(target_arch = "x86_64")]

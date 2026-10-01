@@ -370,6 +370,7 @@ impl Store {
                 history_id: Some(id),
                 diarized: false,
                 stage_errors: vec![],
+                live_segments: vec![],
             })?;
         }
         conn.execute("DELETE FROM workspace_documents WHERE history_id IS NOT NULL AND history_id NOT IN (SELECT id FROM transcription_history)", [])?;
@@ -753,6 +754,7 @@ mod tests {
             history_id: None,
             diarized: false,
             stage_errors: vec![],
+            live_segments: vec![],
         }
     }
     #[test]

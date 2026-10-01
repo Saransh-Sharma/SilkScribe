@@ -444,6 +444,10 @@ pub struct AppSettings {
     pub whisper_gpu_device: i32,
     #[serde(default)]
     pub extra_recording_buffer_ms: u64,
+    /// Where the meeting orb sits on the right screen edge, as a fraction of the
+    /// usable height from the top (its centre).
+    #[serde(default = "default_meeting_orb_y")]
+    pub meeting_orb_y: f64,
 }
 
 fn default_model() -> String {
@@ -503,6 +507,10 @@ fn default_word_correction_threshold() -> f64 {
 
 fn default_paste_delay_ms() -> u64 {
     60
+}
+
+fn default_meeting_orb_y() -> f64 {
+    0.35
 }
 
 fn default_auto_submit() -> bool {
@@ -858,6 +866,7 @@ pub fn get_default_settings() -> AppSettings {
         ort_accelerator: OrtAcceleratorSetting::default(),
         whisper_gpu_device: default_whisper_gpu_device(),
         extra_recording_buffer_ms: 0,
+        meeting_orb_y: default_meeting_orb_y(),
     }
 }
 

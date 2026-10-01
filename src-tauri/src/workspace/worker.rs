@@ -114,8 +114,16 @@ pub fn run(
         }
         thread::sleep(Duration::from_millis(100));
     }
+    let note_model = (request["task"] == "notes")
+        .then(|| request["model_path"].as_str())
+        .flatten()
+        .map(std::path::Path::new);
+    // Workers run out of process and don't block dictation. Only free the
+    // dictation engine's memory for a large notes model or when memory is tight.
+    const LOW_MEMORY: u64 = 2 * 1024 * 1024 * 1024;
+    let evict = note_model.is_some() || super::memory::available() < LOW_MEMORY;
     let manager = app.state::<Arc<crate::managers::transcription::TranscriptionManager>>();
-    let _inference = manager.external_inference(cancelled)?;
+    let _job = manager.external_job(cancelled, evict)?;
     if cancelled.load(std::sync::atomic::Ordering::Relaxed) {
         bail!("Cancelled");
     }
@@ -124,10 +132,6 @@ pub fn run(
         request["task"] == "notes" || (request["task"] == "health" && request["kind"] == "notes"),
     )?;
     let root = crate::portable::app_data_dir(app)?;
-    let note_model = (request["task"] == "notes")
-        .then(|| request["model_path"].as_str())
-        .flatten()
-        .map(std::path::Path::new);
     if let Some(model) = note_model {
         super::memory::admit(
             super::memory::observation(&root, model, &runtime).as_ref(),

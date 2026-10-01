@@ -3,6 +3,7 @@ mod checkpoint;
 pub mod commands;
 mod decode;
 mod export;
+pub mod live;
 mod memory;
 pub mod packs;
 pub mod readiness;
@@ -31,6 +32,12 @@ pub struct Workspace {
     pub cancelled: AtomicBool,
     pub child: Arc<Mutex<Option<Child>>>,
     pub recording: Mutex<Option<capture::Recording>>,
+    /// True while a meeting is recording or paused. Cheap to read from any thread,
+    /// unlike `recording`, which is held across native capture calls.
+    pub meeting_active: AtomicBool,
+    /// The live transcript of the meeting being recorded. A leaf lock: never held
+    /// while taking another lock or calling into capture.
+    pub live: Mutex<Option<live::LiveSession>>,
     pub installing: AtomicBool,
     pub download_cancelled: AtomicBool,
     pub importing: AtomicBool,
@@ -47,6 +54,8 @@ impl Workspace {
             cancelled: AtomicBool::new(false),
             child: Arc::new(Mutex::new(None)),
             recording: Mutex::new(None),
+            meeting_active: AtomicBool::new(false),
+            live: Mutex::new(None),
             installing: AtomicBool::new(false),
             download_cancelled: AtomicBool::new(false),
             importing: AtomicBool::new(false),
@@ -119,6 +128,7 @@ impl Workspace {
             history_id: None,
             diarized: false,
             stage_errors: vec![],
+            live_segments: vec![],
         }
     }
     pub fn import(
@@ -561,15 +571,16 @@ impl Workspace {
                     if self.cancelled.load(Ordering::Relaxed) {
                         bail!("Cancelled");
                     }
-                    // Let shortcut recordings finish before taking the next inference slot.
-                    while app
-                        .state::<Arc<crate::managers::audio::AudioRecordingManager>>()
-                        .is_recording()
+                    // A live meeting transcribes with the dictation engine. Don't
+                    // make the shared engine swap models under it; jobs on another
+                    // engine continue once the meeting ends.
+                    while self.meeting_active.load(Ordering::SeqCst)
+                        && doc.options.model != crate::settings::get_settings(app).selected_model
                     {
                         if self.cancelled.load(Ordering::Relaxed) {
                             bail!("Cancelled");
                         }
-                        std::thread::sleep(Duration::from_millis(100));
+                        std::thread::sleep(Duration::from_millis(500));
                     }
                     let chunk: Vec<f32> = samples
                         .by_ref()
@@ -581,8 +592,18 @@ impl Workspace {
                     let count = chunk.len();
                     let selected = Some(doc.options.model.as_str());
                     let language = language_code(&doc.options.language);
-                    let result =
-                        manager.transcribe_with_options(chunk, selected, Some(language))?;
+                    // Background priority: dictation always goes first.
+                    let result = loop {
+                        match manager.transcribe_background(
+                            chunk.clone(),
+                            selected,
+                            Some(language),
+                            &self.cancelled,
+                        )? {
+                            Some(result) => break result,
+                            None => std::thread::sleep(Duration::from_millis(250)),
+                        }
+                    };
                     let segments = result.segments.unwrap_or_default();
                     if segments.is_empty() && !result.text.trim().is_empty() {
                         bail!("This engine doesn't give timestamps. Pick Whisper or Parakeet in Settings.");
@@ -884,6 +905,8 @@ mod section_retry_tests {
             cancelled: AtomicBool::new(false),
             child: Arc::new(Mutex::new(None)),
             recording: Mutex::new(None),
+            meeting_active: AtomicBool::new(false),
+            live: Mutex::new(None),
             installing: AtomicBool::new(false),
             download_cancelled: AtomicBool::new(false),
             importing: AtomicBool::new(false),

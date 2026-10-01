@@ -9,6 +9,59 @@ private func response(_ object: [String: Any]) -> UnsafeMutablePointer<CChar>? {
 }
 @_cdecl("ss_capture_free") public func ssCaptureFree(_ pointer: UnsafeMutablePointer<CChar>?) { free(pointer) }
 
+// While dictation records, the meeting's mic track is silenced so dictated words
+// stay out of the meeting. Set from any thread; independent of the capture object.
+private let micGateLock = NSLock()
+private var micGated = false
+@_cdecl("ss_capture_set_mic_gate") public func ssCaptureSetMicGate(_ gated: Bool) {
+    micGateLock.lock(); micGated = gated; micGateLock.unlock()
+}
+private func isMicGated() -> Bool {
+    micGateLock.lock(); defer { micGateLock.unlock() }
+    return micGated
+}
+
+/// The newest aligned 16 kHz samples per source (0 = mic, 1 = computer audio),
+/// kept for the live transcript. Reset on start, not stop, so the reader can drain
+/// the tail after capture ends. Holds at most a minute; older audio is dropped.
+private final class LiveRing {
+    private let lock = NSLock()
+    private var samples: [[Float]] = [[], []]
+    /// Timeline frame of the first buffered sample, per source.
+    private var startFrames: [Int64] = [0, 0]
+    private let limit = 16000 * 60
+    func reset() {
+        lock.lock(); samples = [[], []]; startFrames = [0, 0]; lock.unlock()
+    }
+    /// Appends `silence` zero frames and then `count` samples, starting at `frame`.
+    func append(source: Int, frame: Int64, silence: Int, data: UnsafePointer<Float>, count: Int) {
+        lock.lock(); defer { lock.unlock() }
+        if samples[source].isEmpty { startFrames[source] = frame }
+        if silence > 0 { samples[source].append(contentsOf: repeatElement(0, count: silence)) }
+        samples[source].append(contentsOf: UnsafeBufferPointer(start: data, count: count))
+        let overflow = samples[source].count - limit
+        if overflow > 0 {
+            samples[source].removeFirst(overflow)
+            startFrames[source] += Int64(overflow)
+        }
+    }
+    func drain(source: Int, into out: UnsafeMutablePointer<Float>, capacity: Int, startFrame: UnsafeMutablePointer<Int64>) -> Int {
+        lock.lock(); defer { lock.unlock() }
+        let count = min(capacity, samples[source].count)
+        guard count > 0 else { return 0 }
+        startFrame.pointee = startFrames[source]
+        samples[source].withUnsafeBufferPointer { _ = memcpy(out, $0.baseAddress!, count * MemoryLayout<Float>.size) }
+        samples[source].removeFirst(count)
+        startFrames[source] += Int64(count)
+        return count
+    }
+}
+private let liveRing = LiveRing()
+@_cdecl("ss_capture_read_live") public func ssCaptureReadLive(_ source: Int32, _ out: UnsafeMutablePointer<Float>, _ capacity: Int, _ startFrame: UnsafeMutablePointer<Int64>) -> Int {
+    guard source == 0 || source == 1, capacity > 0 else { return 0 }
+    return liveRing.drain(source: Int(source), into: out, capacity: capacity, startFrame: startFrame)
+}
+
 @available(macOS 13.0, *)
 private final class MeetingCapture: NSObject, SCStreamOutput, SCStreamDelegate {
     let queue = DispatchQueue(label: "app.silkscribe.meeting.audio")
@@ -43,6 +96,11 @@ private final class MeetingCapture: NSObject, SCStreamOutput, SCStreamDelegate {
         }
         // Apple's voice processing input provides echo/noise suppression on supported devices.
         try input.setVoiceProcessingEnabled(true)
+        // Voice processing ducks other apps' audio by default, which would quiet
+        // the call itself. Keep ducking to the minimum.
+        if #available(macOS 14.0, *) {
+            input.voiceProcessingOtherAudioDuckingConfiguration = AVAudioVoiceProcessingOtherAudioDuckingConfiguration(enableAdvancedDucking: false, duckingLevel: .min)
+        }
         let sourceFormat = input.outputFormat(forBus: 0)
         guard sourceFormat.sampleRate > 0, let converter = AVAudioConverter(from: sourceFormat, to: format) else { throw NSError(domain:"SilkScribe",code:2,userInfo:[NSLocalizedDescriptionKey:"The microphone format is unavailable."]) }
         input.installTap(onBus: 0, bufferSize: 2048, format: sourceFormat) { [weak self] buffer, when in
@@ -83,6 +141,10 @@ private final class MeetingCapture: NSObject, SCStreamOutput, SCStreamDelegate {
     }
     func write(_ buffer: AVAudioPCMBuffer, microphone: Bool, time: Double) {
         guard !finished, pausedAt == nil, buffer.frameLength > 0, let data = buffer.floatChannelData?[0] else { return }
+        if microphone && isMicGated() {
+            // Silence rather than skip, so the two tracks stay aligned.
+            memset(data, 0, Int(buffer.frameLength) * MemoryLayout<Float>.size)
+        }
         let received = ProcessInfo.processInfo.systemUptime
         if microphone { lastMicrophoneBuffer = received } else { lastSystemBuffer = received }
         let level = sqrt((0..<Int(buffer.frameLength)).reduce(Float(0)) { $0 + data[$1]*data[$1] } / Float(buffer.frameLength))
@@ -91,7 +153,8 @@ private final class MeetingCapture: NSObject, SCStreamOutput, SCStreamDelegate {
         let current = microphone ? micFrames : systemFrames
         do {
             let file = microphone ? micFile : systemFile
-            var gap = max(0,target-current)
+            let silence = max(0,target-current)
+            var gap = silence
             while gap > 0 {
                 let count = AVAudioFrameCount(min(gap,16000))
                 let silence = AVAudioPCMBuffer(pcmFormat:format,frameCapacity:count)!
@@ -100,6 +163,7 @@ private final class MeetingCapture: NSObject, SCStreamOutput, SCStreamDelegate {
                 try file?.write(from:silence); gap -= AVAudioFramePosition(count)
             }
             try file?.write(from:buffer)
+            liveRing.append(source: microphone ? 0 : 1, frame: current, silence: Int(silence), data: data, count: Int(buffer.frameLength))
             if microphone { micFrames = max(current,target)+AVAudioFramePosition(buffer.frameLength) } else { systemFrames = max(current,target)+AVAudioFramePosition(buffer.frameLength) }
         } catch {
             self.error = "Recording paused — couldn't save audio: " + error.localizedDescription
@@ -170,6 +234,7 @@ private var capture: AnyObject?
     }
     if operation=="start" {
         guard capture==nil,let path=request["path"] as? String else {return response(["error":"A recording is already active."])}
+        liveRing.reset()
         let instance=MeetingCapture(path:path);capture=instance
         let semaphore=DispatchSemaphore(value:0);var failure:String?
         Task { do {try await instance.start(system:request["system"] as? Bool ?? true,device:(request["device"] as? String).flatMap(UInt32.init))} catch {failure=error.localizedDescription};semaphore.signal() }
@@ -196,7 +261,7 @@ private var capture: AnyObject?
         let microphoneStalled = !paused && now-instance.lastMicrophoneBuffer > 3
         let microphoneLevel = paused || microphoneStalled ? 0 : instance.microphoneLevel
         let systemLevel = paused || now-instance.lastSystemBuffer > 3 ? 0 : instance.systemLevel
-        let error = instance.error ?? (microphoneStalled ? "The microphone stopped delivering audio. Check the selected input, then pause and resume or save the recording." : nil)
-        return response(["seconds":instance.elapsed,"paused":paused,"microphone_level":microphoneLevel,"system_level":systemLevel,"error":error as Any? ?? NSNull()])
+        let error = instance.error ?? (microphoneStalled ? "The microphone stopped sending audio. Check your input, then pause and resume." : nil)
+        return response(["seconds":instance.elapsed,"paused":paused,"microphone_level":microphoneLevel,"system_level":systemLevel,"mic_gated":isMicGated(),"error":error as Any? ?? NSNull()])
     }
 }

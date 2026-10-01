@@ -10,6 +10,7 @@ mod helpers;
 mod input;
 mod llm_client;
 mod managers;
+mod meeting_orb;
 mod overlay;
 pub mod portable;
 mod settings;
@@ -85,7 +86,7 @@ fn build_console_filter() -> env_filter::Filter {
     builder.build()
 }
 
-fn show_main_window(app: &AppHandle) {
+pub(crate) fn show_main_window(app: &AppHandle) {
     if let Some(main_window) = app.get_webview_window("main") {
         if let Err(e) = main_window.unminimize() {
             log::error!("Failed to unminimize window: {}", e);
@@ -214,22 +215,25 @@ fn initialize_core_logic(app_handle: &AppHandle) {
             "copy_last_transcript" => {
                 tray::copy_last_transcript(app);
             }
+            // Menu handlers run on the main thread. Unloading waits for any in-flight
+            // inference, so do it on a worker thread to keep the UI responsive.
             "unload_model" => {
-                let transcription_manager = app.state::<Arc<TranscriptionManager>>();
-                if !transcription_manager.is_model_loaded() {
-                    log::warn!("No model is currently loaded.");
-                    return;
-                }
-                match transcription_manager.unload_model() {
-                    Ok(()) => log::info!("Model unloaded via tray."),
-                    Err(e) => log::error!("Failed to unload model via tray: {}", e),
-                }
+                let app = app.clone();
+                std::thread::spawn(move || {
+                    let transcription_manager = app.state::<Arc<TranscriptionManager>>();
+                    if !transcription_manager.is_model_loaded() {
+                        log::warn!("No model is currently loaded.");
+                        return;
+                    }
+                    match transcription_manager.unload_model() {
+                        Ok(()) => log::info!("Model unloaded via tray."),
+                        Err(e) => log::error!("Failed to unload model via tray: {}", e),
+                    }
+                });
             }
             "cancel" => {
-                use crate::utils::cancel_current_operation;
-
-                // Use centralized cancellation that handles all operations
-                cancel_current_operation(app);
+                let app = app.clone();
+                std::thread::spawn(move || crate::utils::cancel_current_operation(&app));
             }
             "meeting_stop" | "meeting_pause" => {
                 let app = app.clone();
@@ -255,6 +259,8 @@ fn initialize_core_logic(app_handle: &AppHandle) {
                 let app = app.clone();
                 std::thread::spawn(move || {
                     if let Some(ws) = app.try_state::<Arc<workspace::Workspace>>() {
+                        // Don't hold up quitting for the last live lines.
+                        workspace::capture::abandon_live_transcript(ws.inner());
                         if ws.recording.lock().unwrap().is_some() {
                             let _ = workspace::capture::control(&app, ws.inner(), "stop");
                         }
@@ -267,9 +273,10 @@ fn initialize_core_logic(app_handle: &AppHandle) {
         .build(app_handle)
         .unwrap();
     app_handle.manage(tray);
+    app_handle.manage(tray::TrayModel::default());
 
     // Initialize tray menu with idle state
-    utils::update_tray_menu(app_handle, &utils::TrayIconState::Idle, None);
+    tray::refresh_tray(app_handle);
 
     // Apply show_tray_icon setting
     let settings = settings::get_settings(app_handle);
@@ -280,7 +287,7 @@ fn initialize_core_logic(app_handle: &AppHandle) {
     // Refresh tray menu when model state changes
     let app_handle_for_listener = app_handle.clone();
     app_handle.listen("model-state-changed", move |_| {
-        tray::update_tray_menu(&app_handle_for_listener, &tray::TrayIconState::Idle, None);
+        tray::refresh_tray(&app_handle_for_listener);
     });
 
     // Get the autostart manager and configure based on user setting
@@ -297,6 +304,8 @@ fn initialize_core_logic(app_handle: &AppHandle) {
 
     // Create the recording overlay window (hidden by default)
     utils::create_recording_overlay(app_handle);
+    // And the meeting orb, shown while a meeting records
+    meeting_orb::create(app_handle);
 }
 
 #[tauri::command]
@@ -495,8 +504,8 @@ pub fn run(cli_args: CliArgs) {
             }
             tauri::WindowEvent::ThemeChanged(theme) => {
                 log::info!("Theme changed to: {:?}", theme);
-                // Update tray icon to match new theme, maintaining idle state
-                utils::change_tray_icon(&window.app_handle(), utils::TrayIconState::Idle);
+                // Redraw the tray icon for the new theme, keeping the current state
+                tray::refresh_tray(window.app_handle());
             }
             _ => {}
         })
@@ -643,6 +652,11 @@ fn command_builder() -> Builder<tauri::Wry> {
             workspace::commands::workspace_recording_start,
             workspace::commands::workspace_recording_control,
             workspace::commands::workspace_capture_devices,
+            workspace::commands::workspace_live_transcript,
+            meeting_orb::meeting_orb_snapshot,
+            meeting_orb::meeting_orb_set_expanded,
+            meeting_orb::meeting_orb_drag,
+            meeting_orb::meeting_orb_open_document,
             commands::history::get_home_dashboard_data,
             commands::history::get_history_entries,
             commands::history::search_history_entries,

@@ -1030,6 +1030,35 @@ async workspaceCaptureDevices() : Promise<Result<CaptureDevice[], string>> {
     else return { status: "error", error: e  as any };
 }
 },
+/**
+ * The live transcript of the meeting being recorded, if any.
+ */
+async workspaceLiveTranscript() : Promise<LiveTranscript | null> {
+    return await TAURI_INVOKE("workspace_live_transcript");
+},
+async meetingOrbSnapshot() : Promise<MeetingOrbSnapshot> {
+    return await TAURI_INVOKE("meeting_orb_snapshot");
+},
+/**
+ * Grow the panel into the transcript card, or shrink it back to the orb.
+ * The orb keeps its screen position either way.
+ */
+async meetingOrbSetExpanded(expanded: boolean) : Promise<void> {
+    await TAURI_INVOKE("meeting_orb_set_expanded", { expanded });
+},
+/**
+ * Move the orb along the screen edge. `delta_y` is the pointer's vertical travel
+ * since the drag began, in points; `done` ends the drag and remembers the spot.
+ */
+async meetingOrbDrag(deltaY: number, done: boolean) : Promise<void> {
+    await TAURI_INVOKE("meeting_orb_drag", { deltaY, done });
+},
+/**
+ * Open the meeting's document in the main window.
+ */
+async meetingOrbOpenDocument(documentId: string) : Promise<void> {
+    await TAURI_INVOKE("meeting_orb_open_document", { documentId });
+},
 async getHomeDashboardData(limit: number | null, cursor: HomeHistoryCursor | null) : Promise<Result<HomeDashboardPageData, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_home_dashboard_data", { limit, cursor }) };
@@ -1134,7 +1163,12 @@ historyUpdatePayload: "history-update-payload"
 /** user-defined types **/
 
 export type ActionItem = { text: string; owner: string | null; due: string | null; sources: string[]; evidence?: NoteEvidence[]; done: boolean }
-export type AppSettings = { bindings: Partial<{ [key in string]: ShortcutBinding }>; push_to_talk: boolean; audio_feedback?: boolean; audio_feedback_volume?: number; sound_theme?: SoundTheme; start_hidden?: boolean; autostart_enabled?: boolean; update_checks_enabled?: boolean; selected_model?: string; has_completed_onboarding?: boolean; always_on_microphone?: boolean; selected_microphone?: string | null; clamshell_microphone?: string | null; selected_output_device?: string | null; translate_to_english?: boolean; selected_language?: string; overlay_position?: OverlayPosition; overlay_appearance?: OverlayAppearance; debug_mode?: boolean; log_level?: LogLevel; custom_words?: string[]; model_unload_timeout?: ModelUnloadTimeout; word_correction_threshold?: number; history_limit?: number; recording_retention_period?: RecordingRetentionPeriod; paste_method?: PasteMethod; clipboard_handling?: ClipboardHandling; auto_submit?: boolean; auto_submit_key?: AutoSubmitKey; post_process_enabled?: boolean; post_process_provider_id?: string; post_process_providers?: PostProcessProvider[]; post_process_api_keys?: Partial<{ [key in string]: string }>; post_process_models?: Partial<{ [key in string]: string }>; post_process_prompts?: LLMPrompt[]; post_process_selected_prompt_id?: string | null; mute_while_recording?: boolean; append_trailing_space?: boolean; app_language?: string; experimental_enabled?: boolean; lazy_stream_close?: boolean; keyboard_implementation?: KeyboardImplementation; theme?: ThemePreference; show_tray_icon?: boolean; paste_delay_ms?: number; typing_tool?: TypingTool; external_script_path: string | null; custom_filler_words?: string[] | null; whisper_accelerator?: WhisperAcceleratorSetting; ort_accelerator?: OrtAcceleratorSetting; whisper_gpu_device?: number; extra_recording_buffer_ms?: number }
+export type AppSettings = { bindings: Partial<{ [key in string]: ShortcutBinding }>; push_to_talk: boolean; audio_feedback?: boolean; audio_feedback_volume?: number; sound_theme?: SoundTheme; start_hidden?: boolean; autostart_enabled?: boolean; update_checks_enabled?: boolean; selected_model?: string; has_completed_onboarding?: boolean; always_on_microphone?: boolean; selected_microphone?: string | null; clamshell_microphone?: string | null; selected_output_device?: string | null; translate_to_english?: boolean; selected_language?: string; overlay_position?: OverlayPosition; overlay_appearance?: OverlayAppearance; debug_mode?: boolean; log_level?: LogLevel; custom_words?: string[]; model_unload_timeout?: ModelUnloadTimeout; word_correction_threshold?: number; history_limit?: number; recording_retention_period?: RecordingRetentionPeriod; paste_method?: PasteMethod; clipboard_handling?: ClipboardHandling; auto_submit?: boolean; auto_submit_key?: AutoSubmitKey; post_process_enabled?: boolean; post_process_provider_id?: string; post_process_providers?: PostProcessProvider[]; post_process_api_keys?: Partial<{ [key in string]: string }>; post_process_models?: Partial<{ [key in string]: string }>; post_process_prompts?: LLMPrompt[]; post_process_selected_prompt_id?: string | null; mute_while_recording?: boolean; append_trailing_space?: boolean; app_language?: string; experimental_enabled?: boolean; lazy_stream_close?: boolean; keyboard_implementation?: KeyboardImplementation; theme?: ThemePreference; show_tray_icon?: boolean; paste_delay_ms?: number; typing_tool?: TypingTool; external_script_path: string | null; custom_filler_words?: string[] | null; whisper_accelerator?: WhisperAcceleratorSetting; ort_accelerator?: OrtAcceleratorSetting; whisper_gpu_device?: number; extra_recording_buffer_ms?: number; 
+/**
+ * Where the meeting orb sits on the right screen edge, as a fraction of the
+ * usable height from the top (its centre).
+ */
+meeting_orb_y?: number }
 export type Artifact = { path: string; url: string; sha256: string; bytes: number }
 export type AudioDevice = { index: string; name: string; is_default: boolean }
 export type AutoSubmitKey = "enter" | "ctrl_enter" | "cmd_enter"
@@ -1143,7 +1177,12 @@ export type BindingResponse = { success: boolean; binding: ShortcutBinding | nul
 export type CaptureDevice = { id: string; name: string }
 export type ClipboardHandling = "dont_modify" | "copy_to_clipboard"
 export type CustomSounds = { start: boolean; stop: boolean }
-export type Document = { notes_section?: NotesSection | null; attempt_id?: string; id: string; title: string; source: Source; created_at: number; duration: number; stage: Stage; progress: number; error: string | null; failed_stage: Stage | null; saved: boolean; audio_path: string | null; segments: Segment[]; speakers: Speaker[]; turns: SpeakerTurn[]; notes: Notes | null; notes_candidate?: Notes | null; original_turns?: SpeakerTurn[] | null; retry_stage?: Stage | null; options: JobOptions; revision: number; history_id: number | null; diarized: boolean; stage_errors?: StageError[] }
+export type Document = { notes_section?: NotesSection | null; attempt_id?: string; id: string; title: string; source: Source; created_at: number; duration: number; stage: Stage; progress: number; error: string | null; failed_stage: Stage | null; saved: boolean; audio_path: string | null; segments: Segment[]; speakers: Speaker[]; turns: SpeakerTurn[]; notes: Notes | null; notes_candidate?: Notes | null; original_turns?: SpeakerTurn[] | null; retry_stage?: Stage | null; options: JobOptions; revision: number; history_id: number | null; diarized: boolean; stage_errors?: StageError[]; 
+/**
+ * Quick "You / Others" lines made while a meeting recorded. Shown until the
+ * full transcript exists; processing never changes them.
+ */
+live_segments?: LiveSegment[] }
 export type DocumentEdit = { id: string; expected_revision: number; title: string; segments: Segment[]; speakers: Speaker[]; notes: Notes | null; turns?: SpeakerTurn[] | null; saved: boolean }
 /**
  * Compact Library/Activity projection. Transcript content stays behind workspace_get.
@@ -1171,7 +1210,39 @@ export type ImportResult = { documents: Document[]; errors: string[]; remaining_
 export type JobOptions = { model: string; language: string; speakers: boolean; notes_model: string | null }
 export type KeyboardImplementation = "tauri" | "native_keys"
 export type LLMPrompt = { id: string; name: string; prompt: string }
+export type LiveSegment = { id: string; source: LiveSource; 
+/**
+ * Seconds on the recording's timeline.
+ */
+start: number; end: number; text: string }
+/**
+ * Which side of a meeting a live line came from.
+ */
+export type LiveSource = 
+/**
+ * The user's microphone.
+ */
+"mic" | 
+/**
+ * Computer audio: everyone else on the call.
+ */
+"system"
+export type LiveTranscript = { document_id: string; segments: LiveSegment[]; 
+/**
+ * No dictation engine is available to transcribe with.
+ */
+unavailable: boolean; 
+/**
+ * Transcription fell behind and dropped some audio.
+ */
+behind: boolean }
 export type LogLevel = "trace" | "debug" | "info" | "warn" | "error"
+export type MeetingOrbPhase = "hidden" | "recording" | 
+/**
+ * Capture has stopped and the audio is being finalised.
+ */
+"finishing"
+export type MeetingOrbSnapshot = { phase: MeetingOrbPhase; document_id: string | null; title: string }
 /**
  * Observations from this machine, not a quality benchmark or guaranteed bound.
  */
@@ -1210,7 +1281,11 @@ export type PostProcessProvider = { id: string; label: string; base_url: string;
 export type ReadinessIssue = { capability: string; model: string; code: string }
 export type RecordingOptions = { title: string; microphone_id: string | null; system_audio: boolean; options: JobOptions }
 export type RecordingRetentionPeriod = "never" | "preserve_limit" | "days_3" | "weeks_2" | "months_3"
-export type RecordingStatus = { document_id: string | null; paused: boolean; seconds: number; microphone_level: number; system_level: number; error: string | null }
+export type RecordingStatus = { document_id: string | null; paused: boolean; seconds: number; microphone_level: number; system_level: number; error: string | null; 
+/**
+ * Dictation is recording, so the meeting's mic track is silenced.
+ */
+mic_gated?: boolean }
 export type Segment = { id: string; start: number; end: number; text: string; original_text: string; speaker: string | null }
 export type ShortcutBinding = { id: string; name: string; description: string; default_binding: string; current_binding: string }
 export type SoundTheme = "silk" | "marimba" | "pop" | "custom"

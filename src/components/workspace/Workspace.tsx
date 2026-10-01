@@ -51,6 +51,7 @@ import { LANGUAGES } from "@/lib/constants/languages";
 import { useSettings } from "@/hooks/useSettings";
 import { readSetup, writeSetup, readWorkflowOptions } from "./setupStorage";
 import "./workspace.css";
+import { toastError } from "@/lib/utils/toastError";
 
 export default function Workspace({
   renderSettings,
@@ -335,10 +336,6 @@ export default function Workspace({
             void refreshRef.current();
           },
         ],
-        [
-          "workspace-recording-conflict",
-          () => toast.info(t("workspace.recordingConflict")),
-        ],
       ] as const) {
         const off = await listen(event, handler);
         if (disposed) off();
@@ -364,6 +361,16 @@ export default function Workspace({
       );
       if (disposed) progressOff();
       else cleanups.push(progressOff);
+      // The meeting orb's "Open" button.
+      const openOff = await listen<string>(
+        "workspace-open-document",
+        (event) => {
+          setPage("library");
+          void openDocumentRef.current(event.payload);
+        },
+      );
+      if (disposed) openOff();
+      else cleanups.push(openOff);
       const off = await listen<{
         id: string;
         downloaded: number;
@@ -462,7 +469,7 @@ export default function Workspace({
         setSelected(null);
       }
     } catch (e) {
-      toast.error(String(e));
+      toastError(t("workspace.errors.addFiles"), e);
     }
   };
   const beginMeeting = async () => {
@@ -472,7 +479,7 @@ export default function Workspace({
     try {
       setDevices(await api.devices());
     } catch (e) {
-      toast.error(String(e));
+      toastError(t("workspace.errors.loadDevices"), e);
     }
   };
   const submit = async () => {
@@ -510,7 +517,7 @@ export default function Workspace({
       setPage("library");
       await refresh();
     } catch (e) {
-      toast.error(String(e));
+      toastError(t("workspace.errors.startImport"), e);
     } finally {
       setWorking(false);
       setImportProgress(null);
@@ -523,7 +530,7 @@ export default function Workspace({
       setRecording(await api.control(operation));
       await refresh();
     } catch (e) {
-      toast.error(String(e));
+      toastError(t("workspace.errors.controlRecording"), e);
     } finally {
       setWorking(false);
       setCaptureOperation(null);
@@ -535,9 +542,11 @@ export default function Workspace({
       setSelected(await api.get(id));
       setCreate(null);
     } catch (e) {
-      toast.error(String(e));
+      toastError(t("workspace.errors.openTranscript"), e);
     }
   };
+  const openDocumentRef = useRef(openDocument);
+  openDocumentRef.current = openDocument;
   const active = jobs;
   const renderRows = (items: DocumentSummary[]) => (
     <div className="ws-document-list">
@@ -588,7 +597,7 @@ export default function Workspace({
                   await api.cancel(doc.id);
                   await refresh();
                 } catch (e) {
-                  toast.error(String(e));
+                  toastError(t("workspace.errors.cancelJob"), e);
                 }
               }}
             >
@@ -722,7 +731,9 @@ export default function Workspace({
       </aside>
       <ConfirmDialog
         open={!!removePack}
-        title={t("workspace.removeModel")}
+        title={t("workspace.removeModelTitle", {
+          name: packs.find((pack) => pack.id === removePack)?.name ?? "",
+        })}
         description={t("workspace.removeModelHelp")}
         confirmLabel={t("workspace.remove")}
         cancelLabel={t("workspace.cancel")}
@@ -734,7 +745,7 @@ export default function Workspace({
               await api.removePack(removePack);
               await loadPacks();
             } catch (e) {
-              toast.error(String(e));
+              toastError(t("workspace.errors.removeEngine"), e);
             }
           }
           setRemovePack(null);
@@ -759,7 +770,9 @@ export default function Workspace({
               onClick={() =>
                 void api
                   .cancelImport()
-                  .catch((error) => toast.error(String(error)))
+                  .catch((error) =>
+                    toastError(t("workspace.errors.cancelJob"), error),
+                  )
               }
             >
               {t("workspace.cancel")}
@@ -876,7 +889,10 @@ export default function Workspace({
                             setFiles([]);
                           await refresh();
                         } catch (error) {
-                          toast.error(String(error));
+                          toastError(
+                            t("workspace.errors.discardImport"),
+                            error,
+                          );
                         }
                       }}
                     >
@@ -932,7 +948,6 @@ export default function Workspace({
                 <ArrowLeft size={16} />
                 {t("workspace.back")}
               </button>
-              <p className="ws-eyebrow">{t("workspace.newTranscript")}</p>
               <h1>
                 {t(
                   create === "meeting"
@@ -974,7 +989,10 @@ export default function Workspace({
                                   await api.captureReadiness(system),
                                 );
                               } catch (error) {
-                                toast.error(String(error));
+                                toastError(
+                                  t("workspace.errors.requestAccess"),
+                                  error,
+                                );
                               }
                             }}
                           >
@@ -999,7 +1017,10 @@ export default function Workspace({
                                   await api.captureReadiness(system),
                                 );
                               } catch (error) {
-                                toast.error(String(error));
+                                toastError(
+                                  t("workspace.errors.requestAccess"),
+                                  error,
+                                );
                               }
                             }}
                           >
@@ -1072,7 +1093,7 @@ export default function Workspace({
                               current.filter((path) => path !== file),
                             );
                           } catch (error) {
-                            toast.error(String(error));
+                            toastError(t("workspace.errors.removeFile"), error);
                           }
                         }}
                       >
@@ -1229,7 +1250,6 @@ export default function Workspace({
             </section>
           ) : page === "settings" ? (
             <section>
-              <p className="ws-eyebrow">{t("workspace.yourWorkspace")}</p>
               <h1>{t("workspace.settings")}</h1>
               <div className="ws-settings-tabs">
                 {(
@@ -1339,7 +1359,10 @@ export default function Workspace({
                               }));
                               await loadPacks();
                             } catch (e) {
-                              toast.error(String(e));
+                              toastError(
+                                t("workspace.errors.installEngine"),
+                                e,
+                              );
                             } finally {
                               setDownload(null);
                             }
@@ -1371,7 +1394,10 @@ export default function Workspace({
                                   [pack.id]: result.valid,
                                 }));
                               } catch (error) {
-                                toast.error(String(error));
+                                toastError(
+                                  t("workspace.errors.verifyEngine"),
+                                  error,
+                                );
                               } finally {
                                 setVerifying(null);
                               }
@@ -1473,13 +1499,6 @@ export default function Workspace({
             <>
               <header className="ws-page-header">
                 <div>
-                  <p className="ws-eyebrow">
-                    {t(
-                      page === "home"
-                        ? "workspace.yourWorkspace"
-                        : "workspace.allYourWords",
-                    )}
-                  </p>
                   <h1>
                     {t(
                       page === "home"
@@ -1524,7 +1543,7 @@ export default function Workspace({
                     </div>
                   )}
                   <button
-                    className="ws-dictation-strip"
+                    className={`ws-dictation-strip${dictationReady ? "" : " is-attention"}`}
                     onClick={() => {
                       navigate("settings");
                       setSettingsPage("general");
@@ -1641,6 +1660,7 @@ export default function Workspace({
               )}
               {error ? (
                 <div role="alert" className="ws-alert">
+                  <strong>{t("workspace.errors.loadLibrary")}</strong>
                   <p>{error}</p>
                   <button onClick={() => void refresh()}>
                     {t("workspace.retry")}
@@ -1714,7 +1734,7 @@ export default function Workspace({
                       ]);
                       setMore(next.length === 100);
                     } catch (e) {
-                      toast.error(String(e));
+                      toastError(t("workspace.errors.loadMore"), e);
                     } finally {
                       setLoadingMore(false);
                     }

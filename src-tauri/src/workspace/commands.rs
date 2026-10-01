@@ -284,10 +284,33 @@ pub async fn workspace_runtime_ready(app: AppHandle) -> Result<bool, String> {
 #[specta::specta]
 pub async fn workspace_recording_status(app: AppHandle) -> Result<RecordingStatus, String> {
     tauri::async_runtime::spawn_blocking(move || {
-        capture::status(&ws(&app)).map_err(|e| e.to_string())
+        let workspace = ws(&app);
+        let was_paused = workspace
+            .recording
+            .lock()
+            .unwrap()
+            .as_ref()
+            .map(|r| r.last_status.paused);
+        let status = capture::status(&workspace).map_err(|e| e.to_string())?;
+        // Capture can pause itself (e.g. a failed write); relabel the tray item.
+        if was_paused.is_some_and(|paused| paused != status.paused) {
+            crate::tray::set_tray_meeting(&app, Some(status.paused));
+        }
+        Ok(status)
     })
     .await
     .map_err(|e| e.to_string())?
+}
+/// The live transcript of the meeting being recorded, if any.
+#[tauri::command]
+#[specta::specta]
+pub fn workspace_live_transcript(app: AppHandle) -> Option<LiveTranscript> {
+    ws(&app)
+        .live
+        .lock()
+        .unwrap()
+        .as_ref()
+        .map(|session| session.snapshot())
 }
 #[tauri::command]
 #[specta::specta]

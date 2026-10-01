@@ -30,6 +30,12 @@
           ]
         },
         {
+          "identifier": "mac-app-store-meeting-orb",
+          "platforms": ["macOS"],
+          "windows": ["meeting_orb"],
+          "permissions": ["core:default"]
+        },
+        {
           "identifier": "mac-app-store-desktop",
           "platforms": ["macOS"],
           "windows": ["main"],

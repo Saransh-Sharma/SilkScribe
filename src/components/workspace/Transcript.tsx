@@ -20,6 +20,8 @@ import { Dropdown } from "../ui/Dropdown";
 import { SaveQueue } from "./saveQueue";
 import { drafts } from "./drafts";
 import { AudioPlayer } from "../ui/AudioPlayer";
+import { LiveTranscript } from "./LiveTranscript";
+import { toastError } from "@/lib/utils/toastError";
 
 export function Transcript({
   document: initial,
@@ -150,7 +152,7 @@ export function Transcript({
       return true;
     } catch (error) {
       if (mounted.current) setSaveState("saveFailed");
-      toast.error(String(error));
+      toastError(t("workspace.errors.saveTranscript"), error);
       return false;
     }
   };
@@ -247,7 +249,7 @@ export function Transcript({
         toast.success(t("workspace.exported"));
       }
     } catch (error) {
-      toast.error(String(error));
+      toastError(t("workspace.errors.exportTranscript"), error);
     }
   };
   const resolveNotes = async (
@@ -267,7 +269,7 @@ export function Transcript({
       setDoc(updated);
       onUpdated();
     } catch (error) {
-      toast.error(String(error));
+      toastError(t("workspace.errors.updateNotes"), error);
     } finally {
       setResolving(false);
     }
@@ -279,7 +281,7 @@ export function Transcript({
       onUpdated();
       onBack();
     } catch (error) {
-      toast.error(String(error));
+      toastError(t("workspace.errors.generateNotes"), error);
     }
   };
   const regenerateSection = (section: NotesSection) => (
@@ -376,7 +378,7 @@ export function Transcript({
                 await drafts.discard(doc.id);
                 setConflict(false);
               } catch (error) {
-                toast.error(String(error));
+                toastError(t("workspace.errors.discardDraft"), error);
               }
             }}
           >
@@ -505,7 +507,7 @@ export function Transcript({
                 onUpdated();
                 onBack();
               } catch (e) {
-                toast.error(String(e));
+                toastError(t("workspace.errors.startProcessing"), e);
               }
             }}
           >
@@ -570,7 +572,7 @@ export function Transcript({
                 onUpdated();
                 onBack();
               } catch (error) {
-                toast.error(String(error));
+                toastError(t("workspace.errors.startProcessing"), error);
               }
             }}
           >
@@ -599,7 +601,7 @@ export function Transcript({
                 onUpdated();
                 onBack();
               } catch (error) {
-                toast.error(String(error));
+                toastError(t("workspace.errors.startProcessing"), error);
               }
             }}
           >
@@ -694,13 +696,11 @@ export function Transcript({
             </div>
           )}
           {!doc.segments.length && (
-            <p className="ws-empty-copy">
-              {t(
-                doc.segments.length
-                  ? "workspace.noResults"
-                  : "workspace.transcriptPending",
-              )}
-            </p>
+            <LiveTranscript
+              documentId={doc.id}
+              stored={doc.live_segments}
+              live={doc.stage === "recording" || doc.stage === "paused"}
+            />
           )}
           <div className="ws-segments">
             {editing && doc.speakers.length > 0 && (
@@ -1438,7 +1438,9 @@ export function Transcript({
             ? "workspace.deleteAudioHelp"
             : "workspace.deleteHelp",
         )}
-        confirmLabel={t("workspace.delete")}
+        confirmLabel={t(
+          remove === "audio" ? "workspace.deleteAudio" : "workspace.delete",
+        )}
         cancelLabel={t("workspace.cancel")}
         destructive
         onCancel={() => setRemove(null)}
@@ -1450,7 +1452,7 @@ export function Transcript({
             onUpdated();
             onBack();
           } catch (e) {
-            toast.error(String(e));
+            toastError(t("workspace.errors.deleteTranscript"), e);
           }
           setRemove(null);
         }}

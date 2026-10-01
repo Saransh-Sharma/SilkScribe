@@ -160,6 +160,37 @@ pub struct Document {
     pub diarized: bool,
     #[serde(default)]
     pub stage_errors: Vec<StageError>,
+    /// Quick "You / Others" lines made while a meeting recorded. Shown until the
+    /// full transcript exists; processing never changes them.
+    #[serde(default)]
+    pub live_segments: Vec<LiveSegment>,
+}
+/// Which side of a meeting a live line came from.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, Type)]
+#[serde(rename_all = "lowercase")]
+pub enum LiveSource {
+    /// The user's microphone.
+    Mic,
+    /// Computer audio: everyone else on the call.
+    System,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, Type)]
+pub struct LiveSegment {
+    pub id: String,
+    pub source: LiveSource,
+    /// Seconds on the recording's timeline.
+    pub start: f64,
+    pub end: f64,
+    pub text: String,
+}
+#[derive(Clone, Debug, Serialize, Type)]
+pub struct LiveTranscript {
+    pub document_id: String,
+    pub segments: Vec<LiveSegment>,
+    /// No dictation engine is available to transcribe with.
+    pub unavailable: bool,
+    /// Transcription fell behind and dropped some audio.
+    pub behind: bool,
 }
 /// Compact Library/Activity projection. Transcript content stays behind workspace_get.
 #[derive(Clone, Debug, Serialize, Deserialize, Type)]
@@ -212,6 +243,9 @@ pub struct RecordingStatus {
     pub microphone_level: f64,
     pub system_level: f64,
     pub error: Option<String>,
+    /// Dictation is recording, so the meeting's mic track is silenced.
+    #[serde(default)]
+    pub mic_gated: bool,
 }
 impl Default for RecordingStatus {
     fn default() -> Self {
@@ -222,6 +256,7 @@ impl Default for RecordingStatus {
             microphone_level: 0.0,
             system_level: 0.0,
             error: None,
+            mic_gated: false,
         }
     }
 }

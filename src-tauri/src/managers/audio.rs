@@ -244,6 +244,14 @@ impl AudioRecordingManager {
 
     /// Applies mute if mute_while_recording is enabled and stream is open
     pub fn apply_mute(&self) {
+        // Muting output during a meeting would silence the call.
+        let meeting_active = self
+            .app_handle
+            .try_state::<Arc<crate::workspace::Workspace>>()
+            .is_some_and(|ws| ws.meeting_active.load(Ordering::SeqCst));
+        if meeting_active {
+            return;
+        }
         let settings = get_settings(&self.app_handle);
         let mut did_mute_guard = self.did_mute.lock().unwrap();
 
@@ -408,6 +416,8 @@ impl AudioRecordingManager {
                     *state = RecordingState::Recording {
                         binding_id: binding_id.to_string(),
                     };
+                    // Keep dictated words out of a meeting that's recording.
+                    crate::workspace::capture::set_mic_gate(true);
                     debug!("Recording started for binding {binding_id}");
                     return true;
                 }
@@ -462,6 +472,7 @@ impl AudioRecordingManager {
                 };
 
                 *self.is_recording.lock().unwrap() = false;
+                crate::workspace::capture::set_mic_gate(false);
 
                 // In on-demand mode turn the mic off again
                 if matches!(*self.mode.lock().unwrap(), MicrophoneMode::OnDemand) {
@@ -508,6 +519,7 @@ impl AudioRecordingManager {
             }
 
             *self.is_recording.lock().unwrap() = false;
+            crate::workspace::capture::set_mic_gate(false);
 
             // In on-demand mode turn the mic off again
             if matches!(*self.mode.lock().unwrap(), MicrophoneMode::OnDemand) {
