@@ -644,6 +644,28 @@ test("Home asks to finish dictation setup when it isn't ready", async ({
   await expect(strip.locator("kbd")).toHaveCount(0);
 });
 
+test("Home offers on-device AI cleanup once", async ({ page }) => {
+  await page.goto(`${fixture}?dictation=ready&cleanupSuggestion`);
+  const card = page.getByRole("region", { name: "Clean up every dictation" });
+  await expect(card).toContainText("Apple Intelligence");
+  await card.getByRole("button", { name: "Not now" }).click();
+  await expect(card).toBeHidden();
+});
+
+test("a cleaned-up dictation can show the text before cleanup", async ({
+  page,
+}) => {
+  await page.goto(`${fixture}?dictation=ready`);
+  await page.getByText("Note to Sam", { exact: true }).click();
+  const show = page.getByRole("button", { name: "Show original" });
+  await show.click();
+  await expect(
+    page.getByLabel("Text before AI cleanup"),
+  ).toHaveText("can you send the revised screens before friday");
+  await page.getByRole("button", { name: "Hide original" }).click();
+  await expect(page.getByLabel("Text before AI cleanup")).toBeHidden();
+});
+
 test("Home surfaces recovery work and opens the filtered Library", async ({
   page,
 }) => {

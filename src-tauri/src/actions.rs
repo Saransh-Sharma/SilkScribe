@@ -65,7 +65,9 @@ pub trait ShortcutAction: Send + Sync {
 
 // Transcribe Action
 struct TranscribeAction {
-    post_process: bool,
+    /// The "Dictate with AI cleanup" shortcut always cleans up; the main one
+    /// follows the "Clean up every dictation" setting.
+    always_clean_up: bool,
 }
 
 pub(crate) async fn process_transcription_output(
@@ -200,7 +202,10 @@ impl ShortcutAction for TranscribeAction {
         play_feedback_sound(app, SoundType::Transcribing);
 
         let binding_id = binding_id.to_string(); // Clone binding_id for the async task
-        let post_process = self.post_process;
+        let post_process = self.always_clean_up || {
+            let settings = get_settings(app);
+            settings.post_process_enabled && settings.ai_cleanup_on_main
+        };
 
         tauri::async_runtime::spawn(async move {
             // Signals the coordinator when this dictation is fully done. It moves
@@ -443,12 +448,14 @@ pub static ACTION_MAP: Lazy<HashMap<String, Arc<dyn ShortcutAction>>> = Lazy::ne
     map.insert(
         "transcribe".to_string(),
         Arc::new(TranscribeAction {
-            post_process: false,
+            always_clean_up: false,
         }) as Arc<dyn ShortcutAction>,
     );
     map.insert(
         "transcribe_with_post_process".to_string(),
-        Arc::new(TranscribeAction { post_process: true }) as Arc<dyn ShortcutAction>,
+        Arc::new(TranscribeAction {
+            always_clean_up: true,
+        }) as Arc<dyn ShortcutAction>,
     );
     map.insert(
         "cancel".to_string(),

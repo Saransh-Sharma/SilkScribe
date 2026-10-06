@@ -56,6 +56,10 @@ export const api = {
     }
     return installed;
   },
+  /** Apple Intelligence can clean up dictation on this Mac. */
+  onDeviceCleanupAvailable: () => commands.checkAppleIntelligenceAvailable(),
+  enableOnDeviceCleanup: () => unwrap(commands.enableOnDeviceCleanup()),
+  dismissCleanupSuggestion: () => unwrap(commands.dismissAiCleanupCard()),
   cancelImport: () => unwrap(commands.workspaceCancelImport()),
   importBatches: () => unwrap(commands.workspaceImportBatches()),
   discardImportBatch: (requestId: string) =>

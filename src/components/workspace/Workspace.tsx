@@ -28,6 +28,7 @@ import {
   X,
   Cpu,
   ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import SilkScribeWordmark from "../icons/SilkScribeWordmark";
@@ -66,8 +67,31 @@ export default function Workspace({
   onSetupDictation: () => void;
 }) {
   const { t } = useTranslation();
-  const { settings } = useSettings();
+  const { settings, refreshSettings } = useSettings();
   const osType = useOsType();
+  // Offer on-device AI cleanup once, to people who don't have it on every
+  // dictation yet and whose Mac can run it.
+  const [cleanupSuggested, setCleanupSuggested] = useState(false);
+  const cleanupCovered =
+    !settings ||
+    settings.ai_cleanup_card_dismissed ||
+    (settings.post_process_enabled && settings.ai_cleanup_on_main);
+  useEffect(() => {
+    if (cleanupCovered) {
+      setCleanupSuggested(false);
+      return;
+    }
+    let current = true;
+    void api
+      .onDeviceCleanupAvailable()
+      .then((available) => {
+        if (current) setCleanupSuggested(available);
+      })
+      .catch(() => {});
+    return () => {
+      current = false;
+    };
+  }, [cleanupCovered]);
   const [dictationReady, setDictationReady] = useState(false);
   useEffect(() => {
     let current = true;
@@ -1480,13 +1504,6 @@ export default function Workspace({
                         | "history"
                     }
                   />
-                  {settingsPage === "general" &&
-                    settings?.post_process_enabled && (
-                      <details>
-                        <summary>{t("workspace.dictationProcessing")}</summary>
-                        {renderSettings("postprocessing", setSettingsPage)}
-                      </details>
-                    )}
                   {settingsPage === "history" && settings?.debug_mode && (
                     <details>
                       <summary>{t("workspace.debug")}</summary>
@@ -1573,6 +1590,42 @@ export default function Workspace({
                     </span>
                     <ArrowUpRight size={16} />
                   </button>
+                  {cleanupSuggested && (
+                    <section
+                      className="ws-suggestion"
+                      aria-label={t("workspace.cleanupCard.title")}
+                    >
+                      <Sparkles size={18} aria-hidden="true" />
+                      <div>
+                        <strong>{t("workspace.cleanupCard.title")}</strong>
+                        <p>{t("workspace.cleanupCard.body")}</p>
+                      </div>
+                      <button
+                        className="ws-primary"
+                        onClick={async () => {
+                          try {
+                            await api.enableOnDeviceCleanup();
+                            setCleanupSuggested(false);
+                            await refreshSettings();
+                          } catch (error) {
+                            toastError(t("workspace.errors.enableCleanup"), error);
+                          }
+                        }}
+                      >
+                        {t("workspace.cleanupCard.turnOn")}
+                      </button>
+                      <button
+                        className="ws-text-button"
+                        onClick={async () => {
+                          setCleanupSuggested(false);
+                          await api.dismissCleanupSuggestion().catch(() => {});
+                          void refreshSettings();
+                        }}
+                      >
+                        {t("workspace.cleanupCard.notNow")}
+                      </button>
+                    </section>
+                  )}
                   {attention.length > 0 && (
                     <section
                       className="ws-active-jobs"

@@ -264,7 +264,10 @@ fn initialize_core_logic(app_handle: &AppHandle) {
                 }
             }
             "copy_last_transcript" => {
-                tray::copy_last_transcript(app);
+                tray::copy_last_transcript(app, false);
+            }
+            "copy_last_original" => {
+                tray::copy_last_transcript(app, true);
             }
             // Menu handlers run on the main thread. Unloading waits for any in-flight
             // inference, so do it on a worker thread to keep the UI responsive.
@@ -621,6 +624,9 @@ fn command_builder() -> Builder<tauri::Wry> {
             shortcut::change_lazy_stream_close_setting,
             shortcut::change_extra_recording_buffer_setting,
             shortcut::change_paste_delay_setting,
+            shortcut::change_ai_cleanup_on_main_setting,
+            shortcut::dismiss_ai_cleanup_card,
+            shortcut::enable_on_device_cleanup,
             shortcut::change_whisper_accelerator_setting,
             shortcut::change_ort_accelerator_setting,
             shortcut::change_whisper_gpu_device,

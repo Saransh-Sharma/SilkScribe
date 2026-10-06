@@ -355,6 +355,9 @@ api.status = async () => ({
 api.inspectFiles = async (paths) =>
   paths.map((path) => ({ path, bytes: 1048576, duration: 90, error: null }));
 api.dictationReady = async () => dictation === "ready";
+api.onDeviceCleanupAvailable = async () => params.has("cleanupSuggestion");
+api.enableOnDeviceCleanup = async () => null;
+api.dismissCleanupSuggestion = async () => null;
 api.devices = async () => [{ id: "default", name: "Studio microphone" }];
 api.captureReadiness = async () => ({
   supported: true,

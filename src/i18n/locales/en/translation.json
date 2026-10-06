@@ -3,6 +3,7 @@
     "settings": "Settings…",
     "checkUpdates": "Check for Updates…",
     "copyLastTranscript": "Copy Last Transcript",
+    "copyLastOriginal": "Copy Last Transcript Before Cleanup",
     "unloadModel": "Unload Engine",
     "quit": "Quit SilkScribe",
     "cancel": "Cancel Recording",
@@ -733,8 +734,8 @@
         "title": "Microphone with lid closed"
       },
       "postProcessingToggle": {
-        "label": "AI cleanup",
-        "description": "Tidy up dictation with AI before it’s pasted."
+        "label": "Use AI cleanup",
+        "description": "Fixes punctuation and filler words with a language model before pasting."
       },
       "muteWhileRecording": {
         "label": "Mute other audio",
@@ -775,6 +776,30 @@
       "appDataDirectory": {
         "title": "Data folder"
       }
+    },
+    "aiCleanup": {
+      "title": "AI cleanup",
+      "everyDictation": {
+        "label": "Clean up every dictation",
+        "description": "Your main shortcut gets AI cleanup too, not just the one below."
+      },
+      "level": {
+        "title": "Cleanup style"
+      },
+      "levels": {
+        "light": "Light",
+        "standard": "Standard",
+        "rewrite": "Rewrite"
+      },
+      "levelHelp": {
+        "light": "Punctuation, capitals and numbers only.",
+        "standard": "Also removes filler words and stutters.",
+        "rewrite": "Rewrites for clarity and structure.",
+        "custom": "Uses your own prompt."
+      },
+      "onDevice": "Runs on this Mac. Your words aren’t uploaded.",
+      "cloud": "Your dictated text is sent to {{provider}} for cleanup.",
+      "prompts": "Prompts"
     }
   },
   "footer": {
@@ -1079,7 +1104,6 @@
     },
     "audio": "Audio",
     "appearance": "Appearance",
-    "dictationProcessing": "AI cleanup",
     "debug": "Developer",
     "retentionHelp": "Meetings and imports stay until you delete them. These settings only affect dictation audio.",
     "dictationRetention": "Dictation audio",
@@ -1213,10 +1237,23 @@
       "generateNotes": "Couldn’t generate notes",
       "discardDraft": "Couldn’t discard the draft",
       "startProcessing": "Couldn’t start processing",
-      "deleteTranscript": "Couldn’t delete"
+      "deleteTranscript": "Couldn’t delete",
+      "enableCleanup": "Couldn’t turn on AI cleanup",
+      "copyOriginal": "Couldn’t copy the original"
     },
     "liveTranscript": "Live transcript",
-    "liveTranscriptNote": "A more accurate transcript replaces this once processing finishes."
+    "liveTranscriptNote": "A more accurate transcript replaces this once processing finishes.",
+    "cleanupCard": {
+      "title": "Clean up every dictation",
+      "body": "Fix punctuation and filler words with Apple Intelligence. It runs on this Mac.",
+      "turnOn": "Turn on",
+      "notNow": "Not now"
+    },
+    "showOriginal": "Show original",
+    "hideOriginal": "Hide original",
+    "copyOriginal": "Copy original",
+    "copiedOriginal": "Original copied",
+    "originalLabel": "Text before AI cleanup"
   },
   "audioPlayer": {
     "play": "Play",

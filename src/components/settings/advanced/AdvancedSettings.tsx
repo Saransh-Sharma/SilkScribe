@@ -11,7 +11,6 @@ import { PasteMethodSetting } from "../PasteMethod";
 import { TypingToolSetting } from "../TypingTool";
 import { ClipboardHandlingSetting } from "../ClipboardHandling";
 import { AutoSubmit } from "../AutoSubmit";
-import { PostProcessingToggle } from "../PostProcessingToggle";
 import { AppendTrailingSpace } from "../AppendTrailingSpace";
 import { HistoryLimit } from "../HistoryLimit";
 import { RecordingRetentionPeriodSelector } from "../RecordingRetentionPeriod";
@@ -124,7 +123,6 @@ export const AdvancedSettings: React.FC<{
           <ExperimentalToggle descriptionMode="inline" grouped={true} />
           {experimentalEnabled ? (
             <>
-              <PostProcessingToggle descriptionMode="inline" grouped={true} />
               <KeyboardImplementationSelector
                 descriptionMode="inline"
                 grouped={true}

@@ -12,6 +12,7 @@ import {
   Users,
   FileText,
 } from "lucide-react";
+import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 import type { NoteEvidence, NotesSection } from "@/bindings";
 import { toast } from "sonner";
 import { api, busy, duration, type Document, type Notes } from "./api";
@@ -105,6 +106,14 @@ export function Transcript({
   }, [initial.id, initial.audio_path]);
   const activeSegment = useRef<string | null>(null);
   const [speed, setSpeed] = useState("1");
+  const [showOriginal, setShowOriginal] = useState(false);
+  // A dictation keeps what the engine heard before AI cleanup. Offer it when
+  // cleanup changed the text.
+  const originalText =
+    doc.source === "dictation" &&
+    doc.segments.some((segment) => segment.original_text !== segment.text)
+      ? doc.segments.map((segment) => segment.original_text).join("\n")
+      : "";
   const [saveState, setSaveState] = useState("saved");
   const [exportFormat, setExportFormat] = useState<string | null>(null);
   const [exportContent, setExportContent] = useState({
@@ -449,6 +458,40 @@ export function Transcript({
         {new Date(doc.created_at * 1000).toLocaleDateString()} ·{" "}
         {duration(doc.duration)} · {t("workspace.localOnly")}
       </p>
+      {originalText && (
+        <div className="ws-original">
+          <div className="ws-review-controls">
+            <button
+              className="ws-text-button"
+              aria-expanded={showOriginal}
+              onClick={() => setShowOriginal(!showOriginal)}
+            >
+              {t(
+                showOriginal
+                  ? "workspace.hideOriginal"
+                  : "workspace.showOriginal",
+              )}
+            </button>
+            <button
+              className="ws-text-button"
+              onClick={() =>
+                writeText(originalText)
+                  .then(() => toast.success(t("workspace.copiedOriginal")))
+                  .catch((error) =>
+                    toastError(t("workspace.errors.copyOriginal"), error),
+                  )
+              }
+            >
+              {t("workspace.copyOriginal")}
+            </button>
+          </div>
+          {showOriginal && (
+            <blockquote dir="auto" aria-label={t("workspace.originalLabel")}>
+              {originalText}
+            </blockquote>
+          )}
+        </div>
+      )}
       {(doc.error ||
         ["failed", "cancelled", "interrupted"].includes(doc.stage)) && (
         <div role="alert" className="ws-alert">

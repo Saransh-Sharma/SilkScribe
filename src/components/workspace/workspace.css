@@ -1115,3 +1115,40 @@
   border: 1px solid var(--ss-border-subtle);
   border-radius: 8px;
 }
+/* A one-time suggestion on Home, e.g. turning on on-device AI cleanup. */
+.ws-suggestion {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--ss-border-subtle);
+  border-radius: var(--ss-radius-md);
+  background: var(--ss-bg-surface);
+  font-size: 12px;
+  color: var(--ss-text-secondary);
+}
+.ws-suggestion > svg {
+  flex-shrink: 0;
+  color: var(--ss-brand-highlight);
+}
+.ws-suggestion > div {
+  flex: 1;
+  min-width: 0;
+}
+.ws-suggestion strong {
+  display: block;
+  color: var(--ss-text-primary);
+  font-size: 13px;
+}
+.ws-suggestion p {
+  margin-top: 2px;
+}
+/* A dictation's text before AI cleanup. */
+.ws-original blockquote {
+  margin: 4px 0 12px;
+  padding: 10px 14px;
+  border-inline-start: 2px solid var(--ss-border-default);
+  color: var(--ss-text-secondary);
+  white-space: pre-wrap;
+}

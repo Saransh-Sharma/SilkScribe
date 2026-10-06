@@ -414,6 +414,13 @@ pub struct AppSettings {
     pub post_process_prompts: Vec<LLMPrompt>,
     #[serde(default)]
     pub post_process_selected_prompt_id: Option<String>,
+    /// Run AI cleanup on the main dictation shortcut too, not only on the
+    /// "Dictate with AI cleanup" shortcut. Needs `post_process_enabled`.
+    #[serde(default)]
+    pub ai_cleanup_on_main: bool,
+    /// The Home suggestion to clean up every dictation on device was dismissed.
+    #[serde(default)]
+    pub ai_cleanup_card_dismissed: bool,
     #[serde(default)]
     pub mute_while_recording: bool,
     #[serde(default)]
@@ -679,12 +686,47 @@ fn default_post_process_models() -> HashMap<String, String> {
     map
 }
 
+/// The cleanup prompt new installs use ("Standard" in Settings).
+pub const STANDARD_PROMPT_ID: &str = "default_improve_transcriptions";
+/// The built-in cleanup levels. They can be edited but not deleted, and are
+/// added back to stores written before they existed.
+pub const BUILTIN_PROMPT_IDS: [&str; 3] = ["builtin_light", STANDARD_PROMPT_ID, "builtin_rewrite"];
+
 fn default_post_process_prompts() -> Vec<LLMPrompt> {
-    vec![LLMPrompt {
-        id: "default_improve_transcriptions".to_string(),
-        name: "Clean up".to_string(),
-        prompt: "Clean this transcript:\n1. Fix spelling, capitalization, and punctuation errors\n2. Convert number words to digits (twenty-five → 25, ten percent → 10%, five dollars → $5)\n3. Replace spoken punctuation with symbols (period → ., comma → ,, question mark → ?)\n4. Remove filler words (um, uh, like as filler)\n5. Keep the language in the original version (if it was french, keep it in french for example)\n\nPreserve exact meaning and word order. Do not paraphrase or reorder content.\n\nReturn only the cleaned transcript.\n\nTranscript:\n${output}".to_string(),
-    }]
+    // The first prompt is the default selection, so Standard leads.
+    vec![
+        LLMPrompt {
+            id: STANDARD_PROMPT_ID.to_string(),
+            name: "Clean up".to_string(),
+            prompt: "Clean this transcript:\n1. Fix spelling, capitalization, and punctuation errors\n2. Convert number words to digits (twenty-five → 25, ten percent → 10%, five dollars → $5)\n3. Replace spoken punctuation with symbols (period → ., comma → ,, question mark → ?)\n4. Remove filler words (um, uh, like as filler)\n5. Keep the language in the original version (if it was french, keep it in french for example)\n\nPreserve exact meaning and word order. Do not paraphrase or reorder content.\n\nReturn only the cleaned transcript.\n\nTranscript:\n${output}".to_string(),
+        },
+        LLMPrompt {
+            id: "builtin_light".to_string(),
+            name: "Light".to_string(),
+            prompt: "Fix this transcript's punctuation and capitalization:\n1. Add punctuation and capital letters where they belong\n2. Convert number words to digits (twenty-five → 25, ten percent → 10%)\n3. Replace spoken punctuation with symbols (period → ., comma → ,)\n4. Fix obvious spelling mistakes\n\nDon't remove, add, reorder, or reword anything else. Keep the original language.\n\nReturn only the corrected transcript.\n\nTranscript:\n${output}".to_string(),
+        },
+        LLMPrompt {
+            id: "builtin_rewrite".to_string(),
+            name: "Rewrite".to_string(),
+            prompt: "Rewrite this transcript as clear written text:\n1. Remove filler words, false starts, and repeated words\n2. Fix grammar, punctuation, and capitalization; write numbers as digits\n3. Split run-on sentences; use a short list when the speaker lists things\n4. Keep the speaker's meaning, tone, and language. Don't add facts or answer questions in the text\n\nReturn only the rewritten text.\n\nTranscript:\n${output}".to_string(),
+        },
+    ]
+}
+
+/// Adds built-in cleanup prompts missing from older stores.
+fn ensure_builtin_prompts(settings: &mut AppSettings) -> bool {
+    let mut changed = false;
+    for prompt in default_post_process_prompts() {
+        if !settings
+            .post_process_prompts
+            .iter()
+            .any(|p| p.id == prompt.id)
+        {
+            settings.post_process_prompts.push(prompt);
+            changed = true;
+        }
+    }
+    changed
 }
 
 fn default_post_process_selected_prompt_id() -> Option<String> {
@@ -797,6 +839,10 @@ fn apply_settings_migrations(
     }
 
     if ensure_post_process_defaults(settings) {
+        updated = true;
+    }
+
+    if ensure_builtin_prompts(settings) {
         updated = true;
     }
 
@@ -925,6 +971,8 @@ pub fn get_default_settings() -> AppSettings {
         post_process_models: default_post_process_models(),
         post_process_prompts: default_post_process_prompts(),
         post_process_selected_prompt_id: default_post_process_selected_prompt_id(),
+        ai_cleanup_on_main: false,
+        ai_cleanup_card_dismissed: false,
         mute_while_recording: false,
         append_trailing_space: false,
         app_language: default_app_language(),
@@ -1148,12 +1196,25 @@ mod tests {
     }
 
     #[test]
-    fn migration_leaves_selection_empty_without_prompts() {
+    fn migration_adds_missing_builtin_prompts_and_keeps_custom_ones() {
         let mut settings = get_default_settings();
-        settings.post_process_prompts.clear();
-        settings.post_process_selected_prompt_id = None;
-        apply_settings_migrations(&mut settings, None);
-        assert_eq!(settings.post_process_selected_prompt_id, None);
+        settings
+            .post_process_prompts
+            .retain(|p| p.id == STANDARD_PROMPT_ID);
+        settings.post_process_prompts.push(LLMPrompt {
+            id: "mine".into(),
+            name: "Mine".into(),
+            prompt: "${output}".into(),
+        });
+        assert!(apply_settings_migrations(&mut settings, None));
+        for id in BUILTIN_PROMPT_IDS {
+            assert!(settings.post_process_prompts.iter().any(|p| p.id == id));
+        }
+        assert!(settings.post_process_prompts.iter().any(|p| p.id == "mine"));
+        assert_eq!(
+            settings.post_process_selected_prompt_id.as_deref(),
+            Some(STANDARD_PROMPT_ID)
+        );
     }
 
     /// A store written before `settings_version` existed, as JSON.

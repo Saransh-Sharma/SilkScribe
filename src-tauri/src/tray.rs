@@ -152,7 +152,7 @@ fn menu_items(dictation: &TrayIconState, meeting: Option<bool>) -> Vec<&'static 
     if *dictation != TrayIconState::Idle {
         items.extend(["cancel", "-"]);
     }
-    items.push("copy_last_transcript");
+    items.extend(["copy_last_transcript", "copy_last_original"]);
     if *dictation == TrayIconState::Idle {
         items.push("unload_model");
     }
@@ -196,6 +196,7 @@ fn build_menu(app: &AppHandle, view: &TrayView) -> tauri::Result<Menu<tauri::Wry
             "copy_last_transcript" => {
                 menu.append(&item(&strings.copy_last_transcript, true, None)?)?
             }
+            "copy_last_original" => menu.append(&item(&strings.copy_last_original, true, None)?)?,
             "unload_model" => {
                 let model_loaded = app.state::<Arc<TranscriptionManager>>().is_model_loaded();
                 menu.append(&item(&strings.unload_model, model_loaded, None)?)?
@@ -213,7 +214,11 @@ fn build_menu(app: &AppHandle, view: &TrayView) -> tauri::Result<Menu<tauri::Wry
     Ok(menu)
 }
 
-fn last_transcript_text(entry: &HistoryEntry) -> &str {
+/// The delivered text, or with `original` the transcript before AI cleanup.
+fn last_transcript_text(entry: &HistoryEntry, original: bool) -> &str {
+    if original {
+        return &entry.transcription_text;
+    }
     entry
         .post_processed_text
         .as_deref()
@@ -229,7 +234,8 @@ pub fn set_tray_visibility(app: &AppHandle, visible: bool) {
     }
 }
 
-pub fn copy_last_transcript(app: &AppHandle) {
+/// Copies the last dictation, or with `original` its text before AI cleanup.
+pub fn copy_last_transcript(app: &AppHandle, original: bool) {
     let history_manager = app.state::<Arc<HistoryManager>>();
     let entry = match history_manager.get_latest_entry() {
         Ok(Some(entry)) => entry,
@@ -243,7 +249,10 @@ pub fn copy_last_transcript(app: &AppHandle) {
         }
     };
 
-    if let Err(err) = app.clipboard().write_text(last_transcript_text(&entry)) {
+    if let Err(err) = app
+        .clipboard()
+        .write_text(last_transcript_text(&entry, original))
+    {
         error!("Failed to copy last transcript to clipboard: {}", err);
         return;
     }
@@ -273,13 +282,15 @@ mod tests {
     #[test]
     fn uses_post_processed_text_when_available() {
         let entry = build_entry("raw", Some("processed"));
-        assert_eq!(last_transcript_text(&entry), "processed");
+        assert_eq!(last_transcript_text(&entry, false), "processed");
+        assert_eq!(last_transcript_text(&entry, true), "raw");
     }
 
     #[test]
     fn falls_back_to_raw_transcription() {
         let entry = build_entry("raw", None);
-        assert_eq!(last_transcript_text(&entry), "raw");
+        assert_eq!(last_transcript_text(&entry, false), "raw");
+        assert_eq!(last_transcript_text(&entry, true), "raw");
     }
 
     #[test]

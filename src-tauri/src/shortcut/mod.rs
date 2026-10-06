@@ -840,6 +840,43 @@ pub fn change_auto_submit_key_setting(app: AppHandle, key: String) -> Result<(),
     Ok(())
 }
 
+/// Run AI cleanup on every dictation, not only the "Dictate with AI cleanup"
+/// shortcut.
+#[tauri::command]
+#[specta::specta]
+pub fn change_ai_cleanup_on_main_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.ai_cleanup_on_main = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// Hide the Home suggestion to clean up every dictation on device.
+#[tauri::command]
+#[specta::specta]
+pub fn dismiss_ai_cleanup_card(app: AppHandle) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.ai_cleanup_card_dismissed = true;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// Turn on AI cleanup for every dictation with Apple Intelligence, which runs
+/// on this Mac. Used by onboarding and the Home suggestion.
+#[tauri::command]
+#[specta::specta]
+pub fn enable_on_device_cleanup(app: AppHandle) -> Result<(), String> {
+    if !crate::commands::check_apple_intelligence_available() {
+        return Err("Apple Intelligence isn't available on this Mac.".to_string());
+    }
+    let mut settings = settings::get_settings(&app);
+    settings.post_process_provider_id = settings::APPLE_INTELLIGENCE_PROVIDER_ID.to_string();
+    settings.ai_cleanup_on_main = true;
+    settings.ai_cleanup_card_dismissed = true;
+    settings::write_settings(&app, settings);
+    change_post_process_enabled_setting(app, true)
+}
+
 #[tauri::command]
 #[specta::specta]
 pub fn change_post_process_enabled_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
@@ -1006,6 +1043,10 @@ pub fn update_post_process_prompt(
 #[specta::specta]
 pub fn delete_post_process_prompt(app: AppHandle, id: String) -> Result<(), String> {
     let mut settings = settings::get_settings(&app);
+
+    if settings::BUILTIN_PROMPT_IDS.contains(&id.as_str()) {
+        return Err("Built-in cleanup levels can't be deleted.".to_string());
+    }
 
     // Don't allow deleting the last prompt
     if settings.post_process_prompts.len() <= 1 {

@@ -7,29 +7,26 @@ import { MicrophoneSelector } from "../settings/MicrophoneSelector";
 import { OutputDeviceSelector } from "../settings/OutputDeviceSelector";
 import { AudioFeedback } from "../settings/AudioFeedback";
 import { MuteWhileRecording } from "../settings/MuteWhileRecording";
+import { AiCleanupSettings } from "../settings/AiCleanupSettings";
 import { ThemeSelector } from "../settings/ThemeSelector";
 import { AppLanguageSelector } from "../settings/AppLanguageSelector";
 import { HistoryLimit } from "../settings/HistoryLimit";
 import { RecordingRetentionPeriodSelector } from "../settings/RecordingRetentionPeriod";
-import { useSettings } from "@/hooks/useSettings";
 export function Preferences({
   page,
 }: {
   page: "general" | "audio" | "appearance" | "history";
 }) {
   const { t } = useTranslation();
-  const { settings } = useSettings();
   return (
     <div className="space-y-5">
       {page === "general" && (
         <SettingsGroup title={t("workspace.dictation")}>
           <ShortcutInput shortcutId="transcribe" grouped />
           <PushToTalk descriptionMode="inline" grouped />
-          {settings?.post_process_enabled && (
-            <ShortcutInput shortcutId="transcribe_with_post_process" grouped />
-          )}
         </SettingsGroup>
       )}
+      {page === "general" && <AiCleanupSettings />}
       {page === "audio" && (
         <SettingsGroup title={t("workspace.audio")}>
           <MicrophoneSelector descriptionMode="inline" grouped />

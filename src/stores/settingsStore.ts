@@ -130,6 +130,9 @@ const settingUpdaters: {
     commands.changePostProcessEnabledSetting(value as boolean),
   post_process_selected_prompt_id: (value) =>
     commands.setPostProcessSelectedPrompt(value as string),
+  ai_cleanup_on_main: (value) =>
+    commands.changeAiCleanupOnMainSetting(value as boolean),
+  ai_cleanup_card_dismissed: () => commands.dismissAiCleanupCard(),
   mute_while_recording: (value) =>
     commands.changeMuteWhileRecordingSetting(value as boolean),
   append_trailing_space: (value) =>
