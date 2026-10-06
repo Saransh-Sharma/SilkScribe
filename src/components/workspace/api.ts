@@ -70,6 +70,9 @@ export const api = {
   },
   /** Call apps running now, to capture just one of them. */
   callApps: () => commands.workspaceCallApps(),
+  /** Answers a question across the Library, citing its passages. */
+  ask: (question: string) => unwrap(commands.workspaceAsk(question)),
+  cancelAsk: () => commands.workspaceCancelAsk(),
   calendarStatus: () => commands.calendarStatus(),
   connectCalendar: () => unwrap(commands.connectCalendar()),
   disconnectCalendar: () => commands.disconnectCalendar(),

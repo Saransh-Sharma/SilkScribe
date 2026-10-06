@@ -58,6 +58,7 @@ import { useOsType } from "@/hooks/useOsType";
 import { formatKeyCombination } from "@/lib/utils/keyboard";
 import { readSetup, writeSetup, readWorkflowOptions } from "./setupStorage";
 import { CalendarSettings } from "./CalendarSettings";
+import { AskPanel } from "./AskPanel";
 import "./workspace.css";
 import { toastError } from "@/lib/utils/toastError";
 
@@ -714,9 +715,12 @@ export default function Workspace({
       setCaptureOperation(null);
     }
   };
-  const openDocument = async (id: string) => {
+  // Where to start in the transcript that opens, e.g. from a citation.
+  const [openAt, setOpenAt] = useState<number | null>(null);
+  const openDocument = async (id: string, at: number | null = null) => {
     if (saveBarrier.current && !(await saveBarrier.current())) return;
     try {
+      setOpenAt(at);
       setSelected(await api.get(id));
       setCreate(null);
     } catch (e) {
@@ -1135,8 +1139,9 @@ export default function Workspace({
                 setSettingsPage("models");
                 setSelected(null);
               }}
-              key={`${selected.id}-${busy(selected.stage) ? selected.stage : "editable"}`}
+              key={`${selected.id}-${busy(selected.stage) ? selected.stage : "editable"}-${openAt ?? ""}`}
               document={selected}
+              openAt={openAt}
               onBack={() => {
                 setSelected(null);
                 void refresh();
@@ -1757,6 +1762,11 @@ export default function Workspace({
                   {t("workspace.onDevice")}
                 </span>
               </header>
+              {documents.length > 0 && (
+                <AskPanel
+                  onOpen={(id, start) => void openDocument(id, start)}
+                />
+              )}
               {page === "home" && (
                 <>
                   {documents.length === 0 && (

@@ -1497,6 +1497,18 @@
       "remindersHint": "Offers to take notes a minute before",
       "denied": "Calendar access is off. Turn it on in System Settings → Privacy & Security → Calendars.",
       "openSettings": "Open System Settings"
+    },
+    "ask": {
+      "title": "Ask your meetings",
+      "label": "Ask about your meetings",
+      "placeholder": "Ask about your meetings and notes…",
+      "submit": "Ask",
+      "thinking": "Reading your meetings… The first question can take a minute while the notes engine loads.",
+      "nothingFound": "Nothing in your Library mentions that.",
+      "checkSources": "Answers come from your transcripts. Check the sources before relying on them.",
+      "yourNotes": "Your notes",
+      "openSource": "Open {{source}}",
+      "shortcut": "⌘K"
     }
   },
   "audioPlayer": {

@@ -478,6 +478,25 @@ commands.changeCalendarRemindersSetting = async () => ({
   status: "ok",
   data: null,
 });
+// Asking: questions about the screens are answered from the first meeting.
+api.ask = async (question) => {
+  localStorage.setItem("fixture-ask", question);
+  if (!/screen/i.test(question)) return { answer: "", sources: [] };
+  return {
+    answer: "Sam is bringing the revised screens to Friday’s review [p1].",
+    sources: [
+      {
+        id: "p1",
+        document_id: "one",
+        title: "Product design review",
+        created_at: 1788900000,
+        start: 9,
+        text: "I’ll bring the revised screens to our next review on Friday.",
+      },
+    ],
+  };
+};
+api.cancelAsk = async () => {};
 api.addToDictionary = async (heard, write) =>
   heard && heard !== write ? "replacement" : "word";
 // Dictionary edits save without a backend.

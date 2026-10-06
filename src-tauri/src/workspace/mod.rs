@@ -43,6 +43,9 @@ pub struct Workspace {
     pub download_cancelled: AtomicBool,
     pub importing: AtomicBool,
     pub import_cancelled: AtomicBool,
+    /// Asking a question runs its own worker beside any processing job.
+    pub ask_child: Arc<Mutex<Option<Child>>>,
+    pub ask_cancelled: AtomicBool,
 }
 impl Workspace {
     pub fn new(app: &tauri::AppHandle) -> Result<Arc<Self>> {
@@ -61,6 +64,8 @@ impl Workspace {
             download_cancelled: AtomicBool::new(false),
             importing: AtomicBool::new(false),
             import_cancelled: AtomicBool::new(false),
+            ask_child: Arc::new(Mutex::new(None)),
+            ask_cancelled: AtomicBool::new(false),
         });
         workspace.store.sync_history(&workspace.root)?;
         let history_workspace = workspace.clone();
@@ -905,6 +910,208 @@ fn coalesce_segments(segments: &mut Vec<Segment>) {
     *segments = grouped;
 }
 
+/// Builds what the model reads for a question from index hits, best first:
+/// each transcript hit with the segment either side for context (merged where
+/// windows overlap), typed notes as they are, up to `limit` passages.
+fn assemble_passages(
+    hits: Vec<store::PassageHit>,
+    documents: &std::collections::HashMap<String, Document>,
+    limit: usize,
+) -> Vec<AskSource> {
+    const MAX_CHARS: usize = 1200;
+    let mut passages: Vec<AskSource> = Vec::new();
+    let mut taken: Vec<(String, usize)> = Vec::new();
+    for hit in hits {
+        if passages.len() == limit {
+            break;
+        }
+        let Some(doc) = documents.get(&hit.document_id) else {
+            continue;
+        };
+        let (start, text) = if hit.segment_id == "user-notes" {
+            (None, hit.text)
+        } else {
+            let Some(index) = doc.segments.iter().position(|s| s.id == hit.segment_id) else {
+                continue;
+            };
+            if taken.contains(&(doc.id.clone(), index)) {
+                continue;
+            }
+            let window = index.saturating_sub(1)..(index + 2).min(doc.segments.len());
+            taken.extend(window.clone().map(|i| (doc.id.clone(), i)));
+            let segments = &doc.segments[window];
+            (
+                segments.first().map(|s| s.start),
+                segments
+                    .iter()
+                    .map(|s| s.text.trim())
+                    .collect::<Vec<_>>()
+                    .join(" "),
+            )
+        };
+        let text: String = text.chars().take(MAX_CHARS).collect();
+        passages.push(AskSource {
+            id: format!("p{}", passages.len() + 1),
+            document_id: doc.id.clone(),
+            title: doc.title.clone(),
+            created_at: doc.created_at,
+            start,
+            text,
+        });
+    }
+    passages
+}
+
+impl Workspace {
+    /// Answers a question from the meetings and notes in the Library, citing
+    /// where each part of the answer comes from. An empty answer means nothing
+    /// in the Library mentions it.
+    pub fn ask(&self, app: &tauri::AppHandle, question: &str) -> Result<AskAnswer> {
+        let question = question.trim();
+        if question.is_empty() {
+            bail!("Ask a question first.");
+        }
+        if question.chars().count() > 500 {
+            bail!("Keep the question under 500 characters.");
+        }
+        // Two notes models at once would be too much for most Macs.
+        let writing_notes = self
+            .active
+            .lock()
+            .unwrap()
+            .clone()
+            .and_then(|id| self.store.get(&id).ok())
+            .is_some_and(|doc| doc.stage == Stage::Notes);
+        if writing_notes {
+            bail!("Notes are being written. Ask again when they're done.");
+        }
+        let hits = self.store.search_passages(question, 40)?;
+        let mut documents = std::collections::HashMap::new();
+        for hit in &hits {
+            if !documents.contains_key(&hit.document_id) {
+                if let Ok(doc) = self.store.get(&hit.document_id) {
+                    documents.insert(hit.document_id.clone(), doc);
+                }
+            }
+        }
+        let passages = assemble_passages(hits, &documents, 24);
+        if passages.is_empty() {
+            return Ok(AskAnswer {
+                answer: String::new(),
+                sources: Vec::new(),
+            });
+        }
+        let model_path = ["qwen3.5-9b", "qwen3.6-27b"]
+            .iter()
+            .find_map(|id| packs::model_path(app, id).ok())
+            .context(
+                "Download a notes engine in Settings → AI notes to ask about your meetings.",
+            )?;
+        self.ask_cancelled.store(false, Ordering::SeqCst);
+        let request = serde_json::json!({
+            "protocol": 1,
+            "task": "ask",
+            "question": question,
+            "model_path": model_path,
+            "passages": passages.iter().map(|p| serde_json::json!({
+                "id": p.id,
+                "title": p.title,
+                "date": chrono::DateTime::from_timestamp(p.created_at, 0)
+                    .map(|date| date.format("%Y-%m-%d").to_string())
+                    .unwrap_or_default(),
+                "text": p.text,
+            })).collect::<Vec<_>>(),
+        });
+        let result = worker::run(app, request, &self.ask_child, &self.ask_cancelled)?;
+        let answer = result["answer"].as_str().unwrap_or_default().to_string();
+        let sources = result["citations"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter_map(|id| id.as_str())
+            .filter_map(|id| passages.iter().find(|p| p.id == id).cloned())
+            .collect();
+        Ok(AskAnswer { answer, sources })
+    }
+
+    /// Stops a question being answered.
+    pub fn cancel_ask(&self) {
+        self.ask_cancelled.store(true, Ordering::SeqCst);
+        if let Some(child) = self.ask_child.lock().unwrap().as_mut() {
+            let _ = child.kill();
+        }
+    }
+}
+
+#[cfg(test)]
+mod ask_tests {
+    use super::*;
+
+    fn segment(id: &str, start: f64, text: &str) -> Segment {
+        Segment {
+            id: id.into(),
+            start,
+            end: start + 1.0,
+            text: text.into(),
+            original_text: text.into(),
+            speaker: None,
+        }
+    }
+
+    fn hit(segment_id: &str, text: &str) -> store::PassageHit {
+        store::PassageHit {
+            document_id: "m".into(),
+            segment_id: segment_id.into(),
+            start: None,
+            title: "Design review".into(),
+            text: text.into(),
+            created_at: 0,
+        }
+    }
+
+    #[test]
+    fn passages_carry_context_and_never_repeat_a_segment() {
+        let mut doc = Workspace::new_document(
+            "Design review".into(),
+            Source::Meeting,
+            JobOptions::default(),
+        );
+        doc.id = "m".into();
+        doc.segments = vec![
+            segment("s0", 0.0, "Pricing came up."),
+            segment("s1", 5.0, "We ship Friday."),
+            segment("s2", 9.0, "Legal checks terms."),
+            segment("s3", 14.0, "Then marketing."),
+        ];
+        let documents = std::collections::HashMap::from([("m".to_string(), doc)]);
+        let passages = assemble_passages(
+            vec![
+                hit("s1", ""),
+                hit("s2", ""),
+                hit("user-notes", "- ask legal"),
+                hit("gone", ""),
+            ],
+            &documents,
+            10,
+        );
+        assert_eq!(passages.len(), 2);
+        assert_eq!(passages[0].id, "p1");
+        assert_eq!(
+            passages[0].text,
+            "Pricing came up. We ship Friday. Legal checks terms."
+        );
+        assert_eq!(passages[0].start, Some(0.0));
+        // s2 was already shown as context; typed notes have no time.
+        assert_eq!(passages[1].id, "p2");
+        assert_eq!(passages[1].text, "- ask legal");
+        assert_eq!(passages[1].start, None);
+        assert_eq!(
+            assemble_passages(vec![hit("s0", "")], &documents, 0).len(),
+            0
+        );
+    }
+}
+
 #[cfg(test)]
 mod section_retry_tests {
     use super::*;
@@ -926,6 +1133,8 @@ mod section_retry_tests {
             download_cancelled: AtomicBool::new(false),
             importing: AtomicBool::new(false),
             import_cancelled: AtomicBool::new(false),
+            ask_child: Arc::new(Mutex::new(None)),
+            ask_cancelled: AtomicBool::new(false),
         };
         let mut doc =
             Workspace::new_document("Meeting".into(), Source::Meeting, JobOptions::default());

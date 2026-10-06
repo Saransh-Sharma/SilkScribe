@@ -1,5 +1,5 @@
 import unittest
-from worker import validate_notes, chunk_bounds, as_document
+from worker import validate_notes, chunk_bounds, as_document, validate_answer
 class NotesTests(unittest.TestCase):
     def test_rejects_hallucinated_and_missing_sources(self):
         for sources in [[],['invented']]:
@@ -85,6 +85,36 @@ class TemplateTests(unittest.TestCase):
         self.assertIn('a team standup',prompts[0]);self.assertIn('"blockers": what is in the way',prompts[0])
         self.assertNotIn('"decisions"',prompts[0])
         self.assertEqual(result['sections'][1]['items'][0]['text'],'Waiting on design')
+class AskTests(unittest.TestCase):
+    def test_answers_cite_only_the_passages_given(self):
+        result=validate_answer({'answer':'Pricing ships Friday [p1], legal reviews it [p9].','citations':['p1','p9','p2']},{'p1','p2'})
+        self.assertEqual(result['answer'],'Pricing ships Friday [p1], legal reviews it.')
+        self.assertEqual(result['citations'],['p1','p2'])
+    def test_inline_markers_count_as_citations(self):
+        result=validate_answer({'answer':'Monday [p3].'},{'p3'})
+        self.assertEqual(result['citations'],['p3'])
+    def test_rejects_answers_without_text(self):
+        for bad in [[], {'citations':['p1']}, {'answer':3}]:
+            with self.assertRaises(ValueError): validate_answer(bad,{'p1'})
+    def test_the_question_and_passages_reach_the_model(self):
+        import json, tempfile, pathlib, types
+        from unittest.mock import patch
+        from worker import ask
+        class Tokenizer:
+            def encode(self,text): return list(text)
+            def apply_chat_template(self,messages,**kwargs): return messages[0]['content']+'\n'+messages[-1]['content']
+        prompts=[]
+        def generate(*args,**kwargs):
+            prompts.append(kwargs['prompt'])
+            return json.dumps({'answer':'Friday [p1].','citations':['p1']})
+        with tempfile.TemporaryDirectory() as directory:
+            pathlib.Path(directory,'installed.json').write_text('{}')
+            runtime=types.SimpleNamespace(load=lambda _: (object(),Tokenizer()),generate=generate)
+            request={'model_path':directory,'question':'When does pricing ship?','passages':[{'id':'p1','title':'Design review','date':'2026-10-01','text':'Pricing ships Friday.'}]}
+            with patch.dict('sys.modules',{'mlx_lm':runtime}):
+                result=ask(request)
+        self.assertIn('When does pricing ship?',prompts[0]);self.assertIn('Pricing ships Friday.',prompts[0])
+        self.assertEqual(result,{'answer':'Friday [p1].','citations':['p1']})
 class ChunkTests(unittest.TestCase):
     def test_original_offsets_and_last_partial_chunk(self):
         self.assertEqual(chunk_bounds({'start_seconds':120,'end_seconds':240}, 200*16000,16000),(120*16000,200*16000))

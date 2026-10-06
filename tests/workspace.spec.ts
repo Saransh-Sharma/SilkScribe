@@ -717,6 +717,41 @@ test("AI notes settings connect and disconnect the calendar", async ({
   ).toBeVisible();
 });
 
+test("asking across meetings answers with sources that open the moment", async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const box = page.getByLabel("Ask about your meetings");
+  await expect(box).toBeVisible();
+  await page.keyboard.press("Meta+k");
+  await expect(box).toBeFocused();
+  await box.fill("Who is bringing the screens?");
+  await box.press("Enter");
+  const panel = page.getByRole("region", { name: "Ask your meetings" });
+  await expect(panel).toContainText(
+    "Sam is bringing the revised screens to Friday’s review",
+  );
+  // The [p1] marker becomes a numbered citation.
+  await expect(panel).not.toContainText("[p1]");
+  await panel
+    .getByRole("button", { name: /^Open Product design review/ })
+    .click();
+  await expect(page.getByRole("tab", { name: "Transcript" })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+});
+
+test("asking says when nothing in the Library matches", async ({ page }) => {
+  await page.goto(fixture);
+  const box = page.getByLabel("Ask about your meetings");
+  await box.fill("What is the budget?");
+  await page.getByRole("button", { name: "Ask", exact: true }).click();
+  await expect(
+    page.getByText("Nothing in your Library mentions that."),
+  ).toBeVisible();
+});
+
 test("Home asks to finish dictation setup when it isn't ready", async ({
   page,
 }) => {

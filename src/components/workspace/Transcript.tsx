@@ -44,8 +44,11 @@ export function Transcript({
   onUpdated,
   onSetupModels,
   saveBarrier,
+  openAt = null,
 }: {
   document: Document;
+  /** Seconds to start at, e.g. when a citation opened it. */
+  openAt?: number | null;
   onBack: () => void;
   onUpdated: () => void;
   onSetupModels: () => void;
@@ -80,9 +83,10 @@ export function Transcript({
   const [notesTemplate, setNotesTemplate] = useState<NoteTemplate>(
     (initial.options.notes_template as NoteTemplate | null) ?? "general",
   );
-  // A finished meeting opens on its notes; everything else on its transcript.
+  // A finished meeting opens on its notes; everything else on its transcript,
+  // as does any transcript opened at a moment.
   const [tab, setTab] = useState(() =>
-    initial.source === "meeting" && initial.segments.length
+    openAt === null && initial.source === "meeting" && initial.segments.length
       ? "notes"
       : "transcript",
   );
@@ -283,6 +287,15 @@ export function Transcript({
       void audio.current.play().catch(() => {});
     }
   };
+  // Opened at a moment: go there once the recording can play.
+  const pendingSeek = useRef(openAt);
+  useEffect(() => {
+    const at = pendingSeek.current;
+    if (at === null || (doc.audio_path && !playbackPath)) return;
+    pendingSeek.current = null;
+    requestAnimationFrame(() => seek(at));
+    // seek reads the latest render; only the recording's arrival matters here.
+  }, [playbackPath]);
   const doExport = async (format: string) => {
     if (!(await flush())) return;
     try {

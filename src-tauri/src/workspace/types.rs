@@ -365,3 +365,23 @@ pub struct CaptureDevice {
     pub id: String,
     pub name: String,
 }
+
+/// A passage an answer can cite: part of a transcript, or notes someone typed.
+#[derive(Clone, Debug, Serialize, Deserialize, Type)]
+pub struct AskSource {
+    /// "p1", "p2", … as the answer cites them.
+    pub id: String,
+    pub document_id: String,
+    pub title: String,
+    pub created_at: i64,
+    /// Where it starts in the recording; none for typed notes.
+    pub start: Option<f64>,
+    pub text: String,
+}
+/// An answer from across the Library, with the passages it cites.
+#[derive(Clone, Debug, Serialize, Deserialize, Type)]
+pub struct AskAnswer {
+    /// Cites passages as [p1]; empty when nothing in the Library matched.
+    pub answer: String,
+    pub sources: Vec<AskSource>,
+}

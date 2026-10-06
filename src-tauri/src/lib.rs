@@ -729,6 +729,8 @@ fn command_builder() -> Builder<tauri::Wry> {
             workspace::commands::workspace_edit,
             workspace::commands::workspace_cancel,
             workspace::commands::workspace_retry,
+            workspace::commands::workspace_ask,
+            workspace::commands::workspace_cancel_ask,
             workspace::commands::workspace_delete,
             workspace::commands::workspace_export,
             workspace::commands::workspace_export_preview,

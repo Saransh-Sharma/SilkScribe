@@ -65,6 +65,7 @@ impl Store {
             tx.execute_batch("INSERT INTO workspace_search(rowid,title,transcript) SELECT rowid,json_extract(body,'$.title'),coalesce((SELECT group_concat(json_extract(value,'$.text'),char(10)) FROM json_each(body,'$.segments')),'') FROM workspace_documents;")?;
         }
         tx.commit()?;
+        store.create_passage_index()?;
         store.recover_import_registrations()?;
         for mut doc in store.processing_documents()? {
             if doc.stage.active() || matches!(doc.stage, Stage::Recording | Stage::Paused) {
@@ -77,6 +78,75 @@ impl Store {
             }
         }
         Ok(store)
+    }
+    /// A word index over every transcript segment and the notes people typed,
+    /// for asking questions across meetings. Kept current by triggers and
+    /// built once for existing libraries.
+    fn create_passage_index(&self) -> Result<()> {
+        let mut conn = self.conn()?;
+        let tx = conn.transaction()?;
+        let exists: bool = tx.query_row(
+            "SELECT EXISTS(SELECT 1 FROM sqlite_master WHERE name='workspace_passages')",
+            [],
+            |r| r.get(0),
+        )?;
+        const SEGMENTS: &str = "SELECT new.id, json_extract(value,'$.id'), json_extract(value,'$.start'), json_extract(new.body,'$.title'), json_extract(value,'$.text') FROM json_each(new.body,'$.segments')";
+        const NOTES: &str = "VALUES(new.document_id, 'user-notes', NULL, (SELECT json_extract(body,'$.title') FROM workspace_documents WHERE id=new.document_id), new.body)";
+        tx.execute_batch(&format!("CREATE VIRTUAL TABLE IF NOT EXISTS workspace_passages USING fts5(document_id UNINDEXED, segment_id UNINDEXED, start UNINDEXED, title, text, tokenize='unicode61 remove_diacritics 2');
+            CREATE TRIGGER IF NOT EXISTS workspace_passages_insert AFTER INSERT ON workspace_documents BEGIN
+              INSERT INTO workspace_passages(document_id,segment_id,start,title,text) {SEGMENTS}; END;
+            CREATE TRIGGER IF NOT EXISTS workspace_passages_delete AFTER DELETE ON workspace_documents BEGIN
+              DELETE FROM workspace_passages WHERE document_id=old.id; END;
+            CREATE TRIGGER IF NOT EXISTS workspace_passages_update AFTER UPDATE OF body ON workspace_documents
+              WHEN json_extract(old.body,'$.title') IS NOT json_extract(new.body,'$.title') OR json_extract(old.body,'$.segments') IS NOT json_extract(new.body,'$.segments') BEGIN
+              DELETE FROM workspace_passages WHERE document_id=old.id AND segment_id<>'user-notes';
+              INSERT INTO workspace_passages(document_id,segment_id,start,title,text) {SEGMENTS};
+              UPDATE workspace_passages SET title=json_extract(new.body,'$.title') WHERE document_id=new.id AND segment_id='user-notes'; END;
+            CREATE TRIGGER IF NOT EXISTS workspace_passages_notes_insert AFTER INSERT ON workspace_user_notes BEGIN
+              DELETE FROM workspace_passages WHERE document_id=new.document_id AND segment_id='user-notes';
+              INSERT INTO workspace_passages(document_id,segment_id,start,title,text) {NOTES}; END;
+            CREATE TRIGGER IF NOT EXISTS workspace_passages_notes_update AFTER UPDATE OF body ON workspace_user_notes BEGIN
+              DELETE FROM workspace_passages WHERE document_id=old.document_id AND segment_id='user-notes';
+              INSERT INTO workspace_passages(document_id,segment_id,start,title,text) {NOTES}; END;
+            CREATE TRIGGER IF NOT EXISTS workspace_passages_notes_delete AFTER DELETE ON workspace_user_notes BEGIN
+              DELETE FROM workspace_passages WHERE document_id=old.document_id AND segment_id='user-notes'; END;"))?;
+        if !exists {
+            tx.execute_batch("INSERT INTO workspace_passages(document_id,segment_id,start,title,text)
+                SELECT d.id, json_extract(s.value,'$.id'), json_extract(s.value,'$.start'), json_extract(d.body,'$.title'), json_extract(s.value,'$.text')
+                FROM workspace_documents d, json_each(d.body,'$.segments') s;
+              INSERT INTO workspace_passages(document_id,segment_id,start,title,text)
+                SELECT n.document_id, 'user-notes', NULL, json_extract(d.body,'$.title'), n.body
+                FROM workspace_user_notes n JOIN workspace_documents d ON d.id=n.document_id;")?;
+        }
+        tx.commit()?;
+        Ok(())
+    }
+    /// The passages that best match a question, best first: transcript
+    /// segments (with their start) and notes people typed (`user-notes`).
+    pub fn search_passages(&self, question: &str, limit: usize) -> Result<Vec<PassageHit>> {
+        let Some(query) = passage_query(question) else {
+            return Ok(Vec::new());
+        };
+        let conn = self.conn()?;
+        let mut stmt = conn.prepare(
+            "SELECT p.document_id, p.segment_id, p.start, p.title, p.text, d.created_at FROM (
+               SELECT document_id, segment_id, start, title, text, bm25(workspace_passages, 0.0, 0.0, 0.0, 2.0, 1.0) AS score
+               FROM workspace_passages WHERE workspace_passages MATCH ?1 ORDER BY score LIMIT ?2
+             ) p JOIN workspace_documents d ON d.id=p.document_id ORDER BY p.score",
+        )?;
+        let hits = stmt
+            .query_map(params![query, limit as i64], |row| {
+                Ok(PassageHit {
+                    document_id: row.get(0)?,
+                    segment_id: row.get(1)?,
+                    start: row.get(2)?,
+                    title: row.get::<_, Option<String>>(3)?.unwrap_or_default(),
+                    text: row.get::<_, Option<String>>(4)?.unwrap_or_default(),
+                    created_at: row.get(5)?,
+                })
+            })?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        Ok(hits)
     }
     fn recover_import_registrations(&self) -> Result<()> {
         let conn = self.conn()?;
@@ -761,6 +831,53 @@ fn preserve_note_evidence(
     }
     Ok(())
 }
+/// One match from the passage index.
+#[derive(Clone, Debug, PartialEq)]
+pub struct PassageHit {
+    pub document_id: String,
+    /// A transcript segment id, or `user-notes`.
+    pub segment_id: String,
+    pub start: Option<f64>,
+    pub title: String,
+    pub text: String,
+    pub created_at: i64,
+}
+
+/// Words that say nothing about what to look for.
+const STOP_WORDS: &[&str] = &[
+    "a", "about", "an", "and", "any", "are", "as", "at", "be", "did", "do", "does", "for", "from",
+    "had", "has", "have", "how", "i", "in", "is", "it", "me", "my", "of", "on", "or", "our",
+    "said", "say", "that", "the", "their", "there", "they", "this", "to", "was", "we", "were",
+    "what", "when", "where", "which", "who", "why", "will", "with", "you", "your",
+];
+
+/// A full-text query for a question: its meaningful words, each also matching
+/// longer forms ("price" finds "pricing"), any of them. Quoting each word keeps
+/// question marks and apostrophes from being read as query syntax.
+pub fn passage_query(question: &str) -> Option<String> {
+    let mut words: Vec<String> = Vec::new();
+    for word in question
+        .split(|c: char| !c.is_alphanumeric())
+        .map(str::to_lowercase)
+    {
+        if word.chars().count() < 2 || STOP_WORDS.contains(&word.as_str()) || words.contains(&word)
+        {
+            continue;
+        }
+        words.push(word);
+        if words.len() == 12 {
+            break;
+        }
+    }
+    (!words.is_empty()).then(|| {
+        words
+            .iter()
+            .map(|word| format!("\"{word}\"*"))
+            .collect::<Vec<_>>()
+            .join(" OR ")
+    })
+}
+
 /// AI note items must cite existing transcript segments. Items the person
 /// wrote may have no sources, but any they have must exist. A template's
 /// sections each appear once.
@@ -825,6 +942,49 @@ mod tests {
             live_segments: vec![],
         }
     }
+    #[test]
+    fn questions_become_safe_word_queries() {
+        assert_eq!(
+            passage_query("What did Priya say about the pricing?").as_deref(),
+            Some("\"priya\"* OR \"pricing\"*")
+        );
+        assert_eq!(
+            passage_query("\"launch\" AND (date) NEAR x").as_deref(),
+            Some("\"launch\"* OR \"date\"* OR \"near\"*")
+        );
+        assert_eq!(passage_query("what is it?"), None);
+    }
+
+    #[test]
+    fn passages_cover_transcripts_and_typed_notes_and_stay_current() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::new(dir.path()).unwrap();
+        let mut doc = document();
+        doc.segments[0].text = "We agreed the pricing page ships Friday".into();
+        store.put(&doc).unwrap();
+        store
+            .save_user_notes(&doc.id, "- Ask legal about pricing terms")
+            .unwrap();
+        let hits = store
+            .search_passages("When does pricing ship?", 10)
+            .unwrap();
+        assert_eq!(hits.len(), 2);
+        assert!(hits
+            .iter()
+            .any(|hit| hit.segment_id == "s0" && hit.start == Some(1.0)));
+        assert!(hits.iter().any(|hit| hit.segment_id == "user-notes"));
+        assert_eq!(hits[0].title, "Design review");
+
+        // Edits replace what's indexed; deleting the document removes it all.
+        doc.segments[0].text = "Launch moved to Monday".into();
+        store.put(&doc).unwrap();
+        store.save_user_notes(&doc.id, "- nothing here").unwrap();
+        assert!(store.search_passages("pricing", 10).unwrap().is_empty());
+        assert_eq!(store.search_passages("monday launch", 10).unwrap().len(), 1);
+        store.delete(&doc.id).unwrap();
+        assert!(store.search_passages("monday", 10).unwrap().is_empty());
+    }
+
     #[test]
     fn template_sections_are_checked_cited_and_exported() {
         let blocker = NoteItem {

@@ -1169,6 +1169,20 @@ async workspaceRetry(id: string, notesOnly: boolean, notesModel: string | null, 
     else return { status: "error", error: e  as any };
 }
 },
+/**
+ * Answers a question across meetings and notes, with citations.
+ */
+async workspaceAsk(question: string) : Promise<Result<AskAnswer, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("workspace_ask", { question }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async workspaceCancelAsk() : Promise<void> {
+    await TAURI_INVOKE("workspace_cancel_ask");
+},
 async workspaceDelete(id: string, audioOnly: boolean) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("workspace_delete", { id, audioOnly }) };
@@ -1522,6 +1536,26 @@ meeting_orb_y?: number;
  */
 settings_version?: number }
 export type Artifact = { path: string; url: string; sha256: string; bytes: number }
+/**
+ * An answer from across the Library, with the passages it cites.
+ */
+export type AskAnswer = { 
+/**
+ * Cites passages as [p1]; empty when nothing in the Library matched.
+ */
+answer: string; sources: AskSource[] }
+/**
+ * A passage an answer can cite: part of a transcript, or notes someone typed.
+ */
+export type AskSource = { 
+/**
+ * "p1", "p2", … as the answer cites them.
+ */
+id: string; document_id: string; title: string; created_at: number; 
+/**
+ * Where it starts in the recording; none for typed notes.
+ */
+start: number | null; text: string }
 export type AudioDevice = { index: string; name: string; is_default: boolean }
 export type AutoSubmitKey = "enter" | "ctrl_enter" | "cmd_enter"
 export type AvailableAccelerators = { whisper: string[]; ort: string[]; gpu_devices: GpuDeviceOption[] }

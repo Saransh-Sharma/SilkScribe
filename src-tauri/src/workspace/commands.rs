@@ -642,3 +642,19 @@ pub async fn workspace_discard_partial_import(app: AppHandle, path: String) -> R
     .await
     .map_err(|error| error.to_string())?
 }
+
+/// Answers a question across meetings and notes, with citations.
+#[tauri::command]
+#[specta::specta]
+pub async fn workspace_ask(app: AppHandle, question: String) -> Result<AskAnswer, String> {
+    let ws = ws(&app);
+    tauri::async_runtime::spawn_blocking(move || ws.ask(&app, &question).map_err(|e| e.to_string()))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn workspace_cancel_ask(app: AppHandle) {
+    ws(&app).cancel_ask();
+}

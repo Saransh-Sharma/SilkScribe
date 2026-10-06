@@ -1255,6 +1255,109 @@
 .ws-dictation-text:hover span {
   color: var(--ss-brand-primary);
 }
+/* Asking across meetings: a question box, then an answer with numbered
+   citations and the passages they point to. */
+.ws-ask {
+  margin: 4px 0 18px;
+}
+.ws-ask-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px 6px 14px;
+  background: var(--ss-bg-surface);
+  border: 1px solid var(--ss-border-default);
+  border-radius: var(--ss-radius-md);
+  color: var(--ss-text-tertiary);
+}
+/* The form shows focus for its input. */
+.ws-ask-form:focus-within {
+  border-color: var(--ss-brand-secondary);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--ss-brand-secondary) 18%, transparent);
+}
+.ws-ask-form input:focus,
+.ws-ask-form input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.ws-ask-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-size: 14px;
+  color: var(--ss-text-primary);
+}
+.ws-ask-form kbd {
+  font-size: 11px;
+  color: var(--ss-text-tertiary);
+}
+.ws-ask-result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 4px 4px;
+}
+.ws-ask-answer {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ss-text-primary);
+  white-space: pre-wrap;
+}
+.ws-ask-cite {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  margin-inline: 2px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--ss-brand-primary) 12%, transparent);
+  color: var(--ss-brand-primary);
+  font-size: 11px;
+  font-weight: 650;
+  vertical-align: 1px;
+}
+.ws-ask-sources {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-self: stretch;
+  list-style: decimal;
+  padding-inline-start: 20px;
+  font-size: 12px;
+  color: var(--ss-text-tertiary);
+}
+.ws-ask-sources button {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 0;
+  text-align: start;
+}
+.ws-ask-source-title {
+  flex-shrink: 0;
+  color: var(--ss-text-secondary);
+  font-weight: 600;
+}
+.ws-ask-excerpt {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ss-text-tertiary);
+}
+.ws-ask-sources button:hover .ws-ask-source-title {
+  color: var(--ss-brand-primary);
+}
 /* The next meetings from the person's calendar. */
 .ws-upcoming {
   padding: 14px 0 18px;

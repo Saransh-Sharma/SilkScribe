@@ -114,7 +114,9 @@ pub fn run(
         }
         thread::sleep(Duration::from_millis(100));
     }
-    let note_model = (request["task"] == "notes")
+    // Asking a question loads the same notes model.
+    let uses_notes_model = matches!(request["task"].as_str(), Some("notes" | "ask"));
+    let note_model = uses_notes_model
         .then(|| request["model_path"].as_str())
         .flatten()
         .map(std::path::Path::new);
@@ -129,7 +131,7 @@ pub fn run(
     }
     let runtime = binary(
         app,
-        request["task"] == "notes" || (request["task"] == "health" && request["kind"] == "notes"),
+        uses_notes_model || (request["task"] == "health" && request["kind"] == "notes"),
     )?;
     let root = crate::portable::app_data_dir(app)?;
     if let Some(model) = note_model {
