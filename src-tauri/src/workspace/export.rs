@@ -83,7 +83,7 @@ pub fn render_document(
     user_notes: &str,
 ) -> Result<String> {
     let user_notes = user_notes.trim();
-    let include_notes = content.as_ref().map_or(true, |c| c.notes);
+    let include_notes = content.as_ref().is_none_or(|c| c.notes);
     if user_notes.is_empty() || !include_notes || !matches!(format, "md" | "txt" | "json") {
         return render_content(doc, format, content);
     }
