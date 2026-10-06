@@ -554,10 +554,9 @@
       "clipboardHandling": {
         "title": "After pasting",
         "options": {
-          "dontModify": "Restore my clipboard",
-          "copyToClipboard": "Keep transcript on clipboard"
-        },
-        "directInsertHint": "Typing it out never touches your clipboard."
+          "dontModify": "Put back what was on my clipboard",
+          "copyToClipboard": "Keep the text on my clipboard"
+        }
       },
       "autoSubmit": {
         "title": "Press a key after pasting",

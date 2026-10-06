@@ -218,11 +218,12 @@ impl Default for ModelUnloadTimeout {
 
 impl Default for PasteMethod {
     fn default() -> Self {
-        // Default to CtrlV for macOS and Windows, Direct for Linux
-        #[cfg(target_os = "linux")]
-        return PasteMethod::Direct;
-        #[cfg(not(target_os = "linux"))]
+        // macOS pastes and then restores the clipboard. Elsewhere a clipboard
+        // paste would leave the text on it, so type it out by default.
+        #[cfg(target_os = "macos")]
         return PasteMethod::CtrlV;
+        #[cfg(not(target_os = "macos"))]
+        return PasteMethod::Direct;
     }
 }
 
@@ -457,7 +458,9 @@ pub struct AppSettings {
 /// Bump when adding a one-time migration to `apply_settings_migrations`.
 ///
 /// 1: raised the default history limit from 5 to `default_history_limit()`.
-const CURRENT_SETTINGS_VERSION: u32 = 1;
+/// 2: outside macOS, "paste and keep my clipboard" (which typed the text) is
+///    now spelled out as "type it out".
+const CURRENT_SETTINGS_VERSION: u32 = 2;
 
 /// The history limit every install shipped with before version 1.
 const LEGACY_DEFAULT_HISTORY_LIMIT: usize = 5;
@@ -811,6 +814,20 @@ fn apply_settings_migrations(
         updated = true;
     }
 
+    if settings.settings_version < 2 {
+        #[cfg(not(target_os = "macos"))]
+        if settings.clipboard_handling == ClipboardHandling::DontModify
+            && matches!(
+                settings.paste_method,
+                PasteMethod::CtrlV | PasteMethod::CtrlShiftV | PasteMethod::ShiftInsert
+            )
+        {
+            settings.paste_method = PasteMethod::Direct;
+        }
+        settings.settings_version = 2;
+        updated = true;
+    }
+
     let normalized_paste_method = normalize_paste_method_for_platform(settings.paste_method);
     if settings.paste_method != normalized_paste_method {
         settings.paste_method = normalized_paste_method;
@@ -1161,6 +1178,19 @@ mod tests {
         settings.history_limit = LEGACY_DEFAULT_HISTORY_LIMIT;
         assert!(!apply_settings_migrations(&mut settings, None));
         assert_eq!(settings.history_limit, LEGACY_DEFAULT_HISTORY_LIMIT);
+    }
+
+    #[test]
+    fn migration_spells_out_typing_outside_macos() {
+        let mut settings = legacy_settings(500);
+        settings.paste_method = PasteMethod::CtrlV;
+        settings.clipboard_handling = ClipboardHandling::DontModify;
+        apply_settings_migrations(&mut settings, None);
+        #[cfg(target_os = "macos")]
+        assert_eq!(settings.paste_method, PasteMethod::CtrlV);
+        #[cfg(not(target_os = "macos"))]
+        assert_eq!(settings.paste_method, PasteMethod::Direct);
+        assert_eq!(settings.settings_version, CURRENT_SETTINGS_VERSION);
     }
 
     #[test]
