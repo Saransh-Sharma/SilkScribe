@@ -3,6 +3,8 @@ use serde::de::{self, Visitor};
 use serde::{Deserialize, Deserializer, Serialize};
 use specta::Type;
 use std::collections::HashMap;
+
+use crate::app_context::{AppCategory, DictationStyle};
 use tauri::AppHandle;
 use tauri_plugin_store::StoreExt;
 
@@ -424,6 +426,15 @@ pub struct AppSettings {
     /// Remind the user to tell people a meeting is being recorded.
     #[serde(default = "default_true")]
     pub meeting_consent_reminder: bool,
+    /// Adjust AI cleanup to the app being dictated into.
+    #[serde(default = "default_true")]
+    pub per_app_styles: bool,
+    /// Chosen tone per kind of app; missing entries use the defaults.
+    #[serde(default)]
+    pub app_styles: HashMap<AppCategory, DictationStyle>,
+    /// Apps the person moved to another category, by bundle identifier.
+    #[serde(default)]
+    pub app_category_overrides: HashMap<String, AppCategory>,
     #[serde(default)]
     pub mute_while_recording: bool,
     #[serde(default)]
@@ -981,6 +992,9 @@ pub fn get_default_settings() -> AppSettings {
         ai_cleanup_on_main: false,
         ai_cleanup_card_dismissed: false,
         meeting_consent_reminder: true,
+        per_app_styles: true,
+        app_styles: HashMap::new(),
+        app_category_overrides: HashMap::new(),
         mute_while_recording: false,
         append_trailing_space: false,
         app_language: default_app_language(),

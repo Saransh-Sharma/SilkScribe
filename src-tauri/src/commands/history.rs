@@ -1,4 +1,6 @@
-use crate::managers::history::{DictationSummary, HistoryFilter, HistoryManager, PaginatedHistory};
+use crate::managers::history::{
+    DictationSummary, HistoryFilter, HistoryManager, PaginatedHistory, RecentApp,
+};
 use crate::managers::transcription::TranscriptionManager;
 use std::sync::Arc;
 use tauri::{AppHandle, State};
@@ -30,6 +32,17 @@ pub async fn search_history_entries(
     history_manager
         .search_history_entries(query, filter, cursor, limit)
         .await
+        .map_err(|e| e.to_string())
+}
+
+/// Apps dictated into recently, for per-app styles.
+#[tauri::command]
+#[specta::specta]
+pub async fn recent_dictation_apps(
+    history_manager: State<'_, Arc<HistoryManager>>,
+) -> Result<Vec<RecentApp>, String> {
+    history_manager
+        .recent_dictation_apps(12)
         .map_err(|e| e.to_string())
 }
 

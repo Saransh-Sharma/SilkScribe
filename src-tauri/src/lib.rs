@@ -1,4 +1,5 @@
 mod actions;
+mod app_context;
 #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
 mod apple_intelligence;
 mod audio_feedback;
@@ -627,6 +628,10 @@ fn command_builder() -> Builder<tauri::Wry> {
             shortcut::change_ai_cleanup_on_main_setting,
             shortcut::dismiss_ai_cleanup_card,
             shortcut::change_meeting_consent_reminder_setting,
+            shortcut::change_per_app_styles_setting,
+            shortcut::change_app_style_setting,
+            shortcut::change_app_category_override,
+            commands::history::recent_dictation_apps,
             shortcut::enable_on_device_cleanup,
             shortcut::change_whisper_accelerator_setting,
             shortcut::change_ort_accelerator_setting,

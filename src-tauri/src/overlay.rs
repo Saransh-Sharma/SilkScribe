@@ -51,6 +51,10 @@ struct OverlayPayload {
     detail_code: Option<String>,
     /// A short excerpt of what was actually transcribed, shown on success.
     preview_text: Option<String>,
+    /// The app the text is going into, shown while AI cleanup writes for it.
+    context_app: Option<String>,
+    /// Key suffix under `overlay.style.*` for how cleanup writes for that app.
+    context_style: Option<String>,
     /// Screen edge the overlay is anchored to, so it can animate in from there.
     position: String,
     can_cancel: bool,
@@ -369,6 +373,8 @@ fn create_overlay_payload(
         theme: resolve_overlay_theme(settings),
         detail_code: detail_code.map(str::to_string),
         preview_text,
+        context_app: None,
+        context_style: None,
         position: match settings.overlay_position {
             OverlayPosition::Top => "top",
             OverlayPosition::Bottom | OverlayPosition::None => "bottom",
@@ -422,6 +428,19 @@ pub fn show_transcribing_overlay(app_handle: &AppHandle) {
 /// Shows the processing overlay window
 pub fn show_processing_overlay(app_handle: &AppHandle) {
     show_overlay_state(app_handle, "processing", None, None);
+}
+
+/// Shows the processing state with the app the text is going into and the
+/// style AI cleanup uses for it, e.g. "Slack · Casual".
+pub fn show_processing_overlay_for(app_handle: &AppHandle, app_name: &str, style_code: &str) {
+    let settings = settings::get_settings(app_handle);
+    if settings.overlay_position == OverlayPosition::None {
+        return;
+    }
+    let mut payload = create_overlay_payload(&settings, "processing", None, None);
+    payload.context_app = Some(app_name.to_string());
+    payload.context_style = Some(style_code.to_string());
+    show_overlay_payload(app_handle, payload);
 }
 
 /// Shows the success overlay with an excerpt of the text that was delivered, so

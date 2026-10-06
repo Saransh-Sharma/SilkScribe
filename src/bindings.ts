@@ -433,6 +433,50 @@ async changeMeetingConsentReminderSetting(enabled: boolean) : Promise<Result<nul
 }
 },
 /**
+ * Adjust AI cleanup to the app being dictated into.
+ */
+async changePerAppStylesSetting(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_per_app_styles_setting", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * The tone AI cleanup uses for a kind of app.
+ */
+async changeAppStyleSetting(category: AppCategory, style: DictationStyle) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_app_style_setting", { category, style }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Treat an app as another kind of app, or go back to its built-in kind.
+ */
+async changeAppCategoryOverride(bundleId: string, category: AppCategory | null) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_app_category_override", { bundleId, category }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Apps dictated into recently, for per-app styles.
+ */
+async recentDictationApps() : Promise<Result<RecentApp[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("recent_dictation_apps") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Turn on AI cleanup for every dictation with Apple Intelligence, which runs
  * on this Mac. Used by onboarding and the Home suggestion.
  */
@@ -1258,6 +1302,10 @@ historyUpdatePayload: "history-update-payload"
 /** user-defined types **/
 
 export type ActionItem = { text: string; owner: string | null; due: string | null; sources: string[]; evidence?: NoteEvidence[]; done: boolean; origin?: NoteOrigin }
+/**
+ * The kind of app, which decides the writing style.
+ */
+export type AppCategory = "messaging" | "email" | "documents" | "code" | "ai_chat" | "other"
 export type AppSettings = { bindings: Partial<{ [key in string]: ShortcutBinding }>; push_to_talk: boolean; audio_feedback?: boolean; audio_feedback_volume?: number; sound_theme?: SoundTheme; start_hidden?: boolean; autostart_enabled?: boolean; update_checks_enabled?: boolean; selected_model?: string; has_completed_onboarding?: boolean; always_on_microphone?: boolean; selected_microphone?: string | null; clamshell_microphone?: string | null; selected_output_device?: string | null; translate_to_english?: boolean; selected_language?: string; overlay_position?: OverlayPosition; overlay_appearance?: OverlayAppearance; debug_mode?: boolean; log_level?: LogLevel; custom_words?: string[]; model_unload_timeout?: ModelUnloadTimeout; word_correction_threshold?: number; history_limit?: number; recording_retention_period?: RecordingRetentionPeriod; paste_method?: PasteMethod; clipboard_handling?: ClipboardHandling; auto_submit?: boolean; auto_submit_key?: AutoSubmitKey; post_process_enabled?: boolean; post_process_provider_id?: string; post_process_providers?: PostProcessProvider[]; post_process_api_keys?: Partial<{ [key in string]: string }>; post_process_models?: Partial<{ [key in string]: string }>; post_process_prompts?: LLMPrompt[]; post_process_selected_prompt_id?: string | null; 
 /**
  * Run AI cleanup on the main dictation shortcut too, not only on the
@@ -1271,7 +1319,19 @@ ai_cleanup_card_dismissed?: boolean;
 /**
  * Remind the user to tell people a meeting is being recorded.
  */
-meeting_consent_reminder?: boolean; mute_while_recording?: boolean; append_trailing_space?: boolean; app_language?: string; experimental_enabled?: boolean; lazy_stream_close?: boolean; keyboard_implementation?: KeyboardImplementation; theme?: ThemePreference; show_tray_icon?: boolean; paste_delay_ms?: number; typing_tool?: TypingTool; external_script_path: string | null; custom_filler_words?: string[] | null; whisper_accelerator?: WhisperAcceleratorSetting; ort_accelerator?: OrtAcceleratorSetting; whisper_gpu_device?: number; extra_recording_buffer_ms?: number; 
+meeting_consent_reminder?: boolean; 
+/**
+ * Adjust AI cleanup to the app being dictated into.
+ */
+per_app_styles?: boolean; 
+/**
+ * Chosen tone per kind of app; missing entries use the defaults.
+ */
+app_styles?: Partial<{ [key in AppCategory]: DictationStyle }>; 
+/**
+ * Apps the person moved to another category, by bundle identifier.
+ */
+app_category_overrides?: Partial<{ [key in string]: AppCategory }>; mute_while_recording?: boolean; append_trailing_space?: boolean; app_language?: string; experimental_enabled?: boolean; lazy_stream_close?: boolean; keyboard_implementation?: KeyboardImplementation; theme?: ThemePreference; show_tray_icon?: boolean; paste_delay_ms?: number; typing_tool?: TypingTool; external_script_path: string | null; custom_filler_words?: string[] | null; whisper_accelerator?: WhisperAcceleratorSetting; ort_accelerator?: OrtAcceleratorSetting; whisper_gpu_device?: number; extra_recording_buffer_ms?: number; 
 /**
  * Where the meeting orb sits on the right screen edge, as a fraction of the
  * usable height from the top (its centre).
@@ -1290,6 +1350,10 @@ export type BindingResponse = { success: boolean; binding: ShortcutBinding | nul
 export type CaptureDevice = { id: string; name: string }
 export type ClipboardHandling = "dont_modify" | "copy_to_clipboard"
 export type CustomSounds = { start: boolean; stop: boolean }
+/**
+ * How formal AI cleanup writes for a category.
+ */
+export type DictationStyle = "casual" | "neutral" | "formal"
 /**
  * Dictation at a glance, for Home.
  */
@@ -1403,6 +1467,10 @@ export type PasteMethod = "ctrl_v" | "direct" | "none" | "shift_insert" | "ctrl_
 export type PermissionAccess = "allowed" | "denied" | "unknown"
 export type PostProcessProvider = { id: string; label: string; base_url: string; allow_base_url_edit?: boolean; models_endpoint?: string | null; supports_structured_output?: boolean }
 export type ReadinessIssue = { capability: string; model: string; code: string }
+/**
+ * An app dictated into, for choosing per-app styles.
+ */
+export type RecentApp = { bundle_id: string; name: string; last_used: number; dictations: number }
 export type RecordingOptions = { title: string; microphone_id: string | null; system_audio: boolean; options: JobOptions }
 export type RecordingRetentionPeriod = "never" | "preserve_limit" | "days_3" | "weeks_2" | "months_3"
 export type RecordingStatus = { document_id: string | null; paused: boolean; seconds: number; microphone_level: number; system_level: number; error: string | null; 

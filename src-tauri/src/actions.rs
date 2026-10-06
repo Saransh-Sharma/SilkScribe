@@ -8,8 +8,8 @@ use crate::shortcut;
 use crate::tray::{change_tray_icon, TrayIconState};
 use crate::utils::{
     self, show_empty_overlay, show_error_overlay_with_reason, show_processing_overlay,
-    show_recording_overlay, show_success_overlay_with_notice, show_success_overlay_with_preview,
-    show_transcribing_overlay,
+    show_processing_overlay_for, show_recording_overlay, show_success_overlay_with_notice,
+    show_success_overlay_with_preview, show_transcribing_overlay,
 };
 use crate::TranscriptionCoordinator;
 use log::{debug, error};
@@ -76,10 +76,23 @@ pub(crate) async fn process_transcription_output(
     post_process: bool,
 ) -> ProcessedTranscription {
     let settings = get_settings(app);
-    let finished = finish_dictation(&settings, transcription, post_process).await;
+    let finished = finish_dictation(&settings, transcription, post_process, None).await;
     ProcessedTranscription {
         post_processed_text: finished.cleaned,
         post_process_prompt: finished.prompt,
+    }
+}
+
+/// The style shown in the recording indicator while cleanup runs: the tone,
+/// or what code and AI-chat targets do instead.
+fn target_style_code(target: &crate::app_context::DictationTarget) -> &'static str {
+    use crate::app_context::{AppCategory, DictationStyle};
+    match (target.category, target.style) {
+        (AppCategory::Code, _) => "code",
+        (AppCategory::AiChat, _) => "ai_chat",
+        (_, DictationStyle::Casual) => "casual",
+        (_, DictationStyle::Neutral) => "neutral",
+        (_, DictationStyle::Formal) => "formal",
     }
 }
 
@@ -109,6 +122,10 @@ impl ShortcutAction for TranscribeAction {
     fn start(&self, app: &AppHandle, binding_id: &str, _shortcut_str: &str) {
         let start_time = Instant::now();
         debug!("TranscribeAction::start called for binding: {}", binding_id);
+
+        // The target app still has focus: note it before anything else can
+        // take it, for per-app styles and history.
+        crate::app_context::remember_target_app();
 
         // Load model in the background
         let tm = app.state::<Arc<TranscriptionManager>>();
@@ -201,6 +218,7 @@ impl ShortcutAction for TranscribeAction {
         // "transcribing" cue (it was named `stop` before the cue set grew).
         play_feedback_sound(app, SoundType::Transcribing);
 
+        let target_app = crate::app_context::take_target_app();
         let binding_id = binding_id.to_string(); // Clone binding_id for the async task
         let post_process = self.always_clean_up || {
             let settings = get_settings(app);
@@ -241,11 +259,27 @@ impl ShortcutAction for TranscribeAction {
                         );
                         if !transcription.is_empty() {
                             let settings = get_settings(&ah);
+                            let target = target_app
+                                .clone()
+                                .filter(|_| settings.per_app_styles)
+                                .map(|app| crate::app_context::resolve_target(app, &settings));
                             if post_process {
-                                show_processing_overlay(&ah);
+                                match &target {
+                                    Some(target) => show_processing_overlay_for(
+                                        &ah,
+                                        &target.app.name,
+                                        target_style_code(target),
+                                    ),
+                                    None => show_processing_overlay(&ah),
+                                }
                             }
-                            let finished =
-                                finish_dictation(&settings, &transcription, post_process).await;
+                            let finished = finish_dictation(
+                                &settings,
+                                &transcription,
+                                post_process,
+                                target.as_ref().and_then(|target| target.instruction()),
+                            )
+                            .await;
                             let text_ready = stop_time.elapsed();
                             // The raw text still goes in, but the user asked for
                             // cleanup and should know they didn't get it.
@@ -257,6 +291,7 @@ impl ShortcutAction for TranscribeAction {
                             let engine = tm.get_current_model().unwrap_or_default();
 
                             // Save to history with post-processed text and prompt
+                            let history_app = target_app.clone();
                             let hm_clone = Arc::clone(&hm);
                             let transcription_for_history = transcription.clone();
                             tauri::async_runtime::spawn(async move {
@@ -267,6 +302,7 @@ impl ShortcutAction for TranscribeAction {
                                         post_process,
                                         post_processed_text,
                                         post_process_prompt,
+                                        history_app,
                                     )
                                     .await
                                 {
@@ -379,6 +415,7 @@ impl ShortcutAction for TranscribeAction {
                                 post_process,
                                 None,
                                 None,
+                                target_app.clone(),
                             )
                             .await
                         {

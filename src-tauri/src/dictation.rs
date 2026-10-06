@@ -58,18 +58,23 @@ pub(crate) struct Finished {
 }
 
 /// Runs the text stages on a transcript: Chinese variant conversion, then AI
-/// cleanup when `cleanup_requested`.
+/// cleanup when `cleanup_requested`. `style` is extra guidance for the app the
+/// text is going into (see `app_context`).
 pub(crate) async fn finish_dictation(
     settings: &AppSettings,
     raw: &str,
     cleanup_requested: bool,
+    style: Option<&str>,
 ) -> Finished {
+    let style = style.map(str::to_string);
     finish_with(
         settings,
         raw,
         cleanup_requested,
         CLEANUP_TIMEOUT,
-        |settings, text| async move { post_process_transcription(&settings, &text).await },
+        |settings, text| async move {
+            post_process_transcription(&settings, &text, style.as_deref()).await
+        },
     )
     .await
 }
@@ -150,15 +155,21 @@ fn strip_invisible_chars(s: &str) -> String {
     s.replace(['\u{200B}', '\u{200C}', '\u{200D}', '\u{FEFF}'], "")
 }
 
-/// Build a system prompt from the user's prompt template.
-/// Removes `${output}` placeholder since the transcription is sent as the user message.
-fn build_system_prompt(prompt_template: &str) -> String {
-    prompt_template.replace("${output}", "").trim().to_string()
+/// Build a system prompt from the user's prompt template, plus any style
+/// guidance for the target app. Removes `${output}` placeholder since the
+/// transcription is sent as the user message.
+fn build_system_prompt(prompt_template: &str, style: Option<&str>) -> String {
+    let prompt = prompt_template.replace("${output}", "").trim().to_string();
+    match style {
+        Some(style) => format!("{prompt}\n\n{style}"),
+        None => prompt,
+    }
 }
 
 async fn post_process_transcription(
     settings: &AppSettings,
     transcription: &str,
+    style: Option<&str>,
 ) -> Result<String, CleanupError> {
     let Some(provider) = settings.active_post_process_provider().cloned() else {
         debug!("Post-processing enabled but no provider is selected");
@@ -203,7 +214,7 @@ async fn post_process_transcription(
     if provider.supports_structured_output {
         debug!("Using structured outputs for provider '{}'", provider.id);
 
-        let system_prompt = build_system_prompt(&prompt);
+        let system_prompt = build_system_prompt(&prompt, style);
         let user_content = transcription.to_string();
 
         // Handle Apple Intelligence separately since it uses native Swift APIs
@@ -325,7 +336,10 @@ async fn post_process_transcription(
     }
 
     // Legacy mode: Replace ${output} variable in the prompt with the actual text
-    let processed_prompt = prompt.replace("${output}", transcription);
+    let processed_prompt = match style {
+        Some(style) => format!("{style}\n\n{}", prompt.replace("${output}", transcription)),
+        None => prompt.replace("${output}", transcription),
+    };
     debug!("Processed prompt length: {} chars", processed_prompt.len());
 
     match crate::llm_client::send_chat_completion(&provider, api_key, &model, processed_prompt)
@@ -413,6 +427,18 @@ mod tests {
                 result
             },
         ))
+    }
+
+    #[test]
+    fn style_guidance_follows_the_prompt() {
+        assert_eq!(
+            build_system_prompt("Clean up:\n${output}", None),
+            "Clean up:"
+        );
+        assert_eq!(
+            build_system_prompt("Clean up:\n${output}", Some("Style: casual.")),
+            "Clean up:\n\nStyle: casual."
+        );
     }
 
     #[test]

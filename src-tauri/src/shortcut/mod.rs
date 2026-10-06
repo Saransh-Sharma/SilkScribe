@@ -864,6 +864,51 @@ pub fn change_meeting_consent_reminder_setting(
     Ok(())
 }
 
+/// Adjust AI cleanup to the app being dictated into.
+#[tauri::command]
+#[specta::specta]
+pub fn change_per_app_styles_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.per_app_styles = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// The tone AI cleanup uses for a kind of app.
+#[tauri::command]
+#[specta::specta]
+pub fn change_app_style_setting(
+    app: AppHandle,
+    category: crate::app_context::AppCategory,
+    style: crate::app_context::DictationStyle,
+) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.app_styles.insert(category, style);
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// Treat an app as another kind of app, or go back to its built-in kind.
+#[tauri::command]
+#[specta::specta]
+pub fn change_app_category_override(
+    app: AppHandle,
+    bundle_id: String,
+    category: Option<crate::app_context::AppCategory>,
+) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    match category {
+        Some(category) => {
+            settings.app_category_overrides.insert(bundle_id, category);
+        }
+        None => {
+            settings.app_category_overrides.remove(&bundle_id);
+        }
+    }
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
 /// Hide the Home suggestion to clean up every dictation on device.
 #[tauri::command]
 #[specta::specta]

@@ -827,6 +827,35 @@
       "onDevice": "Runs on this Mac. Your words aren’t uploaded.",
       "cloud": "Your dictated text is sent to {{provider}} for cleanup.",
       "prompts": "Prompts"
+    },
+    "styles": {
+      "title": "Styles",
+      "enable": {
+        "label": "Match the app you’re in",
+        "description": "AI cleanup writes casually in chat, formally in email, and keeps code as spoken."
+      },
+      "categories": {
+        "messaging": "Messages and chat",
+        "email": "Email",
+        "documents": "Documents and notes",
+        "code": "Code and terminals",
+        "ai_chat": "AI assistants",
+        "other": "Everything else"
+      },
+      "tones": {
+        "casual": "Casual",
+        "neutral": "Neutral",
+        "formal": "Formal"
+      },
+      "fixed": {
+        "code": "Keeps code and commands as spoken",
+        "ai_chat": "Keeps your request as a clear prompt"
+      },
+      "apps": {
+        "title": "Apps you’ve dictated into",
+        "description": "Move an app to another kind if it’s treated the wrong way.",
+        "builtIn": "Built-in"
+      }
     }
   },
   "footer": {
@@ -887,6 +916,13 @@
       "cleanupSkipped": "Pasted without AI cleanup",
       "transcriptionFailed": "Transcription didn’t finish",
       "recordingFailed": "Couldn’t start recording"
+    },
+    "style": {
+      "casual": "Casual",
+      "neutral": "Neutral",
+      "formal": "Formal",
+      "code": "Code",
+      "ai_chat": "AI prompt"
     }
   },
   "meetingOrb": {
@@ -1271,7 +1307,8 @@
       "loadNotes": "Couldn’t load your notes",
       "saveNotes": "Couldn’t save your notes",
       "copyMessage": "Couldn’t copy the message",
-      "copyText": "Couldn’t copy the text"
+      "copyText": "Couldn’t copy the text",
+      "saveStyle": "Couldn’t save the style"
     },
     "liveTranscript": "Live transcript",
     "liveTranscriptNote": "A more accurate transcript replaces this once processing finishes.",

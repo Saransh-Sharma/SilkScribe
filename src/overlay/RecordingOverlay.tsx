@@ -35,6 +35,10 @@ interface OverlayEventPayload {
   detailCode?: string;
   /** Excerpt of the text that was actually delivered, shown on success. */
   previewText?: string;
+  /** The app the text is going into, while AI cleanup writes for it. */
+  contextApp?: string;
+  /** Key suffix under `overlay.style.*`. */
+  contextStyle?: string;
   /** Screen edge the overlay is anchored to, so it can enter from that side. */
   position?: "top" | "bottom";
   canCancel: boolean;
@@ -181,6 +185,8 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
         theme: candidate.theme,
         detailCode: candidate.detailCode,
         previewText: candidate.previewText,
+        contextApp: candidate.contextApp,
+        contextStyle: candidate.contextStyle,
         position: candidate.position,
         canCancel: candidate.canCancel ?? next === "recording",
       };
@@ -293,9 +299,17 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
   // the generic per-state detail line.
   const detailText = useMemo(() => {
     if (payload.previewText) return payload.previewText;
+    if (payload.contextApp && payload.contextStyle)
+      return `${payload.contextApp} · ${t(`overlay.style.${payload.contextStyle}`)}`;
     if (payload.detailCode) return t(`overlay.detail.${payload.detailCode}`);
     return undefined;
-  }, [payload.detailCode, payload.previewText, t]);
+  }, [
+    payload.contextApp,
+    payload.contextStyle,
+    payload.detailCode,
+    payload.previewText,
+    t,
+  ]);
 
   const isQuoted = Boolean(payload.previewText);
   const announcement = [stateLabel, detailText].filter(Boolean).join(". ");

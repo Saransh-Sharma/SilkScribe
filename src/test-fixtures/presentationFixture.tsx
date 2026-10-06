@@ -430,8 +430,17 @@ const OVERLAY_STATES: OverlayState[] = [
    a running backend. `success` gets a transcript excerpt (quoted, italic);
    everything else gets its translated reason. */
 const SAMPLE_DETAIL: Partial<
-  Record<OverlayState, Partial<{ detailCode: string; previewText: string }>>
+  Record<
+    OverlayState,
+    Partial<{
+      detailCode: string;
+      previewText: string;
+      contextApp: string;
+      contextStyle: string;
+    }>
+  >
 > = {
+  processing: { contextApp: "Slack", contextStyle: "casual" },
   success: {
     previewText:
       "The quarterly numbers came in ahead of what we forecast in March",

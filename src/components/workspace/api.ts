@@ -56,6 +56,8 @@ export const api = {
     }
     return installed;
   },
+  /** Apps dictated into recently, for per-app styles. */
+  recentDictationApps: () => unwrap(commands.recentDictationApps()),
   /** Today's dictation, the streak and the latest dictations. */
   dictationSummary: () => unwrap(commands.getDictationSummary()),
   /** Apple Intelligence can clean up dictation on this Mac. */

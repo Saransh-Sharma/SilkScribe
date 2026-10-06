@@ -1667,7 +1667,9 @@ mod tests {
         let first = doc.segments[0].id.as_str();
         assert!(validate_notes(&notes(item(vec![], NoteOrigin::User)), &doc.segments).is_ok());
         assert!(validate_notes(&notes(item(vec![first], NoteOrigin::User)), &doc.segments).is_ok());
-        assert!(validate_notes(&notes(item(vec!["nope"], NoteOrigin::User)), &doc.segments).is_err());
+        assert!(
+            validate_notes(&notes(item(vec!["nope"], NoteOrigin::User)), &doc.segments).is_err()
+        );
         assert!(validate_notes(&notes(item(vec![], NoteOrigin::Ai)), &doc.segments).is_err());
 
         // Items the person wrote keep their origin through storage; AI items

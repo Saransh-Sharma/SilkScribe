@@ -253,6 +253,13 @@ test.describe("deterministic product states", () => {
     });
   }
 
+  test("names the app and style while cleanup writes for it", async ({
+    page,
+  }) => {
+    await page.goto(fixture("view=overlay&state=processing&detail=1"));
+    await expect(page.getByRole("status")).toContainText("Slack · Casual");
+  });
+
   test("keeps the pill inside the native overlay window", async ({ page }) => {
     // There is no shared source of truth between the CSS pill size and
     // OVERLAY_WIDTH/OVERLAY_HEIGHT in src-tauri/src/overlay.rs, so pin both

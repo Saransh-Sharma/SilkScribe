@@ -16,6 +16,7 @@ use tauri::{AppHandle, Emitter};
 use tauri_specta::Event;
 use unicode_segmentation::UnicodeSegmentation;
 
+use crate::app_context::FocusedApp;
 use crate::audio_toolkit::save_wav_file;
 
 /// Database migrations for transcription history.
@@ -51,6 +52,16 @@ static MIGRATIONS: &[M] = &[
     ),
     M::up("ALTER TABLE usage_stats ADD COLUMN backfill_completed INTEGER NOT NULL DEFAULT 0;"),
     M::up("ALTER TABLE transcription_history ADD COLUMN post_process_requested BOOLEAN NOT NULL DEFAULT 0;"),
+    // The app each dictation went into, kept apart so history queries don't change.
+    M::up(
+        "CREATE TABLE IF NOT EXISTS dictation_apps (
+            history_id INTEGER PRIMARY KEY,
+            bundle_id TEXT NOT NULL,
+            name TEXT NOT NULL
+        );
+        CREATE TRIGGER IF NOT EXISTS dictation_apps_cleanup AFTER DELETE ON transcription_history
+        BEGIN DELETE FROM dictation_apps WHERE history_id = old.id; END;",
+    ),
 ];
 
 #[derive(Clone, Debug, Serialize, Deserialize, Type)]
@@ -97,6 +108,15 @@ pub struct HistoryEntry {
 pub struct HomeHistoryCursor {
     pub timestamp: i64,
     pub id: i64,
+}
+
+/// An app dictated into, for choosing per-app styles.
+#[derive(Clone, Debug, Serialize, Deserialize, Type)]
+pub struct RecentApp {
+    pub bundle_id: String,
+    pub name: String,
+    pub last_used: i64,
+    pub dictations: i64,
 }
 
 /// Dictation at a glance, for Home.
@@ -288,6 +308,7 @@ impl HistoryManager {
         post_process_requested: bool,
         post_processed_text: Option<String>,
         post_process_prompt: Option<String>,
+        app: Option<FocusedApp>,
     ) -> Result<()> {
         let timestamp = Utc::now().timestamp();
         let file_name = format!("silkscribe-{}.wav", timestamp);
@@ -307,6 +328,7 @@ impl HistoryManager {
             post_processed_text,
             post_process_prompt,
             audio_samples.len(),
+            app,
         )?;
 
         // Clean up old entries
@@ -340,6 +362,7 @@ impl HistoryManager {
             post_processed_text,
             post_process_prompt,
             0,
+            None,
         )?;
 
         if let Err(cleanup_error) = self.cleanup_old_entries() {
@@ -362,6 +385,7 @@ impl HistoryManager {
         post_processed_text: Option<String>,
         post_process_prompt: Option<String>,
         audio_sample_count: usize,
+        app: Option<FocusedApp>,
     ) -> Result<HistoryEntry> {
         let mut conn = self.get_connection()?;
         let tx = conn.transaction_with_behavior(TransactionBehavior::Immediate)?;
@@ -389,6 +413,12 @@ impl HistoryManager {
 
         if !entry.transcription_text.is_empty() {
             self.update_usage_stats_after_save(&tx, timestamp, &visible_text, audio_sample_count)?;
+        }
+        if let Some(app) = app {
+            tx.execute(
+                "INSERT OR REPLACE INTO dictation_apps (history_id, bundle_id, name) VALUES (?1, ?2, ?3)",
+                params![entry.id, app.bundle_id, app.name],
+            )?;
         }
         tx.commit()?;
 
@@ -1217,6 +1247,27 @@ impl HistoryManager {
         }
 
         Ok(PaginatedHistory { entries, has_more })
+    }
+
+    /// Apps dictated into, most recent first, for choosing per-app styles.
+    pub fn recent_dictation_apps(&self, limit: usize) -> Result<Vec<RecentApp>> {
+        let conn = self.get_connection()?;
+        let mut stmt = conn.prepare(
+            "SELECT a.bundle_id, a.name, MAX(h.timestamp) AS last_used, COUNT(*) AS uses
+             FROM dictation_apps a JOIN transcription_history h ON h.id = a.history_id
+             GROUP BY a.bundle_id ORDER BY last_used DESC LIMIT ?1",
+        )?;
+        let apps = stmt
+            .query_map(params![limit as i64], |row| {
+                Ok(RecentApp {
+                    bundle_id: row.get(0)?,
+                    name: row.get(1)?,
+                    last_used: row.get(2)?,
+                    dictations: row.get(3)?,
+                })
+            })?
+            .collect::<std::result::Result<Vec<_>, _>>()?;
+        Ok(apps)
     }
 
     /// Today's dictation (since local midnight), the streak and the latest
