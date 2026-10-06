@@ -1,117 +1,121 @@
 ---
 version: "alpha"
 name: "SilkScribe Product Design"
-description: "A Stitch-style design system for SilkScribe, a quiet offline-first desktop speech-to-text app with warm native surfaces, forest primary actions, berry accents, gold focus states, soft panel depth, and compact settings workflows."
+description: "A Stitch-style design system for SilkScribe, a private on-device dictation and meeting-notes app for Mac with warm translucent surfaces, ruby primary actions and focus, gold highlights, soft panel depth, and compact settings workflows. Values mirror src/theme.css, which is the source of truth."
 sources:
   stitchOverview: "https://stitch.withgoogle.com/docs/design-md/overview/"
   stitchSpecification: "https://stitch.withgoogle.com/docs/design-md/specification/"
   inspiration: "https://github.com/VoltAgent/awesome-design-md"
 colors:
-  primitive-green: "#293a18"
-  primitive-pink: "#b1205f"
-  primitive-gold: "#febf2b"
-  primitive-red: "#c11317"
-  primitive-sand: "#9e5f0a"
-  neutral-ivory: "#fff8ef"
-  neutral-cream: "#f7efe4"
-  neutral-mist: "#efe4d6"
-  neutral-stone: "#e2d3c2"
-  neutral-sand-gray: "#c9b9a6"
-  neutral-umber: "#3a2e24"
-  neutral-ink: "#1b1511"
-  dark-ink-0: "#0f0c0a"
-  dark-ink-1: "#15110e"
-  dark-ink-2: "#1d1712"
-  dark-ink-3: "#2a211a"
-  dark-border-1: "#3a2e24"
-  dark-border-2: "#4a3b30"
-  dark-text-1: "#fff3e6"
-  dark-text-2: "#e7d9cb"
-  dark-text-3: "#cbbba7"
-  dark-disabled: "#7e7268"
-  canvas: "#fff8ef"
-  surface: "#ffffff"
-  surface-alt: "#f7efe4"
-  elevated: "#ffffff"
-  text-primary: "#1b1511"
-  text-secondary: "#3a2e24"
-  text-tertiary: "#6a594b"
-  text-inverse: "#fff8ef"
-  text-disabled: "#a19386"
-  border-subtle: "#efe4d6"
-  border-default: "#e2d3c2"
-  border-strong: "#c9b9a6"
-  brand-primary: "#293a18"
-  on-primary: "#fff8ef"
-  brand-secondary: "#b1205f"
-  on-secondary: "#fff8ef"
-  brand-highlight: "#febf2b"
-  on-highlight: "#1b1511"
-  success: "#293a18"
-  warning: "#febf2b"
-  danger: "#c11317"
-  info: "#9e5f0a"
-  action-primary: "#293a18"
-  action-primary-hover: "#223114"
-  action-primary-pressed: "#1b2610"
-  action-disabled: "#c9b9a6"
-  action-danger: "#c11317"
+  primitive-green: "#2d705d"
+  primitive-pink: "#a51f48"
+  primitive-gold: "#d2a343"
+  primitive-red: "#b52a36"
+  primitive-sand: "#9a7132"
+  neutral-ivory: "#f7f5f1"
+  neutral-cream: "#f0ede7"
+  neutral-mist: "rgba(70, 48, 41, 0.075)"
+  neutral-stone: "rgba(70, 48, 41, 0.12)"
+  neutral-sand-gray: "rgba(70, 48, 41, 0.22)"
+  neutral-umber: "#534a46"
+  neutral-ink: "#211b19"
+  dark-ink-0: "#121010"
+  dark-ink-1: "rgba(30, 26, 25, 0.84)"
+  dark-ink-2: "rgba(43, 37, 35, 0.76)"
+  dark-ink-3: "rgba(55, 47, 44, 0.92)"
+  dark-border-1: "rgba(255, 242, 234, 0.1)"
+  dark-border-2: "rgba(255, 242, 234, 0.18)"
+  dark-text-1: "#f7f1ed"
+  dark-text-2: "#d8ceca"
+  dark-text-3: "#9d918c"
+  dark-disabled: "#706661"
+  canvas: "#f7f5f1"
+  surface: "rgba(255, 255, 255, 0.72)"
+  surface-alt: "rgba(240, 237, 231, 0.7)"
+  elevated: "rgba(255, 255, 255, 0.9)"
+  text-primary: "#211b19"
+  text-secondary: "#534a46"
+  text-tertiary: "#7b716c"
+  text-inverse: "#fffaf5"
+  text-disabled: "#aba19c"
+  border-subtle: "rgba(70, 48, 41, 0.075)"
+  border-default: "rgba(70, 48, 41, 0.12)"
+  border-strong: "rgba(70, 48, 41, 0.22)"
+  brand-primary: "#a51f48"
+  on-primary: "#fffaf5"
+  brand-secondary: "#a51f48"
+  on-secondary: "#fffaf5"
+  brand-highlight: "#d2a343"
+  on-highlight: "#211b19"
+  success: "#2d705d"
+  warning: "#d2a343"
+  danger: "#b52a36"
+  info: "#9a7132"
+  action-primary: "#a51f48"
+  action-primary-hover: "#90193d"
+  action-primary-pressed: "#771333"
+  action-disabled: "rgba(70, 48, 41, 0.22)"
+  action-danger: "#b52a36"
   action-danger-hover: "#a80f12"
-  action-focus: "#febf2b"
-  accent-selection: "#b1205f"
-  accent-glow: "#febf2b"
+  action-focus: "#a51f48"
+  accent-selection: "#a51f48"
+  accent-glow: "#d2a343"
+  dark-brand-primary: "#d94d75"
+  dark-action-primary: "#c83b66"
+  dark-action-primary-hover: "#da4c76"
+  dark-action-primary-pressed: "#ad2c54"
 typography:
   display-lg:
-    fontFamily: "'SF Pro Display', 'SF Pro Text', Inter, 'Segoe UI', sans-serif"
+    fontFamily: "Manrope, 'SF Pro Text', -apple-system, 'Segoe UI', sans-serif"
     fontSize: "36px"
     fontWeight: 600
     lineHeight: 0.94
     letterSpacing: "-0.03em"
   display-md:
-    fontFamily: "'SF Pro Display', 'SF Pro Text', Inter, 'Segoe UI', sans-serif"
+    fontFamily: "Manrope, 'SF Pro Text', -apple-system, 'Segoe UI', sans-serif"
     fontSize: "32px"
     fontWeight: 600
     lineHeight: 1.1
     letterSpacing: "-0.03em"
   title-lg:
-    fontFamily: "'SF Pro Text', 'SF Pro Display', Inter, 'Segoe UI', sans-serif"
+    fontFamily: "Manrope, 'SF Pro Text', -apple-system, 'Segoe UI', sans-serif"
     fontSize: "20px"
     fontWeight: 700
     lineHeight: 1.25
     letterSpacing: "0"
   title-md:
-    fontFamily: "'SF Pro Text', 'SF Pro Display', Inter, 'Segoe UI', sans-serif"
+    fontFamily: "Manrope, 'SF Pro Text', -apple-system, 'Segoe UI', sans-serif"
     fontSize: "15px"
     fontWeight: 600
     lineHeight: 1.35
     letterSpacing: "0.01em"
   body-md:
-    fontFamily: "'SF Pro Text', 'SF Pro Display', Inter, 'Segoe UI', sans-serif"
+    fontFamily: "Manrope, 'SF Pro Text', -apple-system, 'Segoe UI', sans-serif"
     fontSize: "15px"
     fontWeight: 500
     lineHeight: 1.5
     letterSpacing: "0"
   body-sm:
-    fontFamily: "'SF Pro Text', 'SF Pro Display', Inter, 'Segoe UI', sans-serif"
+    fontFamily: "Manrope, 'SF Pro Text', -apple-system, 'Segoe UI', sans-serif"
     fontSize: "14px"
     fontWeight: 500
     lineHeight: 1.5
     letterSpacing: "0"
   label-sm:
-    fontFamily: "'SF Pro Text', 'SF Pro Display', Inter, 'Segoe UI', sans-serif"
+    fontFamily: "Manrope, 'SF Pro Text', -apple-system, 'Segoe UI', sans-serif"
     fontSize: "11px"
     fontWeight: 700
     lineHeight: 1.4
     letterSpacing: "0.22em"
     textTransform: "uppercase"
   caption:
-    fontFamily: "'SF Pro Text', 'SF Pro Display', Inter, 'Segoe UI', sans-serif"
+    fontFamily: "Manrope, 'SF Pro Text', -apple-system, 'Segoe UI', sans-serif"
     fontSize: "12px"
     fontWeight: 500
     lineHeight: 1.45
     letterSpacing: "0"
   button:
-    fontFamily: "'SF Pro Text', 'SF Pro Display', Inter, 'Segoe UI', sans-serif"
+    fontFamily: "Manrope, 'SF Pro Text', -apple-system, 'Segoe UI', sans-serif"
     fontSize: "14px"
     fontWeight: 600
     lineHeight: 1
@@ -123,10 +127,11 @@ typography:
     lineHeight: 1.45
     letterSpacing: "0"
 rounded:
-  sm: "12px"
-  md: "14px"
-  lg: "18px"
-  xl: "22px"
+  sm: "13px"
+  md: "16px"
+  lg: "22px"
+  xl: "28px"
+  window: "32px"
   onboarding-card: "36px"
   pill: "999px"
 spacing:
@@ -147,10 +152,13 @@ shadows:
 motion:
   press: "90ms"
   hover: "140ms"
-  state: "220ms"
-  panel: "260ms"
-  overlay-in: "280ms"
-  overlay-out: "220ms"
+  state: "240ms"
+  panel: "340ms"
+  overlay-in: "360ms"
+  overlay-out: "240ms"
+  ease-out-quart: "cubic-bezier(0.25, 1, 0.5, 1)"
+  ease-out-quint: "cubic-bezier(0.22, 1, 0.36, 1)"
+  ease-out-expo: "cubic-bezier(0.16, 1, 0.3, 1)"
 components:
   button-primary:
     backgroundColor: "{colors.action-primary}"
@@ -198,7 +206,7 @@ components:
   sidebar:
     backgroundColor: "{colors.surface-alt}"
     borderColor: "{colors.border-subtle}"
-    width: "240px"
+    width: "218px"
   dashboard-card:
     backgroundColor: "{colors.surface}"
     borderColor: "{colors.border-subtle}"
@@ -222,13 +230,13 @@ components:
 
 # SilkScribe Design System
 
-SilkScribe is a local-first desktop speech-to-text app. Its design should feel native, private, calm, and efficient: one shortcut, one short burst of speech, one pasted result. The interface is not a generic SaaS dashboard and not a marketing canvas inside the product. It is a compact desktop utility with enough warmth to feel approachable and enough density to support repeated settings work.
+SilkScribe is a private, on-device app for dictation and meeting notes. Its design should feel native, private, calm, and efficient: one shortcut, one short burst of speech, one pasted result — and for meetings, a transcript and notes you can trust and check. The interface is not a generic SaaS dashboard and not a marketing canvas inside the product. It is a compact desktop utility with enough warmth to feel approachable and enough density to support repeated settings work.
 
 This file follows the plain-text `DESIGN.md` convention introduced by Google Stitch and the extended practical section structure popularized by `awesome-design-md`. Treat it as the visual companion to `AGENTS.md`: coding instructions live there, product visual intent lives here.
 
 ## Visual Theme & Atmosphere
 
-SilkScribe's product UI is warm native utility. The app uses an ivory canvas, white and cream panels, soft umber text, forest-green primary actions, berry accents, and gold highlights. The result should feel like a polished macOS preference pane crossed with a focused transcription instrument.
+SilkScribe's product UI is warm native utility. The app uses a warm ivory canvas, translucent white and cream panels, soft umber text, ruby primary actions and focus, and gold highlights. The result should feel like a polished macOS preference pane crossed with a focused transcription instrument.
 
 Core characteristics:
 
@@ -245,38 +253,38 @@ The product should never drift into flashy AI-product chrome. Avoid oversized he
 
 ## Color Palette & Roles
 
-| Token                      |       Hex | Role                                                                   |
-| -------------------------- | --------: | ---------------------------------------------------------------------- |
-| `{colors.canvas}`          | `#fff8ef` | Main light app canvas and page floor.                                  |
-| `{colors.surface}`         | `#ffffff` | Primary cards, setting groups, dropdowns, and elevated product panels. |
-| `{colors.surface-alt}`     | `#f7efe4` | Sidebar, secondary panels, grouped row backgrounds, and quiet fills.   |
-| `{colors.border-subtle}`   | `#efe4d6` | Default low-contrast dividers and card outlines.                       |
-| `{colors.border-default}`  | `#e2d3c2` | Stronger panel borders and control outlines.                           |
-| `{colors.border-strong}`   | `#c9b9a6` | Scrollbar thumbs, disabled fills, strong separators.                   |
-| `{colors.text-primary}`    | `#1b1511` | Main text, headings, critical values.                                  |
-| `{colors.text-secondary}`  | `#3a2e24` | Secondary copy and readable descriptions.                              |
-| `{colors.text-tertiary}`   | `#6a594b` | Captions, helper text, inactive labels.                                |
-| `{colors.brand-primary}`   | `#293a18` | Light-mode primary action, success, completed onboarding states.       |
-| `{colors.brand-secondary}` | `#b1205f` | Active navigation, selected model, progress accents, emphasis.         |
-| `{colors.brand-highlight}` | `#febf2b` | Focus ring, glow, warning, onboarding atmosphere.                      |
-| `{colors.danger}`          | `#c11317` | Destructive action, errors, failed states.                             |
-| `{colors.info}`            | `#9e5f0a` | Warm informational accents and overlay atmosphere.                     |
+| Token                      | Value                    | Use                                                                  |
+| -------------------------- | ------------------------ | -------------------------------------------------------------------- |
+| `{colors.canvas}`          | `#f7f5f1`                | App background behind translucent panels.                            |
+| `{colors.surface}`         | `rgba(255,255,255,0.72)` | Cards, settings groups, document panels.                             |
+| `{colors.surface-alt}`     | `rgba(240,237,231,0.7)`  | Sidebar, secondary panels, grouped row backgrounds, and quiet fills. |
+| `{colors.border-subtle}`   | `rgba(70,48,41,0.075)`   | Default low-contrast dividers and card outlines.                     |
+| `{colors.border-default}`  | `rgba(70,48,41,0.12)`    | Stronger panel borders and control outlines.                         |
+| `{colors.border-strong}`   | `rgba(70,48,41,0.22)`    | Scrollbar thumbs, disabled fills, strong separators.                 |
+| `{colors.text-primary}`    | `#211b19`                | Main text, headings, critical values.                                |
+| `{colors.text-secondary}`  | `#534a46`                | Secondary copy and readable descriptions.                            |
+| `{colors.text-tertiary}`   | `#7b716c`                | Captions, helper text, inactive labels.                              |
+| `{colors.brand-primary}`   | `#a51f48`                | Primary actions, focus rings, active navigation, selection.          |
+| `{colors.brand-highlight}` | `#d2a343`                | Glow, warning, readiness energy, progress blends.                    |
+| `{colors.success}`         | `#2d705d`                | Completed and ready states.                                          |
+| `{colors.danger}`          | `#b52a36`                | Destructive action, errors, failed states.                           |
+| `{colors.info}`            | `#9a7132`                | Warm informational accents.                                          |
 
-Dark mode inverts toward near-black ink surfaces: `{colors.dark-ink-0}` `#0f0c0a`, `{colors.dark-ink-1}` `#15110e`, `{colors.dark-ink-2}` `#1d1712`, and `{colors.dark-ink-3}` `#2a211a`. Text becomes warm parchment: `{colors.dark-text-1}` `#fff3e6`, `{colors.dark-text-2}` `#e7d9cb`, and `{colors.dark-text-3}` `#cbbba7`.
+Dark mode inverts toward near-black ink surfaces: `{colors.dark-ink-0}` `#121010` canvas with translucent `{colors.dark-ink-1}` and `{colors.dark-ink-2}` panels. Text becomes warm parchment: `{colors.dark-text-1}` `#f7f1ed`, `{colors.dark-text-2}` `#d8ceca`, and `{colors.dark-text-3}` `#9d918c`. The primary action brightens to `{colors.dark-action-primary}` `#c83b66`.
 
 Usage rules:
 
-- Use forest green as the primary action in light mode, never as a large decorative wash.
-- Use berry for selected, active, and "currently happening" states.
+- Use ruby (`{colors.brand-primary}`) for primary actions, focus and active states, never as a large decorative wash.
+- Use green only for success and readiness.
 - Use gold for focus, readiness glow, subtle ambient energy, and progress blends.
 - Use red only for actual failure or destructive behavior.
 - Do not invent blue or purple product accents. The marketing site has sibling colors, but product UI is governed by the tokens above.
 
 ## Typography Rules
 
-SilkScribe uses the platform-native Apple stack first:
+SilkScribe uses Manrope (bundled with `@fontsource/manrope`), falling back to the platform stack:
 
-`'SF Pro Text', 'SF Pro Display', Inter, 'Segoe UI', sans-serif`
+`Manrope, 'SF Pro Text', -apple-system, 'Segoe UI', sans-serif`
 
 Technical values use:
 
@@ -320,9 +328,9 @@ Do not:
 - Turn the sidebar into a marketing nav.
 - Add dense explanatory text inside nav rows.
 
-### Home Dashboard
+### Home
 
-Dashboard panels use rounded surfaces, subtle warm gradients, and small readiness/status cards. The dashboard should answer: "Am I ready to dictate, and what happened recently?"
+Home is a calm overview, not a dashboard of charts. It should answer: "Am I ready to dictate, what needs my attention, and what happened recently?" Dictation status and the shortcut come first, then items that need attention, then recent dictations, meetings and files.
 
 Use:
 
@@ -349,7 +357,7 @@ Long explanations should live in tooltips or compact helper copy. Do not create 
 
 Button variants:
 
-- Primary: forest green fill, ivory text, matching border, card shadow, hover lift.
+- Primary: ruby fill, light text, matching border, card shadow, hover lift.
 - Primary soft: berry text on low-opacity berry fill.
 - Secondary: cream fill, ink text, default border, hover to elevated white.
 - Danger: red fill, white text, hover red-deep.
@@ -389,7 +397,7 @@ Badges use pill or small-radius geometry, never oversized tags. Tooltips use `{c
 Alerts:
 
 - Info: warm sand or gold tint.
-- Success: forest tint in light mode, gold tint in dark mode.
+- Success: green tint (`{colors.success}`).
 - Danger: red text and low-opacity red background.
 - Keep alert copy short and directly actionable.
 
@@ -481,8 +489,8 @@ Dark mode uses the same hierarchy with darker ink surfaces and stronger black sh
 
 - Do keep SilkScribe native, quiet, offline-first, and utility-focused.
 - Do use the existing CSS token names when implementing UI.
-- Do use forest green for primary light-mode actions and gold for dark-mode primary actions.
-- Do use berry for active states, selections, and progress emphasis.
+- Do use ruby for primary actions, focus, active states and selections in both themes.
+- Do use gold for highlights and progress energy.
 - Do preserve compact settings rows and grouped panels.
 - Do use gold focus rings and clear `focus-visible` states.
 - Do preserve dark mode, reduced motion, and RTL-aware controls.
@@ -525,7 +533,7 @@ Rules:
 
 When generating SilkScribe UI, use this shorthand:
 
-> Build a warm native desktop utility UI for an offline-first speech-to-text app. Use ivory canvas `#fff8ef`, white/cream panels, ink text `#1b1511`, forest primary `#293a18`, berry accent `#b1205f`, gold focus/highlight `#febf2b`, soft warm borders, `12-22px` radii, and compact grouped settings rows. Keep it calm, dense, accessible, dark-mode aware, and speech-specific with subtle waveform/progress motion only for active states.
+> Build a warm native desktop utility UI for an offline-first speech-to-text app. Use ivory canvas `#f7f5f1`, translucent white/cream panels, ink text `#211b19`, ruby primary and focus `#a51f48`, gold highlight `#d2a343`, soft warm borders, `13-28px` radii, Manrope type, and compact grouped settings rows. Keep it calm, dense, accessible, dark-mode aware, and speech-specific with subtle waveform/progress motion only for active states.
 
 Preferred component defaults:
 

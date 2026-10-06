@@ -94,7 +94,7 @@ export const howItWorksSteps: Step[] = [
   {
     title: "Hold your shortcut",
     description:
-      "Start dictation from anywhere on your Mac. No dashboard, meeting bot, or extra writing workspace.",
+      "Start dictation from anywhere on your Mac, in any app.",
   },
   {
     title: "Say it naturally",
@@ -167,8 +167,8 @@ export const privacyCards: MarketingCard[] = [
     body: "Use local speech models so dictation can happen on your Mac.",
   },
   {
-    title: "No forced cloud workspace",
-    body: "SilkScribe is not designed around uploading every thought to a web dashboard.",
+    title: "No cloud workspace",
+    body: "Your dictations and meetings live in a Library on your Mac, not on a web dashboard.",
   },
   {
     title: "Clear permissions",
@@ -301,9 +301,9 @@ export const troubleshootingCards: TroubleshootingCard[] = [
     title: "Shortcut not firing",
     body: "A shortcut can fail if another app has claimed the same key combination or the keyboard backend needs adjustment.",
     steps: [
-      "Open SilkScribe Settings > General > SilkScribe Shortcuts.",
+      "Open SilkScribe Settings → Dictation → Shortcut.",
       "Choose a shortcut that is not already owned by Raycast, Spotlight, or another launcher.",
-      "If needed, switch the keyboard implementation in Debug settings and test again.",
+      "If needed, switch the keyboard backend under Settings → Dictation → Experimental and test again.",
     ],
   },
   {
@@ -312,7 +312,7 @@ export const troubleshootingCards: TroubleshootingCard[] = [
     body: "Most insertion issues come from focus or paste method selection rather than the speech engine.",
     steps: [
       "Keep the destination text field focused until transcription finishes.",
-      "Check Settings > Advanced > Paste Method.",
+      "Check Settings → Dictation → Output.",
       "If you preserve clipboard contents, SilkScribe may switch to direct insertion to avoid replacing your clipboard.",
     ],
   },
@@ -322,7 +322,7 @@ export const troubleshootingCards: TroubleshootingCard[] = [
     body: "If the preferred speech engine is still preparing, SilkScribe needs time to finish model setup locally.",
     steps: [
       "Wait for the model setup screen to finish preparing the offline engine.",
-      "Open Models settings to confirm the selected model is installed.",
+      "Open Settings → Engines & language to confirm the selected engine is installed.",
       "If a download fails, try again on a stable connection or switch to another supported model.",
     ],
     note: "Community models are supported, but troubleshooting is strongest for the default packaged options.",
@@ -332,9 +332,9 @@ export const troubleshootingCards: TroubleshootingCard[] = [
     title: "History and logs",
     body: "You can use history to confirm transcriptions succeeded even if insertion failed, then gather logs if support needs them.",
     steps: [
-      "Open the Home dashboard to review recent activity and saved transcripts.",
-      "Press Cmd+Shift+D to reveal Debug mode if the Debug section is hidden.",
-      "Then open Settings > Debug to reveal the log directory when support asks for logs.",
+      "Open Home or Library to review recent dictations and saved transcripts.",
+      "Press Cmd+Shift+D to show the Developer settings.",
+      "Then open Settings → Storage & privacy → Developer to reveal the log folder when support asks for logs.",
       "Share your macOS version, chip type, model choice, and the exact behavior you saw.",
     ],
   },
@@ -364,6 +364,12 @@ export const faqItems: FaqItem[] = [
     question: "Which models does SilkScribe support?",
     answer:
       "SilkScribe supports local transcription models, including Whisper variants and Parakeet V3 in supported builds. Exact availability can vary by release and Mac capabilities.",
+  },
+  {
+    id: "faq-meetings",
+    question: "Can SilkScribe take meeting notes?",
+    answer:
+      "Yes, on Apple Silicon Macs. Record a meeting with your mic and computer audio, and SilkScribe transcribes it, labels speakers, and writes notes that point back to the moment they came from. It all runs on your Mac, and no bot joins the call.",
   },
   {
     id: "faq-apple-intelligence",

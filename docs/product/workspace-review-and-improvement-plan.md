@@ -282,4 +282,6 @@ Suggested first research round: five to eight participants spanning frequent dic
 
 Defer chat-with-transcript, automatic folders/tags, calendar integrations, meeting bots, live captions, cross-recording voice recognition, team workspaces, and hosted inference. None is needed to resolve the current friction. Optional manual collections/tags can follow once search, saved state, and library scale are proven.
 
+> **Update (Oct 2026):** a live You/Others transcript shipped with the meeting orb (`workspace/live.rs`). Chat across meetings, calendar titles and call detection are now planned for the current cycle; meeting bots, team workspaces and hosted inference stay deferred.
+
 The next concrete implementation milestone should be Phase 1: capability-aware setup, independent partial-success states, and a reliable save/delete boundary. It improves the core product more than another visual overhaul or another model choice.

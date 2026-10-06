@@ -1,34 +1,41 @@
 # SilkScribe
 
-**A free, open source, and extensible speech-to-text application that works completely offline.**
+**Private dictation and meeting notes for your Mac. Everything runs on your device.**
 
-SilkScribe is a cross-platform desktop application that provides simple, privacy-focused speech transcription. Press a shortcut, speak, and have your words appear in any text field. This happens on your own computer without sending any information to the cloud.
+SilkScribe does two jobs in one app:
+
+- **Dictation** — hold a shortcut, speak, and clean text appears wherever your cursor is: Mail, Slack, Notion, your editor, a chat box.
+- **Meetings** — record a call with your mic and computer audio, follow a live transcript, and get a searchable transcript with speaker labels and AI notes that cite the moment they came from.
+
+Speech recognition and AI notes run locally. There's no account, no meeting bot, and no cloud workspace. Your recordings stay on your Mac, so you can play back any line to check it.
 
 ## Why SilkScribe?
 
-SilkScribe was created to fill the gap for a truly open source, extensible speech-to-text tool. As stated on [silkscribe.app](https://silkscribe.app):
-
-- **Free**: Accessibility tooling belongs in everyone's hands, not behind a paywall
-- **Open Source**: Together we can build further. Extend SilkScribe for yourself and contribute to something bigger
-- **Private**: Your voice stays on your computer. Get transcriptions without sending audio to the cloud
-- **Simple**: One tool, one job. Transcribe what you say and put it into a text box
-
-SilkScribe isn't trying to be the best speech-to-text app—it's trying to be the most forkable one.
+- **Private by design**: audio and transcripts stay on your device. Optional AI cleanup can use Apple Intelligence on your Mac, a local model through Ollama, or a provider you choose.
+- **Audio you keep**: every transcript links back to its audio, and AI notes point to the exact moment they came from.
+- **One library**: dictations, meetings and imported audio live together in one searchable Library.
+- **Open source**: read the code, build it yourself, and see exactly where your data goes.
 
 ## How It Works
 
-1. **Press** a configurable keyboard shortcut to start/stop recording (or use push-to-talk mode)
-2. **Speak** your words while the shortcut is active
-3. **Release** and SilkScribe processes your speech using Whisper
-4. **Get** your transcribed text pasted directly into whatever app you're using
+**Dictation**
 
-The process is entirely local:
+1. **Hold** your shortcut (or press it once to start and again to stop)
+2. **Speak** naturally — pauses, corrections and filler words are fine
+3. **Release** and the text is typed into the app you're using
 
-- Silence is filtered using VAD (Voice Activity Detection) with Silero
-- Transcription uses your choice of models:
-  - **Whisper models** (Small/Medium/Turbo/Large) with GPU acceleration when available
-  - **Parakeet V3** - CPU-optimized model with excellent performance and automatic language detection
-- Works on Windows, macOS, and Linux
+**Meetings**
+
+1. **Record meeting** captures your mic and your computer's audio as separate tracks
+2. A **live transcript** labels lines as You or Others while the call runs
+3. When you stop, SilkScribe transcribes the full recording, identifies speakers, and writes notes with sources
+
+Everything is processed locally:
+
+- Silence is filtered with Silero VAD
+- Dictation engines: **Parakeet V3** (recommended, fast on CPU), **Whisper** (Small/Medium/Turbo/Large, GPU-accelerated when available), **Moonshine**, and **SenseVoice**
+- Meeting transcripts use Qwen3-ASR with word timing; AI notes use a local Qwen model on Apple Silicon
+- Dictation works on macOS, Windows and Linux; meetings and AI notes need an Apple Silicon Mac
 
 ## Quick Start
 
@@ -37,9 +44,8 @@ The process is entirely local:
 1. Download the latest release from the [releases page](https://github.com/Saransh-Sharma/SilkScribe/releases) or the [website](https://silkscribe.app)
    - **macOS**: Also available via [Homebrew cask](https://formulae.brew.sh/cask/silkscribe): `brew install --cask silkscribe`
 2. Install the application
-3. Launch SilkScribe and grant necessary system permissions (microphone, accessibility)
-4. Configure your preferred keyboard shortcuts in Settings
-5. Start transcribing!
+3. Launch SilkScribe and follow setup: allow the microphone and Accessibility, and SilkScribe picks an engine for your Mac
+4. Try one dictation in the practice step, then use it anywhere
 
 ### Development Setup
 
@@ -57,17 +63,13 @@ For signed and notarized macOS direct-download releases, see [docs/direct-downlo
 
 ## Architecture
 
-SilkScribe is built as a Tauri application combining:
+SilkScribe is a Tauri application:
 
-- **Frontend**: React + TypeScript with Tailwind CSS for the settings UI
-- **Backend**: Rust for system integration, audio processing, and ML inference
-- **Core Libraries**:
-  - `whisper-rs`: Local speech recognition with Whisper models
-  - `transcription-rs`: CPU-optimized speech recognition with Parakeet models
-  - `cpal`: Cross-platform audio I/O
-  - `vad-rs`: Voice Activity Detection
-  - `rdev`: Global keyboard shortcuts and system events
-  - `rubato`: Audio resampling
+- **Frontend**: React + TypeScript (Home, Library, meeting documents, settings, onboarding, the recording indicator and the meeting orb)
+- **Backend**: Rust for audio capture, shortcuts, inference and storage
+- **Native bridges (macOS)**: Swift for meeting capture (ScreenCaptureKit + AVAudioEngine) and Apple Intelligence
+- **Local AI runtime**: a bundled Python worker for meeting transcription, speaker detection and notes (Qwen3-ASR, pyannote, MLX)
+- **Core libraries**: `transcribe-rs` (Whisper, Parakeet, Moonshine, SenseVoice), `cpal` (audio I/O), Silero VAD, `rubato` (resampling), SQLite for the Library
 
 ### Debug Mode
 
@@ -84,7 +86,7 @@ SilkScribe supports command-line flags for controlling a running instance and cu
 
 ```bash
 silkscribe --toggle-transcription    # Toggle recording on/off
-silkscribe --toggle-post-process     # Toggle recording with post-processing on/off
+silkscribe --toggle-post-process     # Toggle dictation with AI cleanup on/off
 silkscribe --cancel                  # Cancel the current operation
 ```
 
@@ -193,10 +195,10 @@ Without these tools, SilkScribe falls back to enigo which may have limited compa
 
 - You can also manage global shortcuts outside of SilkScribe via Unix signals, which lets Wayland window managers or other hotkey daemons keep ownership of keybindings:
 
-  | Signal    | Action                                    | Example                     |
-  | --------- | ----------------------------------------- | --------------------------- |
-  | `SIGUSR2` | Toggle transcription                      | `pkill -USR2 -n silkscribe` |
-  | `SIGUSR1` | Toggle transcription with post-processing | `pkill -USR1 -n silkscribe` |
+  | Signal    | Action                           | Example                     |
+  | --------- | -------------------------------- | --------------------------- |
+  | `SIGUSR2` | Toggle dictation                 | `pkill -USR2 -n silkscribe` |
+  | `SIGUSR1` | Toggle dictation with AI cleanup | `pkill -USR1 -n silkscribe` |
 
   Example Sway config:
 
@@ -231,35 +233,14 @@ The following are recommendations for running SilkScribe on your own machine. If
 - **Performance**: ~5x real-time speed on mid-range hardware (tested on i5)
 - **Automatic language detection** - no manual language selection required
 
-## Roadmap & Active Development
+## Roadmap
 
-We're actively working on several features and improvements. Contributions and feedback are welcome!
+Current focus, in order:
 
-### In Progress
+- **Dictation**: clipboard-safe pasting, AI cleanup on every dictation (on-device by default where available), per-app styles, voice commands on selected text, a dictionary with replacements and snippets
+- **Meetings**: your own notes alongside the live transcript, Enhance to merge them with the transcript, note templates, call detection, calendar titles, and asking questions across meetings
 
-**Debug Logging:**
-
-- Adding debug logging to a file to help diagnose issues
-
-**macOS Keyboard Improvements:**
-
-- Support for Globe key as transcription trigger
-- A rewrite of global shortcut handling for MacOS, and potentially other OS's too.
-
-**Opt-in Analytics:**
-
-- Collect anonymous usage data to help improve SilkScribe
-- Privacy-first approach with clear opt-in
-
-**Settings Refactoring:**
-
-- Cleanup and refactor settings system which is becoming bloated and messy
-- Implement better abstractions for settings management
-
-**Tauri Commands Cleanup:**
-
-- Abstract and organize Tauri command patterns
-- Investigate tauri-specta for improved type safety and organization
+See [CHANGELOG.md](CHANGELOG.md) for what has shipped.
 
 ## Troubleshooting
 
@@ -269,11 +250,8 @@ If you're behind a proxy, firewall, or in a restricted network environment where
 
 #### Step 1: Find Your App Data Directory
 
-1. Open SilkScribe settings
-2. Navigate to the **About** section
-3. Copy the "App Data Directory" path shown there, or use the shortcuts:
-   - **macOS**: `Cmd+Shift+D` to open debug menu
-   - **Windows/Linux**: `Ctrl+Shift+D` to open debug menu
+1. Open SilkScribe **Settings → Storage & privacy**
+2. Copy the "App data folder" path shown there
 
 The typical paths are:
 
@@ -352,7 +330,7 @@ Final structure should look like:
 #### Step 5: Verify Installation
 
 1. Restart SilkScribe
-2. Open Settings → Models
+2. Open Settings → Engines & language
 3. Your manually installed models should now appear as "Downloaded"
 4. Select the model you want to use and test transcription
 
@@ -402,4 +380,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-_"Your search for the right speech-to-text tool can end here—not because SilkScribe is perfect, but because you can make it perfect for you."_
+_Private dictation and meeting notes, on your Mac, in your hands._

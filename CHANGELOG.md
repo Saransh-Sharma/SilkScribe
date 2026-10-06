@@ -1,5 +1,30 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- **Meetings workspace**: record a meeting with your mic and computer audio as separate tracks, then get a transcript with word timing (Qwen3-ASR), speaker labels, and local AI notes whose every item cites the transcript. Imports audio files too.
+- **Library**: dictations, meetings and imported audio in one searchable list, with an editor, audio playback, speaker renaming and merging, notes review, and export to TXT, Markdown, SRT, VTT and JSON.
+- **Live transcript and meeting orb**: while a meeting records, lines appear as You or Others, and a floating orb on the screen edge shows them with pause, resume and stop.
+- **Dictation during meetings**: dictate while a meeting records; your dictated words are kept out of the meeting.
+- **Five-cue sound feedback**, a redesigned recording indicator with light and dark themes, and a rebuilt onboarding that recovers when permissions change.
+- `scripts/dictation-latency.ts` summarises dictation timing from the logs (p50/p95 per engine).
+
+### Changed
+
+- App copy rewritten to a style guide (`docs/copy-style-guide.md`); translations whose English changed now fall back to English until retranslated.
+- History keeps 500 dictations by default instead of 5.
+- The dictation engine loads at launch, so the first dictation doesn't wait for it.
+- A shortcut press during transcription now starts the next dictation when the current one finishes.
+- The mic opens at its current sample rate on macOS, so a call in progress isn't disturbed.
+
+### Fixed
+
+- The AI cleanup shortcut did nothing until a prompt was picked by hand; the Clean up prompt is now selected by default, and the recording indicator says when cleanup didn't run.
+- Meeting jobs no longer ask for speaker detection while its engine isn't available.
+- "Mute other audio" is back in Settings → Audio, the paste delay setting saves again, Home shows the shortcut in a readable form, and retried dictations update their Library copy.
+
 ## [0.3.0] - 2025-07-11
 
 ### Added
