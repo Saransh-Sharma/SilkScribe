@@ -1023,7 +1023,9 @@
     "letPeopleKnow": "Let people know",
     "prompt": {
       "title": "Take notes for this {{app}} call?",
+      "titleEvent": "Take notes for “{{title}}”?",
       "body": "SilkScribe records your mic and {{app}} on this Mac. Nothing is uploaded.",
+      "bodyEvent": "SilkScribe records your mic and computer audio on this Mac. Nothing is uploaded.",
       "start": "Start notes",
       "notNow": "Not now"
     }
@@ -1386,7 +1388,8 @@
       "copyText": "Couldn’t copy the text",
       "saveStyle": "Couldn’t save the style",
       "startMeeting": "Couldn’t start the meeting",
-      "addToDictionary": "Couldn’t add to your dictionary"
+      "addToDictionary": "Couldn’t add to your dictionary",
+      "connectCalendar": "Couldn’t connect your calendar"
     },
     "liveTranscript": "Live transcript",
     "liveTranscriptNote": "A more accurate transcript replaces this once processing finishes.",
@@ -1470,6 +1473,26 @@
         "definitions": "Definitions",
         "questions": "Questions"
       }
+    },
+    "upcoming": {
+      "title": "Upcoming",
+      "now": "Now",
+      "tomorrow": "Tomorrow {{time}}",
+      "takeNotes": "Take notes"
+    },
+    "calendarCard": {
+      "title": "See your next meetings here",
+      "body": "Connect your calendar to name notes after meetings and get a reminder as they start. It stays on this Mac."
+    },
+    "calendar": {
+      "title": "Calendar",
+      "description": "Shows upcoming meetings on Home and names notes after them. Your calendar stays on this Mac.",
+      "connect": "Connect calendar",
+      "disconnect": "Disconnect calendar",
+      "reminders": "Remind me as meetings start",
+      "remindersHint": "Offers to take notes a minute before",
+      "denied": "Calendar access is off. Turn it on in System Settings → Privacy & Security → Calendars.",
+      "openSettings": "Open System Settings"
     }
   },
   "audioPlayer": {

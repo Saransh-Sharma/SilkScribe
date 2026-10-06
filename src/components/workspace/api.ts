@@ -70,6 +70,13 @@ export const api = {
   },
   /** Call apps running now, to capture just one of them. */
   callApps: () => commands.workspaceCallApps(),
+  calendarStatus: () => commands.calendarStatus(),
+  connectCalendar: () => unwrap(commands.connectCalendar()),
+  disconnectCalendar: () => commands.disconnectCalendar(),
+  upcomingMeetings: () => commands.upcomingMeetings(),
+  /** The calendar meeting going on now, to name a recording after. */
+  currentMeeting: () => commands.currentCalendarMeeting(),
+  openCalendarPrivacy: () => unwrap(commands.openCalendarPrivacy()),
   /** Apps dictated into recently, for per-app styles. */
   recentDictationApps: () => unwrap(commands.recentDictationApps()),
   /** Today's dictation, the streak and the latest dictations. */

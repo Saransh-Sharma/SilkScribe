@@ -5,6 +5,7 @@ import {
   commands,
   type LiveSegment,
   type MeetingOrbPhase,
+  type MeetingPrompt,
   type RecordingStatus,
 } from "@/bindings";
 import i18n from "@/i18n";
@@ -38,12 +39,14 @@ interface OrbStatePayload {
   phase: MeetingOrbPhase;
   document_id: string | null;
   title: string;
+  prompt?: MeetingPrompt | null;
 }
 
 export interface MeetingOrbPreview {
   mode: "collapsed" | "expanded";
   phase?: MeetingOrbPhase;
   title?: string;
+  prompt?: MeetingPrompt;
   status?: Partial<RecordingStatus>;
   segments?: LiveSegment[];
   unavailable?: boolean;
@@ -91,6 +94,9 @@ const MeetingOrb: React.FC<{ preview?: MeetingOrbPreview }> = ({ preview }) => {
   );
   const [documentId, setDocumentId] = useState<string | null>(null);
   const [title, setTitle] = useState(preview?.title ?? "");
+  const [prompt, setPrompt] = useState<MeetingPrompt | null>(
+    preview?.prompt ?? null,
+  );
   const [status, setStatus] = useState<RecordingStatus>({
     ...EMPTY_STATUS,
     ...preview?.status,
@@ -225,6 +231,7 @@ const MeetingOrb: React.FC<{ preview?: MeetingOrbPreview }> = ({ preview }) => {
             return payload.phase;
           });
           setTitle(payload.title);
+          setPrompt(payload.prompt ?? null);
           if (payload.phase === "hidden") {
             clearTimer();
             setMode("collapsed");
@@ -272,6 +279,7 @@ const MeetingOrb: React.FC<{ preview?: MeetingOrbPreview }> = ({ preview }) => {
       setPhase(snapshot.phase);
       if (snapshot.phase === "prompt") setMode("expanded");
       setTitle(snapshot.title);
+      setPrompt(snapshot.prompt ?? null);
       if (transcript && transcript.document_id === snapshot.document_id) {
         setSegments(transcript.segments);
         setUnavailable(transcript.unavailable);
@@ -377,6 +385,15 @@ const MeetingOrb: React.FC<{ preview?: MeetingOrbPreview }> = ({ preview }) => {
   const direction = getLanguageDirection(i18n.language);
 
   if (phase === "prompt") {
+    // A calendar meeting's name says the most; otherwise the call app's.
+    const app = prompt?.app?.name ?? title;
+    const question = prompt?.title
+      ? t("meetingOrb.prompt.titleEvent", { title: prompt.title })
+      : t("meetingOrb.prompt.title", { app });
+    const body =
+      prompt && !prompt.app
+        ? t("meetingOrb.prompt.bodyEvent")
+        : t("meetingOrb.prompt.body", { app });
     return (
       <div
         className="orb-stage"
@@ -384,18 +401,11 @@ const MeetingOrb: React.FC<{ preview?: MeetingOrbPreview }> = ({ preview }) => {
         data-state="prompt"
         dir={direction}
       >
-        <section
-          className="orb-card orb-prompt"
-          aria-label={t("meetingOrb.prompt.title", { app: title })}
-        >
+        <section className="orb-card orb-prompt" aria-label={question}>
           <header className="orb-header">
             <div className="orb-heading">
-              <p className="orb-title">
-                {t("meetingOrb.prompt.title", { app: title })}
-              </p>
-              <p className="orb-meta">
-                {t("meetingOrb.prompt.body", { app: title })}
-              </p>
+              <p className="orb-title">{question}</p>
+              <p className="orb-meta">{body}</p>
             </div>
           </header>
           <footer className="orb-footer">

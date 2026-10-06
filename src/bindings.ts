@@ -312,6 +312,54 @@ async exportDictionary(path: string) : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async calendarStatus() : Promise<CalendarStatus> {
+    return await TAURI_INVOKE("calendar_status");
+},
+/**
+ * Connects the calendar, asking macOS for access the first time.
+ */
+async connectCalendar() : Promise<Result<CalendarStatus, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("connect_calendar") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async disconnectCalendar() : Promise<CalendarStatus> {
+    return await TAURI_INVOKE("disconnect_calendar");
+},
+async changeCalendarRemindersSetting(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_calendar_reminders_setting", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * The next few meetings in the coming day, for Home.
+ */
+async upcomingMeetings() : Promise<CalendarEvent[]> {
+    return await TAURI_INVOKE("upcoming_meetings");
+},
+/**
+ * The meeting happening now, to name a new recording after.
+ */
+async currentCalendarMeeting() : Promise<CalendarEvent | null> {
+    return await TAURI_INVOKE("current_calendar_meeting");
+},
+/**
+ * Opens Privacy & Security → Calendars, to turn access back on.
+ */
+async openCalendarPrivacy() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("open_calendar_privacy") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 /**
  * Temporarily unregister a binding while the user is editing it in the UI.
  * This avoids firing the action while keys are being recorded.
@@ -1266,8 +1314,8 @@ async meetingOrbCopy(text: string) : Promise<Result<null, string>> {
 }
 },
 /**
- * Answer the "take notes for this call?" prompt. Starting opens the main
- * window, which starts the meeting with the person's usual setup.
+ * Answer the "take notes?" prompt. Starting opens the main window, which
+ * starts the meeting with the person's usual setup.
  */
 async meetingOrbAnswerPrompt(start: boolean) : Promise<void> {
     await TAURI_INVOKE("meeting_orb_answer_prompt", { start });
@@ -1405,7 +1453,15 @@ export type AppSettings = { bindings: Partial<{ [key in string]: ShortcutBinding
  * With push-to-talk, a quick tap keeps recording hands-free until the
  * next press. On for new installs; existing ones opt in (see migration 3).
  */
-tap_to_lock?: boolean; audio_feedback?: boolean; audio_feedback_volume?: number; sound_theme?: SoundTheme; start_hidden?: boolean; autostart_enabled?: boolean; update_checks_enabled?: boolean; selected_model?: string; has_completed_onboarding?: boolean; always_on_microphone?: boolean; selected_microphone?: string | null; clamshell_microphone?: string | null; selected_output_device?: string | null; translate_to_english?: boolean; selected_language?: string; overlay_position?: OverlayPosition; overlay_appearance?: OverlayAppearance; debug_mode?: boolean; log_level?: LogLevel; custom_words?: string[]; replacements?: Replacement[]; snippets?: Snippet[]; model_unload_timeout?: ModelUnloadTimeout; word_correction_threshold?: number; history_limit?: number; recording_retention_period?: RecordingRetentionPeriod; paste_method?: PasteMethod; clipboard_handling?: ClipboardHandling; auto_submit?: boolean; auto_submit_key?: AutoSubmitKey; post_process_enabled?: boolean; post_process_provider_id?: string; post_process_providers?: PostProcessProvider[]; post_process_api_keys?: Partial<{ [key in string]: string }>; post_process_models?: Partial<{ [key in string]: string }>; post_process_prompts?: LLMPrompt[]; post_process_selected_prompt_id?: string | null; 
+tap_to_lock?: boolean; audio_feedback?: boolean; audio_feedback_volume?: number; sound_theme?: SoundTheme; start_hidden?: boolean; autostart_enabled?: boolean; update_checks_enabled?: boolean; selected_model?: string; has_completed_onboarding?: boolean; always_on_microphone?: boolean; selected_microphone?: string | null; clamshell_microphone?: string | null; selected_output_device?: string | null; translate_to_english?: boolean; selected_language?: string; overlay_position?: OverlayPosition; overlay_appearance?: OverlayAppearance; debug_mode?: boolean; log_level?: LogLevel; custom_words?: string[]; 
+/**
+ * The person connected their calendar (macOS access is checked too).
+ */
+calendar_connected?: boolean; 
+/**
+ * Offer to take notes as a calendar meeting starts.
+ */
+calendar_reminders?: boolean; replacements?: Replacement[]; snippets?: Snippet[]; model_unload_timeout?: ModelUnloadTimeout; word_correction_threshold?: number; history_limit?: number; recording_retention_period?: RecordingRetentionPeriod; paste_method?: PasteMethod; clipboard_handling?: ClipboardHandling; auto_submit?: boolean; auto_submit_key?: AutoSubmitKey; post_process_enabled?: boolean; post_process_provider_id?: string; post_process_providers?: PostProcessProvider[]; post_process_api_keys?: Partial<{ [key in string]: string }>; post_process_models?: Partial<{ [key in string]: string }>; post_process_prompts?: LLMPrompt[]; post_process_selected_prompt_id?: string | null; 
 /**
  * Run AI cleanup on the main dictation shortcut too, not only on the
  * "Dictate with AI cleanup" shortcut. Needs `post_process_enabled`.
@@ -1458,6 +1514,40 @@ export type AudioDevice = { index: string; name: string; is_default: boolean }
 export type AutoSubmitKey = "enter" | "ctrl_enter" | "cmd_enter"
 export type AvailableAccelerators = { whisper: string[]; ort: string[]; gpu_devices: GpuDeviceOption[] }
 export type BindingResponse = { success: boolean; binding: ShortcutBinding | null; error: string | null }
+export type CalendarAccess = 
+/**
+ * macOS hasn't asked yet.
+ */
+"not_determined" | 
+/**
+ * Turned off in System Settings.
+ */
+"denied" | "granted" | 
+/**
+ * Only allowed to add events, which isn't enough to read them.
+ */
+"write_only" | 
+/**
+ * This build or platform can't read calendars.
+ */
+"unavailable"
+/**
+ * One calendar event. Times are Unix seconds.
+ */
+export type CalendarEvent = { id: string; title: string; start: number; end: number; all_day?: boolean; calendar?: string; 
+/**
+ * How many people are invited.
+ */
+attendees?: number; 
+/**
+ * A Zoom, Meet, Teams or similar link in the event.
+ */
+join_url?: string | null }
+export type CalendarStatus = { access: CalendarAccess; 
+/**
+ * The person connected it and macOS allows it.
+ */
+connected: boolean }
 export type CaptureDevice = { id: string; name: string }
 export type ClipboardHandling = "dont_modify" | "copy_to_clipboard"
 export type CustomSounds = { start: boolean; stop: boolean }
@@ -1564,7 +1654,24 @@ export type MeetingOrbPhase = "hidden" | "recording" |
  * A call started: offering to take notes for it.
  */
 "prompt"
-export type MeetingOrbSnapshot = { phase: MeetingOrbPhase; document_id: string | null; title: string }
+export type MeetingOrbSnapshot = { phase: MeetingOrbPhase; document_id: string | null; title: string; 
+/**
+ * What the prompt phase is asking about.
+ */
+prompt?: MeetingPrompt | null }
+/**
+ * What the orb offers to take notes for: a call that started, a calendar
+ * meeting that's starting, or both.
+ */
+export type MeetingPrompt = { 
+/**
+ * The call app, when a call was noticed; recording captures just it.
+ */
+app: FocusedApp | null; 
+/**
+ * The calendar meeting's title, when there is one.
+ */
+title: string | null }
 /**
  * Observations from this machine, not a quality benchmark or guaranteed bound.
  */

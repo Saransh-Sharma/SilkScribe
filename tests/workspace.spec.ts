@@ -664,6 +664,59 @@ test("a tap can make dictation hands-free", async ({ page }) => {
   await expect(tap).toHaveCount(0);
 });
 
+test("Home lists upcoming meetings from the calendar", async ({ page }) => {
+  await page.goto(`${fixture}?calendar`);
+  const upcoming = page.getByRole("region", { name: "Upcoming" });
+  await expect(upcoming.getByRole("listitem")).toHaveCount(2);
+  await expect(upcoming.getByRole("listitem").first()).toContainText(
+    "NowTeam standup",
+  );
+  await upcoming
+    .getByRole("listitem")
+    .nth(1)
+    .getByRole("button", { name: "Take notes" })
+    .click();
+  await expect(page.getByLabel("Title")).toHaveValue("Design review");
+});
+
+test("Home offers to connect the calendar once there are meetings", async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const card = page.getByRole("region", {
+    name: "See your next meetings here",
+  });
+  await card.getByRole("button", { name: "Connect calendar" }).click();
+  await expect(card).toBeHidden();
+  await expect(
+    page.getByRole("region", { name: "Upcoming" }).getByRole("listitem"),
+  ).toHaveCount(2);
+});
+
+test("a new meeting is named after the calendar meeting going on", async ({
+  page,
+}) => {
+  await page.goto(`${fixture}?calendar`);
+  await page.getByRole("button", { name: "Record meeting" }).first().click();
+  await expect(page.getByLabel("Title")).toHaveValue("Team standup");
+});
+
+test("AI notes settings connect and disconnect the calendar", async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
+  await page.getByRole("button", { name: "AI notes", exact: true }).click();
+  await page.getByRole("button", { name: "Connect calendar" }).click();
+  await expect(
+    page.getByRole("switch", { name: "Remind me as meetings start" }),
+  ).toBeChecked();
+  await page.getByRole("button", { name: "Disconnect calendar" }).click();
+  await expect(
+    page.getByRole("button", { name: "Connect calendar" }),
+  ).toBeVisible();
+});
+
 test("Home asks to finish dictation setup when it isn't ready", async ({
   page,
 }) => {

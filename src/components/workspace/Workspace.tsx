@@ -29,6 +29,7 @@ import {
   Cpu,
   ShieldCheck,
   Sparkles,
+  CalendarDays,
 } from "lucide-react";
 import { toast } from "sonner";
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
@@ -56,6 +57,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { useOsType } from "@/hooks/useOsType";
 import { formatKeyCombination } from "@/lib/utils/keyboard";
 import { readSetup, writeSetup, readWorkflowOptions } from "./setupStorage";
+import { CalendarSettings } from "./CalendarSettings";
 import "./workspace.css";
 import { toastError } from "@/lib/utils/toastError";
 
@@ -131,6 +133,47 @@ export default function Workspace({
       current = false;
     };
   }, [cleanupCovered]);
+  // Upcoming meetings from the calendar, once it's connected.
+  const [calendar, setCalendar] = useState<
+    import("@/bindings").CalendarStatus | null
+  >(null);
+  const [upcoming, setUpcoming] = useState<
+    import("@/bindings").CalendarEvent[]
+  >([]);
+  const [calendarCardDismissed, setCalendarCardDismissed] = useState(() =>
+    readSetup("calendar-card-dismissed", false),
+  );
+  const loadCalendar = useCallback(async () => {
+    try {
+      const status = await api.calendarStatus();
+      setCalendar(status);
+      setUpcoming(status.connected ? await api.upcomingMeetings() : []);
+    } catch {
+      setCalendar(null);
+      setUpcoming([]);
+    }
+  }, []);
+  useEffect(() => {
+    void loadCalendar();
+    const timer = window.setInterval(() => void loadCalendar(), 60_000);
+    window.addEventListener("focus", loadCalendar);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("focus", loadCalendar);
+    };
+  }, [loadCalendar]);
+  const formatEventTime = (event: import("@/bindings").CalendarEvent) => {
+    const now = Date.now() / 1000;
+    if (event.start <= now) return t("workspace.upcoming.now");
+    const start = new Date(event.start * 1000);
+    const time = start.toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+    return start.toDateString() === new Date().toDateString()
+      ? time
+      : t("workspace.upcoming.tomorrow", { time });
+  };
   const [dictationReady, setDictationReady] = useState(false);
   useEffect(() => {
     let current = true;
@@ -374,11 +417,15 @@ export default function Workspace({
   const refreshRef = useRef(refresh);
   refreshRef.current = refresh;
 
-  // A call started and the person chose "Start notes" on the orb: record it
-  // with their usual setup, capturing just that app. If it can't start (e.g.
-  // a permission is missing), open the meeting form with it filled in.
-  const startCall = async (call: import("@/bindings").FocusedApp) => {
-    const callTitle = t("workspace.callTitle", { app: call.name });
+  // The person chose "Start notes" on the orb, for a call that started or a
+  // calendar meeting that's starting: record it with their usual setup,
+  // capturing just the call app if there is one. If it can't start (e.g. a
+  // permission is missing), open the meeting form with it filled in.
+  const startCall = async (prompt: import("@/bindings").MeetingPrompt) => {
+    const call = prompt.app;
+    const callTitle =
+      prompt.title ??
+      (call ? t("workspace.callTitle", { app: call.name }) : "");
     try {
       setRecording(
         await api.start({
@@ -386,7 +433,7 @@ export default function Workspace({
           microphone_id: device || null,
           system_audio: true,
           options,
-          target_bundle_id: call.bundle_id,
+          target_bundle_id: call?.bundle_id ?? null,
         }),
       );
       await refreshRef.current();
@@ -395,7 +442,7 @@ export default function Workspace({
       setCreate("meeting");
       setTitle(callTitle);
       setSystem(true);
-      setTargetApp(call.bundle_id);
+      setTargetApp(call?.bundle_id ?? "");
       toastError(t("workspace.errors.startMeeting"), error);
     }
   };
@@ -404,7 +451,7 @@ export default function Workspace({
   useEffect(() => {
     let disposed = false;
     let off: (() => void) | undefined;
-    void listen<import("@/bindings").FocusedApp>(
+    void listen<import("@/bindings").MeetingPrompt>(
       "meeting-call-start",
       (event) => void startCallRef.current(event.payload),
     )
@@ -424,6 +471,13 @@ export default function Workspace({
       .callApps()
       .then(setCallApps)
       .catch(() => setCallApps([]));
+    // Name a new meeting after the calendar event going on, if there is one.
+    void api
+      .currentMeeting()
+      .then((event) => {
+        if (event) setTitle((current) => current || event.title);
+      })
+      .catch(() => {});
   }, [create]);
   const selectedRef = useRef(selected);
   selectedRef.current = selected;
@@ -1630,6 +1684,7 @@ export default function Workspace({
                   {settingsPage === "models" && (
                     <AdvancedSettings group="runtime" />
                   )}
+                  {settingsPage === "local" && <CalendarSettings />}
                   {settingsPage === "models" && (
                     <details>
                       <summary>
@@ -1877,6 +1932,75 @@ export default function Workspace({
                       </button>
                     </section>
                   )}
+                  {upcoming.length > 0 && (
+                    <section
+                      className="ws-upcoming"
+                      aria-label={t("workspace.upcoming.title")}
+                    >
+                      <h2>{t("workspace.upcoming.title")}</h2>
+                      <ul>
+                        {upcoming.map((event) => (
+                          <li key={event.id}>
+                            <time>{formatEventTime(event)}</time>
+                            <span dir="auto">{event.title}</span>
+                            <button
+                              className="ws-text-button"
+                              onClick={async () => {
+                                await beginMeeting();
+                                setTitle(event.title);
+                              }}
+                            >
+                              {t("workspace.upcoming.takeNotes")}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+                  {calendar &&
+                    !calendar.connected &&
+                    calendar.access !== "unavailable" &&
+                    !calendarCardDismissed &&
+                    documents.some((doc) => doc.source === "meeting") && (
+                      <section
+                        className="ws-suggestion"
+                        aria-label={t("workspace.calendarCard.title")}
+                      >
+                        <CalendarDays size={18} aria-hidden="true" />
+                        <div>
+                          <strong>{t("workspace.calendarCard.title")}</strong>
+                          <p>{t("workspace.calendarCard.body")}</p>
+                        </div>
+                        <button
+                          className="ws-primary"
+                          onClick={async () => {
+                            try {
+                              const status = await api.connectCalendar();
+                              setCalendar(status);
+                              if (status.connected) void loadCalendar();
+                              else if (status.access === "denied")
+                                toast.error(t("workspace.calendar.denied"));
+                            } catch (error) {
+                              toastError(
+                                t("workspace.errors.connectCalendar"),
+                                error,
+                              );
+                            }
+                          }}
+                        >
+                          {t("workspace.calendar.connect")}
+                        </button>
+                        <button
+                          className="ws-text-button"
+                          onClick={() => {
+                            setCalendarCardDismissed(true);
+                            writeSetup("calendar-card-dismissed", true);
+                          }}
+                        >
+                          {t("workspace.cleanupCard.notNow")}
+                        </button>
+                      </section>
+                    )}
                   {attention.length > 0 && (
                     <section
                       className="ws-active-jobs"

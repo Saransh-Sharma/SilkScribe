@@ -431,6 +431,53 @@ api.dictationSummary = async () => ({
     : [],
 });
 api.enableOnDeviceCleanup = async () => null;
+// ?calendar: a connected calendar with a meeting going on and one later.
+let calendarConnected = params.has("calendar");
+const calendarEvents = () => {
+  const now = Math.floor(Date.now() / 1000);
+  return [
+    {
+      id: "standup@1",
+      title: "Team standup",
+      start: now - 120,
+      end: now + 780,
+      all_day: false,
+      calendar: "Work",
+      attendees: 5,
+      join_url: "https://zoom.us/j/1",
+    },
+    {
+      id: "review@2",
+      title: "Design review",
+      start: now + 3600,
+      end: now + 5400,
+      all_day: false,
+      calendar: "Work",
+      attendees: 3,
+      join_url: null,
+    },
+  ];
+};
+api.calendarStatus = async () => ({
+  access: calendarConnected ? "granted" : "not_determined",
+  connected: calendarConnected,
+});
+api.connectCalendar = async () => {
+  calendarConnected = true;
+  return { access: "granted", connected: true };
+};
+api.disconnectCalendar = async () => {
+  calendarConnected = false;
+  return { access: "granted", connected: false };
+};
+api.upcomingMeetings = async () => (calendarConnected ? calendarEvents() : []);
+api.currentMeeting = async () =>
+  calendarConnected ? calendarEvents()[0] : null;
+api.openCalendarPrivacy = async () => null;
+commands.changeCalendarRemindersSetting = async () => ({
+  status: "ok",
+  data: null,
+});
 api.addToDictionary = async (heard, write) =>
   heard && heard !== write ? "replacement" : "word";
 // Dictionary edits save without a backend.

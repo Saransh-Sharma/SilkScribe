@@ -1255,6 +1255,49 @@
 .ws-dictation-text:hover span {
   color: var(--ss-brand-primary);
 }
+/* The next meetings from the person's calendar. */
+.ws-upcoming {
+  padding: 14px 0 18px;
+  border-bottom: 1px solid var(--ss-border-subtle);
+}
+.ws-upcoming ul {
+  display: flex;
+  flex-direction: column;
+  margin-top: 6px;
+}
+.ws-upcoming li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+  padding: 6px 0;
+  font-size: 13px;
+}
+.ws-upcoming time {
+  flex-shrink: 0;
+  min-width: 112px;
+  font-size: 12px;
+  color: var(--ss-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+.ws-upcoming span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ss-text-primary);
+}
+.ws-calendar-settings {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 28px;
+}
+.ws-calendar-settings .ws-field-toggle {
+  align-self: stretch;
+}
 /* Notes the person wrote read as theirs; AI additions sit back a step and
    carry their citations. */
 .ws-note-item[data-origin="ai"] textarea {

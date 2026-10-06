@@ -617,6 +617,12 @@ const ORB_STATES: Record<string, Omit<MeetingOrbPreview, "mode">> = {
     behind: true,
   },
   prompt: { phase: "prompt", title: "Zoom" },
+  // A calendar meeting starting, with no call noticed yet.
+  reminder: {
+    phase: "prompt",
+    title: "Design review",
+    prompt: { app: null, title: "Design review" },
+  },
   error: {
     status: {
       seconds: 402,

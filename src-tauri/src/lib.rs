@@ -4,6 +4,7 @@ mod app_context;
 mod apple_intelligence;
 mod audio_feedback;
 pub mod audio_toolkit;
+mod calendar;
 mod call_watch;
 pub mod cli;
 mod clipboard;
@@ -366,6 +367,7 @@ fn initialize_core_logic(app_handle: &AppHandle) {
     meeting_orb::create(app_handle);
     // Offers to take notes when a call starts (macOS)
     call_watch::start(app_handle.clone());
+    calendar::start(app_handle.clone());
 }
 
 #[tauri::command]
@@ -623,6 +625,13 @@ fn command_builder() -> Builder<tauri::Wry> {
             dictionary::add_to_dictionary,
             dictionary::import_dictionary,
             dictionary::export_dictionary,
+            calendar::calendar_status,
+            calendar::connect_calendar,
+            calendar::disconnect_calendar,
+            calendar::change_calendar_reminders_setting,
+            calendar::upcoming_meetings,
+            calendar::current_calendar_meeting,
+            calendar::open_calendar_privacy,
             shortcut::suspend_binding,
             shortcut::resume_binding,
             shortcut::change_mute_while_recording_setting,

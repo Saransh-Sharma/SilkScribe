@@ -443,6 +443,18 @@ test.describe("meeting orb", () => {
     }
   });
 
+  test("reminds about a calendar meeting by name", async ({ page }) => {
+    await page.goto(fixture("view=meeting-orb&mode=expanded&state=reminder"));
+    await expect(
+      page.getByText("Take notes for “Design review”?"),
+    ).toBeVisible();
+    await expect(
+      page.getByText(
+        "SilkScribe records your mic and computer audio on this Mac. Nothing is uploaded.",
+      ),
+    ).toBeVisible();
+  });
+
   test("offers the controls a live meeting needs", async ({ page }) => {
     await page.goto(fixture("view=meeting-orb&mode=expanded&state=recording"));
     for (const name of [

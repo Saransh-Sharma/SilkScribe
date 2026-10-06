@@ -5,7 +5,7 @@
 //! Meeting capture is macOS-only, so everywhere else the orb never appears and
 //! its commands are no-ops (they still exist so the bindings are the same).
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use specta::Type;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
@@ -32,11 +32,24 @@ pub enum MeetingOrbPhase {
     Prompt,
 }
 
+/// What the orb offers to take notes for: a call that started, a calendar
+/// meeting that's starting, or both.
+#[derive(Clone, Debug, Serialize, Deserialize, Type)]
+pub struct MeetingPrompt {
+    /// The call app, when a call was noticed; recording captures just it.
+    pub app: Option<crate::app_context::FocusedApp>,
+    /// The calendar meeting's title, when there is one.
+    pub title: Option<String>,
+}
+
 #[derive(Clone, Debug, Serialize, Type)]
 pub struct MeetingOrbSnapshot {
     pub phase: MeetingOrbPhase,
     pub document_id: Option<String>,
     pub title: String,
+    /// What the prompt phase is asking about.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub prompt: Option<MeetingPrompt>,
 }
 
 #[derive(Clone, Serialize)]
@@ -53,8 +66,8 @@ struct OrbInner {
     dragged_to: Option<f64>,
     /// Stops the hover poller for the current showing.
     poller: Option<Arc<AtomicBool>>,
-    /// The call app the current prompt is about.
-    prompt: Option<crate::app_context::FocusedApp>,
+    /// What the current prompt is about.
+    prompt: Option<MeetingPrompt>,
 }
 
 pub struct MeetingOrbState(Mutex<OrbInner>);
@@ -66,6 +79,7 @@ impl Default for MeetingOrbState {
                 phase: MeetingOrbPhase::Hidden,
                 document_id: None,
                 title: String::new(),
+                prompt: None,
             },
             expanded: false,
             drag_origin: None,
@@ -96,6 +110,7 @@ pub fn show(app: &AppHandle, document_id: &str, title: &str) {
             phase: MeetingOrbPhase::Recording,
             document_id: Some(document_id.to_string()),
             title: title.to_string(),
+            prompt: None,
         };
         inner.expanded = false;
         inner.drag_origin = None;
@@ -110,16 +125,23 @@ pub fn show(app: &AppHandle, document_id: &str, title: &str) {
     platform::start_hover_poller(app, poller);
 }
 
-/// Offer to take notes for a call that just started. Shown expanded, since
-/// it needs an answer; recording a meeting replaces it.
-pub fn show_prompt(app: &AppHandle, call: &crate::app_context::FocusedApp) {
+/// Offer to take notes for a call that just started or a calendar meeting
+/// that's starting. Shown expanded, since it needs an answer; recording a
+/// meeting replaces it.
+pub fn show_prompt(app: &AppHandle, prompt: MeetingPrompt) {
+    let title = prompt
+        .title
+        .clone()
+        .or_else(|| prompt.app.as_ref().map(|call| call.name.clone()))
+        .unwrap_or_default();
     with_state(app, |inner| {
         inner.snapshot = MeetingOrbSnapshot {
             phase: MeetingOrbPhase::Prompt,
             document_id: None,
-            title: call.name.clone(),
+            title,
+            prompt: Some(prompt.clone()),
         };
-        inner.prompt = Some(call.clone());
+        inner.prompt = Some(prompt);
         inner.expanded = true;
         inner.drag_origin = None;
     });
@@ -163,6 +185,7 @@ pub fn hide(app: &AppHandle) {
             phase: MeetingOrbPhase::Hidden,
             document_id: None,
             title: String::new(),
+            prompt: None,
         };
         inner.expanded = false;
         inner.drag_origin = None;
@@ -189,6 +212,7 @@ pub fn meeting_orb_snapshot(app: AppHandle) -> MeetingOrbSnapshot {
         phase: MeetingOrbPhase::Hidden,
         document_id: None,
         title: String::new(),
+        prompt: None,
     })
 }
 
@@ -236,17 +260,17 @@ pub fn meeting_orb_open_document(app: AppHandle, document_id: String) {
     let _ = app.emit("workspace-open-document", document_id);
 }
 
-/// Answer the "take notes for this call?" prompt. Starting opens the main
-/// window, which starts the meeting with the person's usual setup.
+/// Answer the "take notes?" prompt. Starting opens the main window, which
+/// starts the meeting with the person's usual setup.
 #[tauri::command]
 #[specta::specta]
 pub fn meeting_orb_answer_prompt(app: AppHandle, start: bool) {
-    let call = with_state(&app, |inner| inner.prompt.take()).flatten();
+    let prompt = with_state(&app, |inner| inner.prompt.take()).flatten();
     dismiss_prompt(&app);
     if start {
-        if let Some(call) = call {
+        if let Some(prompt) = prompt {
             crate::show_main_window(&app);
-            let _ = app.emit("meeting-call-start", call);
+            let _ = app.emit("meeting-call-start", prompt);
         }
     }
 }

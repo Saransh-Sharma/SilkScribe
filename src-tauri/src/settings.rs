@@ -405,6 +405,12 @@ pub struct AppSettings {
     pub log_level: LogLevel,
     #[serde(default)]
     pub custom_words: Vec<String>,
+    /// The person connected their calendar (macOS access is checked too).
+    #[serde(default)]
+    pub calendar_connected: bool,
+    /// Offer to take notes as a calendar meeting starts.
+    #[serde(default = "default_true")]
+    pub calendar_reminders: bool,
     #[serde(default)]
     pub replacements: Vec<Replacement>,
     #[serde(default)]
@@ -1034,6 +1040,8 @@ pub fn get_default_settings() -> AppSettings {
         debug_mode: false,
         log_level: default_log_level(),
         custom_words: Vec::new(),
+        calendar_connected: false,
+        calendar_reminders: true,
         replacements: Vec::new(),
         snippets: Vec::new(),
         model_unload_timeout: ModelUnloadTimeout::Never,

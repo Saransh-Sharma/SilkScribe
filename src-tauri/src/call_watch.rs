@@ -143,7 +143,15 @@ pub fn start(app: AppHandle) {
             let call = running_call_apps().into_iter().next();
             if let Some(call) = watch.observe(Instant::now(), mic_in_use, call) {
                 log::info!("Call detected in {}; offering to take notes", call.name);
-                crate::meeting_orb::show_prompt(&app, &call);
+                // Name it after the calendar meeting going on, if there is one.
+                let title = crate::calendar::current_meeting(&app).map(|event| event.title);
+                crate::meeting_orb::show_prompt(
+                    &app,
+                    crate::meeting_orb::MeetingPrompt {
+                        app: Some(call),
+                        title,
+                    },
+                );
             }
         }
     });

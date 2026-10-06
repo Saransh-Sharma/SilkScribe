@@ -9,6 +9,8 @@ fn main() {
     #[cfg(target_os = "macos")]
     if std::env::var_os("CARGO_FEATURE_MAC_APP_STORE").is_none() {
         build_text_context_bridge();
+        // Calendar is for meetings, which the App Store build doesn't have.
+        build_calendar_bridge();
     }
 
     generate_tray_translations();
@@ -342,6 +344,48 @@ fn build_text_context_bridge() {
     println!("cargo:rustc-link-search=native={}", out.display());
     println!("cargo:rustc-link-lib=static=text_context");
     for framework in ["ApplicationServices", "Foundation"] {
+        println!("cargo:rustc-link-lib=framework={framework}");
+    }
+}
+
+#[cfg(target_os = "macos")]
+fn build_calendar_bridge() {
+    use std::{env, path::PathBuf, process::Command};
+    println!("cargo:rerun-if-changed=swift/calendar.swift");
+    let out = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let arch = if env::var("CARGO_CFG_TARGET_ARCH").unwrap() == "aarch64" {
+        "arm64"
+    } else {
+        "x86_64"
+    };
+    let object = out.join("calendar.o");
+    let status = Command::new("xcrun")
+        .args([
+            "swiftc",
+            "-parse-as-library",
+            "-swift-version",
+            "5",
+            "-target",
+            &format!("{arch}-apple-macosx11.0"),
+            "-O",
+            "-c",
+            "swift/calendar.swift",
+            "-o",
+        ])
+        .arg(&object)
+        .status()
+        .unwrap();
+    assert!(status.success(), "Failed to compile calendar bridge");
+    let status = Command::new("libtool")
+        .args(["-static", "-o"])
+        .arg(out.join("libcalendar.a"))
+        .arg(object)
+        .status()
+        .unwrap();
+    assert!(status.success());
+    println!("cargo:rustc-link-search=native={}", out.display());
+    println!("cargo:rustc-link-lib=static=calendar");
+    for framework in ["EventKit", "Foundation"] {
         println!("cargo:rustc-link-lib=framework={framework}");
     }
 }
