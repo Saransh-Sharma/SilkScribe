@@ -435,6 +435,12 @@ pub struct AppSettings {
     /// Apps the person moved to another category, by bundle identifier.
     #[serde(default)]
     pub app_category_overrides: HashMap<String, AppCategory>,
+    /// Let AI cleanup read the text around the cursor to spell names right.
+    #[serde(default = "default_true")]
+    pub nearby_text_context: bool,
+    /// Also send that text to a cloud cleanup provider (off: on-device only).
+    #[serde(default)]
+    pub share_context_with_cloud: bool,
     #[serde(default)]
     pub mute_while_recording: bool,
     #[serde(default)]
@@ -995,6 +1001,8 @@ pub fn get_default_settings() -> AppSettings {
         per_app_styles: true,
         app_styles: HashMap::new(),
         app_category_overrides: HashMap::new(),
+        nearby_text_context: true,
+        share_context_with_cloud: false,
         mute_while_recording: false,
         append_trailing_space: false,
         app_language: default_app_language(),

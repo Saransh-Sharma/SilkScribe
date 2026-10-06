@@ -133,6 +133,10 @@ const settingUpdaters: {
   ai_cleanup_on_main: (value) =>
     commands.changeAiCleanupOnMainSetting(value as boolean),
   ai_cleanup_card_dismissed: () => commands.dismissAiCleanupCard(),
+  nearby_text_context: (value) =>
+    commands.changeNearbyTextContextSetting(value as boolean),
+  share_context_with_cloud: (value) =>
+    commands.changeShareContextWithCloudSetting(value as boolean),
   per_app_styles: (value) =>
     commands.changePerAppStylesSetting(value as boolean),
   meeting_consent_reminder: (value) =>

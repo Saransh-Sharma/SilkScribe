@@ -58,8 +58,9 @@ pub(crate) struct Finished {
 }
 
 /// Runs the text stages on a transcript: Chinese variant conversion, then AI
-/// cleanup when `cleanup_requested`. `style` is extra guidance for the app the
-/// text is going into (see `app_context`).
+/// cleanup when `cleanup_requested`. `style` is extra guidance: how to write
+/// for the target app (`app_context`) and the text around the cursor
+/// (`text_context`).
 pub(crate) async fn finish_dictation(
     settings: &AppSettings,
     raw: &str,

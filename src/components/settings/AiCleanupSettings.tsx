@@ -90,6 +90,34 @@ export const AiCleanupSettings: React.FC = () => {
                   provider: provider?.label ?? providerId,
                 })}
           </p>
+          <ToggleSwitch
+            checked={getSetting("nearby_text_context") ?? true}
+            onChange={(value) => updateSetting("nearby_text_context", value)}
+            isUpdating={isUpdating("nearby_text_context")}
+            label={t("settings.aiCleanup.nearbyText.label")}
+            description={t(
+              onDevice
+                ? "settings.aiCleanup.nearbyText.description"
+                : "settings.aiCleanup.nearbyText.descriptionCloud",
+            )}
+            descriptionMode="inline"
+            grouped
+          />
+          {!onDevice && (getSetting("nearby_text_context") ?? true) && (
+            <ToggleSwitch
+              checked={getSetting("share_context_with_cloud") ?? false}
+              onChange={(value) =>
+                updateSetting("share_context_with_cloud", value)
+              }
+              isUpdating={isUpdating("share_context_with_cloud")}
+              label={t("settings.aiCleanup.shareNearbyText.label", {
+                provider: provider?.label ?? providerId,
+              })}
+              description={t("settings.aiCleanup.shareNearbyText.description")}
+              descriptionMode="inline"
+              grouped
+            />
+          )}
           <ShortcutInput
             shortcutId="transcribe_with_post_process"
             descriptionMode="inline"

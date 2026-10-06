@@ -55,6 +55,8 @@ struct OverlayPayload {
     context_app: Option<String>,
     /// Key suffix under `overlay.style.*` for how cleanup writes for that app.
     context_style: Option<String>,
+    /// Cleanup is using the text around the cursor.
+    context_nearby: bool,
     /// Screen edge the overlay is anchored to, so it can animate in from there.
     position: String,
     can_cancel: bool,
@@ -375,6 +377,7 @@ fn create_overlay_payload(
         preview_text,
         context_app: None,
         context_style: None,
+        context_nearby: false,
         position: match settings.overlay_position {
             OverlayPosition::Top => "top",
             OverlayPosition::Bottom | OverlayPosition::None => "bottom",
@@ -432,7 +435,12 @@ pub fn show_processing_overlay(app_handle: &AppHandle) {
 
 /// Shows the processing state with the app the text is going into and the
 /// style AI cleanup uses for it, e.g. "Slack · Casual".
-pub fn show_processing_overlay_for(app_handle: &AppHandle, app_name: &str, style_code: &str) {
+pub fn show_processing_overlay_for(
+    app_handle: &AppHandle,
+    app_name: &str,
+    style_code: &str,
+    nearby_text: bool,
+) {
     let settings = settings::get_settings(app_handle);
     if settings.overlay_position == OverlayPosition::None {
         return;
@@ -440,6 +448,7 @@ pub fn show_processing_overlay_for(app_handle: &AppHandle, app_name: &str, style
     let mut payload = create_overlay_payload(&settings, "processing", None, None);
     payload.context_app = Some(app_name.to_string());
     payload.context_style = Some(style_code.to_string());
+    payload.context_nearby = nearby_text;
     show_overlay_payload(app_handle, payload);
 }
 

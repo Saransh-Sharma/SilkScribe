@@ -437,10 +437,15 @@ const SAMPLE_DETAIL: Partial<
       previewText: string;
       contextApp: string;
       contextStyle: string;
+      contextNearby: boolean;
     }>
   >
 > = {
-  processing: { contextApp: "Slack", contextStyle: "casual" },
+  processing: {
+    contextApp: "Slack",
+    contextStyle: "casual",
+    contextNearby: true,
+  },
   success: {
     previewText:
       "The quarterly numbers came in ahead of what we forecast in March",

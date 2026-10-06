@@ -444,6 +444,28 @@ async changePerAppStylesSetting(enabled: boolean) : Promise<Result<null, string>
 }
 },
 /**
+ * Let AI cleanup read the text around the cursor.
+ */
+async changeNearbyTextContextSetting(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_nearby_text_context_setting", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Also send the text around the cursor to a cloud cleanup provider.
+ */
+async changeShareContextWithCloudSetting(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_share_context_with_cloud_setting", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * The tone AI cleanup uses for a kind of app.
  */
 async changeAppStyleSetting(category: AppCategory, style: DictationStyle) : Promise<Result<null, string>> {
@@ -1331,7 +1353,15 @@ app_styles?: Partial<{ [key in AppCategory]: DictationStyle }>;
 /**
  * Apps the person moved to another category, by bundle identifier.
  */
-app_category_overrides?: Partial<{ [key in string]: AppCategory }>; mute_while_recording?: boolean; append_trailing_space?: boolean; app_language?: string; experimental_enabled?: boolean; lazy_stream_close?: boolean; keyboard_implementation?: KeyboardImplementation; theme?: ThemePreference; show_tray_icon?: boolean; paste_delay_ms?: number; typing_tool?: TypingTool; external_script_path: string | null; custom_filler_words?: string[] | null; whisper_accelerator?: WhisperAcceleratorSetting; ort_accelerator?: OrtAcceleratorSetting; whisper_gpu_device?: number; extra_recording_buffer_ms?: number; 
+app_category_overrides?: Partial<{ [key in string]: AppCategory }>; 
+/**
+ * Let AI cleanup read the text around the cursor to spell names right.
+ */
+nearby_text_context?: boolean; 
+/**
+ * Also send that text to a cloud cleanup provider (off: on-device only).
+ */
+share_context_with_cloud?: boolean; mute_while_recording?: boolean; append_trailing_space?: boolean; app_language?: string; experimental_enabled?: boolean; lazy_stream_close?: boolean; keyboard_implementation?: KeyboardImplementation; theme?: ThemePreference; show_tray_icon?: boolean; paste_delay_ms?: number; typing_tool?: TypingTool; external_script_path: string | null; custom_filler_words?: string[] | null; whisper_accelerator?: WhisperAcceleratorSetting; ort_accelerator?: OrtAcceleratorSetting; whisper_gpu_device?: number; extra_recording_buffer_ms?: number; 
 /**
  * Where the meeting orb sits on the right screen edge, as a fraction of the
  * usable height from the top (its centre).

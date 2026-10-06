@@ -190,6 +190,20 @@ impl ShortcutAction for TranscribeAction {
             shortcut::register_cancel_shortcut(app);
         }
 
+        // Read the text around the cursor now that recording is under way, so
+        // a slow app can't delay the mic. Only when cleanup could use it.
+        let wants_context = {
+            let settings = get_settings(app);
+            recording_started
+                && settings.post_process_enabled
+                && crate::text_context::context_allowed(&settings)
+        };
+        crate::text_context::remember_focused_text(if wants_context {
+            crate::text_context::read_focused_text()
+        } else {
+            None
+        });
+
         debug!(
             "TranscribeAction::start completed in {:?}",
             start_time.elapsed()
@@ -219,6 +233,7 @@ impl ShortcutAction for TranscribeAction {
         play_feedback_sound(app, SoundType::Transcribing);
 
         let target_app = crate::app_context::take_target_app();
+        let focused_text = crate::text_context::take_focused_text();
         let binding_id = binding_id.to_string(); // Clone binding_id for the async task
         let post_process = self.always_clean_up || {
             let settings = get_settings(app);
@@ -263,12 +278,30 @@ impl ShortcutAction for TranscribeAction {
                                 .clone()
                                 .filter(|_| settings.per_app_styles)
                                 .map(|app| crate::app_context::resolve_target(app, &settings));
+                            // Nearby text, re-checked: settings may have changed
+                            // since recording started.
+                            let nearby = focused_text
+                                .as_ref()
+                                .filter(|_| crate::text_context::context_allowed(&settings))
+                                .and_then(|text| text.cleanup_context());
+                            let guidance = [
+                                target
+                                    .as_ref()
+                                    .and_then(|target| target.instruction())
+                                    .map(str::to_string),
+                                nearby.clone(),
+                            ]
+                            .into_iter()
+                            .flatten()
+                            .collect::<Vec<_>>()
+                            .join("\n\n");
                             if post_process {
                                 match &target {
                                     Some(target) => show_processing_overlay_for(
                                         &ah,
                                         &target.app.name,
                                         target_style_code(target),
+                                        nearby.is_some(),
                                     ),
                                     None => show_processing_overlay(&ah),
                                 }
@@ -277,7 +310,7 @@ impl ShortcutAction for TranscribeAction {
                                 &settings,
                                 &transcription,
                                 post_process,
-                                target.as_ref().and_then(|target| target.instruction()),
+                                (!guidance.is_empty()).then_some(guidance.as_str()),
                             )
                             .await;
                             let text_ready = stop_time.elapsed();

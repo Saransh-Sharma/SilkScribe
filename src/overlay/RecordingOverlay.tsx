@@ -39,6 +39,8 @@ interface OverlayEventPayload {
   contextApp?: string;
   /** Key suffix under `overlay.style.*`. */
   contextStyle?: string;
+  /** Cleanup is using the text around the cursor. */
+  contextNearby?: boolean;
   /** Screen edge the overlay is anchored to, so it can enter from that side. */
   position?: "top" | "bottom";
   canCancel: boolean;
@@ -187,6 +189,7 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
         previewText: candidate.previewText,
         contextApp: candidate.contextApp,
         contextStyle: candidate.contextStyle,
+        contextNearby: candidate.contextNearby,
         position: candidate.position,
         canCancel: candidate.canCancel ?? next === "recording",
       };
@@ -300,11 +303,18 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
   const detailText = useMemo(() => {
     if (payload.previewText) return payload.previewText;
     if (payload.contextApp && payload.contextStyle)
-      return `${payload.contextApp} · ${t(`overlay.style.${payload.contextStyle}`)}`;
+      return [
+        payload.contextApp,
+        t(`overlay.style.${payload.contextStyle}`),
+        payload.contextNearby ? t("overlay.nearbyText") : null,
+      ]
+        .filter(Boolean)
+        .join(" · ");
     if (payload.detailCode) return t(`overlay.detail.${payload.detailCode}`);
     return undefined;
   }, [
     payload.contextApp,
+    payload.contextNearby,
     payload.contextStyle,
     payload.detailCode,
     payload.previewText,

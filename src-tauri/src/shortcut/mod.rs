@@ -909,6 +909,29 @@ pub fn change_app_category_override(
     Ok(())
 }
 
+/// Let AI cleanup read the text around the cursor.
+#[tauri::command]
+#[specta::specta]
+pub fn change_nearby_text_context_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.nearby_text_context = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// Also send the text around the cursor to a cloud cleanup provider.
+#[tauri::command]
+#[specta::specta]
+pub fn change_share_context_with_cloud_setting(
+    app: AppHandle,
+    enabled: bool,
+) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.share_context_with_cloud = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
 /// Hide the Home suggestion to clean up every dictation on device.
 #[tauri::command]
 #[specta::specta]

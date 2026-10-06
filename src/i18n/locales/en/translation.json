@@ -826,7 +826,16 @@
       },
       "onDevice": "Runs on this Mac. Your words aren’t uploaded.",
       "cloud": "Your dictated text is sent to {{provider}} for cleanup.",
-      "prompts": "Prompts"
+      "prompts": "Prompts",
+      "nearbyText": {
+        "label": "Use nearby text",
+        "description": "Reads the text around your cursor to spell names and terms right. It stays on this Mac, and password fields are never read.",
+        "descriptionCloud": "Reads the text around your cursor to spell names right, when cleanup runs on this Mac. Password fields are never read."
+      },
+      "shareNearbyText": {
+        "label": "Also send nearby text to {{provider}}",
+        "description": "Off by default: the text around your cursor stays on this Mac."
+      }
     },
     "styles": {
       "title": "Styles",
@@ -923,7 +932,8 @@
       "formal": "Formal",
       "code": "Code",
       "ai_chat": "AI prompt"
-    }
+    },
+    "nearbyText": "Nearby text"
   },
   "meetingOrb": {
     "orbLabel": "Meeting recording, {{state}}",

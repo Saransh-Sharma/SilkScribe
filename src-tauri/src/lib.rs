@@ -18,6 +18,7 @@ pub mod portable;
 mod settings;
 mod shortcut;
 mod signal_handle;
+mod text_context;
 mod transcription_coordinator;
 mod tray;
 mod tray_i18n;
@@ -629,6 +630,8 @@ fn command_builder() -> Builder<tauri::Wry> {
             shortcut::dismiss_ai_cleanup_card,
             shortcut::change_meeting_consent_reminder_setting,
             shortcut::change_per_app_styles_setting,
+            shortcut::change_nearby_text_context_setting,
+            shortcut::change_share_context_with_cloud_setting,
             shortcut::change_app_style_setting,
             shortcut::change_app_category_override,
             commands::history::recent_dictation_apps,

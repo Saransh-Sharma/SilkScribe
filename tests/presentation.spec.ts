@@ -257,7 +257,9 @@ test.describe("deterministic product states", () => {
     page,
   }) => {
     await page.goto(fixture("view=overlay&state=processing&detail=1"));
-    await expect(page.getByRole("status")).toContainText("Slack · Casual");
+    await expect(page.getByRole("status")).toContainText(
+      "Slack · Casual · Nearby text",
+    );
   });
 
   test("keeps the pill inside the native overlay window", async ({ page }) => {
