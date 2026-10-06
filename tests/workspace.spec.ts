@@ -724,6 +724,24 @@ test("a finished meeting opens on notes the person can write", async ({
   ).toHaveValue("- Ship Friday\n- Ask Sam");
 });
 
+test("Enhance keeps the person's points apart from AI notes", async ({
+  page,
+}) => {
+  await page.goto(`${fixture}?userNote`);
+  await page.getByText("Product design review", { exact: true }).click();
+  const mine = page.locator('.ws-note-item[data-origin="user"]');
+  await expect(mine).toContainText("You wrote this");
+  await expect(mine.getByRole("textbox")).toHaveValue(
+    "Check the empty state copy before Friday.",
+  );
+  await expect(mine.locator(".ws-citations button")).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Regenerate", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("textbox", { name: "Your notes" }).fill("- Ship Friday");
+  await expect(page.getByRole("button", { name: "Enhance notes" })).toBeVisible();
+});
+
 test("meeting setup offers a heads-up for the people on the call", async ({
   page,
 }) => {

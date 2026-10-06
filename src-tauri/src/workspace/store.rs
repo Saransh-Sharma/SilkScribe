@@ -792,15 +792,17 @@ fn preserve_note_evidence(
     }
     Ok(())
 }
+/// AI note items must cite existing transcript segments. Items the person
+/// wrote may have no sources, but any they have must exist.
 pub fn validate_notes(notes: &Notes, segments: &[Segment]) -> Result<()> {
-    for sources in notes
+    for (sources, origin) in notes
         .summary
         .iter()
         .chain(&notes.decisions)
-        .map(|n| &n.sources)
-        .chain(notes.actions.iter().map(|n| &n.sources))
+        .map(|n| (&n.sources, n.origin))
+        .chain(notes.actions.iter().map(|n| (&n.sources, n.origin)))
     {
-        if sources.is_empty()
+        if (sources.is_empty() && origin == NoteOrigin::Ai)
             || sources
                 .iter()
                 .any(|id| !segments.iter().any(|s| &s.id == id))
@@ -922,6 +924,7 @@ mod tests {
             text: text.into(),
             sources: vec!["s0".into()],
             evidence: vec![],
+            origin: Default::default(),
         };
         doc.notes = Some(Notes {
             summary: vec![item("Old summary")],
@@ -965,6 +968,7 @@ mod tests {
                 text: "Keep my decision".into(),
                 sources: vec!["s0".into()],
                 evidence: vec![],
+                origin: Default::default(),
             }],
             transcript_revision: 1,
             ..Default::default()
@@ -974,6 +978,7 @@ mod tests {
                 text: "New summary".into(),
                 sources: vec!["s0".into()],
                 evidence: vec![],
+                origin: Default::default(),
             }],
             transcript_revision: 2,
             ..Default::default()
@@ -1075,6 +1080,7 @@ mod tests {
                 text: "A supported summary".into(),
                 sources: vec!["s0".into()],
                 evidence: vec![],
+                origin: Default::default(),
             }],
             ..Default::default()
         });
@@ -1117,6 +1123,7 @@ mod tests {
             text: changed.segments[0].text.clone(),
             sources: vec!["s0".into()],
             evidence: vec![snapshot(&changed.segments[0], Some(changed.revision), true)],
+            origin: Default::default(),
         });
         store.edit(new_note).unwrap();
         let current = store.get(&d.id).unwrap();
@@ -1130,6 +1137,7 @@ mod tests {
                 Some(current.revision),
                 true,
             )],
+            origin: Default::default(),
         });
         let combined = store.edit(combined).unwrap();
         assert_eq!(
@@ -1149,6 +1157,7 @@ mod tests {
                 text: "Old summary".into(),
                 sources: vec!["s0".into()],
                 evidence: vec![],
+                origin: Default::default(),
             }],
             ..Default::default()
         };
@@ -1159,6 +1168,7 @@ mod tests {
                 text: "Fresh decision".into(),
                 sources: vec!["s0".into()],
                 evidence: vec![],
+                origin: Default::default(),
             }],
             ..Default::default()
         };
@@ -1283,6 +1293,7 @@ mod tests {
                 text: text.into(),
                 sources: vec!["s0".into()],
                 evidence: vec![],
+                origin: Default::default(),
             }],
             ..Default::default()
         };
@@ -1381,6 +1392,7 @@ mod tests {
                 text: "Unreviewed secret".into(),
                 sources: vec!["s0".into()],
                 evidence: vec![],
+                origin: Default::default(),
             }],
             ..Default::default()
         });
@@ -1401,6 +1413,7 @@ mod tests {
                 text: "A supported point".into(),
                 sources: vec!["s0".into()],
                 evidence: vec![],
+                origin: Default::default(),
             }],
             ..Default::default()
         });
@@ -1524,6 +1537,7 @@ mod tests {
                 text: "Invented".into(),
                 sources: vec!["missing".into()],
                 evidence: vec![],
+                origin: Default::default(),
             }],
             ..Default::default()
         };
@@ -1636,5 +1650,31 @@ mod tests {
         store.delete(&doc.id).unwrap();
         assert_eq!(store.user_notes(&doc.id).unwrap(), "");
         assert!(store.save_user_notes(&doc.id, "late").is_err());
+    }
+    #[test]
+    fn notes_the_person_wrote_need_no_sources_but_ai_notes_do() {
+        let doc = document();
+        let item = |sources: Vec<&str>, origin| NoteItem {
+            text: "Ship Friday".into(),
+            sources: sources.into_iter().map(String::from).collect(),
+            evidence: vec![],
+            origin,
+        };
+        let notes = |item| Notes {
+            summary: vec![item],
+            ..Default::default()
+        };
+        let first = doc.segments[0].id.as_str();
+        assert!(validate_notes(&notes(item(vec![], NoteOrigin::User)), &doc.segments).is_ok());
+        assert!(validate_notes(&notes(item(vec![first], NoteOrigin::User)), &doc.segments).is_ok());
+        assert!(validate_notes(&notes(item(vec!["nope"], NoteOrigin::User)), &doc.segments).is_err());
+        assert!(validate_notes(&notes(item(vec![], NoteOrigin::Ai)), &doc.segments).is_err());
+
+        // Items the person wrote keep their origin through storage; AI items
+        // don't write the field at all.
+        let json = serde_json::to_string(&notes(item(vec![], NoteOrigin::User))).unwrap();
+        assert!(json.contains("\"origin\":\"user\""));
+        let json = serde_json::to_string(&notes(item(vec![first], NoteOrigin::Ai))).unwrap();
+        assert!(!json.contains("origin"));
     }
 }

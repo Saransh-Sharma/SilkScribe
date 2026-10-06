@@ -10,6 +10,38 @@ class NotesTests(unittest.TestCase):
     def test_rejects_wrong_output_shape(self):
         for output in [[],{}, {'summary':'no','decisions':[],'actions':[]}]:
             with self.assertRaises(ValueError):validate_notes(output,{'s1'})
+class EnhanceTests(unittest.TestCase):
+    def test_keeps_the_persons_points_without_sources(self):
+        result=validate_notes({'summary':[{'text':'Ship Friday','sources':[],'origin':'user'},{'text':'Budget agreed','sources':['s1'],'origin':'ai'}],'decisions':[],'actions':[]},{'s1'})
+        self.assertEqual(result['summary'][0],{'text':'Ship Friday','sources':[],'origin':'user'})
+        self.assertEqual(result['summary'][1],{'text':'Budget agreed','sources':['s1']})
+    def test_drops_invented_sources_from_the_persons_points(self):
+        result=validate_notes({'summary':[{'text':'Ship Friday','sources':['invented','s1'],'origin':'user'}],'decisions':[],'actions':[]},{'s1'})
+        self.assertEqual(result['summary'][0]['sources'],['s1'])
+    def test_ai_points_still_need_sources(self):
+        with self.assertRaises(ValueError): validate_notes({'summary':[{'text':'Claim','sources':[],'origin':'ai'}],'decisions':[],'actions':[]},{'s1'})
+    def test_the_persons_notes_reach_every_chunk_prompt(self):
+        import json, tempfile, pathlib, types
+        from unittest.mock import patch
+        from worker import notes
+        class Tokenizer:
+            def encode(self,text): return list(text)
+            def decode(self,tokens): return ''.join(tokens)
+            def apply_chat_template(self,messages,**kwargs): return messages[0]['content']+'\n'+messages[-1]['content']
+        prompts=[]
+        def generate(*args,**kwargs):
+            prompts.append(kwargs['prompt'])
+            return json.dumps({'summary':[{'text':'Ship Friday','sources':[],'origin':'user'}],'decisions':[],'actions':[]})
+        with tempfile.TemporaryDirectory() as directory:
+            pathlib.Path(directory,'installed.json').write_text('{}')
+            runtime=types.SimpleNamespace(load=lambda _: (object(),Tokenizer()),generate=generate)
+            request={'model_path':directory,'segments':[{'id':'s0','text':'We ship on Friday.'}],'user_notes':'- ship friday'}
+            with patch.dict('sys.modules',{'mlx_lm':runtime}):
+                result=notes(request)
+        self.assertIn('<user_notes>\n- ship friday\n</user_notes>',prompts[0])
+        self.assertIn('"origin":"user"',prompts[0])
+        self.assertEqual(result['summary'][0],{'text':'Ship Friday','sources':[],'origin':'user'})
+
 class ChunkTests(unittest.TestCase):
     def test_original_offsets_and_last_partial_chunk(self):
         self.assertEqual(chunk_bounds({'start_seconds':120,'end_seconds':240}, 200*16000,16000),(120*16000,200*16000))

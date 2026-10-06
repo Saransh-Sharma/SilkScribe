@@ -113,6 +113,7 @@ export function Transcript({
   const activeSegment = useRef<string | null>(null);
   const [speed, setSpeed] = useState("1");
   const [showOriginal, setShowOriginal] = useState(false);
+  const [hasUserNotes, setHasUserNotes] = useState(false);
   // A dictation keeps what the engine heard before AI cleanup. Offer it when
   // cleanup changed the text.
   const originalText =
@@ -1050,7 +1051,9 @@ export function Transcript({
           role="tabpanel"
           aria-labelledby="tab-notes"
         >
-          {doc.source === "meeting" && <UserNotes documentId={doc.id} />}
+          {doc.source === "meeting" && (
+            <UserNotes documentId={doc.id} onContentChange={setHasUserNotes} />
+          )}
           <fieldset disabled={locked}>
             {doc.notes_candidate && (
               <section
@@ -1182,9 +1185,11 @@ export function Transcript({
                 >
                   <RotateCcw size={15} />
                   {t(
-                    doc.notes
-                      ? "workspace.regenerate"
-                      : "workspace.generateNotes",
+                    hasUserNotes
+                      ? "workspace.enhanceNotes"
+                      : doc.notes
+                        ? "workspace.regenerate"
+                        : "workspace.generateNotes",
                   )}
                 </button>
               </div>
@@ -1198,7 +1203,16 @@ export function Transcript({
                       {regenerateSection(key)}
                     </div>
                     {doc.notes![key].map((item, index) => (
-                      <div key={index} className="ws-note-item">
+                      <div
+                        key={index}
+                        className="ws-note-item"
+                        data-origin={item.origin ?? "ai"}
+                      >
+                        {item.origin === "user" && (
+                          <span className="ws-note-origin">
+                            {t("workspace.youWrote")}
+                          </span>
+                        )}
                         <textarea
                           dir="auto"
                           aria-label={t(`workspace.${key}`)}
@@ -1248,7 +1262,16 @@ export function Transcript({
                   {regenerateSection("actions")}
                 </div>
                 {doc.notes.actions.map((item, index) => (
-                  <div key={index} className="ws-note-item">
+                  <div
+                    key={index}
+                    className="ws-note-item"
+                    data-origin={item.origin ?? "ai"}
+                  >
+                    {item.origin === "user" && (
+                      <span className="ws-note-origin">
+                        {t("workspace.youWrote")}
+                      </span>
+                    )}
                     <label>
                       <input
                         type="checkbox"

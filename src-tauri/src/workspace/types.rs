@@ -61,12 +61,31 @@ pub struct NoteEvidence {
     /// None for legacy notes whose generation-time source was not retained.
     pub transcript_revision: Option<u32>,
 }
+/// Who a note item came from. Items the person wrote keep their words and
+/// don't need transcript sources; AI items always cite the transcript.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize, Type)]
+#[serde(rename_all = "snake_case")]
+pub enum NoteOrigin {
+    #[default]
+    Ai,
+    User,
+}
+impl NoteOrigin {
+    fn is_ai(&self) -> bool {
+        *self == Self::Ai
+    }
+}
 #[derive(Clone, Debug, Serialize, Deserialize, Type)]
 pub struct NoteItem {
     pub text: String,
     pub sources: Vec<String>,
     #[serde(default)]
     pub evidence: Vec<NoteEvidence>,
+    // specta reads these in order; `default` last keeps the field optional
+    // in the generated TypeScript.
+    #[serde(skip_serializing_if = "NoteOrigin::is_ai")]
+    #[serde(default)]
+    pub origin: NoteOrigin,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, Type)]
 pub struct ActionItem {
@@ -77,6 +96,11 @@ pub struct ActionItem {
     #[serde(default)]
     pub evidence: Vec<NoteEvidence>,
     pub done: bool,
+    // specta reads these in order; `default` last keeps the field optional
+    // in the generated TypeScript.
+    #[serde(skip_serializing_if = "NoteOrigin::is_ai")]
+    #[serde(default)]
+    pub origin: NoteOrigin,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, Type)]
 #[serde(rename_all = "snake_case")]

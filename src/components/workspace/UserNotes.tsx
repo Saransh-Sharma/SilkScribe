@@ -47,7 +47,14 @@ export function continueList(
 
 /** The notes a person types for a meeting. Saved apart from the document, so
  * typing works while the meeting records and while it's processed. */
-export function UserNotes({ documentId }: { documentId: string }) {
+export function UserNotes({
+  documentId,
+  onContentChange,
+}: {
+  documentId: string;
+  /** Told whether there's anything written, e.g. to offer "Enhance notes". */
+  onContentChange?: (hasContent: boolean) => void;
+}) {
   const { t } = useTranslation();
   const [text, setText] = useState(() => latest.get(documentId) ?? "");
   const [loaded, setLoaded] = useState(() => latest.has(documentId));
@@ -86,6 +93,11 @@ export function UserNotes({ documentId }: { documentId: string }) {
       current = false;
     };
   }, [documentId, t]);
+
+  const hasContent = text.trim() !== "";
+  useEffect(() => {
+    onContentChange?.(hasContent);
+  }, [hasContent, onContentChange]);
 
   // Save what's pending when the editor goes away.
   useEffect(

@@ -187,6 +187,14 @@ for (const document of docs) {
     }
   }
 }
+// ?userNote adds a note the person wrote (no sources) to the first meeting.
+if (params.has("userNote"))
+  docs[0].notes?.summary.push({
+    text: "Check the empty state copy before Friday.",
+    evidence: [],
+    sources: [],
+    origin: "user",
+  });
 if (params.has("empty")) docs = [];
 // ?dictation=ready|setup seeds the settings store (commands.* aren't mocked)
 // and a dictation document, so Home's dictation strip can be exercised.

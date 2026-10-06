@@ -1304,7 +1304,9 @@
     "streakDays_one": "{{count}} day",
     "streakDays_other": "{{count}} days",
     "copy": "Copy",
-    "copied": "Copied"
+    "copied": "Copied",
+    "enhanceNotes": "Enhance notes",
+    "youWrote": "You wrote this"
   },
   "audioPlayer": {
     "play": "Play",

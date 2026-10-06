@@ -1255,3 +1255,15 @@
 .ws-dictation-text:hover span {
   color: var(--ss-brand-primary);
 }
+/* Notes the person wrote read as theirs; AI additions sit back a step and
+   carry their citations. */
+.ws-note-item[data-origin="ai"] textarea {
+  color: var(--ss-text-secondary);
+}
+.ws-note-origin {
+  display: inline-block;
+  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ss-brand-primary);
+}

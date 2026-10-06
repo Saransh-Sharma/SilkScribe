@@ -717,10 +717,13 @@ impl Workspace {
                         serde_json::json!({"id":segment.id,"text":segment.text,"speaker":speaker})
                     })
                     .collect();
+                    // The person's own notes: the job keeps their points and
+                    // adds cited detail from the transcript ("Enhance").
+                    let user_notes = self.store.user_notes(&doc.id)?;
                     let key = format!(
                         "{:x}",
                         Sha256::digest(serde_json::to_vec(&serde_json::json!({
-                            "version":3,"section":doc.notes_section,"runtime":worker::fingerprint(&worker::binary(app, true)?)?,"segments":note_segments,"model":std::fs::read_to_string(model_path.join("installed.json"))?
+                            "version":4,"section":doc.notes_section,"runtime":worker::fingerprint(&worker::binary(app, true)?)?,"segments":note_segments,"user_notes":user_notes,"model":std::fs::read_to_string(model_path.join("installed.json"))?
                         }))?)
                     );
                     let mut continuation = std::fs::read(&checkpoint_path)
@@ -732,7 +735,7 @@ impl Workspace {
                     let result = loop {
                         let step = worker::run(
                             app,
-                            serde_json::json!({"protocol":1,"task":"notes","section":doc.notes_section,"step":true,"continuation":continuation,"model_path":model_path,"segments":note_segments}),
+                            serde_json::json!({"protocol":1,"task":"notes","section":doc.notes_section,"step":true,"continuation":continuation,"model_path":model_path,"segments":note_segments,"user_notes":user_notes}),
                             &self.child,
                             &self.cancelled,
                         )?;
