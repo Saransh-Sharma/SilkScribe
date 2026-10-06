@@ -78,6 +78,21 @@ impl From<LogLevel> for tauri_plugin_log::LogLevel {
     }
 }
 
+/// A word or phrase that's always written another way, e.g. "gonna" as
+/// "going to" or "ss" as "SilkScribe".
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Type)]
+pub struct Replacement {
+    pub from: String,
+    pub to: String,
+}
+
+/// A short spoken phrase that expands into longer text, like an address.
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Type)]
+pub struct Snippet {
+    pub trigger: String,
+    pub text: String,
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, Type)]
 pub struct ShortcutBinding {
     pub id: String,
@@ -386,6 +401,10 @@ pub struct AppSettings {
     pub log_level: LogLevel,
     #[serde(default)]
     pub custom_words: Vec<String>,
+    #[serde(default)]
+    pub replacements: Vec<Replacement>,
+    #[serde(default)]
+    pub snippets: Vec<Snippet>,
     #[serde(default)]
     pub model_unload_timeout: ModelUnloadTimeout,
     #[serde(default = "default_word_correction_threshold")]
@@ -997,6 +1016,8 @@ pub fn get_default_settings() -> AppSettings {
         debug_mode: false,
         log_level: default_log_level(),
         custom_words: Vec::new(),
+        replacements: Vec::new(),
+        snippets: Vec::new(),
         model_unload_timeout: ModelUnloadTimeout::Never,
         word_correction_threshold: default_word_correction_threshold(),
         history_limit: default_history_limit(),

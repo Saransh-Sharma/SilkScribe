@@ -264,6 +264,46 @@ async updateCustomWords(words: string[]) : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async updateReplacements(replacements: Replacement[]) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("update_replacements", { replacements }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async updateSnippets(snippets: Snippet[]) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("update_snippets", { snippets }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async addToDictionary(heard: string | null, write: string) : Promise<Result<DictionaryEntry, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("add_to_dictionary", { heard, write }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async importDictionary(path: string) : Promise<Result<ImportSummary, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("import_dictionary", { path }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async exportDictionary(path: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("export_dictionary", { path }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 /**
  * Temporarily unregister a binding while the user is editing it in the UI.
  * This avoids firing the action while keys are being recorded.
@@ -1352,7 +1392,7 @@ export type ActionItem = { text: string; owner: string | null; due: string | nul
  * The kind of app, which decides the writing style.
  */
 export type AppCategory = "messaging" | "email" | "documents" | "code" | "ai_chat" | "other"
-export type AppSettings = { bindings: Partial<{ [key in string]: ShortcutBinding }>; push_to_talk: boolean; audio_feedback?: boolean; audio_feedback_volume?: number; sound_theme?: SoundTheme; start_hidden?: boolean; autostart_enabled?: boolean; update_checks_enabled?: boolean; selected_model?: string; has_completed_onboarding?: boolean; always_on_microphone?: boolean; selected_microphone?: string | null; clamshell_microphone?: string | null; selected_output_device?: string | null; translate_to_english?: boolean; selected_language?: string; overlay_position?: OverlayPosition; overlay_appearance?: OverlayAppearance; debug_mode?: boolean; log_level?: LogLevel; custom_words?: string[]; model_unload_timeout?: ModelUnloadTimeout; word_correction_threshold?: number; history_limit?: number; recording_retention_period?: RecordingRetentionPeriod; paste_method?: PasteMethod; clipboard_handling?: ClipboardHandling; auto_submit?: boolean; auto_submit_key?: AutoSubmitKey; post_process_enabled?: boolean; post_process_provider_id?: string; post_process_providers?: PostProcessProvider[]; post_process_api_keys?: Partial<{ [key in string]: string }>; post_process_models?: Partial<{ [key in string]: string }>; post_process_prompts?: LLMPrompt[]; post_process_selected_prompt_id?: string | null; 
+export type AppSettings = { bindings: Partial<{ [key in string]: ShortcutBinding }>; push_to_talk: boolean; audio_feedback?: boolean; audio_feedback_volume?: number; sound_theme?: SoundTheme; start_hidden?: boolean; autostart_enabled?: boolean; update_checks_enabled?: boolean; selected_model?: string; has_completed_onboarding?: boolean; always_on_microphone?: boolean; selected_microphone?: string | null; clamshell_microphone?: string | null; selected_output_device?: string | null; translate_to_english?: boolean; selected_language?: string; overlay_position?: OverlayPosition; overlay_appearance?: OverlayAppearance; debug_mode?: boolean; log_level?: LogLevel; custom_words?: string[]; replacements?: Replacement[]; snippets?: Snippet[]; model_unload_timeout?: ModelUnloadTimeout; word_correction_threshold?: number; history_limit?: number; recording_retention_period?: RecordingRetentionPeriod; paste_method?: PasteMethod; clipboard_handling?: ClipboardHandling; auto_submit?: boolean; auto_submit_key?: AutoSubmitKey; post_process_enabled?: boolean; post_process_provider_id?: string; post_process_providers?: PostProcessProvider[]; post_process_api_keys?: Partial<{ [key in string]: string }>; post_process_models?: Partial<{ [key in string]: string }>; post_process_prompts?: LLMPrompt[]; post_process_selected_prompt_id?: string | null; 
 /**
  * Run AI cleanup on the main dictation shortcut too, not only on the
  * "Dictate with AI cleanup" shortcut. Needs `post_process_enabled`.
@@ -1420,6 +1460,18 @@ export type DictationSummary = { words_today: number; dictations_today: number; 
  * The most recent dictations, newest first.
  */
 recent: HistoryEntry[] }
+/**
+ * What "Add to dictionary" saved.
+ */
+export type DictionaryEntry = 
+/**
+ * A vocabulary word: spelled as written.
+ */
+"word" | 
+/**
+ * Written as `write` whenever `heard` is said.
+ */
+"replacement"
 export type Document = { notes_section?: NotesSection | null; attempt_id?: string; id: string; title: string; source: Source; created_at: number; duration: number; stage: Stage; progress: number; error: string | null; failed_stage: Stage | null; saved: boolean; audio_path: string | null; segments: Segment[]; speakers: Speaker[]; turns: SpeakerTurn[]; notes: Notes | null; notes_candidate?: Notes | null; original_turns?: SpeakerTurn[] | null; retry_stage?: Stage | null; options: JobOptions; revision: number; history_id: number | null; diarized: boolean; stage_errors?: StageError[]; 
 /**
  * Quick "You / Others" lines made while a meeting recorded. Shown until the
@@ -1452,6 +1504,10 @@ export type ImplementationChangeResult = { success: boolean;
 reset_bindings: string[] }
 export type ImportBatch = { request_id: string; paths: string[]; options: JobOptions; errors: string[] }
 export type ImportResult = { documents: Document[]; errors: string[]; remaining_paths: string[] }
+/**
+ * How many entries an import added or changed.
+ */
+export type ImportSummary = { words: number; replacements: number; snippets: number }
 export type JobOptions = { model: string; language: string; speakers: boolean; notes_model: string | null }
 export type KeyboardImplementation = "tauri" | "native_keys"
 export type LLMPrompt = { id: string; name: string; prompt: string }
@@ -1549,8 +1605,17 @@ export type RecordingStatus = { document_id: string | null; paused: boolean; sec
  * Dictation is recording, so the meeting's mic track is silenced.
  */
 mic_gated?: boolean }
+/**
+ * A word or phrase that's always written another way, e.g. "gonna" as
+ * "going to" or "ss" as "SilkScribe".
+ */
+export type Replacement = { from: string; to: string }
 export type Segment = { id: string; start: number; end: number; text: string; original_text: string; speaker: string | null }
 export type ShortcutBinding = { id: string; name: string; description: string; default_binding: string; current_binding: string }
+/**
+ * A short spoken phrase that expands into longer text, like an address.
+ */
+export type Snippet = { trigger: string; text: string }
 export type SoundTheme = "silk" | "marimba" | "pop" | "custom"
 export type Source = "dictation" | "meeting" | "file"
 export type Speaker = { id: string; name: string }

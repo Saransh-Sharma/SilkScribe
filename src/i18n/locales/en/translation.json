@@ -869,6 +869,41 @@
         "description": "Move an app to another kind if it’s treated the wrong way.",
         "builtIn": "Built-in"
       }
+    },
+    "dictionary": {
+      "title": "Dictionary",
+      "remove": "Remove {{phrase}}",
+      "replacements": {
+        "title": "Replacements",
+        "description": "Always write a word or phrase your way.",
+        "said": "When I say",
+        "saidExample": "e.g. gonna",
+        "written": "Write",
+        "writtenExample": "e.g. going to",
+        "add": "Add replacement"
+      },
+      "snippets": {
+        "title": "Snippets",
+        "description": "Say a short phrase to insert longer text, like your address.",
+        "trigger": "Snippet phrase",
+        "triggerExample": "e.g. my address",
+        "text": "Snippet text",
+        "textExample": "Text to insert",
+        "add": "Add snippet"
+      },
+      "file": {
+        "title": "Back up or move",
+        "description": "Import a word list or a dictionary file, or export yours.",
+        "import": "Import…",
+        "export": "Export…",
+        "kind": "Dictionary",
+        "defaultName": "SilkScribe dictionary.json",
+        "imported_one": "Added {{count}} entry",
+        "imported_other": "Added {{count}} entries",
+        "exported": "Dictionary exported",
+        "importFailed": "Couldn’t import the dictionary",
+        "exportFailed": "Couldn’t export the dictionary"
+      }
     }
   },
   "footer": {
@@ -1341,7 +1376,8 @@
       "copyMessage": "Couldn’t copy the message",
       "copyText": "Couldn’t copy the text",
       "saveStyle": "Couldn’t save the style",
-      "startMeeting": "Couldn’t start the meeting"
+      "startMeeting": "Couldn’t start the meeting",
+      "addToDictionary": "Couldn’t add to your dictionary"
     },
     "liveTranscript": "Live transcript",
     "liveTranscriptNote": "A more accurate transcript replaces this once processing finishes.",
@@ -1385,6 +1421,18 @@
     "suggestNotes": {
       "label": "Offer notes when a call starts",
       "hint": "Shows a prompt when Zoom, Teams, FaceTime or another call app starts using the mic."
+    },
+    "dictionary": {
+      "add": "Add to dictionary",
+      "heard": "Heard as",
+      "heardHelp": "Leave empty to just teach the spelling",
+      "write": "Write as",
+      "writeHelp": "How it should always appear",
+      "save": "Add",
+      "added": {
+        "word": "Added to your vocabulary",
+        "replacement": "Added as a replacement"
+      }
     }
   },
   "audioPlayer": {

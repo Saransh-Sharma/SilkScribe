@@ -9,6 +9,7 @@ import { AudioFeedback } from "../settings/AudioFeedback";
 import { MuteWhileRecording } from "../settings/MuteWhileRecording";
 import { AiCleanupSettings } from "../settings/AiCleanupSettings";
 import { DictationStyles } from "../settings/DictationStyles";
+import { DictionarySettings } from "../settings/DictionarySettings";
 import { ThemeSelector } from "../settings/ThemeSelector";
 import { AppLanguageSelector } from "../settings/AppLanguageSelector";
 import { HistoryLimit } from "../settings/HistoryLimit";
@@ -29,6 +30,7 @@ export function Preferences({
       )}
       {page === "general" && <AiCleanupSettings />}
       {page === "general" && <DictationStyles />}
+      {page === "general" && <DictionarySettings />}
       {page === "audio" && (
         <SettingsGroup title={t("workspace.audio")}>
           <MicrophoneSelector descriptionMode="inline" grouped />

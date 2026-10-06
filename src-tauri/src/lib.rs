@@ -9,6 +9,7 @@ pub mod cli;
 mod clipboard;
 mod commands;
 mod dictation;
+mod dictionary;
 mod helpers;
 mod input;
 mod llm_client;
@@ -616,6 +617,11 @@ fn command_builder() -> Builder<tauri::Wry> {
             shortcut::delete_post_process_prompt,
             shortcut::set_post_process_selected_prompt,
             shortcut::update_custom_words,
+            dictionary::update_replacements,
+            dictionary::update_snippets,
+            dictionary::add_to_dictionary,
+            dictionary::import_dictionary,
+            dictionary::export_dictionary,
             shortcut::suspend_binding,
             shortcut::resume_binding,
             shortcut::change_mute_while_recording_setting,

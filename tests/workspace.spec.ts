@@ -696,6 +696,47 @@ test("a cleaned-up dictation can show the text before cleanup", async ({
   await expect(page.getByLabel("Text before AI cleanup")).toBeHidden();
 });
 
+test("a dictation can teach the dictionary a spelling", async ({ page }) => {
+  await page.goto(`${fixture}?dictation=ready`);
+  await page.getByText("Note to Sam", { exact: true }).click();
+  await page.getByRole("button", { name: "Add to dictionary" }).click();
+  await page.getByLabel("Heard as").fill("sam");
+  await page.getByLabel("Write as").fill("Sam");
+  await page.getByRole("button", { name: "Add", exact: true }).click();
+  await expect(page.getByText("Added as a replacement")).toBeVisible();
+  await expect(page.getByLabel("Heard as")).toBeHidden();
+});
+
+test("the dictionary keeps replacements, snippets and multi-word names", async ({
+  page,
+}) => {
+  await page.goto(`${fixture}?dictation=ready`);
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
+  await page.getByRole("button", { name: "Dictation", exact: true }).click();
+
+  await page.getByPlaceholder("Add a word or name").fill("Charge Bee");
+  await page.getByRole("button", { name: "Add", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Remove Charge Bee" }),
+  ).toBeVisible();
+
+  await page.getByLabel("When I say").fill("gonna");
+  await page.getByLabel("Write", { exact: true }).fill("going to");
+  await page.getByLabel("Write", { exact: true }).press("Enter");
+  const replacements = page.getByRole("list", { name: "Replacements" });
+  await expect(replacements).toContainText("gonna→going to");
+
+  await page.getByLabel("Snippet phrase").fill("my address");
+  await page.getByLabel("Snippet text").fill("1 Infinite Loop\nCupertino");
+  await page.getByRole("button", { name: "Add snippet" }).click();
+  await expect(page.getByRole("list", { name: "Snippets" })).toContainText(
+    "1 Infinite Loop ⏎ Cupertino",
+  );
+
+  await page.getByRole("button", { name: "Remove gonna" }).click();
+  await expect(replacements).toBeHidden();
+});
+
 test("a finished meeting opens on notes the person can write", async ({
   page,
 }) => {

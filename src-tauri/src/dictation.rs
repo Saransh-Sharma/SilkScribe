@@ -5,6 +5,7 @@
 
 #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
 use crate::apple_intelligence;
+use crate::audio_toolkit::{normalize_phrase, PhraseMatcher};
 use crate::settings::{AppSettings, PostProcessProvider, APPLE_INTELLIGENCE_PROVIDER_ID};
 use ferrous_opencc::{config::BuiltinConfig, OpenCC};
 use log::{debug, error, warn};
@@ -36,12 +37,14 @@ pub(crate) enum CleanupOutcome {
     NotConfigured,
     Failed,
     TimedOut,
+    /// The whole dictation was a snippet's trigger, delivered as written.
+    Snippet,
 }
 
 impl CleanupOutcome {
     /// Cleanup was asked for but the delivered text didn't get it.
     pub(crate) fn missed(&self) -> bool {
-        !matches!(self, Self::NotRequested | Self::Done)
+        !matches!(self, Self::NotRequested | Self::Done | Self::Snippet)
     }
 }
 
@@ -57,8 +60,9 @@ pub(crate) struct Finished {
     pub cleanup: CleanupOutcome,
 }
 
-/// Runs the text stages on a transcript: Chinese variant conversion, then AI
-/// cleanup when `cleanup_requested`. `style` is extra guidance: how to write
+/// Runs the text stages on a transcript: Chinese variant conversion, the
+/// dictionary's replacements, AI cleanup when `cleanup_requested`, then
+/// snippets. `style` is extra guidance: how to write
 /// for the target app (`app_context`) and the text around the cursor
 /// (`text_context`).
 pub(crate) async fn finish_dictation(
@@ -91,53 +95,69 @@ where
     F: FnOnce(AppSettings, String) -> Fut,
     Fut: Future<Output = Result<String, CleanupError>>,
 {
-    let converted = maybe_convert_chinese_variant(settings, raw).filter(|text| text != raw);
-    let text = converted.clone().unwrap_or_else(|| raw.to_string());
+    let converted = maybe_convert_chinese_variant(settings, raw).unwrap_or_else(|| raw.to_string());
+    // Replacements first, so cleanup works with the words the person chose.
+    let text = PhraseMatcher::new(
+        settings
+            .replacements
+            .iter()
+            .map(|replacement| (replacement.from.as_str(), replacement.to.as_str())),
+    )
+    .replace(&converted);
+    // What to store as processed text: anything that differs from the transcript.
+    let changed = |text: &str| (text != raw).then(|| text.to_string());
 
-    if !cleanup_requested {
+    // A snippet's trigger said on its own is delivered exactly as written.
+    let said = normalize_phrase(&text);
+    if let Some(snippet) = settings
+        .snippets
+        .iter()
+        .find(|snippet| !said.is_empty() && normalize_phrase(&snippet.trigger) == said)
+    {
         return Finished {
-            delivered: text,
-            cleaned: converted,
+            delivered: snippet.text.clone(),
+            cleaned: changed(&snippet.text),
             prompt: None,
-            cleanup: CleanupOutcome::NotRequested,
+            cleanup: CleanupOutcome::Snippet,
         };
     }
-
-    let outcome = tokio::time::timeout(timeout, cleanup(settings.clone(), text.clone())).await;
-    let (cleaned, cleanup) = match outcome {
-        Ok(Ok(cleaned)) => (cleaned, CleanupOutcome::Done),
-        Ok(Err(CleanupError::NotConfigured)) => {
-            return Finished {
-                delivered: text,
-                cleaned: converted,
-                prompt: None,
-                cleanup: CleanupOutcome::NotConfigured,
-            }
-        }
-        Ok(Err(CleanupError::Failed)) => {
-            return Finished {
-                delivered: text,
-                cleaned: converted,
-                prompt: None,
-                cleanup: CleanupOutcome::Failed,
-            }
-        }
-        Err(_) => {
-            warn!("AI cleanup took longer than {timeout:?}; delivering the transcript as is");
-            return Finished {
-                delivered: text,
-                cleaned: converted,
-                prompt: None,
-                cleanup: CleanupOutcome::TimedOut,
-            };
+    // Inside a sentence, snippets expand after cleanup, so it can't rewrite them.
+    let snippets = PhraseMatcher::new(
+        settings
+            .snippets
+            .iter()
+            .map(|snippet| (snippet.trigger.as_str(), snippet.text.as_str())),
+    );
+    let unchanged = |cleanup: CleanupOutcome| {
+        let delivered = snippets.replace(&text);
+        Finished {
+            cleaned: changed(&delivered),
+            delivered,
+            prompt: None,
+            cleanup,
         }
     };
 
-    Finished {
-        delivered: cleaned.clone(),
-        cleaned: Some(cleaned),
-        prompt: selected_prompt(settings),
-        cleanup,
+    if !cleanup_requested {
+        return unchanged(CleanupOutcome::NotRequested);
+    }
+
+    match tokio::time::timeout(timeout, cleanup(settings.clone(), text.clone())).await {
+        Ok(Ok(cleaned)) => {
+            let delivered = snippets.replace(&cleaned);
+            Finished {
+                delivered: delivered.clone(),
+                cleaned: Some(delivered),
+                prompt: selected_prompt(settings),
+                cleanup: CleanupOutcome::Done,
+            }
+        }
+        Ok(Err(CleanupError::NotConfigured)) => unchanged(CleanupOutcome::NotConfigured),
+        Ok(Err(CleanupError::Failed)) => unchanged(CleanupOutcome::Failed),
+        Err(_) => {
+            warn!("AI cleanup took longer than {timeout:?}; delivering the transcript as is");
+            unchanged(CleanupOutcome::TimedOut)
+        }
     }
 }
 
@@ -589,6 +609,68 @@ mod tests {
                 result
             },
         ))
+    }
+
+    /// Finishes `raw` with a dictionary, recording what cleanup was given.
+    fn finish_dictionary(
+        raw: &str,
+        requested: bool,
+        cleaned: Option<&str>,
+    ) -> (Finished, Option<String>) {
+        let mut settings = get_default_settings();
+        settings.replacements = vec![crate::settings::Replacement {
+            from: "silk scribe".into(),
+            to: "SilkScribe".into(),
+        }];
+        settings.snippets = vec![crate::settings::Snippet {
+            trigger: "my address".into(),
+            text: "1 Infinite Loop\nCupertino".into(),
+        }];
+        let seen = std::sync::Arc::new(std::sync::Mutex::new(None));
+        let record = seen.clone();
+        let cleaned = cleaned.map(str::to_string);
+        let finished = tauri::async_runtime::block_on(finish_with(
+            &settings,
+            raw,
+            requested,
+            Duration::from_millis(50),
+            move |_, text| async move {
+                *record.lock().unwrap() = Some(text.clone());
+                Ok(cleaned.unwrap_or(text))
+            },
+        ));
+        let seen = seen.lock().unwrap().clone();
+        (finished, seen)
+    }
+
+    #[test]
+    fn replacements_reach_cleanup_and_the_delivered_text() {
+        let (done, seen) = finish_dictionary("try silk scribe today", true, None);
+        assert_eq!(seen.as_deref(), Some("try SilkScribe today"));
+        assert_eq!(done.delivered, "try SilkScribe today");
+        let (done, _) = finish_dictionary("try silk scribe today", false, None);
+        assert_eq!(done.delivered, "try SilkScribe today");
+        assert_eq!(done.cleaned.as_deref(), Some("try SilkScribe today"));
+    }
+
+    #[test]
+    fn a_snippet_said_alone_skips_cleanup() {
+        let (done, seen) = finish_dictionary("My address.", true, None);
+        assert_eq!(seen, None);
+        assert_eq!(done.delivered, "1 Infinite Loop\nCupertino");
+        assert_eq!(done.cleanup, CleanupOutcome::Snippet);
+        assert!(!done.cleanup.missed());
+    }
+
+    #[test]
+    fn snippets_in_a_sentence_expand_after_cleanup() {
+        let (done, seen) = finish_dictionary(
+            "send it to my address",
+            true,
+            Some("Send it to my address."),
+        );
+        assert_eq!(seen.as_deref(), Some("send it to my address"));
+        assert_eq!(done.delivered, "Send it to 1 Infinite Loop\nCupertino.");
     }
 
     #[test]

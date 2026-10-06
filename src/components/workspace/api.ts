@@ -66,6 +66,9 @@ export const api = {
   onDeviceCleanupAvailable: () => commands.checkAppleIntelligenceAvailable(),
   enableOnDeviceCleanup: () => unwrap(commands.enableOnDeviceCleanup()),
   dismissCleanupSuggestion: () => unwrap(commands.dismissAiCleanupCard()),
+  /** Teaches a spelling, or (when `heard` differs) a replacement. */
+  addToDictionary: (heard: string | null, write: string) =>
+    unwrap(commands.addToDictionary(heard, write)),
   userNotes: (id: string) => unwrap(commands.workspaceUserNotes(id)),
   saveUserNotes: (id: string, body: string) =>
     unwrap(commands.workspaceSaveUserNotes(id, body)),

@@ -113,6 +113,24 @@ export function Transcript({
   const activeSegment = useRef<string | null>(null);
   const [speed, setSpeed] = useState("1");
   const [showOriginal, setShowOriginal] = useState(false);
+  // "Add to dictionary": what the engine heard and how to write it.
+  const [correction, setCorrection] = useState<{
+    heard: string;
+    write: string;
+  } | null>(null);
+  const addCorrection = async () => {
+    if (!correction) return;
+    try {
+      const entry = await api.addToDictionary(
+        correction.heard.trim() || null,
+        correction.write.trim(),
+      );
+      toast.success(t(`workspace.dictionary.added.${entry}`));
+      setCorrection(null);
+    } catch (error) {
+      toastError(t("workspace.errors.addToDictionary"), error);
+    }
+  };
   const [hasUserNotes, setHasUserNotes] = useState(false);
   // A dictation keeps what the engine heard before AI cleanup. Offer it when
   // cleanup changed the text.
@@ -465,37 +483,108 @@ export function Transcript({
         {new Date(doc.created_at * 1000).toLocaleDateString()} ·{" "}
         {duration(doc.duration)} · {t("workspace.localOnly")}
       </p>
-      {originalText && (
+      {doc.source === "dictation" && (
         <div className="ws-original">
           <div className="ws-review-controls">
+            {originalText && (
+              <>
+                <button
+                  className="ws-text-button"
+                  aria-expanded={showOriginal}
+                  onClick={() => setShowOriginal(!showOriginal)}
+                >
+                  {t(
+                    showOriginal
+                      ? "workspace.hideOriginal"
+                      : "workspace.showOriginal",
+                  )}
+                </button>
+                <button
+                  className="ws-text-button"
+                  onClick={() =>
+                    writeText(originalText)
+                      .then(() => toast.success(t("workspace.copiedOriginal")))
+                      .catch((error) =>
+                        toastError(t("workspace.errors.copyOriginal"), error),
+                      )
+                  }
+                >
+                  {t("workspace.copyOriginal")}
+                </button>
+              </>
+            )}
             <button
               className="ws-text-button"
-              aria-expanded={showOriginal}
-              onClick={() => setShowOriginal(!showOriginal)}
+              aria-expanded={correction !== null}
+              onClick={() => {
+                if (correction) return setCorrection(null);
+                // Start from the words the person selected, if any.
+                const selected = window.getSelection()?.toString().trim() ?? "";
+                setCorrection({ heard: selected, write: selected });
+              }}
             >
-              {t(
-                showOriginal
-                  ? "workspace.hideOriginal"
-                  : "workspace.showOriginal",
-              )}
-            </button>
-            <button
-              className="ws-text-button"
-              onClick={() =>
-                writeText(originalText)
-                  .then(() => toast.success(t("workspace.copiedOriginal")))
-                  .catch((error) =>
-                    toastError(t("workspace.errors.copyOriginal"), error),
-                  )
-              }
-            >
-              {t("workspace.copyOriginal")}
+              {t("workspace.dictionary.add")}
             </button>
           </div>
           {showOriginal && (
             <blockquote dir="auto" aria-label={t("workspace.originalLabel")}>
               {originalText}
             </blockquote>
+          )}
+          {correction && (
+            <form
+              className="ws-form-grid ws-dictionary-form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                void addCorrection();
+              }}
+            >
+              <label>
+                <span className="ws-field-label">
+                  {t("workspace.dictionary.heard")}
+                  <small>{t("workspace.dictionary.heardHelp")}</small>
+                </span>
+                <input
+                  dir="auto"
+                  value={correction.heard}
+                  maxLength={100}
+                  onChange={(event) =>
+                    setCorrection({ ...correction, heard: event.target.value })
+                  }
+                />
+              </label>
+              <label>
+                <span className="ws-field-label">
+                  {t("workspace.dictionary.write")}
+                  <small>{t("workspace.dictionary.writeHelp")}</small>
+                </span>
+                <input
+                  dir="auto"
+                  autoFocus
+                  value={correction.write}
+                  maxLength={100}
+                  onChange={(event) =>
+                    setCorrection({ ...correction, write: event.target.value })
+                  }
+                />
+              </label>
+              <div className="ws-review-controls">
+                <button
+                  type="submit"
+                  className="ws-primary"
+                  disabled={!correction.write.trim()}
+                >
+                  {t("workspace.dictionary.save")}
+                </button>
+                <button
+                  type="button"
+                  className="ws-text-button"
+                  onClick={() => setCorrection(null)}
+                >
+                  {t("workspace.cancel")}
+                </button>
+              </div>
+            </form>
           )}
         </div>
       )}

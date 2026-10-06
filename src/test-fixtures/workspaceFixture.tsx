@@ -9,8 +9,10 @@ import { api, type Document } from "@/components/workspace/api";
 import { Toaster } from "sonner";
 import { drafts, draftStorage } from "@/components/workspace/drafts";
 import { useSettingsStore } from "@/stores/settingsStore";
-import type { AppSettings } from "@/bindings";
+import { commands, type AppSettings } from "@/bindings";
 import "@/theme.css";
+// The app's component styles (e.g. the button ripple), as App.tsx loads them.
+import "@/App.css";
 import "@fontsource/manrope/latin-400.css";
 import "@fontsource/manrope/latin-500.css";
 import "@fontsource/manrope/latin-600.css";
@@ -409,6 +411,12 @@ api.dictationSummary = async () => ({
     : [],
 });
 api.enableOnDeviceCleanup = async () => null;
+api.addToDictionary = async (heard, write) =>
+  heard && heard !== write ? "replacement" : "word";
+// Dictionary edits save without a backend.
+commands.updateCustomWords = async () => ({ status: "ok", data: null });
+commands.updateReplacements = async () => ({ status: "ok", data: null });
+commands.updateSnippets = async () => ({ status: "ok", data: null });
 api.dismissCleanupSuggestion = async () => null;
 // User notes persist across reloads, like the real store.
 api.userNotes = async (id) => localStorage.getItem(`fixture-notes-${id}`) ?? "";

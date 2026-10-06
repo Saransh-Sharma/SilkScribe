@@ -319,9 +319,150 @@ pub fn filter_transcription_output(
     filtered.trim().to_string()
 }
 
+/// Rewrites whole words and phrases, ignoring case. Unlike
+/// [`apply_custom_words`], nothing is fuzzy: "ai" matches "AI" or "Ai" but
+/// never the "ai" inside "said". Longer phrases win over shorter ones, and
+/// one pass means a replacement is never replaced again.
+pub struct PhraseMatcher {
+    regex: Option<Regex>,
+    outputs: Vec<String>,
+}
+
+fn is_word_char(c: char) -> bool {
+    c.is_alphanumeric() || c == '_'
+}
+
+impl PhraseMatcher {
+    /// `pairs` are (what's said, what to write). Blank phrases are ignored.
+    pub fn new<'a>(pairs: impl IntoIterator<Item = (&'a str, &'a str)>) -> Self {
+        let mut pairs: Vec<(&str, &str)> = pairs
+            .into_iter()
+            .map(|(from, to)| (from.trim(), to))
+            .filter(|(from, _)| !from.is_empty())
+            .collect();
+        // The regex takes the first alternative that matches at a position.
+        pairs.sort_by_key(|(from, _)| std::cmp::Reverse(from.chars().count()));
+        if pairs.is_empty() {
+            return Self {
+                regex: None,
+                outputs: Vec::new(),
+            };
+        }
+        let alternatives: Vec<String> = pairs
+            .iter()
+            .map(|(from, _)| {
+                let body = from
+                    .split_whitespace()
+                    .map(regex::escape)
+                    .collect::<Vec<_>>()
+                    .join(r"\s+");
+                // A boundary only makes sense next to a letter or digit, so
+                // "c++" and "#team" still match.
+                let start = if from.starts_with(is_word_char) {
+                    r"\b"
+                } else {
+                    ""
+                };
+                let end = if from.ends_with(is_word_char) {
+                    r"\b"
+                } else {
+                    ""
+                };
+                format!("({start}{body}{end})")
+            })
+            .collect();
+        let regex = Regex::new(&format!("(?i){}", alternatives.join("|"))).ok();
+        Self {
+            regex,
+            outputs: pairs.iter().map(|(_, to)| to.to_string()).collect(),
+        }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.regex.is_none()
+    }
+
+    pub fn replace(&self, text: &str) -> String {
+        let Some(regex) = &self.regex else {
+            return text.to_string();
+        };
+        regex
+            .replace_all(text, |captures: &regex::Captures| {
+                let (index, matched) = captures
+                    .iter()
+                    .skip(1)
+                    .enumerate()
+                    .find_map(|(index, group)| group.map(|group| (index, group.as_str())))
+                    .unwrap_or((0, ""));
+                let output = &self.outputs[index];
+                // "Gonna go" -> "Going to go": keep a capital the speaker's
+                // sentence started with.
+                let mut chars = output.chars();
+                match (matched.chars().next(), chars.next()) {
+                    (Some(said), Some(first)) if said.is_uppercase() && first.is_lowercase() => {
+                        first.to_uppercase().chain(chars).collect()
+                    }
+                    _ => output.clone(),
+                }
+            })
+            .into_owned()
+    }
+}
+
+/// A phrase reduced to lowercase words, for comparing what was said with a
+/// snippet's trigger regardless of punctuation and capitals.
+pub fn normalize_phrase(text: &str) -> String {
+    text.split(|c: char| !is_word_char(c) && c != '\'' && c != '\u{2019}')
+        .map(|word| word.trim_matches(|c| c == '\'' || c == '\u{2019}'))
+        .filter(|word| !word.is_empty())
+        .map(str::to_lowercase)
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn phrases_match_whole_words_ignoring_case() {
+        let matcher = PhraseMatcher::new([("ai", "AI"), ("gonna", "going to")]);
+        assert_eq!(
+            matcher.replace("I said ai is gonna help."),
+            "I said AI is going to help."
+        );
+        assert_eq!(matcher.replace("Gonna try."), "Going to try.");
+        assert_eq!(matcher.replace("Maine, paint"), "Maine, paint");
+    }
+
+    #[test]
+    fn longer_phrases_win_and_replacements_are_not_replaced_again() {
+        let matcher = PhraseMatcher::new([
+            ("silk", "Silk"),
+            ("silk scribe", "SilkScribe"),
+            ("SilkScribe", "never"),
+        ]);
+        assert_eq!(matcher.replace("open silk  scribe"), "open SilkScribe");
+        let chain = PhraseMatcher::new([("a", "b"), ("b", "c")]);
+        assert_eq!(chain.replace("a b"), "b c");
+    }
+
+    #[test]
+    fn phrases_with_symbols_still_match() {
+        let matcher = PhraseMatcher::new([("c plus plus", "C++"), ("#team", "#design-team")]);
+        assert_eq!(
+            matcher.replace("ask #team about c plus plus"),
+            "ask #design-team about C++"
+        );
+        assert!(PhraseMatcher::new([("  ", "x")]).is_empty());
+    }
+
+    #[test]
+    fn normalized_phrases_ignore_punctuation_and_case() {
+        assert_eq!(normalize_phrase("My address."), "my address");
+        assert_eq!(normalize_phrase("  Sign-off,  please! "), "sign off please");
+        assert_eq!(normalize_phrase("Don’t forget"), "don’t forget");
+    }
 
     #[test]
     fn test_apply_custom_words_exact_match() {

@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { ShowOverlay } from "../ShowOverlay";
 import { OverlayAppearance } from "../OverlayAppearance";
 import { ModelUnloadTimeoutSetting } from "../ModelUnloadTimeout";
-import { CustomWords } from "../CustomWords";
 import { StartHidden } from "../StartHidden";
 import { AutostartToggle } from "../AutostartToggle";
 import { ShowTrayIcon } from "../ShowTrayIcon";
@@ -82,7 +81,6 @@ export const AdvancedSettings: React.FC<{
 
       {(!group || group === "transcription") && (
         <DisclosureSection title={t("settings.advanced.groups.transcription")}>
-          <CustomWords descriptionMode="inline" grouped />
           <AppendTrailingSpace descriptionMode="inline" grouped={true} />
         </DisclosureSection>
       )}
