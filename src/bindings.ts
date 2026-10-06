@@ -37,6 +37,14 @@ async changeTapToLockSetting(enabled: boolean) : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async changeLiveTextPreviewSetting(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_live_text_preview_setting", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async changeAudioFeedbackSetting(enabled: boolean) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("change_audio_feedback_setting", { enabled }) };
@@ -1453,7 +1461,11 @@ export type AppSettings = { bindings: Partial<{ [key in string]: ShortcutBinding
  * With push-to-talk, a quick tap keeps recording hands-free until the
  * next press. On for new installs; existing ones opt in (see migration 3).
  */
-tap_to_lock?: boolean; audio_feedback?: boolean; audio_feedback_volume?: number; sound_theme?: SoundTheme; start_hidden?: boolean; autostart_enabled?: boolean; update_checks_enabled?: boolean; selected_model?: string; has_completed_onboarding?: boolean; always_on_microphone?: boolean; selected_microphone?: string | null; clamshell_microphone?: string | null; selected_output_device?: string | null; translate_to_english?: boolean; selected_language?: string; overlay_position?: OverlayPosition; overlay_appearance?: OverlayAppearance; debug_mode?: boolean; log_level?: LogLevel; custom_words?: string[]; 
+tap_to_lock?: boolean; 
+/**
+ * Experimental: show text in the recording indicator while dictating.
+ */
+live_text_preview?: boolean; audio_feedback?: boolean; audio_feedback_volume?: number; sound_theme?: SoundTheme; start_hidden?: boolean; autostart_enabled?: boolean; update_checks_enabled?: boolean; selected_model?: string; has_completed_onboarding?: boolean; always_on_microphone?: boolean; selected_microphone?: string | null; clamshell_microphone?: string | null; selected_output_device?: string | null; translate_to_english?: boolean; selected_language?: string; overlay_position?: OverlayPosition; overlay_appearance?: OverlayAppearance; debug_mode?: boolean; log_level?: LogLevel; custom_words?: string[]; 
 /**
  * The person connected their calendar (macOS access is checked too).
  */

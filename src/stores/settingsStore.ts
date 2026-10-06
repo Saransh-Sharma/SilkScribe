@@ -92,6 +92,8 @@ const settingUpdaters: {
     commands.changeUpdateChecksSetting(value as boolean),
   push_to_talk: (value) => commands.changePttSetting(value as boolean),
   tap_to_lock: (value) => commands.changeTapToLockSetting(value as boolean),
+  live_text_preview: (value) =>
+    commands.changeLiveTextPreviewSetting(value as boolean),
   calendar_reminders: (value) =>
     commands.changeCalendarRemindersSetting(value as boolean),
   selected_microphone: (value) =>

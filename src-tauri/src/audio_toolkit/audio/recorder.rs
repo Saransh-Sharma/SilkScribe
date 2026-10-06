@@ -22,6 +22,9 @@ use crate::audio_toolkit::{
 enum Cmd {
     Start,
     Stop(mpsc::Sender<Vec<f32>>),
+    /// The last `n` samples recorded so far, and how many there are in all,
+    /// without stopping.
+    Snapshot(usize, mpsc::Sender<(usize, Vec<f32>)>),
     Shutdown,
 }
 
@@ -252,6 +255,17 @@ impl AudioRecorder {
             tx.send(Cmd::Stop(resp_tx))?;
         }
         Ok(resp_rx.recv()?) // wait for the samples
+    }
+
+    /// The last `max_samples` of the current recording (16 kHz, speech only)
+    /// and the recording's length so far. For live previews; recording goes on.
+    pub fn snapshot(&self, max_samples: usize) -> Option<(usize, Vec<f32>)> {
+        let (reply_tx, reply_rx) = mpsc::channel();
+        self.cmd_tx
+            .as_ref()?
+            .send(Cmd::Snapshot(max_samples, reply_tx))
+            .ok()?;
+        reply_rx.recv_timeout(Duration::from_millis(500)).ok()
     }
 
     pub fn close(&mut self) -> Result<(), Box<dyn std::error::Error>> {
@@ -555,6 +569,15 @@ fn run_consumer(
 
                     let _ = reply_tx.send(std::mem::take(&mut processed_samples));
                     stop_flag.store(false, Ordering::Relaxed);
+                }
+                Cmd::Snapshot(max_samples, reply_tx) => {
+                    let total = if recording {
+                        processed_samples.len()
+                    } else {
+                        0
+                    };
+                    let tail = &processed_samples[total.saturating_sub(max_samples)..total];
+                    let _ = reply_tx.send((total, tail.to_vec()));
                 }
                 Cmd::Shutdown => {
                     stop_flag.store(true, Ordering::Relaxed);

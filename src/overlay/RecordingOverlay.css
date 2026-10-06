@@ -362,6 +362,31 @@ body {
   opacity: 1;
 }
 
+/* Experimental live text: a line under the waveform. */
+.overlay-pill[data-state="recording"][data-has-partial="true"] {
+  width: 340px;
+  height: 76px;
+}
+.overlay-pill[data-has-partial="true"] .overlay-waveform-bay {
+  inset: 7px 15px 32px;
+}
+.overlay-pill[data-has-partial="true"] .overlay-timer {
+  inset-block: 7px 32px;
+}
+.overlay-partial {
+  position: absolute;
+  inset-inline: 18px;
+  bottom: 11px;
+  z-index: 3;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--ov-ink);
+}
+
 /* ----------------------------------------------------------------------------
    Spine: the persistent luminous line. Hidden under the waveform while
    recording; the through-line for every other state.

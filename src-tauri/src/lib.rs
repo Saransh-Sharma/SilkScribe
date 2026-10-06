@@ -13,6 +13,7 @@ mod dictation;
 mod dictionary;
 mod helpers;
 mod input;
+mod live_preview;
 mod llm_client;
 mod managers;
 mod meeting_orb;
@@ -590,6 +591,7 @@ fn command_builder() -> Builder<tauri::Wry> {
             shortcut::reset_binding,
             shortcut::change_ptt_setting,
             shortcut::change_tap_to_lock_setting,
+            shortcut::change_live_text_preview_setting,
             shortcut::change_audio_feedback_setting,
             shortcut::change_audio_feedback_volume_setting,
             shortcut::change_sound_theme_setting,

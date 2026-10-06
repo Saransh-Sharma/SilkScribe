@@ -21,6 +21,7 @@ pub fn cancel_current_operation(app: &AppHandle) {
     shortcut::unregister_cancel_shortcut(app);
 
     // Cancel any ongoing recording
+    crate::live_preview::stop();
     let audio_manager = app.state::<Arc<AudioRecordingManager>>();
     let recording_was_active = audio_manager.is_recording();
     audio_manager.cancel_recording();

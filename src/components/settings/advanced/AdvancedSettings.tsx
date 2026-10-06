@@ -21,7 +21,7 @@ import { UpdateChecksToggle } from "../UpdateChecksToggle";
 import { AccelerationSelector } from "../AccelerationSelector";
 import { LazyStreamClose } from "../LazyStreamClose";
 import { LogDirectory } from "../debug";
-import { AppPage, DisclosureSection } from "../../ui";
+import { AppPage, DisclosureSection, ToggleSwitch } from "../../ui";
 
 export const AdvancedSettings: React.FC<{
   group?:
@@ -34,7 +34,7 @@ export const AdvancedSettings: React.FC<{
     | "runtime";
 }> = ({ group }) => {
   const { t } = useTranslation();
-  const { getSetting } = useSettings();
+  const { getSetting, updateSetting, isUpdating } = useSettings();
   const experimentalEnabled = getSetting("experimental_enabled") || false;
   const pasteMethod = getSetting("paste_method") || "ctrl_v";
   const showsInsertionControls = pasteMethod !== "none";
@@ -126,6 +126,17 @@ export const AdvancedSettings: React.FC<{
                 grouped={true}
               />
               <LazyStreamClose descriptionMode="inline" grouped={true} />
+              <ToggleSwitch
+                checked={getSetting("live_text_preview") ?? false}
+                onChange={(enabled) =>
+                  void updateSetting("live_text_preview", enabled)
+                }
+                isUpdating={isUpdating("live_text_preview")}
+                label={t("settings.advanced.liveText.label")}
+                description={t("settings.advanced.liveText.description")}
+                descriptionMode="inline"
+                grouped
+              />
             </>
           ) : null}
         </DisclosureSection>

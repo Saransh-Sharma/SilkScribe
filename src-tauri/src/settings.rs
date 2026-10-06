@@ -367,6 +367,9 @@ pub struct AppSettings {
     /// next press. On for new installs; existing ones opt in (see migration 3).
     #[serde(default = "default_tap_to_lock")]
     pub tap_to_lock: bool,
+    /// Experimental: show text in the recording indicator while dictating.
+    #[serde(default)]
+    pub live_text_preview: bool,
     #[serde(default = "default_audio_feedback")]
     pub audio_feedback: bool,
     #[serde(default = "default_audio_feedback_volume")]
@@ -1021,6 +1024,7 @@ pub fn get_default_settings() -> AppSettings {
         bindings,
         push_to_talk: true,
         tap_to_lock: default_tap_to_lock(),
+        live_text_preview: false,
         audio_feedback: true,
         audio_feedback_volume: default_audio_feedback_volume(),
         sound_theme: default_sound_theme(),

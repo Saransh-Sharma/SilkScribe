@@ -103,6 +103,7 @@ fn target_style_code(target: &crate::app_context::DictationTarget) -> &'static s
 /// measured from releasing the shortcut.
 fn log_dictation_timing(
     engine: &str,
+    partials: bool,
     cleanup: &CleanupOutcome,
     audio_ms: usize,
     stopped: Duration,
@@ -112,7 +113,8 @@ fn log_dictation_timing(
 ) {
     log::info!(
         target: "dictation_timing",
-        "engine={engine} cleanup={cleanup:?} audio_ms={audio_ms} stop_ms={} asr_ms={} text_ms={} paste_ms={} total_ms={}",
+        "engine={engine} partials={} cleanup={cleanup:?} audio_ms={audio_ms} stop_ms={} asr_ms={} text_ms={} paste_ms={} total_ms={}",
+        if partials { "on" } else { "off" },
         stopped.as_millis(),
         transcribed.as_millis(),
         text_ready.as_millis(),
@@ -250,6 +252,9 @@ impl ShortcutAction for TranscribeAction {
         show_recording_overlay(app);
 
         let recording_started = begin_recording(app, &binding_id);
+        if recording_started && crate::live_preview::wanted(app) {
+            crate::live_preview::start(app);
+        }
 
         // Read the text around the cursor now that recording is under way, so
         // a slow app can't delay the mic. Only when cleanup could use it.
@@ -274,6 +279,8 @@ impl ShortcutAction for TranscribeAction {
     fn stop(&self, app: &AppHandle, binding_id: &str, _shortcut_str: &str) {
         // Unregister the cancel shortcut when transcription stops
         shortcut::unregister_cancel_shortcut(app);
+        let partials = crate::live_preview::wanted(app);
+        crate::live_preview::stop();
 
         let stop_time = Instant::now();
         debug!("TranscribeAction::stop called for binding: {}", binding_id);
@@ -430,6 +437,7 @@ impl ShortcutAction for TranscribeAction {
                                         play_feedback_sound(&ah_clone, SoundType::Done);
                                         log_dictation_timing(
                                             &engine,
+                                            partials,
                                             &cleanup_outcome,
                                             audio_ms,
                                             stopped,

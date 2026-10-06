@@ -7,6 +7,7 @@ const line =
 test("parses a dictation_timing line", () => {
   expect(parseLine(line)).toEqual({
     engine: "parakeet-tdt-0.6b-v3",
+    partials: "off",
     cleanup: "NotRequested",
     audio_ms: 4200,
     values: {
@@ -17,6 +18,11 @@ test("parses a dictation_timing line", () => {
       total_ms: 290,
     },
   });
+});
+
+test("reads whether live text was on", () => {
+  const withPartials = line.replace("cleanup=", "partials=on cleanup=");
+  expect(parseLine(withPartials)?.partials).toBe("on");
 });
 
 test("ignores other lines and incomplete timing lines", () => {

@@ -639,6 +639,10 @@
           "light": "Light",
           "dark": "Dark"
         }
+      },
+      "liveText": {
+        "label": "Live text while dictating",
+        "description": "Shows words as you speak, with fast engines. The final text can take a moment longer."
       }
     },
     "postProcessing": {

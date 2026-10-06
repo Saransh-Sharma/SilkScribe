@@ -283,6 +283,30 @@ test.describe("deterministic product states", () => {
     await expect(page.locator(".overlay-label")).toHaveText("Writing");
   });
 
+  test("shows live text under the waveform without announcing it", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 460, height: 180 });
+    const words =
+      "so the plan for next week is to finish the onboarding screens and then review them with Priya";
+    await page.goto(
+      fixture(
+        `view=overlay&state=recording&partial=${encodeURIComponent(words)}`,
+      ),
+    );
+    const line = page.locator(".overlay-partial");
+    await expect(line).toHaveAttribute("aria-hidden", "true");
+    // The newest words are the ones kept.
+    await expect(line).toContainText("review them with Priya");
+    await expect(line).toHaveText(/^…/);
+    await expect(page.getByRole("status")).toHaveAttribute(
+      "aria-label",
+      "Listening",
+    );
+    const fits = await line.evaluate((el) => el.scrollWidth <= el.clientWidth);
+    expect(fits).toBe(true);
+  });
+
   test("shows when a tap made the recording hands-free", async ({ page }) => {
     await page.setViewportSize({ width: 460, height: 180 });
     await page.goto(fixture("view=overlay&state=recording&locked=1"));

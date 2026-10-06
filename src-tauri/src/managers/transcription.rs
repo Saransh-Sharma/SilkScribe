@@ -588,6 +588,34 @@ impl TranscriptionManager {
         result
     }
 
+    /// A quick, throwaway transcription of a recording in progress, for the
+    /// live preview. Never waits: returns None if the engine is busy, loading
+    /// or not loaded, so the dictation's own transcription isn't held up.
+    pub fn transcribe_partial(&self, audio: Vec<f32>) -> Option<String> {
+        if self.engine_evicted.load(Ordering::SeqCst)
+            || *self.is_loading.lock().unwrap()
+            || !self.is_model_loaded()
+        {
+            return None;
+        }
+        let guard = self.inference_lock.try_lock().ok()?;
+        match self.transcribe_locked(&guard, audio, None, None) {
+            Ok(result) => Some(result.text),
+            Err(error) => {
+                debug!("Live preview transcription failed: {error}");
+                None
+            }
+        }
+    }
+
+    /// Whether the loaded engine is quick enough to transcribe while
+    /// recording (Parakeet, Moonshine, SenseVoice, Whisper Small).
+    pub fn engine_is_fast(&self) -> bool {
+        self.get_current_model()
+            .and_then(|id| self.model_manager.get_model_info(&id))
+            .is_some_and(|info| info.speed_score >= 0.8)
+    }
+
     /// Transcribe for meetings and other background work. Waits while dictation
     /// is recording or waiting, so push-to-talk never queues behind it; at most
     /// it waits for one background inference already running. Returns `Ok(None)`

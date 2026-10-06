@@ -4,7 +4,8 @@
  * Each finished dictation logs one `dictation_timing` line with the time from
  * releasing the shortcut to each stage (see TranscribeAction::stop in
  * src-tauri/src/actions.rs). This prints p50/p95 per engine so a change can be
- * compared against a baseline.
+ * compared against a baseline. Dictations with live text on are grouped apart
+ * (`partials: on`), so its cost to the final transcription shows directly.
  *
  * Usage: bun scripts/dictation-latency.ts [log files or folders...] [--json]
  * Default: the app's log folder (~/Library/Logs/com.silkscribe.app on macOS).
@@ -24,6 +25,8 @@ type Stage = (typeof STAGES)[number];
 
 interface Sample {
   engine: string;
+  /** Live text was on ("on"/"off"); older logs have no field ("off"). */
+  partials: string;
   cleanup: string;
   audio_ms: number;
   values: Record<Stage, number>;
@@ -80,6 +83,7 @@ export function parseLine(line: string): Sample | null {
   }
   return {
     engine: fields.get("engine") ?? "unknown",
+    partials: fields.get("partials") ?? "off",
     cleanup: fields.get("cleanup") ?? "unknown",
     audio_ms: Number(fields.get("audio_ms") ?? NaN),
     values,
@@ -98,7 +102,7 @@ export function percentile(sorted: number[], p: number): number {
 function summarise(samples: Sample[]) {
   const byEngine = new Map<string, Sample[]>();
   for (const sample of samples) {
-    const key = `${sample.engine} (cleanup: ${sample.cleanup})`;
+    const key = `${sample.engine} (cleanup: ${sample.cleanup}, partials: ${sample.partials})`;
     byEngine.set(key, [...(byEngine.get(key) ?? []), sample]);
   }
   return [...byEngine.entries()].map(([group, items]) => ({

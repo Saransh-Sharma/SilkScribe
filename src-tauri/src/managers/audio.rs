@@ -499,6 +499,22 @@ impl AudioRecordingManager {
             _ => None,
         }
     }
+    /// The tail of the dictation being recorded, for a live preview: up to
+    /// `max_samples` and the recording's length so far.
+    pub fn snapshot(&self, max_samples: usize) -> Option<(usize, Vec<f32>)> {
+        if !matches!(
+            *self.state.lock().unwrap(),
+            RecordingState::Recording { .. }
+        ) {
+            return None;
+        }
+        self.recorder
+            .lock()
+            .unwrap()
+            .as_ref()?
+            .snapshot(max_samples)
+    }
+
     /// Whether SilkScribe's own microphone stream is open (while dictating, and
     /// between dictations with always-on or lazily closed streams).
     pub fn is_microphone_open(&self) -> bool {

@@ -498,6 +498,7 @@ const OverlayFixture = () => {
         previewState={state}
         previewVisible
         previewTheme={params.get("theme") === "dark" ? "dark" : "light"}
+        previewPartial={params.get("partial") ?? undefined}
         previewPayload={{
           canCancel: false,
           ...(withDetail ? SAMPLE_DETAIL[state] : {}),

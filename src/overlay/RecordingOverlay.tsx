@@ -66,6 +66,17 @@ const OVERLAY_STATES: readonly OverlayState[] = [
 const isOverlayState = (value: unknown): value is OverlayState =>
   typeof value === "string" && OVERLAY_STATES.includes(value as OverlayState);
 
+/** Live text is one line; longer keeps its end, the newest words. */
+const PARTIAL_MAX_CHARS = 44;
+
+/** The end of the live text, starting at a word where it's cut. */
+const trimToEnd = (text: string) => {
+  if (text.length <= PARTIAL_MAX_CHARS) return text;
+  const tail = text.slice(-PARTIAL_MAX_CHARS);
+  const space = tail.indexOf(" ");
+  return `…${(space >= 0 && space < 16 ? tail.slice(space + 1) : tail).trimStart()}`;
+};
+
 const ENERGY_ATTACK = 0.5;
 const ENERGY_RELEASE = 0.12;
 
@@ -90,6 +101,8 @@ interface RecordingOverlayProps {
   /** Fixture-only: pin one treatment without touching the document theme, so a
    *  single page can show both side by side. */
   previewTheme?: ResolvedOverlayTheme;
+  /** Fixture-only: live text while recording. */
+  previewPartial?: string;
 }
 
 const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
@@ -97,6 +110,7 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
   previewVisible,
   previewPayload,
   previewTheme,
+  previewPartial,
 }) => {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
@@ -105,6 +119,8 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
     canCancel: true,
   });
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  // Experimental live text: what the engine has heard so far.
+  const [partial, setPartial] = useState("");
   const [resolvedTheme, setResolvedTheme] =
     useState<ResolvedOverlayTheme>(readDocumentTheme);
   const theme = previewTheme ?? resolvedTheme;
@@ -223,7 +239,10 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
           if (nextOverlay.state === "recording") {
             recordingStartedAtRef.current = Date.now();
             setElapsedSeconds(0);
+            // A tap locking the recording re-shows it; keep what's heard.
+            if (!nextOverlay.locked) setPartial("");
           } else {
+            setPartial("");
             recordingStartedAtRef.current = null;
             energyRef.current = 0;
             pillRef.current?.style.setProperty("--overlay-energy", "0");
@@ -232,6 +251,11 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
           setIsVisible(true);
           // Language sync is a round-trip to Rust; never let it gate the paint.
           void syncLanguageFromSettings();
+        }),
+        listen<string>("overlay-partial", (event) => {
+          if (overlayStateRef.current === "recording") {
+            setPartial(event.payload);
+          }
         }),
         listen("hide-overlay", () => {
           isVisibleRef.current = false;
@@ -342,6 +366,9 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
   ]);
 
   const isQuoted = Boolean(payload.previewText);
+  // One line, ending with the latest words.
+  const partialText = previewPartial ?? partial;
+  const partialLine = isRecording && partialText ? trimToEnd(partialText) : "";
   const announcement = [stateLabel, detailText].filter(Boolean).join(". ");
 
   return (
@@ -356,6 +383,7 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
         className={`overlay-pill ${visible ? "is-visible" : ""}`}
         data-state={state}
         data-has-detail={detailText ? "true" : "false"}
+        data-has-partial={partialLine ? "true" : "false"}
         role="status"
         aria-live="polite"
         aria-atomic="true"
@@ -403,6 +431,14 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
             ]
               .filter(Boolean)
               .join(" · ")}
+          </div>
+        ) : null}
+
+        {partialLine ? (
+          // Not announced: it changes every second and the pasted text is
+          // what counts.
+          <div className="overlay-partial" dir="auto" aria-hidden="true">
+            {partialLine}
           </div>
         ) : null}
 
