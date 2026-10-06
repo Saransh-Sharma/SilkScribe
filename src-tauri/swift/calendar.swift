@@ -46,6 +46,8 @@ private func response(_ object: Any) -> UnsafeMutablePointer<CChar>? {
         store.requestAccess(to: .event) { _, _ in done.signal() }
     }
     _ = done.wait(timeout: .now() + 300)
+    // A store made before access was granted can keep seeing no calendars.
+    if ssCalendarAccess() == 2 { store.reset() }
     return ssCalendarAccess()
 }
 
