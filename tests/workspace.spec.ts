@@ -689,9 +689,9 @@ test("a cleaned-up dictation can show the text before cleanup", async ({
   await page.getByText("Note to Sam", { exact: true }).click();
   const show = page.getByRole("button", { name: "Show original" });
   await show.click();
-  await expect(
-    page.getByLabel("Text before AI cleanup"),
-  ).toHaveText("can you send the revised screens before friday");
+  await expect(page.getByLabel("Text before AI cleanup")).toHaveText(
+    "can you send the revised screens before friday",
+  );
   await page.getByRole("button", { name: "Hide original" }).click();
   await expect(page.getByLabel("Text before AI cleanup")).toBeHidden();
 });
@@ -713,15 +713,13 @@ test("a finished meeting opens on notes the person can write", async ({
   await expect(notes).toHaveValue("- Ship Friday\n- Ask Sam");
   // Saved apart from the document, so it survives a reload.
   await expect
-    .poll(() =>
-      page.evaluate(() => localStorage.getItem("fixture-notes-one")),
-    )
+    .poll(() => page.evaluate(() => localStorage.getItem("fixture-notes-one")))
     .toBe("- Ship Friday\n- Ask Sam");
   await page.reload();
   await page.getByText("Product design review", { exact: true }).click();
-  await expect(
-    page.getByRole("textbox", { name: "Your notes" }),
-  ).toHaveValue("- Ship Friday\n- Ask Sam");
+  await expect(page.getByRole("textbox", { name: "Your notes" })).toHaveValue(
+    "- Ship Friday\n- Ask Sam",
+  );
 });
 
 test("Enhance keeps the person's points apart from AI notes", async ({
@@ -739,7 +737,19 @@ test("Enhance keeps the person's points apart from AI notes", async ({
     page.getByRole("button", { name: "Regenerate", exact: true }),
   ).toBeVisible();
   await page.getByRole("textbox", { name: "Your notes" }).fill("- Ship Friday");
-  await expect(page.getByRole("button", { name: "Enhance notes" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Enhance notes" }),
+  ).toBeVisible();
+});
+
+test("meeting setup can capture just the running call app", async ({
+  page,
+}) => {
+  await page.goto(`${fixture}?callApp`);
+  await page.getByRole("button", { name: "Record meeting" }).first().click();
+  const source = page.getByLabel("Capture audio from");
+  await expect(source).toBeVisible();
+  await expect(page.getByText("Offer notes when a call starts")).toBeVisible();
 });
 
 test("meeting setup offers a heads-up for the people on the call", async ({

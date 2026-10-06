@@ -212,7 +212,18 @@ const MeetingOrb: React.FC<{ preview?: MeetingOrbPreview }> = ({ preview }) => {
       const handlers = [
         listen<OrbStatePayload>("meeting-orb-state", ({ payload }) => {
           acceptDocument(payload.document_id);
-          setPhase(payload.phase);
+          setPhase((previous) => {
+            // A prompt opens the panel expanded; once it's answered or a
+            // meeting replaces it, the panel is back to the orb.
+            if (payload.phase === "prompt") {
+              clearTimer();
+              setMode("expanded");
+            } else if (previous === "prompt") {
+              clearTimer();
+              setMode("collapsed");
+            }
+            return payload.phase;
+          });
           setTitle(payload.title);
           if (payload.phase === "hidden") {
             clearTimer();
@@ -259,6 +270,7 @@ const MeetingOrb: React.FC<{ preview?: MeetingOrbPreview }> = ({ preview }) => {
       if (disposed) return;
       acceptDocument(snapshot.document_id);
       setPhase(snapshot.phase);
+      if (snapshot.phase === "prompt") setMode("expanded");
       setTitle(snapshot.title);
       if (transcript && transcript.document_id === snapshot.document_id) {
         setSegments(transcript.segments);
@@ -363,6 +375,49 @@ const MeetingOrb: React.FC<{ preview?: MeetingOrbPreview }> = ({ preview }) => {
   const level = Math.max(status.microphone_level, status.system_level);
   const expanded = mode !== "collapsed";
   const direction = getLanguageDirection(i18n.language);
+
+  if (phase === "prompt") {
+    return (
+      <div
+        className="orb-stage"
+        data-mode="expanded"
+        data-state="prompt"
+        dir={direction}
+      >
+        <section
+          className="orb-card orb-prompt"
+          aria-label={t("meetingOrb.prompt.title", { app: title })}
+        >
+          <header className="orb-header">
+            <div className="orb-heading">
+              <p className="orb-title">
+                {t("meetingOrb.prompt.title", { app: title })}
+              </p>
+              <p className="orb-meta">
+                {t("meetingOrb.prompt.body", { app: title })}
+              </p>
+            </div>
+          </header>
+          <footer className="orb-footer">
+            <button
+              type="button"
+              className="orb-button orb-button-primary"
+              onClick={() => void commands.meetingOrbAnswerPrompt(true)}
+            >
+              {t("meetingOrb.prompt.start")}
+            </button>
+            <button
+              type="button"
+              className="orb-button orb-button-quiet"
+              onClick={() => void commands.meetingOrbAnswerPrompt(false)}
+            >
+              {t("meetingOrb.prompt.notNow")}
+            </button>
+          </footer>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div

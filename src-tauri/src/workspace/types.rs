@@ -293,6 +293,10 @@ pub struct RecordingOptions {
     pub microphone_id: Option<String>,
     pub system_audio: bool,
     pub options: JobOptions,
+    /// Capture computer audio from just this app (e.g. the call app), by
+    /// bundle identifier; None captures every app.
+    #[serde(default)]
+    pub target_bundle_id: Option<String>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, Type)]
 pub struct CaptureDevice {

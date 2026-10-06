@@ -16,6 +16,7 @@ unsafe extern "C" {
     fn ss_capture_call(json: *const std::ffi::c_char) -> *mut std::ffi::c_char;
     fn ss_capture_free(json: *mut std::ffi::c_char);
     fn ss_capture_set_mic_gate(gated: bool);
+    fn ss_input_running_somewhere() -> i32;
     fn ss_capture_read_live(
         source: i32,
         out: *mut f32,
@@ -50,6 +51,22 @@ pub fn call(request: Value) -> Result<Value> {
     {
         let _ = request;
         bail!("Meeting recording is Mac-only for now.")
+    }
+}
+/// Whether any app is using the default microphone (including SilkScribe), or
+/// None when the platform can't tell.
+pub fn microphone_in_use() -> Option<bool> {
+    #[cfg(target_os = "macos")]
+    {
+        match unsafe { ss_input_running_somewhere() } {
+            1 => Some(true),
+            0 => Some(false),
+            _ => None,
+        }
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        None
     }
 }
 /// Silence the meeting's mic track while dictation records, so dictated words
@@ -120,7 +137,7 @@ pub fn start(
         last_status: RecordingStatus::default(),
     });
     let result = call(
-        json!({"operation":"start","path":path,"system":options.system_audio,"device":options.microphone_id}),
+        json!({"operation":"start","path":path,"system":options.system_audio,"device":options.microphone_id,"app":options.target_bundle_id}),
     );
     if let Err(e) = result {
         *recording = None;

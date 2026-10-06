@@ -4,6 +4,7 @@ mod app_context;
 mod apple_intelligence;
 mod audio_feedback;
 pub mod audio_toolkit;
+mod call_watch;
 pub mod cli;
 mod clipboard;
 mod commands;
@@ -362,6 +363,8 @@ fn initialize_core_logic(app_handle: &AppHandle) {
     utils::create_recording_overlay(app_handle);
     // And the meeting orb, shown while a meeting records
     meeting_orb::create(app_handle);
+    // Offers to take notes when a call starts (macOS)
+    call_watch::start(app_handle.clone());
 }
 
 #[tauri::command]
@@ -727,6 +730,9 @@ fn command_builder() -> Builder<tauri::Wry> {
             meeting_orb::meeting_orb_drag,
             meeting_orb::meeting_orb_open_document,
             meeting_orb::meeting_orb_copy,
+            meeting_orb::meeting_orb_answer_prompt,
+            call_watch::workspace_call_apps,
+            shortcut::change_suggest_meeting_notes_setting,
             commands::history::get_dictation_summary,
             commands::history::get_history_entries,
             commands::history::search_history_entries,

@@ -602,6 +602,7 @@ const ORB_STATES: Record<string, Omit<MeetingOrbPreview, "mode">> = {
     segments: ORB_SEGMENTS,
     behind: true,
   },
+  prompt: { phase: "prompt", title: "Zoom" },
   error: {
     status: {
       seconds: 402,
@@ -627,9 +628,9 @@ const MeetingOrbFixture = () => {
       >
         <MeetingOrb
           preview={{
-            mode,
             title: "Weekly launch sync",
             ...(ORB_STATES[state] ?? ORB_STATES.recording),
+            mode,
           }}
         />
       </div>

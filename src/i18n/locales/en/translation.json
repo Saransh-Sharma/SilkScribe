@@ -960,7 +960,13 @@
     "resume": "Resume",
     "stop": "Stop and transcribe",
     "open": "Open notes",
-    "letPeopleKnow": "Let people know"
+    "letPeopleKnow": "Let people know",
+    "prompt": {
+      "title": "Take notes for this {{app}} call?",
+      "body": "SilkScribe records your mic and {{app}} on this Mac. Nothing is uploaded.",
+      "start": "Start notes",
+      "notNow": "Not now"
+    }
   },
   "feedback": {
     "pasteFailed": {
@@ -1318,7 +1324,8 @@
       "saveNotes": "Couldn’t save your notes",
       "copyMessage": "Couldn’t copy the message",
       "copyText": "Couldn’t copy the text",
-      "saveStyle": "Couldn’t save the style"
+      "saveStyle": "Couldn’t save the style",
+      "startMeeting": "Couldn’t start the meeting"
     },
     "liveTranscript": "Live transcript",
     "liveTranscriptNote": "A more accurate transcript replaces this once processing finishes.",
@@ -1353,7 +1360,16 @@
     "copy": "Copy",
     "copied": "Copied",
     "enhanceNotes": "Enhance notes",
-    "youWrote": "You wrote this"
+    "youWrote": "You wrote this",
+    "callTitle": "{{app}} call",
+    "captureFrom": {
+      "label": "Capture audio from",
+      "allApps": "All apps"
+    },
+    "suggestNotes": {
+      "label": "Offer notes when a call starts",
+      "hint": "Shows a prompt when Zoom, Teams, FaceTime or another call app starts using the mic."
+    }
   },
   "audioPlayer": {
     "play": "Play",

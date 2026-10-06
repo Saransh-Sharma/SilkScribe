@@ -932,6 +932,16 @@ pub fn change_share_context_with_cloud_setting(
     Ok(())
 }
 
+/// Offer to take notes when a call starts.
+#[tauri::command]
+#[specta::specta]
+pub fn change_suggest_meeting_notes_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.suggest_meeting_notes = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
 /// Hide the Home suggestion to clean up every dictation on device.
 #[tauri::command]
 #[specta::specta]

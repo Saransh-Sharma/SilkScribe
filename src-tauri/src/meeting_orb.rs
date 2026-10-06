@@ -28,6 +28,8 @@ pub enum MeetingOrbPhase {
     Recording,
     /// Capture has stopped and the audio is being finalised.
     Finishing,
+    /// A call started: offering to take notes for it.
+    Prompt,
 }
 
 #[derive(Clone, Debug, Serialize, Type)]
@@ -51,6 +53,8 @@ struct OrbInner {
     dragged_to: Option<f64>,
     /// Stops the hover poller for the current showing.
     poller: Option<Arc<AtomicBool>>,
+    /// The call app the current prompt is about.
+    prompt: Option<crate::app_context::FocusedApp>,
 }
 
 pub struct MeetingOrbState(Mutex<OrbInner>);
@@ -67,6 +71,7 @@ impl Default for MeetingOrbState {
             drag_origin: None,
             dragged_to: None,
             poller: None,
+            prompt: None,
         }))
     }
 }
@@ -103,6 +108,37 @@ pub fn show(app: &AppHandle, document_id: &str, title: &str) {
     emit_state(app);
     platform::show(app);
     platform::start_hover_poller(app, poller);
+}
+
+/// Offer to take notes for a call that just started. Shown expanded, since
+/// it needs an answer; recording a meeting replaces it.
+pub fn show_prompt(app: &AppHandle, call: &crate::app_context::FocusedApp) {
+    with_state(app, |inner| {
+        inner.snapshot = MeetingOrbSnapshot {
+            phase: MeetingOrbPhase::Prompt,
+            document_id: None,
+            title: call.name.clone(),
+        };
+        inner.prompt = Some(call.clone());
+        inner.expanded = true;
+        inner.drag_origin = None;
+    });
+    emit_state(app);
+    platform::show(app);
+    platform::place(app, true, stored_position(app));
+}
+
+/// Whether the orb is currently offering to take notes.
+pub fn is_prompting(app: &AppHandle) -> bool {
+    with_state(app, |inner| inner.snapshot.phase == MeetingOrbPhase::Prompt).unwrap_or(false)
+}
+
+/// Withdraw an unanswered prompt (the call ended, or it timed out).
+pub fn dismiss_prompt(app: &AppHandle) {
+    if is_prompting(app) {
+        with_state(app, |inner| inner.prompt = None);
+        hide(app);
+    }
 }
 
 /// Mark the orb as finishing while the recording is finalised.
@@ -198,6 +234,21 @@ pub fn meeting_orb_drag(app: AppHandle, delta_y: f64, done: bool) {
 pub fn meeting_orb_open_document(app: AppHandle, document_id: String) {
     crate::show_main_window(&app);
     let _ = app.emit("workspace-open-document", document_id);
+}
+
+/// Answer the "take notes for this call?" prompt. Starting opens the main
+/// window, which starts the meeting with the person's usual setup.
+#[tauri::command]
+#[specta::specta]
+pub fn meeting_orb_answer_prompt(app: AppHandle, start: bool) {
+    let call = with_state(&app, |inner| inner.prompt.take()).flatten();
+    dismiss_prompt(&app);
+    if start {
+        if let Some(call) = call {
+            crate::show_main_window(&app);
+            let _ = app.emit("meeting-call-start", call);
+        }
+    }
 }
 
 /// Copies text for the orb (the "let people know" message). Its panel never

@@ -1218,6 +1218,30 @@ async meetingOrbCopy(text: string) : Promise<Result<null, string>> {
 }
 },
 /**
+ * Answer the "take notes for this call?" prompt. Starting opens the main
+ * window, which starts the meeting with the person's usual setup.
+ */
+async meetingOrbAnswerPrompt(start: boolean) : Promise<void> {
+    await TAURI_INVOKE("meeting_orb_answer_prompt", { start });
+},
+/**
+ * Call apps running now, for "Capture audio from" in the meeting form.
+ */
+async workspaceCallApps() : Promise<FocusedApp[]> {
+    return await TAURI_INVOKE("workspace_call_apps");
+},
+/**
+ * Offer to take notes when a call starts.
+ */
+async changeSuggestMeetingNotesSetting(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_suggest_meeting_notes_setting", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Today's dictation, the streak and the latest dictations, for Home.
  */
 async getDictationSummary() : Promise<Result<DictationSummary, string>> {
@@ -1343,6 +1367,10 @@ ai_cleanup_card_dismissed?: boolean;
  */
 meeting_consent_reminder?: boolean; 
 /**
+ * Offer to take notes when a call starts in a call app.
+ */
+suggest_meeting_notes?: boolean; 
+/**
  * Adjust AI cleanup to the app being dictated into.
  */
 per_app_styles?: boolean; 
@@ -1406,6 +1434,10 @@ export type DocumentSummary = { attempt_id: string; revision: number; id: string
 export type EngineType = "Whisper" | "Parakeet" | "Moonshine" | "MoonshineStreaming" | "SenseVoice" | "GigaAM" | "Canary" | "Cohere"
 export type ExportContent = { original_text?: boolean; transcript: boolean; notes: boolean; speakers: boolean }
 export type FileInspection = { path: string; bytes: number; duration: number | null; error: string | null }
+/**
+ * The app that was frontmost when a dictation started.
+ */
+export type FocusedApp = { bundle_id: string; name: string }
 export type GpuDeviceOption = { id: number; name: string; total_vram_mb: number }
 export type HistoryEntry = { id: number; file_name: string; timestamp: number; saved: boolean; title: string; transcription_text: string; post_processed_text: string | null; post_process_prompt: string | null; post_process_requested: boolean }
 export type HistoryFilter = "all" | "saved" | "failed"
@@ -1454,7 +1486,11 @@ export type MeetingOrbPhase = "hidden" | "recording" |
 /**
  * Capture has stopped and the audio is being finalised.
  */
-"finishing"
+"finishing" | 
+/**
+ * A call started: offering to take notes for it.
+ */
+"prompt"
 export type MeetingOrbSnapshot = { phase: MeetingOrbPhase; document_id: string | null; title: string }
 /**
  * Observations from this machine, not a quality benchmark or guaranteed bound.
@@ -1501,7 +1537,12 @@ export type ReadinessIssue = { capability: string; model: string; code: string }
  * An app dictated into, for choosing per-app styles.
  */
 export type RecentApp = { bundle_id: string; name: string; last_used: number; dictations: number }
-export type RecordingOptions = { title: string; microphone_id: string | null; system_audio: boolean; options: JobOptions }
+export type RecordingOptions = { title: string; microphone_id: string | null; system_audio: boolean; options: JobOptions; 
+/**
+ * Capture computer audio from just this app (e.g. the call app), by
+ * bundle identifier; None captures every app.
+ */
+target_bundle_id?: string | null }
 export type RecordingRetentionPeriod = "never" | "preserve_limit" | "days_3" | "weeks_2" | "months_3"
 export type RecordingStatus = { document_id: string | null; paused: boolean; seconds: number; microphone_level: number; system_level: number; error: string | null; 
 /**

@@ -9,6 +9,23 @@ private func response(_ object: [String: Any]) -> UnsafeMutablePointer<CChar>? {
 }
 @_cdecl("ss_capture_free") public func ssCaptureFree(_ pointer: UnsafeMutablePointer<CChar>?) { free(pointer) }
 
+/// Whether any app is using the default input device: 1 yes, 0 no, -1 unknown.
+/// Used to notice a call starting; it includes SilkScribe's own mic stream.
+@_cdecl("ss_input_running_somewhere") public func ssInputRunningSomewhere() -> Int32 {
+    var device = AudioDeviceID(0)
+    var size = UInt32(MemoryLayout<AudioDeviceID>.size)
+    var address = AudioObjectPropertyAddress(
+        mSelector: kAudioHardwarePropertyDefaultInputDevice,
+        mScope: kAudioObjectPropertyScopeGlobal,
+        mElement: AudioObjectPropertyElement(0))
+    guard AudioObjectGetPropertyData(AudioObjectID(kAudioObjectSystemObject), &address, 0, nil, &size, &device) == noErr, device != 0 else { return -1 }
+    var running: UInt32 = 0
+    size = UInt32(MemoryLayout<UInt32>.size)
+    address.mSelector = kAudioDevicePropertyDeviceIsRunningSomewhere
+    guard AudioObjectGetPropertyData(device, &address, 0, nil, &size, &running) == noErr else { return -1 }
+    return running != 0 ? 1 : 0
+}
+
 // While dictation records, the meeting's mic track is silenced so dictated words
 // stay out of the meeting. Set from any thread; independent of the capture object.
 private let micGateLock = NSLock()
@@ -85,7 +102,7 @@ private final class MeetingCapture: NSObject, SCStreamOutput, SCStreamDelegate {
     let path: String
     init(path: String) { self.path = path }
     var elapsed: Double { max(0, (pausedAt ?? ProcessInfo.processInfo.systemUptime) - started - pausedDuration) }
-    func start(system: Bool, device: AudioDeviceID?) async throws {
+    func start(system: Bool, device: AudioDeviceID?, app: String?) async throws {
         guard await AVCaptureDevice.requestAccess(for: .audio) else { throw NSError(domain:"SilkScribe",code:1,userInfo:[NSLocalizedDescriptionKey:"Allow microphone access in System Settings → Privacy & Security → Microphone."]) }
         micFile = try AVAudioFile(forWriting: URL(fileURLWithPath: path + ".mic.wav"), settings: format.settings)
         systemFile = try AVAudioFile(forWriting: URL(fileURLWithPath: path + ".system.wav"), settings: format.settings)
@@ -129,7 +146,15 @@ private final class MeetingCapture: NSObject, SCStreamOutput, SCStreamDelegate {
                 config.channelCount = 1
                 config.width = 2; config.height = 2
                 config.minimumFrameInterval = CMTime(value:1,timescale:1)
-                let stream = SCStream(filter:SCContentFilter(display:display,excludingApplications:[],exceptingWindows:[]),configuration:config,delegate:self)
+                // Capture just the call app when asked (and running), so other
+                // apps' sounds stay out; otherwise everything on the display.
+                let filter: SCContentFilter
+                if let bundle = app, let target = content.applications.first(where: { $0.bundleIdentifier == bundle }) {
+                    filter = SCContentFilter(display:display,including:[target],exceptingWindows:[])
+                } else {
+                    filter = SCContentFilter(display:display,excludingApplications:[],exceptingWindows:[])
+                }
+                let stream = SCStream(filter:filter,configuration:config,delegate:self)
                 self.stream = stream
                 try stream.addStreamOutput(self,type:.audio,sampleHandlerQueue:queue)
                 try await stream.startCapture()
@@ -237,7 +262,7 @@ private var capture: AnyObject?
         liveRing.reset()
         let instance=MeetingCapture(path:path);capture=instance
         let semaphore=DispatchSemaphore(value:0);var failure:String?
-        Task { do {try await instance.start(system:request["system"] as? Bool ?? true,device:(request["device"] as? String).flatMap(UInt32.init))} catch {failure=error.localizedDescription};semaphore.signal() }
+        Task { do {try await instance.start(system:request["system"] as? Bool ?? true,device:(request["device"] as? String).flatMap(UInt32.init),app:request["app"] as? String)} catch {failure=error.localizedDescription};semaphore.signal() }
         semaphore.wait()
         if let failure=failure {capture=nil;return response(["error":failure])}
         return response(["ok":true])

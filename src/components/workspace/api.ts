@@ -56,6 +56,8 @@ export const api = {
     }
     return installed;
   },
+  /** Call apps running now, to capture just one of them. */
+  callApps: () => commands.workspaceCallApps(),
   /** Apps dictated into recently, for per-app styles. */
   recentDictationApps: () => unwrap(commands.recentDictationApps()),
   /** Today's dictation, the streak and the latest dictations. */

@@ -499,6 +499,12 @@ impl AudioRecordingManager {
             _ => None,
         }
     }
+    /// Whether SilkScribe's own microphone stream is open (while dictating, and
+    /// between dictations with always-on or lazily closed streams).
+    pub fn is_microphone_open(&self) -> bool {
+        *self.is_open.lock().unwrap()
+    }
+
     pub fn is_recording(&self) -> bool {
         matches!(
             *self.state.lock().unwrap(),

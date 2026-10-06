@@ -234,6 +234,11 @@ export default function Workspace({
   const [title, setTitle] = useState(() => readSetup("meeting-title", ""));
   const [device, setDevice] = useState(() => readSetup("meeting-device", ""));
   const [system, setSystem] = useState(() => readSetup("meeting-system", true));
+  // "" captures every app; otherwise just this call app's audio.
+  const [targetApp, setTargetApp] = useState("");
+  const [callApps, setCallApps] = useState<import("@/bindings").FocusedApp[]>(
+    [],
+  );
   useEffect(() => {
     writeSetup("pending-files", files);
   }, [files]);
@@ -367,6 +372,58 @@ export default function Workspace({
   }, [refresh]);
   const refreshRef = useRef(refresh);
   refreshRef.current = refresh;
+
+  // A call started and the person chose "Start notes" on the orb: record it
+  // with their usual setup, capturing just that app. If it can't start (e.g.
+  // a permission is missing), open the meeting form with it filled in.
+  const startCall = async (call: import("@/bindings").FocusedApp) => {
+    const callTitle = t("workspace.callTitle", { app: call.name });
+    try {
+      setRecording(
+        await api.start({
+          title: callTitle,
+          microphone_id: device || null,
+          system_audio: true,
+          options,
+          target_bundle_id: call.bundle_id,
+        }),
+      );
+      await refreshRef.current();
+    } catch (error) {
+      setSelected(null);
+      setCreate("meeting");
+      setTitle(callTitle);
+      setSystem(true);
+      setTargetApp(call.bundle_id);
+      toastError(t("workspace.errors.startMeeting"), error);
+    }
+  };
+  const startCallRef = useRef(startCall);
+  startCallRef.current = startCall;
+  useEffect(() => {
+    let disposed = false;
+    let off: (() => void) | undefined;
+    void listen<import("@/bindings").FocusedApp>(
+      "meeting-call-start",
+      (event) => void startCallRef.current(event.payload),
+    )
+      .then((unlisten) => {
+        if (disposed) unlisten();
+        else off = unlisten;
+      })
+      .catch(() => {});
+    return () => {
+      disposed = true;
+      off?.();
+    };
+  }, []);
+  useEffect(() => {
+    if (create !== "meeting") return;
+    void api
+      .callApps()
+      .then(setCallApps)
+      .catch(() => setCallApps([]));
+  }, [create]);
   const selectedRef = useRef(selected);
   selectedRef.current = selected;
   const loadPacks = async () => {
@@ -557,6 +614,7 @@ export default function Workspace({
             microphone_id: device || null,
             system_audio: system,
             options,
+            target_bundle_id: system && targetApp ? targetApp : null,
           }),
         );
         setTitle("");
@@ -1131,6 +1189,31 @@ export default function Workspace({
                     label={t("workspace.computerAudio")}
                     hint={t("workspace.systemPermission")}
                   />
+                  {system && (callApps.length > 0 || targetApp) && (
+                    <WsSelect
+                      label={t("workspace.captureFrom.label")}
+                      value={targetApp}
+                      onChange={setTargetApp}
+                      options={[
+                        {
+                          value: "",
+                          label: t("workspace.captureFrom.allApps"),
+                        },
+                        ...callApps.map((app) => ({
+                          value: app.bundle_id,
+                          label: app.name,
+                        })),
+                      ]}
+                    />
+                  )}
+                  <WsToggle
+                    checked={settings?.suggest_meeting_notes ?? true}
+                    onChange={(value) =>
+                      void updateSetting("suggest_meeting_notes", value)
+                    }
+                    label={t("workspace.suggestNotes.label")}
+                    hint={t("workspace.suggestNotes.hint")}
+                  />
                   <WsToggle
                     checked={consentReminder}
                     onChange={(value) =>
@@ -1701,9 +1784,7 @@ export default function Workspace({
                                   <button
                                     className="ws-dictation-text"
                                     onClick={() =>
-                                      void openDocument(
-                                        `dictation-${entry.id}`,
-                                      )
+                                      void openDocument(`dictation-${entry.id}`)
                                     }
                                   >
                                     <span dir="auto">{text}</span>
@@ -1756,7 +1837,10 @@ export default function Workspace({
                             setCleanupSuggested(false);
                             await refreshSettings();
                           } catch (error) {
-                            toastError(t("workspace.errors.enableCleanup"), error);
+                            toastError(
+                              t("workspace.errors.enableCleanup"),
+                              error,
+                            );
                           }
                         }}
                       >

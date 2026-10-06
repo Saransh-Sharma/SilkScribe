@@ -426,6 +426,9 @@ pub struct AppSettings {
     /// Remind the user to tell people a meeting is being recorded.
     #[serde(default = "default_true")]
     pub meeting_consent_reminder: bool,
+    /// Offer to take notes when a call starts in a call app.
+    #[serde(default = "default_true")]
+    pub suggest_meeting_notes: bool,
     /// Adjust AI cleanup to the app being dictated into.
     #[serde(default = "default_true")]
     pub per_app_styles: bool,
@@ -998,6 +1001,7 @@ pub fn get_default_settings() -> AppSettings {
         ai_cleanup_on_main: false,
         ai_cleanup_card_dismissed: false,
         meeting_consent_reminder: true,
+        suggest_meeting_notes: true,
         per_app_styles: true,
         app_styles: HashMap::new(),
         app_category_overrides: HashMap::new(),

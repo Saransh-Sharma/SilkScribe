@@ -373,6 +373,18 @@ test.describe("meeting orb", () => {
     ).toBeVisible();
   });
 
+  test("offers to take notes when a call starts", async ({ page }) => {
+    await page.goto(fixture("view=meeting-orb&mode=expanded&state=prompt"));
+    await expect(
+      page.getByText("Take notes for this Zoom call?"),
+    ).toBeVisible();
+    for (const name of ["Start notes", "Not now"]) {
+      await expect(
+        page.getByRole("button", { name, exact: true }),
+      ).toBeVisible();
+    }
+  });
+
   test("offers the controls a live meeting needs", async ({ page }) => {
     await page.goto(fixture("view=meeting-orb&mode=expanded&state=recording"));
     for (const name of [

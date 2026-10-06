@@ -364,6 +364,8 @@ api.inspectFiles = async (paths) =>
   paths.map((path) => ({ path, bytes: 1048576, duration: 90, error: null }));
 api.dictationReady = async () => dictation === "ready";
 api.onDeviceCleanupAvailable = async () => params.has("cleanupSuggestion");
+api.callApps = async () =>
+  params.has("callApp") ? [{ bundle_id: "us.zoom.xos", name: "Zoom" }] : [];
 api.dictationSummary = async () => ({
   words_today: dictation ? 42 : 0,
   dictations_today: dictation ? 3 : 0,

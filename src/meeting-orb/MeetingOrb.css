@@ -480,3 +480,13 @@
     transform: none !important;
   }
 }
+
+/* ----------------------------------------------- "take notes for this call?" */
+/* The card sizes to its question instead of filling the expanded panel. */
+.orb-card.orb-prompt {
+  bottom: auto;
+  gap: 12px;
+}
+.orb-prompt .orb-meta {
+  white-space: normal;
+}
