@@ -52,8 +52,13 @@ pub struct TranscriptionCoordinator {
     tx: Sender<Command>,
 }
 
+/// Bindings that record speech. They share one pipeline, so presses queue and
+/// cancel the same way whichever one started it.
 pub fn is_transcribe_binding(id: &str) -> bool {
-    id == "transcribe" || id == "transcribe_with_post_process"
+    matches!(
+        id,
+        "transcribe" | "transcribe_with_post_process" | "command"
+    )
 }
 
 impl TranscriptionCoordinator {

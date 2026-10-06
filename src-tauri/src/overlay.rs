@@ -57,6 +57,9 @@ struct OverlayPayload {
     context_style: Option<String>,
     /// Cleanup is using the text around the cursor.
     context_nearby: bool,
+    /// A spoken command rather than dictation: "command" while recording,
+    /// then "edit" (a selection) or "write" (at the cursor) while it runs.
+    mode: Option<String>,
     /// Screen edge the overlay is anchored to, so it can animate in from there.
     position: String,
     can_cancel: bool,
@@ -378,6 +381,7 @@ fn create_overlay_payload(
         context_app: None,
         context_style: None,
         context_nearby: false,
+        mode: None,
         position: match settings.overlay_position {
             OverlayPosition::Top => "top",
             OverlayPosition::Bottom | OverlayPosition::None => "bottom",
@@ -449,6 +453,30 @@ pub fn show_processing_overlay_for(
     payload.context_app = Some(app_name.to_string());
     payload.context_style = Some(style_code.to_string());
     payload.context_nearby = nearby_text;
+    show_overlay_payload(app_handle, payload);
+}
+
+/// Shows the recording state for a spoken command.
+pub fn show_command_recording_overlay(app_handle: &AppHandle) {
+    let settings = settings::get_settings(app_handle);
+    if settings.overlay_position == OverlayPosition::None {
+        return;
+    }
+    let mut payload = create_overlay_payload(&settings, "recording", None, None);
+    payload.mode = Some("command".to_string());
+    show_overlay_payload(app_handle, payload);
+}
+
+/// Shows a command running, with the instruction that was heard: "edit" when
+/// it rewrites a selection, "write" when it writes at the cursor.
+pub fn show_command_processing_overlay(app_handle: &AppHandle, instruction: &str, edit: bool) {
+    let settings = settings::get_settings(app_handle);
+    if settings.overlay_position == OverlayPosition::None {
+        return;
+    }
+    let mut payload =
+        create_overlay_payload(&settings, "processing", None, build_preview(instruction));
+    payload.mode = Some(if edit { "edit" } else { "write" }.to_string());
     show_overlay_payload(app_handle, payload);
 }
 

@@ -31,6 +31,10 @@ enum EffectivePasteStrategy {
 #[cfg(target_os = "macos")]
 const RESTORE_DELAY: Duration = Duration::from_millis(400);
 
+/// How long to wait for the frontmost app to answer a simulated copy.
+#[cfg(target_os = "macos")]
+const COPY_WAIT: Duration = Duration::from_millis(400);
+
 fn resolve_paste_strategy(
     paste_method: PasteMethod,
     clipboard_handling: ClipboardHandling,
@@ -99,7 +103,7 @@ fn paste_and_restore(
 /// The general pasteboard, read and written item by item so a restore keeps
 /// images, rich text and files, not just plain text.
 #[cfg(target_os = "macos")]
-mod pasteboard {
+pub(crate) mod pasteboard {
     use tauri_nspanel::objc2::rc::Retained;
     use tauri_nspanel::objc2::runtime::ProtocolObject;
     use tauri_nspanel::objc2_app_kit::{
@@ -157,6 +161,19 @@ mod pasteboard {
         pasteboard.changeCount()
     }
 
+    pub fn change_count() -> isize {
+        NSPasteboard::generalPasteboard().changeCount()
+    }
+
+    /// The clipboard's plain text, if it holds any.
+    pub fn read_string() -> Option<String> {
+        // SAFETY: a constant AppKit provides for the lifetime of the process.
+        let string_type = unsafe { NSPasteboardTypeString };
+        NSPasteboard::generalPasteboard()
+            .stringForType(string_type)
+            .map(|text| text.to_string())
+    }
+
     /// Puts a snapshot back unless the clipboard changed since `written`.
     /// Returns whether it was restored.
     pub fn restore(snapshot: Snapshot, written: isize) -> bool {
@@ -181,6 +198,68 @@ mod pasteboard {
         }
         true
     }
+}
+
+/// What a simulated copy of the selection found.
+#[cfg(target_os = "macos")]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum CopiedSelection {
+    /// The clipboard didn't change: nothing was selected.
+    Nothing,
+    Text(String),
+    /// Something other than text was copied, like a file in Finder.
+    NotText,
+}
+
+/// Copies the frontmost app's selection with Cmd+C and reads it, then puts the
+/// clipboard back. For apps whose text the Accessibility API can't read. Call
+/// it off the main thread, after the shortcut's keys are up: it waits for the
+/// app to answer, and a held modifier would turn Cmd+C into something else.
+#[cfg(target_os = "macos")]
+pub fn copy_selection(app_handle: &AppHandle) -> Result<CopiedSelection, String> {
+    let (sender, receiver) = std::sync::mpsc::channel();
+    let app = app_handle.clone();
+    app_handle
+        .run_on_main_thread(move || {
+            let result = (|| {
+                let saved = pasteboard::snapshot();
+                let before = pasteboard::change_count();
+                let state = app
+                    .try_state::<EnigoState>()
+                    .ok_or("Enigo state not initialized")?;
+                let mut enigo = state
+                    .0
+                    .lock()
+                    .map_err(|e| format!("Failed to lock Enigo: {}", e))?;
+                input::send_copy(&mut enigo)?;
+                Ok::<_, String>((saved, before))
+            })();
+            let _ = sender.send(result);
+        })
+        .map_err(|e| format!("Failed to run copy on main thread: {}", e))?;
+    let (saved, before) = receiver
+        .recv_timeout(Duration::from_secs(2))
+        .map_err(|_| "The copy keystroke didn't run".to_string())??;
+
+    let deadline = std::time::Instant::now() + COPY_WAIT;
+    while pasteboard::change_count() == before && std::time::Instant::now() < deadline {
+        std::thread::sleep(Duration::from_millis(20));
+    }
+    if pasteboard::change_count() == before {
+        return Ok(CopiedSelection::Nothing);
+    }
+    // Some apps write a copy in more than one step; let it settle.
+    std::thread::sleep(Duration::from_millis(40));
+    let copied = pasteboard::read_string();
+    let after = pasteboard::change_count();
+    let _ = app_handle.run_on_main_thread(move || {
+        pasteboard::restore(saved, after);
+    });
+    Ok(match copied {
+        Some(text) if text.is_empty() => CopiedSelection::Nothing,
+        Some(text) => CopiedSelection::Text(text),
+        None => CopiedSelection::NotText,
+    })
 }
 
 /// Pastes text using the clipboard: writes text, waits for clipboard sync, then sends the paste keystroke.
@@ -740,14 +819,26 @@ fn should_send_auto_submit(auto_submit: bool, effective_strategy: EffectivePaste
     auto_submit && effective_strategy != EffectivePasteStrategy::None
 }
 
+/// Delivers a dictation: pastes it with the trailing space and auto-submit
+/// the user chose.
 pub fn paste(text: String, app_handle: AppHandle) -> Result<(), String> {
+    paste_with(text, app_handle, true)
+}
+
+/// Delivers a command's result, usually over a selection. A trailing space or
+/// a submitted message would be wrong there, so neither is added.
+pub fn paste_replacement(text: String, app_handle: AppHandle) -> Result<(), String> {
+    paste_with(text, app_handle, false)
+}
+
+fn paste_with(text: String, app_handle: AppHandle, as_dictation: bool) -> Result<(), String> {
     let settings = get_settings(&app_handle);
     let paste_method = settings.paste_method;
     let paste_delay_ms = settings.paste_delay_ms;
     let effective_strategy = resolve_paste_strategy(paste_method, settings.clipboard_handling);
 
     // Append trailing space if setting is enabled
-    let text = if settings.append_trailing_space {
+    let text = if as_dictation && settings.append_trailing_space {
         format!("{} ", text)
     } else {
         text
@@ -806,7 +897,7 @@ pub fn paste(text: String, app_handle: AppHandle) -> Result<(), String> {
         }
     }
 
-    if should_send_auto_submit(settings.auto_submit, effective_strategy) {
+    if as_dictation && should_send_auto_submit(settings.auto_submit, effective_strategy) {
         std::thread::sleep(Duration::from_millis(50));
         send_return_key(&mut enigo, settings.auto_submit_key)?;
     }

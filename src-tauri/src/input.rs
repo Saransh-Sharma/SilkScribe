@@ -51,6 +51,26 @@ pub fn send_paste_ctrl_v(enigo: &mut Enigo) -> Result<(), String> {
     Ok(())
 }
 
+/// Sends Cmd+C by virtual key code, so it copies on any keyboard layout.
+#[cfg(target_os = "macos")]
+pub fn send_copy(enigo: &mut Enigo) -> Result<(), String> {
+    // kVK_ANSI_C
+    let c_key_code = Key::Other(8);
+    enigo
+        .key(Key::Meta, enigo::Direction::Press)
+        .map_err(|e| format!("Failed to press modifier key: {}", e))?;
+    enigo
+        .key(c_key_code, enigo::Direction::Click)
+        .map_err(|e| format!("Failed to click C key: {}", e))?;
+
+    std::thread::sleep(std::time::Duration::from_millis(100));
+
+    enigo
+        .key(Key::Meta, enigo::Direction::Release)
+        .map_err(|e| format!("Failed to release modifier key: {}", e))?;
+    Ok(())
+}
+
 /// Sends a Ctrl+Shift+V paste command.
 /// This is commonly used in terminal applications on Linux to paste without formatting.
 /// Note: On Wayland, this may not work - callers should check for Wayland and use alternative methods.

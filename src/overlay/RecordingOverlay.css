@@ -636,10 +636,12 @@ body {
 
 .overlay-timer {
   position: absolute;
-  top: 50%;
+  /* Centred with auto margins: the entrance animation owns \`transform\`. */
+  inset-block: 0;
+  margin-block: auto;
+  height: max-content;
   inset-inline-end: 16px;
   z-index: 3;
-  transform: translateY(-50%);
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--ov-gold) 22%, transparent);
   background: color-mix(in srgb, var(--ov-surface-bottom) 82%, transparent);

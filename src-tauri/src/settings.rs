@@ -950,6 +950,20 @@ pub fn get_default_settings() -> AppSettings {
             current_binding: default_post_process_shortcut.to_string(),
         },
     );
+    // Command mode reads the selection through the Accessibility API, which
+    // only the Mac build has. ⌃⌥Space would clash with macOS's input-source
+    // switcher, so it's ⌃⇧Space.
+    #[cfg(target_os = "macos")]
+    bindings.insert(
+        "command".to_string(),
+        ShortcutBinding {
+            id: "command".to_string(),
+            name: "Command".to_string(),
+            description: "Say how to change the selected text, or what to write".to_string(),
+            default_binding: "ctrl+shift+space".to_string(),
+            current_binding: "ctrl+shift+space".to_string(),
+        },
+    );
     bindings.insert(
         "cancel".to_string(),
         ShortcutBinding {

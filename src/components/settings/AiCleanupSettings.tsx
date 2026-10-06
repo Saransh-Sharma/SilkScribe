@@ -29,13 +29,17 @@ export const AiCleanupSettings: React.FC = () => {
   const { t } = useTranslation();
   const { getSetting, updateSetting, isUpdating } = useSettings();
   const enabled = getSetting("post_process_enabled") ?? false;
+  const hasCommandShortcut = Boolean(getSetting("bindings")?.command);
 
   const prompts = getSetting("post_process_prompts") ?? [];
   const selectedPrompt = getSetting("post_process_selected_prompt_id") ?? "";
   const builtIn = new Map<string, string>(LEVELS);
   const levelOptions = [
     ...LEVELS.filter(([id]) => prompts.some((p) => p.id === id)).map(
-      ([id, key]) => ({ value: id, label: t(`settings.aiCleanup.levels.${key}`) }),
+      ([id, key]) => ({
+        value: id,
+        label: t(`settings.aiCleanup.levels.${key}`),
+      }),
     ),
     ...prompts
       .filter((prompt) => !builtIn.has(prompt.id))
@@ -123,6 +127,14 @@ export const AiCleanupSettings: React.FC = () => {
             descriptionMode="inline"
             grouped
           />
+          {/* Command mode exists where the selection can be read (macOS). */}
+          {hasCommandShortcut && (
+            <ShortcutInput
+              shortcutId="command"
+              descriptionMode="inline"
+              grouped
+            />
+          )}
           <DisclosureSection title={t("settings.aiCleanup.prompts")}>
             <PostProcessingSettingsPrompts />
           </DisclosureSection>

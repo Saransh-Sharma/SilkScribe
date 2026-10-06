@@ -408,6 +408,10 @@
           "transcribe_with_post_process": {
             "name": "AI cleanup shortcut",
             "description": "Dictates and tidies up the text with AI."
+          },
+          "command": {
+            "name": "Command shortcut",
+            "description": "Select text and say how to change it, or say what to write."
           }
         },
         "errors": {
@@ -924,7 +928,13 @@
       "pasteFailed": "Couldn’t paste or copy",
       "cleanupSkipped": "Pasted without AI cleanup",
       "transcriptionFailed": "Transcription didn’t finish",
-      "recordingFailed": "Couldn’t start recording"
+      "recordingFailed": "Couldn’t start recording",
+      "commandNeedsSetup": "Set up AI cleanup first",
+      "commandFailed": "Nothing changed",
+      "commandTimedOut": "Timed out, nothing changed",
+      "commandTooLong": "Select less text",
+      "commandPassword": "Not in password fields",
+      "commandNotText": "Select some text"
     },
     "style": {
       "casual": "Casual",
@@ -933,7 +943,13 @@
       "code": "Code",
       "ai_chat": "AI prompt"
     },
-    "nearbyText": "Nearby text"
+    "nearbyText": "Nearby text",
+    "command": {
+      "listening": "Listening for a command",
+      "tag": "Command",
+      "editing": "Editing",
+      "writing": "Writing"
+    }
   },
   "meetingOrb": {
     "orbLabel": "Meeting recording, {{state}}",

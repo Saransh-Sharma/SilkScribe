@@ -1,5 +1,5 @@
 use crate::audio_feedback::{play_feedback_sound, play_feedback_sound_blocking, SoundType};
-use crate::dictation::{finish_dictation, CleanupOutcome};
+use crate::dictation::{finish_dictation, CleanupOutcome, CommandOutcome};
 use crate::managers::audio::AudioRecordingManager;
 use crate::managers::history::HistoryManager;
 use crate::managers::transcription::TranscriptionManager;
@@ -7,9 +7,10 @@ use crate::settings::get_settings;
 use crate::shortcut;
 use crate::tray::{change_tray_icon, TrayIconState};
 use crate::utils::{
-    self, show_empty_overlay, show_error_overlay_with_reason, show_processing_overlay,
-    show_processing_overlay_for, show_recording_overlay, show_success_overlay_with_notice,
-    show_success_overlay_with_preview, show_transcribing_overlay,
+    self, show_command_processing_overlay, show_command_recording_overlay, show_empty_overlay,
+    show_error_overlay_with_reason, show_processing_overlay, show_processing_overlay_for,
+    show_recording_overlay, show_success_overlay_with_notice, show_success_overlay_with_preview,
+    show_transcribing_overlay,
 };
 use crate::TranscriptionCoordinator;
 use log::{debug, error};
@@ -118,6 +119,113 @@ fn log_dictation_timing(
     );
 }
 
+/// The text couldn't be pasted: copy it instead, and say which happened.
+fn report_paste_failure(app: &AppHandle, text: &str) {
+    let copied_to_clipboard = match app.clipboard().write_text(text) {
+        Ok(()) => true,
+        Err(copy_error) => {
+            error!(
+                "Failed to copy transcription fallback to clipboard: {}",
+                copy_error
+            );
+            false
+        }
+    };
+    let code = if copied_to_clipboard {
+        PasteFailureCode::Copied
+    } else {
+        PasteFailureCode::CopyFailed
+    };
+    let _ = app.emit(
+        "transcription-paste-failed",
+        PasteFailedPayload {
+            code,
+            copied_to_clipboard,
+        },
+    );
+    show_error_overlay_with_reason(
+        app,
+        if copied_to_clipboard {
+            "pasteCopied"
+        } else {
+            "pasteFailed"
+        },
+    );
+    play_feedback_sound(app, SoundType::Error);
+    utils::hide_recording_overlay_after(app, 2000);
+}
+
+/// Ends a shortcut with an error the overlay explains. `code` is a key suffix
+/// under `overlay.detail.*`.
+fn finish_with_error(app: &AppHandle, code: &str) {
+    show_error_overlay_with_reason(app, code);
+    play_feedback_sound(app, SoundType::Error);
+    utils::hide_recording_overlay_after(app, 2500);
+    change_tray_icon(app, TrayIconState::Idle);
+}
+
+/// Opens the mic for a shortcut, with the start sound and mute timed to the
+/// microphone mode, and arms the cancel shortcut. Returns whether recording
+/// started; on failure the user has already been told.
+fn begin_recording(app: &AppHandle, binding_id: &str) -> bool {
+    let rm = app.state::<Arc<AudioRecordingManager>>();
+
+    // Get the microphone mode to determine audio feedback timing
+    let settings = get_settings(app);
+    let is_always_on = settings.always_on_microphone;
+    debug!("Microphone mode - always_on: {}", is_always_on);
+
+    let mut recording_started = false;
+    if is_always_on {
+        // Always-on mode: Play audio feedback immediately, then apply mute after sound finishes
+        debug!("Always-on mode: Playing audio feedback immediately");
+        let rm_clone = Arc::clone(&rm);
+        let app_clone = app.clone();
+        // The blocking helper exits immediately if audio feedback is disabled,
+        // so we can always reuse this thread to ensure mute happens right after playback.
+        std::thread::spawn(move || {
+            play_feedback_sound_blocking(&app_clone, SoundType::Start);
+            rm_clone.apply_mute();
+        });
+
+        recording_started = rm.try_start_recording(binding_id);
+        debug!("Recording started: {}", recording_started);
+        if !recording_started {
+            handle_recording_start_failure(app);
+        }
+    } else {
+        // On-demand mode: Start recording first, then play audio feedback, then apply mute
+        // This allows the microphone to be activated before playing the sound
+        debug!("On-demand mode: Starting recording first, then audio feedback");
+        let recording_start_time = Instant::now();
+        if rm.try_start_recording(binding_id) {
+            recording_started = true;
+            debug!("Recording started in {:?}", recording_start_time.elapsed());
+            // Small delay to ensure microphone stream is active
+            let app_clone = app.clone();
+            let rm_clone = Arc::clone(&rm);
+            std::thread::spawn(move || {
+                std::thread::sleep(std::time::Duration::from_millis(100));
+                debug!("Handling delayed audio feedback/mute sequence");
+                // Helper handles disabled audio feedback by returning early, so we reuse it
+                // to keep mute sequencing consistent in every mode.
+                play_feedback_sound_blocking(&app_clone, SoundType::Start);
+                rm_clone.apply_mute();
+            });
+        } else {
+            debug!("Failed to start recording");
+            handle_recording_start_failure(app);
+        }
+    }
+
+    if recording_started {
+        // Dynamically register the cancel shortcut in a separate task to avoid deadlock
+        shortcut::register_cancel_shortcut(app);
+    }
+
+    recording_started
+}
+
 impl ShortcutAction for TranscribeAction {
     fn start(&self, app: &AppHandle, binding_id: &str, _shortcut_str: &str) {
         let start_time = Instant::now();
@@ -135,60 +243,7 @@ impl ShortcutAction for TranscribeAction {
         change_tray_icon(app, TrayIconState::Recording);
         show_recording_overlay(app);
 
-        let rm = app.state::<Arc<AudioRecordingManager>>();
-
-        // Get the microphone mode to determine audio feedback timing
-        let settings = get_settings(app);
-        let is_always_on = settings.always_on_microphone;
-        debug!("Microphone mode - always_on: {}", is_always_on);
-
-        let mut recording_started = false;
-        if is_always_on {
-            // Always-on mode: Play audio feedback immediately, then apply mute after sound finishes
-            debug!("Always-on mode: Playing audio feedback immediately");
-            let rm_clone = Arc::clone(&rm);
-            let app_clone = app.clone();
-            // The blocking helper exits immediately if audio feedback is disabled,
-            // so we can always reuse this thread to ensure mute happens right after playback.
-            std::thread::spawn(move || {
-                play_feedback_sound_blocking(&app_clone, SoundType::Start);
-                rm_clone.apply_mute();
-            });
-
-            recording_started = rm.try_start_recording(&binding_id);
-            debug!("Recording started: {}", recording_started);
-            if !recording_started {
-                handle_recording_start_failure(app);
-            }
-        } else {
-            // On-demand mode: Start recording first, then play audio feedback, then apply mute
-            // This allows the microphone to be activated before playing the sound
-            debug!("On-demand mode: Starting recording first, then audio feedback");
-            let recording_start_time = Instant::now();
-            if rm.try_start_recording(&binding_id) {
-                recording_started = true;
-                debug!("Recording started in {:?}", recording_start_time.elapsed());
-                // Small delay to ensure microphone stream is active
-                let app_clone = app.clone();
-                let rm_clone = Arc::clone(&rm);
-                std::thread::spawn(move || {
-                    std::thread::sleep(std::time::Duration::from_millis(100));
-                    debug!("Handling delayed audio feedback/mute sequence");
-                    // Helper handles disabled audio feedback by returning early, so we reuse it
-                    // to keep mute sequencing consistent in every mode.
-                    play_feedback_sound_blocking(&app_clone, SoundType::Start);
-                    rm_clone.apply_mute();
-                });
-            } else {
-                debug!("Failed to start recording");
-                handle_recording_start_failure(app);
-            }
-        }
-
-        if recording_started {
-            // Dynamically register the cancel shortcut in a separate task to avoid deadlock
-            shortcut::register_cancel_shortcut(app);
-        }
+        let recording_started = begin_recording(app, &binding_id);
 
         // Read the text around the cursor now that recording is under way, so
         // a slow app can't delay the mic. Only when cleanup could use it.
@@ -384,41 +439,7 @@ impl ShortcutAction for TranscribeAction {
                                     }
                                     Err(e) => {
                                         error!("Failed to paste transcription: {}", e);
-                                        let copied_to_clipboard = match ah_clone
-                                            .clipboard()
-                                            .write_text(&paste_text)
-                                        {
-                                            Ok(()) => true,
-                                            Err(copy_error) => {
-                                                error!(
-                                                    "Failed to copy transcription fallback to clipboard: {}",
-                                                    copy_error
-                                                );
-                                                false
-                                            }
-                                        };
-                                        let code = if copied_to_clipboard {
-                                            PasteFailureCode::Copied
-                                        } else {
-                                            PasteFailureCode::CopyFailed
-                                        };
-                                        let _ = ah_clone.emit(
-                                            "transcription-paste-failed",
-                                            PasteFailedPayload {
-                                                code,
-                                                copied_to_clipboard,
-                                            },
-                                        );
-                                        show_error_overlay_with_reason(
-                                            &ah_clone,
-                                            if copied_to_clipboard {
-                                                "pasteCopied"
-                                            } else {
-                                                "pasteFailed"
-                                            },
-                                        );
-                                        play_feedback_sound(&ah_clone, SoundType::Error);
-                                        utils::hide_recording_overlay_after(&ah_clone, 2000);
+                                        report_paste_failure(&ah_clone, &paste_text);
                                     }
                                 }
                                 change_tray_icon(&ah_clone, TrayIconState::Idle);
@@ -476,6 +497,224 @@ impl ShortcutAction for TranscribeAction {
     }
 }
 
+// Command Action
+
+/// Command mode: select text, hold the shortcut and say how to change it, or
+/// with nothing selected, say what to write. The AI cleanup provider does the
+/// work. Commands aren't saved to history: they're edits, not dictations.
+struct CommandAction;
+
+/// The text a command works on, found after the instruction is transcribed
+/// (by then the shortcut's keys are up, so a simulated copy isn't garbled).
+/// `Ok(None)` writes at the cursor. `Err` is an overlay detail code.
+fn command_selection(
+    app: &AppHandle,
+    at_start: Option<crate::text_context::FocusedText>,
+) -> Result<Option<String>, &'static str> {
+    // Read again: the first read may only have woken an Electron app's text.
+    let readings: Vec<_> = [at_start, crate::text_context::read_for_command()]
+        .into_iter()
+        .flatten()
+        .collect();
+    if readings.iter().any(|text| text.secure) {
+        return Err("commandPassword");
+    }
+    if let Some(text) = readings.iter().find(|text| !text.selected.is_empty()) {
+        if text.selection_truncated {
+            return Err("commandTooLong");
+        }
+        return Ok(Some(text.selected.clone()));
+    }
+    // A text field said nothing is selected: trust it rather than copy, which
+    // could pick up something else (a file in Finder, a whole line in an editor).
+    if readings.iter().any(|text| text.is_text_input()) {
+        return Ok(None);
+    }
+    #[cfg(target_os = "macos")]
+    {
+        use crate::clipboard::CopiedSelection;
+        match crate::clipboard::copy_selection(app) {
+            Ok(CopiedSelection::Text(text))
+                if text.chars().count() > crate::text_context::SELECTION_LIMIT as usize =>
+            {
+                Err("commandTooLong")
+            }
+            Ok(CopiedSelection::Text(text)) => Ok(Some(text)),
+            Ok(CopiedSelection::Nothing) => Ok(None),
+            Ok(CopiedSelection::NotText) => Err("commandNotText"),
+            Err(e) => {
+                error!("Command couldn't copy the selection: {}", e);
+                Err("commandFailed")
+            }
+        }
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        let _ = app;
+        Ok(None)
+    }
+}
+
+impl ShortcutAction for CommandAction {
+    fn start(&self, app: &AppHandle, binding_id: &str, _shortcut_str: &str) {
+        // Without a provider there's nothing to run the command, so don't
+        // make the person talk first to find out.
+        if !crate::dictation::commands_ready(&get_settings(app)) {
+            show_error_overlay_with_reason(app, "commandNeedsSetup");
+            play_feedback_sound(app, SoundType::Error);
+            utils::hide_recording_overlay_after(app, 2500);
+            return;
+        }
+        crate::app_context::remember_target_app();
+        app.state::<Arc<TranscriptionManager>>()
+            .initiate_model_load();
+        change_tray_icon(app, TrayIconState::Recording);
+        show_command_recording_overlay(app);
+        let recording_started = begin_recording(app, binding_id);
+        // Read the selection while it's surely still there.
+        crate::text_context::remember_focused_text(if recording_started {
+            crate::text_context::read_for_command()
+        } else {
+            None
+        });
+    }
+
+    fn stop(&self, app: &AppHandle, binding_id: &str, _shortcut_str: &str) {
+        shortcut::unregister_cancel_shortcut(app);
+
+        let ah = app.clone();
+        let rm = Arc::clone(&app.state::<Arc<AudioRecordingManager>>());
+        let tm = Arc::clone(&app.state::<Arc<TranscriptionManager>>());
+
+        change_tray_icon(app, TrayIconState::Transcribing);
+        show_transcribing_overlay(app);
+        rm.remove_mute();
+        play_feedback_sound(app, SoundType::Transcribing);
+
+        let target_app = crate::app_context::take_target_app();
+        let at_start = crate::text_context::take_focused_text();
+        let binding_id = binding_id.to_string();
+
+        tauri::async_runtime::spawn(async move {
+            // Moves into the paste below, so a press queued behind this
+            // command can't start until the text has landed.
+            let finish_guard = FinishGuard(ah.clone());
+
+            let Some(samples) = rm.stop_recording(&binding_id) else {
+                show_empty_overlay(&ah);
+                play_feedback_sound(&ah, SoundType::Cancel);
+                utils::hide_recording_overlay_after(&ah, 1600);
+                change_tray_icon(&ah, TrayIconState::Idle);
+                return;
+            };
+            let instruction = match tm.transcribe(samples) {
+                Ok(text) => text.trim().to_string(),
+                Err(err) => {
+                    debug!("Command transcription error: {}", err);
+                    finish_with_error(&ah, "transcriptionFailed");
+                    return;
+                }
+            };
+            if instruction.is_empty() {
+                show_empty_overlay(&ah);
+                play_feedback_sound(&ah, SoundType::Cancel);
+                utils::hide_recording_overlay_after(&ah, 1600);
+                change_tray_icon(&ah, TrayIconState::Idle);
+                return;
+            }
+
+            let settings = get_settings(&ah);
+            // Nearby text helps only when writing at the cursor, and only
+            // where the person allowed it.
+            let nearby = at_start
+                .as_ref()
+                .filter(|_| crate::text_context::context_allowed(&settings))
+                .and_then(|text| text.cleanup_context());
+            let app_for_selection = ah.clone();
+            let selection = match tauri::async_runtime::spawn_blocking(move || {
+                command_selection(&app_for_selection, at_start)
+            })
+            .await
+            {
+                Ok(Ok(selection)) => selection,
+                Ok(Err(code)) => {
+                    finish_with_error(&ah, code);
+                    return;
+                }
+                Err(e) => {
+                    error!("Command selection task failed: {}", e);
+                    finish_with_error(&ah, "commandFailed");
+                    return;
+                }
+            };
+
+            show_command_processing_overlay(&ah, &instruction, selection.is_some());
+            let style = target_app
+                .filter(|_| settings.per_app_styles)
+                .map(|app| crate::app_context::resolve_target(app, &settings))
+                .and_then(|target| target.instruction().map(str::to_string));
+            let guidance = [style, nearby.filter(|_| selection.is_none())]
+                .into_iter()
+                .flatten()
+                .collect::<Vec<_>>()
+                .join("\n\n");
+            let outcome = crate::dictation::run_command(
+                &settings,
+                &instruction,
+                selection.as_deref(),
+                (!guidance.is_empty()).then_some(guidance.as_str()),
+            )
+            .await;
+            log::info!(
+                "Command ({}) finished: {}",
+                if selection.is_some() { "edit" } else { "write" },
+                match &outcome {
+                    CommandOutcome::Done(_) => "done",
+                    CommandOutcome::NotConfigured => "not configured",
+                    CommandOutcome::Failed => "failed",
+                    CommandOutcome::TimedOut => "timed out",
+                }
+            );
+            let text = match outcome {
+                CommandOutcome::Done(text) => text,
+                CommandOutcome::NotConfigured => {
+                    finish_with_error(&ah, "commandNeedsSetup");
+                    return;
+                }
+                CommandOutcome::Failed => {
+                    finish_with_error(&ah, "commandFailed");
+                    return;
+                }
+                CommandOutcome::TimedOut => {
+                    finish_with_error(&ah, "commandTimedOut");
+                    return;
+                }
+            };
+
+            let ah_clone = ah.clone();
+            ah.run_on_main_thread(move || {
+                let _finish_guard = finish_guard;
+                match utils::paste_replacement(text.clone(), ah_clone.clone()) {
+                    Ok(()) => {
+                        show_success_overlay_with_preview(&ah_clone, &text);
+                        play_feedback_sound(&ah_clone, SoundType::Done);
+                        utils::hide_recording_overlay_after(&ah_clone, 1500);
+                    }
+                    Err(e) => {
+                        error!("Failed to paste command result: {}", e);
+                        report_paste_failure(&ah_clone, &text);
+                    }
+                }
+                change_tray_icon(&ah_clone, TrayIconState::Idle);
+            })
+            .unwrap_or_else(|e| {
+                error!("Failed to run paste on main thread: {:?}", e);
+                finish_with_error(&ah, "pasteFailed");
+            });
+        });
+    }
+}
+
 // Cancel Action
 struct CancelAction;
 
@@ -526,6 +765,10 @@ pub static ACTION_MAP: Lazy<HashMap<String, Arc<dyn ShortcutAction>>> = Lazy::ne
         Arc::new(TranscribeAction {
             always_clean_up: true,
         }) as Arc<dyn ShortcutAction>,
+    );
+    map.insert(
+        "command".to_string(),
+        Arc::new(CommandAction) as Arc<dyn ShortcutAction>,
     );
     map.insert(
         "cancel".to_string(),

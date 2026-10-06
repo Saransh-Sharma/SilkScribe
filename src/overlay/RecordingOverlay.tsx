@@ -22,6 +22,8 @@ export type OverlayState =
   | "cancelled"
   | "empty";
 
+export type OverlayMode = "command" | "edit" | "write";
+
 /** Theme preference as sent by Rust. `system` is resolved here, not there. */
 export type OverlayThemePreference = "light" | "dark" | "system";
 
@@ -41,6 +43,9 @@ interface OverlayEventPayload {
   contextStyle?: string;
   /** Cleanup is using the text around the cursor. */
   contextNearby?: boolean;
+  /** A spoken command: "command" while recording, then "edit" (a selection)
+   *  or "write" (at the cursor) while it runs. */
+  mode?: OverlayMode;
   /** Screen edge the overlay is anchored to, so it can enter from that side. */
   position?: "top" | "bottom";
   canCancel: boolean;
@@ -190,6 +195,7 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
         contextApp: candidate.contextApp,
         contextStyle: candidate.contextStyle,
         contextNearby: candidate.contextNearby,
+        mode: candidate.mode,
         position: candidate.position,
         canCancel: candidate.canCancel ?? next === "recording",
       };
@@ -293,10 +299,18 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
     return () => window.clearInterval(timer);
   }, [isRecording, visible]);
 
-  const showElapsed = isRecording && elapsedSeconds >= 5;
-  const stateLabel = ariaForState(state);
-
   const payload = previewPayload ?? overlay;
+  const mode = payload.mode;
+
+  const showElapsed = isRecording && elapsedSeconds >= 5;
+  const isCommand = isRecording && mode === "command";
+  const stateLabel = isCommand
+    ? t("overlay.command.listening")
+    : state === "processing" && mode === "edit"
+      ? t("overlay.command.editing")
+      : state === "processing" && mode === "write"
+        ? t("overlay.command.writing")
+        : ariaForState(state);
 
   // A transcript excerpt is the most useful thing we can show, so it wins over
   // the generic per-state detail line.
@@ -369,9 +383,18 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
           <div className="overlay-ring" />
         </div>
 
-        {showElapsed ? (
-          <div className="overlay-timer" aria-hidden="true">
-            {formatElapsed(elapsedSeconds)}
+        {isCommand || showElapsed ? (
+          <div
+            className="overlay-timer"
+            data-mode={isCommand ? "command" : undefined}
+            aria-hidden="true"
+          >
+            {[
+              isCommand ? t("overlay.command.tag") : null,
+              showElapsed ? formatElapsed(elapsedSeconds) : null,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
           </div>
         ) : null}
 

@@ -19,6 +19,12 @@ pub struct FocusedText {
     /// A password field: nothing else was read.
     #[serde(default)]
     pub secure: bool,
+    /// The element's accessibility role, e.g. AXTextArea.
+    #[serde(default)]
+    pub role: String,
+    /// The element exposes its text as a string value.
+    #[serde(default)]
+    pub has_value: bool,
     #[serde(default)]
     pub selected: String,
     #[serde(default)]
@@ -31,17 +37,32 @@ pub struct FocusedText {
 
 #[cfg(all(target_os = "macos", not(feature = "mac-app-store")))]
 unsafe extern "C" {
-    fn ss_context_focused_text(around: i32, selection_limit: i32) -> *mut std::ffi::c_char;
+    fn ss_context_focused_text(
+        around: i32,
+        selection_limit: i32,
+        wake_web_apps: i32,
+    ) -> *mut std::ffi::c_char;
     fn ss_context_free(json: *mut std::ffi::c_char);
 }
 
 /// Reads the focused text field, or None if there isn't one, Accessibility
 /// isn't allowed, or the platform or build can't read other apps' text.
 pub fn read_focused_text() -> Option<FocusedText> {
+    read(false)
+}
+
+/// Reads the focused text field for command mode, first asking Electron apps
+/// (Slack, VS Code, Notion) to expose their text.
+pub fn read_for_command() -> Option<FocusedText> {
+    read(true)
+}
+
+fn read(wake_web_apps: bool) -> Option<FocusedText> {
     #[cfg(all(target_os = "macos", not(feature = "mac-app-store")))]
     {
         let json = unsafe {
-            let pointer = ss_context_focused_text(AROUND_CHARS, SELECTION_LIMIT);
+            let pointer =
+                ss_context_focused_text(AROUND_CHARS, SELECTION_LIMIT, i32::from(wake_web_apps));
             if pointer.is_null() {
                 return None;
             }
@@ -59,11 +80,22 @@ pub fn read_focused_text() -> Option<FocusedText> {
     }
     #[cfg(not(all(target_os = "macos", not(feature = "mac-app-store"))))]
     {
+        let _ = wake_web_apps;
         None
     }
 }
 
+/// Roles whose selection the Accessibility API reports reliably.
+const TEXT_ROLES: [&str; 4] = ["AXTextField", "AXTextArea", "AXComboBox", "AXSearchField"];
+
 impl FocusedText {
+    /// A text field answered, so its selection can be trusted even when it's
+    /// empty. Anything else (a web page, a canvas editor) may have a selection
+    /// the API can't see.
+    pub fn is_text_input(&self) -> bool {
+        self.has_value || TEXT_ROLES.contains(&self.role.as_str())
+    }
+
     /// Guidance for AI cleanup built from the nearby text, if there is any.
     pub fn cleanup_context(&self) -> Option<String> {
         if self.secure {
@@ -151,6 +183,20 @@ mod tests {
             .cleanup_context()
             .unwrap()
             .contains("<before>Hi Priya,</before>"));
+    }
+
+    #[test]
+    fn only_text_fields_vouch_for_an_empty_selection() {
+        let field = |role: &str, has_value: bool| FocusedText {
+            role: role.into(),
+            has_value,
+            ..Default::default()
+        };
+        assert!(field("AXTextArea", false).is_text_input());
+        assert!(field("AXGroup", true).is_text_input());
+        // A web page or canvas editor may hold a selection the API can't see.
+        assert!(!field("AXWebArea", false).is_text_input());
+        assert!(!field("", false).is_text_input());
     }
 
     #[test]

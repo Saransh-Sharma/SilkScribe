@@ -217,6 +217,27 @@ if (dictation) {
       external_script_path: null,
     } as AppSettings,
   });
+  // ?cleanup turns AI cleanup on, with the Mac's command shortcut.
+  if (params.has("cleanup"))
+    useSettingsStore.setState((state) => ({
+      settings: {
+        ...state.settings!,
+        post_process_enabled: true,
+        post_process_provider_id: "apple_intelligence",
+        post_process_providers: [],
+        post_process_prompts: [],
+        bindings: {
+          ...state.settings!.bindings,
+          command: {
+            id: "command",
+            name: "Command",
+            description: "",
+            default_binding: "ctrl+shift+space",
+            current_binding: "ctrl+shift+space",
+          },
+        },
+      },
+    }));
   docs.push({
     ...structuredClone(docs[0] ?? ({} as Document)),
     id: "dictation-7",
@@ -379,7 +400,8 @@ api.dictationSummary = async () => ({
           saved: false,
           title: "Note to Sam",
           transcription_text: "can you send the revised screens before friday",
-          post_processed_text: "Can you send the revised screens before Friday?",
+          post_processed_text:
+            "Can you send the revised screens before Friday?",
           post_process_prompt: null,
           post_process_requested: true,
         },

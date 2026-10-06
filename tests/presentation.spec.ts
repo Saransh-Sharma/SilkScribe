@@ -262,6 +262,48 @@ test.describe("deterministic product states", () => {
     );
   });
 
+  test("marks a spoken command apart from dictation", async ({ page }) => {
+    await page.setViewportSize({ width: 460, height: 180 });
+    await page.goto(fixture("view=overlay&state=recording&mode=command"));
+    const status = page.getByRole("status");
+    await expect(status).toHaveAttribute(
+      "aria-label",
+      "Listening for a command",
+    );
+    await expect(page.locator(".overlay-timer")).toHaveText("Command");
+
+    // While it runs, the label says what it's doing and the detail quotes
+    // what was heard.
+    await page.goto(fixture("view=overlay&state=processing&mode=edit"));
+    await expect(page.locator(".overlay-label")).toHaveText("Editing");
+    await expect(page.locator(".overlay-detail")).toHaveText(
+      "make this sound friendlier",
+    );
+    await page.goto(fixture("view=overlay&state=processing&mode=write"));
+    await expect(page.locator(".overlay-label")).toHaveText("Writing");
+  });
+
+  test("explains a command that couldn't run without overflowing", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 460, height: 180 });
+    for (const code of [
+      "commandNeedsSetup",
+      "commandTimedOut",
+      "commandPassword",
+    ]) {
+      await page.goto(
+        fixture(`view=overlay&state=error&mode=write&code=${code}`),
+      );
+      const detail = page.locator(".overlay-detail");
+      await expect(detail).toBeVisible();
+      const fits = await detail.evaluate(
+        (el) => el.scrollWidth <= el.clientWidth,
+      );
+      expect(fits, code).toBe(true);
+    }
+  });
+
   test("keeps the pill inside the native overlay window", async ({ page }) => {
     // There is no shared source of truth between the CSS pill size and
     // OVERLAY_WIDTH/OVERLAY_HEIGHT in src-tauri/src/overlay.rs, so pin both

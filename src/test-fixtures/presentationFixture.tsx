@@ -30,6 +30,7 @@ import type { AppSettings } from "@/bindings";
 import { HistoryFeedItem } from "@/components/history/HistoryFeedItem";
 import SilkScribeWordmark from "@/components/icons/SilkScribeWordmark";
 import RecordingOverlay, {
+  type OverlayMode,
   type OverlayState,
 } from "@/overlay/RecordingOverlay";
 import MeetingOrb, { type MeetingOrbPreview } from "@/meeting-orb/MeetingOrb";
@@ -476,6 +477,16 @@ const backdropStyle = (name: string): React.CSSProperties =>
 const OverlayFixture = () => {
   const state = (params.get("state") ?? "recording") as OverlayState;
   const withDetail = params.get("detail") === "1";
+  // A spoken command (`mode=command|edit|write`), with the instruction heard.
+  const mode = params.get("mode") as OverlayMode | null;
+  const commandPayload = mode
+    ? {
+        mode,
+        previewText:
+          state === "processing" ? "make this sound friendlier" : undefined,
+        detailCode: params.get("code") ?? undefined,
+      }
+    : {};
   return (
     <div
       className="h-[100dvh]"
@@ -485,11 +496,11 @@ const OverlayFixture = () => {
         previewState={state}
         previewVisible
         previewTheme={params.get("theme") === "dark" ? "dark" : "light"}
-        previewPayload={
-          withDetail
-            ? { canCancel: false, ...SAMPLE_DETAIL[state] }
-            : { canCancel: false }
-        }
+        previewPayload={{
+          canCancel: false,
+          ...(withDetail ? SAMPLE_DETAIL[state] : {}),
+          ...commandPayload,
+        }}
       />
     </div>
   );

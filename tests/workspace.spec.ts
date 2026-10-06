@@ -786,6 +786,20 @@ test("Home surfaces recovery work and opens the filtered Library", async ({
   ).toBeHidden();
 });
 
+test("AI cleanup settings offer the command shortcut", async ({ page }) => {
+  await page.goto(`${fixture}?dictation=ready&cleanup=1`);
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
+  await page.getByRole("button", { name: "Dictation", exact: true }).click();
+  await expect(
+    page.getByText("Command shortcut", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "Select text and say how to change it, or say what to write.",
+    ),
+  ).toBeVisible();
+});
+
 test("settings has six workflow groups with advanced controls kept in context", async ({
   page,
 }) => {

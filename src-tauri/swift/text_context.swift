@@ -25,11 +25,21 @@ private func copyAttribute(_ element: AXUIElement, _ attribute: String) -> CFTyp
 
 /// `around`: characters to read before and after the cursor.
 /// `selectionLimit`: most characters of selected text to return.
-@_cdecl("ss_context_focused_text") public func ssContextFocusedText(_ around: Int32, _ selectionLimit: Int32) -> UnsafeMutablePointer<CChar>? {
+/// `wakeWebApps`: ask Electron apps to build their accessibility tree, so
+/// their text can be read. It costs them some speed, so only command mode
+/// asks; the first read after asking may still come back empty.
+@_cdecl("ss_context_focused_text") public func ssContextFocusedText(_ around: Int32, _ selectionLimit: Int32, _ wakeWebApps: Int32) -> UnsafeMutablePointer<CChar>? {
     guard AXIsProcessTrusted() else { return response(["error": "not_trusted"]) }
     let system = AXUIElementCreateSystemWide()
     // Don't let a hung app stall dictation.
     AXUIElementSetMessagingTimeout(system, 0.25)
+    if wakeWebApps != 0,
+       let app = copyAttribute(system, kAXFocusedApplicationAttribute),
+       CFGetTypeID(app) == AXUIElementGetTypeID() {
+        let application = app as! AXUIElement
+        AXUIElementSetMessagingTimeout(application, 0.25)
+        AXUIElementSetAttributeValue(application, "AXManualAccessibility" as CFString, kCFBooleanTrue)
+    }
     guard let focused = copyAttribute(system, kAXFocusedUIElementAttribute),
           CFGetTypeID(focused) == AXUIElementGetTypeID() else {
         return response(["error": "no_focus"])
@@ -47,7 +57,8 @@ private func copyAttribute(_ element: AXUIElement, _ attribute: String) -> CFTyp
     let selected = (copyAttribute(element, kAXSelectedTextAttribute) as? String) ?? ""
     var before = ""
     var after = ""
-    if let value = copyAttribute(element, kAXValueAttribute) as? String {
+    let value = copyAttribute(element, kAXValueAttribute) as? String
+    if let value {
         let text = value as NSString
         let span = max(0, Int(around))
         if let rangeRef = copyAttribute(element, kAXSelectedTextRangeAttribute),
@@ -69,6 +80,7 @@ private func copyAttribute(_ element: AXUIElement, _ attribute: String) -> CFTyp
         "role": role,
         "selected": String(selected.prefix(limit)),
         "selection_truncated": selected.count > limit,
+        "has_value": value != nil,
         "before": before,
         "after": after,
     ])
