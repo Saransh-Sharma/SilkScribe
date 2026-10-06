@@ -708,18 +708,7 @@ pub fn capture_note_evidence(
     revision: Option<u32>,
     timed: bool,
 ) {
-    for (sources, evidence) in notes
-        .summary
-        .iter_mut()
-        .chain(&mut notes.decisions)
-        .map(|n| (&n.sources, &mut n.evidence))
-        .chain(
-            notes
-                .actions
-                .iter_mut()
-                .map(|n| (&n.sources, &mut n.evidence)),
-        )
-    {
+    for (sources, evidence) in notes.evidence_mut() {
         for id in sources {
             if !evidence.iter().any(|e| &e.segment_id == id) {
                 if let Some(segment) = segments.iter().find(|s| &s.id == id) {
@@ -736,28 +725,8 @@ fn preserve_note_evidence(
     revision: u32,
     timed: bool,
 ) -> Result<()> {
-    let existing: Vec<&NoteEvidence> = previous
-        .into_iter()
-        .flat_map(|n| {
-            n.summary
-                .iter()
-                .chain(&n.decisions)
-                .flat_map(|i| &i.evidence)
-                .chain(n.actions.iter().flat_map(|i| &i.evidence))
-        })
-        .collect();
-    for (sources, evidence) in notes
-        .summary
-        .iter_mut()
-        .chain(&mut notes.decisions)
-        .map(|n| (&n.sources, &mut n.evidence))
-        .chain(
-            notes
-                .actions
-                .iter_mut()
-                .map(|n| (&n.sources, &mut n.evidence)),
-        )
-    {
+    let existing: Vec<&NoteEvidence> = previous.into_iter().flat_map(Notes::evidence).collect();
+    for (sources, evidence) in notes.evidence_mut() {
         for entry in evidence.iter_mut() {
             if !sources.contains(&entry.segment_id) {
                 bail!("Saved note evidence must reference a source of this note.");
@@ -793,15 +762,17 @@ fn preserve_note_evidence(
     Ok(())
 }
 /// AI note items must cite existing transcript segments. Items the person
-/// wrote may have no sources, but any they have must exist.
+/// wrote may have no sources, but any they have must exist. A template's
+/// sections each appear once.
 pub fn validate_notes(notes: &Notes, segments: &[Segment]) -> Result<()> {
-    for (sources, origin) in notes
-        .summary
-        .iter()
-        .chain(&notes.decisions)
-        .map(|n| (&n.sources, n.origin))
-        .chain(notes.actions.iter().map(|n| (&n.sources, n.origin)))
-    {
+    for (index, section) in notes.sections.iter().enumerate() {
+        if section.id.trim().is_empty()
+            || notes.sections[..index].iter().any(|s| s.id == section.id)
+        {
+            bail!("Notes have a missing or repeated section.");
+        }
+    }
+    for (sources, origin) in notes.sources() {
         if (sources.is_empty() && origin == NoteOrigin::Ai)
             || sources
                 .iter()
@@ -854,6 +825,41 @@ mod tests {
             live_segments: vec![],
         }
     }
+    #[test]
+    fn template_sections_are_checked_cited_and_exported() {
+        let blocker = NoteItem {
+            text: "Waiting on design".into(),
+            sources: vec!["s0".into()],
+            evidence: vec![],
+            origin: Default::default(),
+        };
+        let mut notes = Notes {
+            template: Some("standup".into()),
+            sections: vec![NoteSection {
+                id: "blockers".into(),
+                title: "Blockers".into(),
+                items: vec![blocker.clone()],
+            }],
+            ..Default::default()
+        };
+        let mut d = document();
+        validate_notes(&notes, &d.segments).unwrap();
+        capture_note_evidence(&mut notes, &d.segments, Some(0), true);
+        assert_eq!(notes.sections[0].items[0].evidence.len(), 1);
+        d.notes = Some(notes.clone());
+        let markdown = render_content(&d, "md", None).unwrap();
+        assert!(markdown.contains("## Blockers\n\n- Waiting on design [^source-1]"));
+        // Standups don't track decisions, so there's no empty heading.
+        assert!(!markdown.contains("## Decisions"));
+
+        let mut uncited = notes.clone();
+        uncited.sections[0].items[0].sources.clear();
+        assert!(validate_notes(&uncited, &d.segments).is_err());
+        let mut repeated = notes;
+        repeated.sections.push(repeated.sections[0].clone());
+        assert!(validate_notes(&repeated, &d.segments).is_err());
+    }
+
     #[test]
     fn processing_attempts_are_distinct_and_durable_without_changing_transcript_revision() {
         let dir = tempfile::tempdir().unwrap();

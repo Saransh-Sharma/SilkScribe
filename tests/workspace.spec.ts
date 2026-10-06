@@ -886,6 +886,54 @@ test("settings has six workflow groups with advanced controls kept in context", 
   ).toBeVisible();
 });
 
+test("a template's own sections show in the notes", async ({ page }) => {
+  await page.goto(fixture + "?template");
+  await page.getByText("Product design review", { exact: true }).click();
+  await page.getByRole("tab", { name: "Notes", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Blockers", exact: true }),
+  ).toBeVisible();
+  // Standups don't track decisions.
+  await expect(
+    page.getByRole("heading", { name: "Decisions", exact: true }),
+  ).toHaveCount(0);
+  const blocker = page.getByRole("textbox", { name: "Blockers" });
+  await expect(blocker).toHaveValue(
+    "Waiting on the final copy for the first screen.",
+  );
+  // Template sections are edited like any other.
+  await blocker.fill("Copy is ready.");
+  await expect(blocker).toHaveValue("Copy is ready.");
+  await expect(page.getByLabel("Notes template")).toContainText("Standup");
+});
+
+test("regenerating notes can switch template", async ({ page }) => {
+  await page.goto(fixture);
+  await page.getByText("Product design review", { exact: true }).click();
+  await page.getByRole("tab", { name: "Notes", exact: true }).click();
+  await page.getByLabel("Notes template").click();
+  await page.getByRole("option", { name: "Customer call" }).click();
+  await page.getByRole("button", { name: "Regenerate", exact: true }).click();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          JSON.parse(localStorage.getItem("fixture-retry") || "{}")
+            .notesTemplate,
+      ),
+    )
+    .toBe("customer_call");
+});
+
+test("meeting setup asks which template the notes follow", async ({ page }) => {
+  await page.goto(fixture);
+  await page.getByRole("button", { name: "Record meeting" }).first().click();
+  // Only notes have a template.
+  await expect(page.getByLabel("Notes template")).toHaveCount(0);
+  await page.getByRole("button", { name: "Transcript + notes" }).click();
+  await expect(page.getByLabel("Notes template")).toBeVisible();
+});
+
 for (const [section, label] of [
   ["summary", "Summary"],
   ["decisions", "Decisions"],

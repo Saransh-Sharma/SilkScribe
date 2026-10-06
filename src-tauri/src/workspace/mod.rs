@@ -8,6 +8,7 @@ mod memory;
 pub mod packs;
 pub mod readiness;
 mod store;
+pub mod templates;
 pub mod types;
 mod worker;
 
@@ -299,6 +300,7 @@ impl Workspace {
         notes_model: Option<String>,
         only_stage: Option<Stage>,
         notes_section: Option<NotesSection>,
+        notes_template: Option<String>,
     ) -> Result<()> {
         let _lock = self.lock.lock().unwrap();
         if self.active.lock().unwrap().as_deref() == Some(id) {
@@ -343,6 +345,15 @@ impl Workspace {
                     bail!("Unknown notes engine.");
                 }
                 doc.options.notes_model = Some(model);
+            }
+            // Regenerating with another template rewrites every section, so
+            // it can't be combined with regenerating one.
+            if let Some(template) = notes_template {
+                let template = templates::normalize(Some(template))?;
+                if template != doc.options.notes_template && notes_section.is_some() {
+                    bail!("Regenerate all notes to use a different template.");
+                }
+                doc.options.notes_template = template;
             }
             if doc.options.notes_model.is_none() {
                 bail!("Choose a notes engine first.");
@@ -723,7 +734,7 @@ impl Workspace {
                     let key = format!(
                         "{:x}",
                         Sha256::digest(serde_json::to_vec(&serde_json::json!({
-                            "version":4,"section":doc.notes_section,"runtime":worker::fingerprint(&worker::binary(app, true)?)?,"segments":note_segments,"user_notes":user_notes,"model":std::fs::read_to_string(model_path.join("installed.json"))?
+                            "version":5,"section":doc.notes_section,"template":doc.options.notes_template,"runtime":worker::fingerprint(&worker::binary(app, true)?)?,"segments":note_segments,"user_notes":user_notes,"model":std::fs::read_to_string(model_path.join("installed.json"))?
                         }))?)
                     );
                     let mut continuation = std::fs::read(&checkpoint_path)
@@ -735,7 +746,7 @@ impl Workspace {
                     let result = loop {
                         let step = worker::run(
                             app,
-                            serde_json::json!({"protocol":1,"task":"notes","section":doc.notes_section,"step":true,"continuation":continuation,"model_path":model_path,"segments":note_segments,"user_notes":user_notes}),
+                            serde_json::json!({"protocol":1,"task":"notes","section":doc.notes_section,"template":templates::worker_spec(doc.options.notes_template.as_deref()),"step":true,"continuation":continuation,"model_path":model_path,"segments":note_segments,"user_notes":user_notes}),
                             &self.child,
                             &self.cancelled,
                         )?;
@@ -770,6 +781,7 @@ impl Workspace {
                     })?;
                     notes.transcript_revision = doc.revision;
                     notes.generated_section = doc.notes_section;
+                    notes.template = doc.options.notes_template.clone();
                     store::validate_notes(&notes, &doc.segments)?;
                     store::capture_note_evidence(
                         &mut notes,
@@ -934,6 +946,7 @@ mod section_retry_tests {
                 Some("qwen3.5-9b".into()),
                 None,
                 Some(NotesSection::Actions),
+                None,
             )
             .unwrap();
         let mut queued = workspace.store.get(&doc.id).unwrap();
@@ -942,18 +955,57 @@ mod section_retry_tests {
         queued.failed_stage = Some(Stage::Notes);
         workspace.store.put(&queued).unwrap();
         workspace
-            .retry(&doc.id, true, None, Some(Stage::Notes), None)
+            .retry(&doc.id, true, None, Some(Stage::Notes), None, None)
             .unwrap();
         assert_eq!(
             workspace.store.get(&doc.id).unwrap().notes_section,
             Some(NotesSection::Actions)
         );
         workspace
-            .retry(&doc.id, true, Some("qwen3.5-9b".into()), None, None)
+            .retry(&doc.id, true, Some("qwen3.5-9b".into()), None, None, None)
             .unwrap();
         assert_eq!(workspace.store.get(&doc.id).unwrap().notes_section, None);
         assert!(workspace
-            .retry(&doc.id, false, None, None, Some(NotesSection::Summary))
+            .retry(
+                &doc.id,
+                false,
+                None,
+                None,
+                Some(NotesSection::Summary),
+                None
+            )
             .is_err());
+
+        // A template applies to the whole of the notes.
+        let mut queued = workspace.store.get(&doc.id).unwrap();
+        queued.stage = Stage::Complete;
+        queued.failed_stage = None;
+        workspace.store.put(&queued).unwrap();
+        assert!(workspace
+            .retry(
+                &doc.id,
+                true,
+                None,
+                None,
+                Some(NotesSection::Summary),
+                Some("standup".into())
+            )
+            .is_err());
+        assert!(workspace
+            .retry(&doc.id, true, None, None, None, Some("nope".into()))
+            .is_err());
+        workspace
+            .retry(&doc.id, true, None, None, None, Some("standup".into()))
+            .unwrap();
+        assert_eq!(
+            workspace
+                .store
+                .get(&doc.id)
+                .unwrap()
+                .options
+                .notes_template
+                .as_deref(),
+            Some("standup")
+        );
     }
 }

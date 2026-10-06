@@ -1443,6 +1443,33 @@
         "word": "Added to your vocabulary",
         "replacement": "Added as a replacement"
       }
+    },
+    "templates": {
+      "label": "Notes template",
+      "names": {
+        "general": "General",
+        "one_on_one": "1:1",
+        "standup": "Standup",
+        "customer_call": "Customer call",
+        "interview": "Interview",
+        "lecture": "Lecture"
+      },
+      "sections": {
+        "updates": "Updates",
+        "feedback": "Feedback",
+        "blockers": "Blockers",
+        "done": "Done",
+        "next": "Next",
+        "context": "Customer context",
+        "pain_points": "Pain points",
+        "requests": "Requests",
+        "background": "Background",
+        "strengths": "Strengths",
+        "concerns": "Concerns",
+        "concepts": "Key concepts",
+        "definitions": "Definitions",
+        "questions": "Questions"
+      }
     }
   },
   "audioPlayer": {

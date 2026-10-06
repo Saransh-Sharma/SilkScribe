@@ -189,6 +189,24 @@ for (const document of docs) {
     }
   }
 }
+// ?template writes the first meeting's notes with the Standup template.
+if (params.has("template") && docs[0].notes) {
+  docs[0].options.notes_template = "standup";
+  docs[0].notes.template = "standup";
+  docs[0].notes.sections = [
+    {
+      id: "blockers",
+      title: "Blockers",
+      items: [
+        {
+          text: "Waiting on the final copy for the first screen.",
+          evidence: [],
+          sources: ["s0"],
+        },
+      ],
+    },
+  ];
+}
 // ?userNote adds a note the person wrote (no sources) to the first meeting.
 if (params.has("userNote"))
   docs[0].notes?.summary.push({
@@ -474,11 +492,25 @@ api.configure = async (id, options) => {
   docs.find((d) => d.id === id)!.options = options;
   return null;
 };
-api.retry = async (id, notesOnly, notesModel, onlyStage, notesSection) => {
+api.retry = async (
+  id,
+  notesOnly,
+  notesModel,
+  onlyStage,
+  notesSection,
+  notesTemplate,
+) => {
   const d = docs.find((d) => d.id === id)!;
   localStorage.setItem(
     "fixture-retry",
-    JSON.stringify({ id, notesOnly, notesModel, onlyStage, notesSection }),
+    JSON.stringify({
+      id,
+      notesOnly,
+      notesModel,
+      onlyStage,
+      notesSection,
+      notesTemplate,
+    }),
   );
   d.stage = "queued";
   if (params.has("sectionGeneration") && notesSection) {

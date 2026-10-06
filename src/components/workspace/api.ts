@@ -29,6 +29,18 @@ export async function unwrap<T>(
   if (result.status === "error") throw new Error(result.error);
   return result.data;
 }
+/** Notes templates, as `src-tauri/src/workspace/templates.rs` defines them.
+ * Names and section titles are under `workspace.templates`. */
+export const NOTE_TEMPLATES = [
+  "general",
+  "one_on_one",
+  "standup",
+  "customer_call",
+  "interview",
+  "lecture",
+] as const;
+export type NoteTemplate = (typeof NOTE_TEMPLATES)[number];
+
 export const api = {
   captureReadiness: async (systemAudio: boolean) => {
     if (platform() !== "macos")
@@ -120,6 +132,7 @@ export const api = {
     notesModel: string | null = null,
     onlyStage: import("@/bindings").Stage | null = null,
     notesSection: import("@/bindings").NotesSection | null = null,
+    notesTemplate: NoteTemplate | null = null,
   ) =>
     unwrap(
       commands.workspaceRetry(
@@ -128,6 +141,7 @@ export const api = {
         notesModel,
         onlyStage,
         notesSection,
+        notesTemplate,
       ),
     ),
   remove: async (id: string, audioOnly = false) => {

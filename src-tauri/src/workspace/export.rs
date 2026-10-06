@@ -146,13 +146,7 @@ fn render_with_evidence(
     let doc = &normalized;
     let mut evidence: Vec<&NoteEvidence> = Vec::new();
     if let Some(notes) = &doc.notes {
-        for item in notes
-            .summary
-            .iter()
-            .chain(&notes.decisions)
-            .flat_map(|n| &n.evidence)
-            .chain(notes.actions.iter().flat_map(|n| &n.evidence))
-        {
+        for item in notes.evidence() {
             if !evidence.contains(&item) {
                 evidence.push(item);
             }
@@ -209,7 +203,18 @@ fn render_with_evidence(
                 out.push_str("> These notes are from an earlier version of the transcript.\n\n");
             }
             if let Some(notes) = &doc.notes {
-                for (title, items) in [("Summary", &notes.summary), ("Decisions", &notes.decisions)]
+                // A template without decisions leaves that heading out.
+                let decisions = (notes.template.is_none() || !notes.decisions.is_empty())
+                    .then_some(("Decisions", &notes.decisions));
+                for (title, items) in [Some(("Summary", &notes.summary)), decisions]
+                    .into_iter()
+                    .flatten()
+                    .chain(
+                        notes
+                            .sections
+                            .iter()
+                            .map(|section| (section.title.as_str(), &section.items)),
+                    )
                 {
                     out.push_str(&format!("## {title}\n\n"));
                     for item in items {

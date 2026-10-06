@@ -118,6 +118,16 @@ impl NotesSection {
         }
     }
 }
+/// A section a notes template adds, e.g. "Blockers" for a standup. Its
+/// items follow the same rules as the summary's.
+#[derive(Clone, Debug, Serialize, Deserialize, Type)]
+pub struct NoteSection {
+    /// The template's id for it, e.g. "blockers".
+    pub id: String,
+    /// The English title, for exports. The app shows a translated one.
+    pub title: String,
+    pub items: Vec<NoteItem>,
+}
 #[derive(Clone, Debug, Default, Serialize, Deserialize, Type)]
 pub struct Notes {
     #[serde(default)]
@@ -128,6 +138,54 @@ pub struct Notes {
     pub decisions: Vec<NoteItem>,
     pub actions: Vec<ActionItem>,
     pub transcript_revision: u32,
+    /// The template's own sections, between decisions and action items.
+    // specta reads these in order; `default` last keeps the field optional.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    #[serde(default)]
+    pub sections: Vec<NoteSection>,
+    /// The template the notes were written with; none is "General".
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
+    pub template: Option<String>,
+}
+impl Notes {
+    /// Every note item except action items: summary, decisions and the
+    /// template's sections.
+    pub fn items(&self) -> impl Iterator<Item = &NoteItem> {
+        self.summary
+            .iter()
+            .chain(&self.decisions)
+            .chain(self.sections.iter().flat_map(|section| &section.items))
+    }
+    /// Each item's sources and origin, action items included.
+    pub fn sources(&self) -> impl Iterator<Item = (&Vec<String>, NoteOrigin)> {
+        self.items()
+            .map(|item| (&item.sources, item.origin))
+            .chain(self.actions.iter().map(|item| (&item.sources, item.origin)))
+    }
+    /// Each item's sources and its evidence snapshots, action items included.
+    pub fn evidence_mut(&mut self) -> impl Iterator<Item = (&Vec<String>, &mut Vec<NoteEvidence>)> {
+        let actions = self
+            .actions
+            .iter_mut()
+            .map(|item| (&item.sources, &mut item.evidence));
+        self.summary
+            .iter_mut()
+            .chain(&mut self.decisions)
+            .chain(
+                self.sections
+                    .iter_mut()
+                    .flat_map(|section| &mut section.items),
+            )
+            .map(|item| (&item.sources, &mut item.evidence))
+            .chain(actions)
+    }
+    /// Every evidence snapshot, action items included.
+    pub fn evidence(&self) -> impl Iterator<Item = &NoteEvidence> {
+        self.items()
+            .flat_map(|item| &item.evidence)
+            .chain(self.actions.iter().flat_map(|item| &item.evidence))
+    }
 }
 #[derive(Clone, Debug, Serialize, Deserialize, Type)]
 pub struct JobOptions {
@@ -135,6 +193,9 @@ pub struct JobOptions {
     pub language: String,
     pub speakers: bool,
     pub notes_model: Option<String>,
+    /// The notes template ("standup", "one_on_one", …); none is General.
+    #[serde(default)]
+    pub notes_template: Option<String>,
 }
 impl Default for JobOptions {
     fn default() -> Self {
@@ -146,6 +207,7 @@ impl Default for JobOptions {
             // already default to off.
             speakers: false,
             notes_model: None,
+            notes_template: None,
         }
     }
 }

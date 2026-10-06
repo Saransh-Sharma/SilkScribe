@@ -1,5 +1,5 @@
 import unittest
-from worker import validate_notes, chunk_bounds
+from worker import validate_notes, chunk_bounds, as_document
 class NotesTests(unittest.TestCase):
     def test_rejects_hallucinated_and_missing_sources(self):
         for sources in [[],['invented']]:
@@ -42,6 +42,49 @@ class EnhanceTests(unittest.TestCase):
         self.assertIn('"origin":"user"',prompts[0])
         self.assertEqual(result['summary'][0],{'text':'Ship Friday','sources':[],'origin':'user'})
 
+STANDUP={'id':'standup','meeting':'a team standup','decisions':False,'sections':[
+    {'id':'done','title':'Done','guidance':'finished work'},{'id':'blockers','title':'Blockers','guidance':'what is in the way'}]}
+class TemplateTests(unittest.TestCase):
+    def test_template_sections_are_cited_like_any_other(self):
+        result=validate_notes({'summary':[],'actions':[],'blockers':[{'text':'Waiting on design','sources':['s1']}]},{'s1'},template=STANDUP)
+        self.assertEqual(result['blockers'],[{'text':'Waiting on design','sources':['s1']}])
+        # Left-out sections are empty; decisions aren't required by a standup.
+        self.assertEqual(result['done'],[]);self.assertEqual(result['decisions'],[])
+        with self.assertRaises(ValueError):
+            validate_notes({'summary':[],'actions':[],'blockers':[{'text':'Claim','sources':['invented']}]},{'s1'},template=STANDUP)
+    def test_general_notes_still_need_every_core_section(self):
+        with self.assertRaises(ValueError): validate_notes({'summary':[],'actions':[]},{'s1'})
+    def test_templates_cannot_shadow_core_sections(self):
+        for bad in [{'sections':[{'id':'summary','title':'x'}]},{'sections':[{'id':'a'},{'id':'a'}]},{'sections':'no'}]:
+            with self.assertRaises(ValueError): validate_notes({'summary':[],'actions':[]},{'s1'},template=bad)
+    def test_template_notes_reach_the_app_as_ordered_sections(self):
+        flat=validate_notes({'summary':[],'actions':[],'done':[{'text':'Shipped','sources':['s1']}]},{'s1'},template=STANDUP)
+        document=as_document(flat,STANDUP)
+        self.assertEqual([s['id'] for s in document['sections']],['done','blockers'])
+        self.assertEqual(document['sections'][0]['title'],'Done')
+        self.assertEqual(document['sections'][0]['items'][0]['text'],'Shipped')
+        self.assertNotIn('done',document)
+    def test_the_prompt_asks_for_the_templates_sections(self):
+        import json, tempfile, pathlib, types
+        from unittest.mock import patch
+        from worker import notes
+        class Tokenizer:
+            def encode(self,text): return list(text)
+            def decode(self,tokens): return ''.join(tokens)
+            def apply_chat_template(self,messages,**kwargs): return messages[0]['content']+'\n'+messages[-1]['content']
+        prompts=[]
+        def generate(*args,**kwargs):
+            prompts.append(kwargs['prompt'])
+            return json.dumps({'summary':[],'actions':[],'blockers':[{'text':'Waiting on design','sources':['s0']}]})
+        with tempfile.TemporaryDirectory() as directory:
+            pathlib.Path(directory,'installed.json').write_text('{}')
+            runtime=types.SimpleNamespace(load=lambda _: (object(),Tokenizer()),generate=generate)
+            request={'model_path':directory,'segments':[{'id':'s0','text':'Still waiting on design.'}],'template':STANDUP}
+            with patch.dict('sys.modules',{'mlx_lm':runtime}):
+                result=notes(request)
+        self.assertIn('a team standup',prompts[0]);self.assertIn('"blockers": what is in the way',prompts[0])
+        self.assertNotIn('"decisions"',prompts[0])
+        self.assertEqual(result['sections'][1]['items'][0]['text'],'Waiting on design')
 class ChunkTests(unittest.TestCase):
     def test_original_offsets_and_last_partial_chunk(self):
         self.assertEqual(chunk_bounds({'start_seconds':120,'end_seconds':240}, 200*16000,16000),(120*16000,200*16000))

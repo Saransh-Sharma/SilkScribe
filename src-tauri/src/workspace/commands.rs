@@ -199,6 +199,7 @@ pub async fn workspace_retry(
     notes_model: Option<String>,
     only_stage: Option<Stage>,
     notes_section: Option<NotesSection>,
+    notes_template: Option<String>,
 ) -> Result<(), String> {
     let ws = ws(&app);
     let doc = ws.store.get(&id).map_err(|e| e.to_string())?;
@@ -225,8 +226,15 @@ pub async fn workspace_retry(
             "Set up these engines in Settings → Engines & language, then try again.".into(),
         );
     }
-    ws.retry(&id, notes_only, notes_model, only_stage, notes_section)
-        .map_err(|e| e.to_string())?;
+    ws.retry(
+        &id,
+        notes_only,
+        notes_model,
+        only_stage,
+        notes_section,
+        notes_template,
+    )
+    .map_err(|e| e.to_string())?;
     ws.start_queue(app.clone());
     ws.emit(&app);
     Ok(())

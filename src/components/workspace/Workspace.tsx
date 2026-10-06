@@ -39,6 +39,7 @@ import {
   api,
   busy,
   duration,
+  NOTE_TEMPLATES,
   type Document,
   type DocumentSummary,
   type JobOptions,
@@ -786,6 +787,22 @@ export default function Workspace({
           { value: "qwen3.6-27b", label: "Qwen3.6 · 27B" },
         ]}
       />
+      {options.notes_model && (
+        <WsSelect
+          label={t("workspace.templates.label")}
+          value={options.notes_template ?? "general"}
+          onChange={(value) =>
+            setOptions({
+              ...options,
+              notes_template: value === "general" ? null : value,
+            })
+          }
+          options={NOTE_TEMPLATES.map((id) => ({
+            value: id,
+            label: t(`workspace.templates.names.${id}`),
+          }))}
+        />
+      )}
     </div>
   );
   return (

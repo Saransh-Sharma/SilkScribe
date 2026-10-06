@@ -1105,9 +1105,9 @@ async workspaceCancel(id: string) : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async workspaceRetry(id: string, notesOnly: boolean, notesModel: string | null, onlyStage: Stage | null, notesSection: NotesSection | null) : Promise<Result<null, string>> {
+async workspaceRetry(id: string, notesOnly: boolean, notesModel: string | null, onlyStage: Stage | null, notesSection: NotesSection | null, notesTemplate: string | null) : Promise<Result<null, string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("workspace_retry", { id, notesOnly, notesModel, onlyStage, notesSection }) };
+    return { status: "ok", data: await TAURI_INVOKE("workspace_retry", { id, notesOnly, notesModel, onlyStage, notesSection, notesTemplate }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -1521,7 +1521,11 @@ export type ImportResult = { documents: Document[]; errors: string[]; remaining_
  * How many entries an import added or changed.
  */
 export type ImportSummary = { words: number; replacements: number; snippets: number }
-export type JobOptions = { model: string; language: string; speakers: boolean; notes_model: string | null }
+export type JobOptions = { model: string; language: string; speakers: boolean; notes_model: string | null; 
+/**
+ * The notes template ("standup", "one_on_one", …); none is General.
+ */
+notes_template?: string | null }
 export type KeyboardImplementation = "tauri" | "native_keys"
 export type LLMPrompt = { id: string; name: string; prompt: string }
 export type LiveSegment = { id: string; source: LiveSource; 
@@ -1584,7 +1588,28 @@ export type NoteItem = { text: string; sources: string[]; evidence?: NoteEvidenc
  * don't need transcript sources; AI items always cite the transcript.
  */
 export type NoteOrigin = "ai" | "user"
-export type Notes = { generated_section?: NotesSection | null; reviewed?: boolean; summary: NoteItem[]; decisions: NoteItem[]; actions: ActionItem[]; transcript_revision: number }
+/**
+ * A section a notes template adds, e.g. "Blockers" for a standup. Its
+ * items follow the same rules as the summary's.
+ */
+export type NoteSection = { 
+/**
+ * The template's id for it, e.g. "blockers".
+ */
+id: string; 
+/**
+ * The English title, for exports. The app shows a translated one.
+ */
+title: string; items: NoteItem[] }
+export type Notes = { generated_section?: NotesSection | null; reviewed?: boolean; summary: NoteItem[]; decisions: NoteItem[]; actions: ActionItem[]; transcript_revision: number; 
+/**
+ * The template's own sections, between decisions and action items.
+ */
+sections?: NoteSection[]; 
+/**
+ * The template the notes were written with; none is "General".
+ */
+template?: string | null }
 export type NotesSection = "summary" | "decisions" | "actions"
 export type OrtAcceleratorSetting = "auto" | "cpu" | "cuda" | "directml" | "rocm"
 /**

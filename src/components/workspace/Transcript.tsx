@@ -13,9 +13,22 @@ import {
   FileText,
 } from "lucide-react";
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
-import type { NoteEvidence, NotesSection } from "@/bindings";
+import type {
+  NoteEvidence,
+  NoteItem,
+  NoteSection,
+  NotesSection,
+} from "@/bindings";
 import { toast } from "sonner";
-import { api, busy, duration, type Document, type Notes } from "./api";
+import {
+  api,
+  busy,
+  duration,
+  NOTE_TEMPLATES,
+  type Document,
+  type NoteTemplate,
+  type Notes,
+} from "./api";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { Dropdown } from "../ui/Dropdown";
 import { SaveQueue } from "./saveQueue";
@@ -63,6 +76,9 @@ export function Transcript({
   const [jobOptions, setJobOptions] = useState(initial.options);
   const [notesModel, setNotesModel] = useState(
     initial.options.notes_model || "qwen3.5-9b",
+  );
+  const [notesTemplate, setNotesTemplate] = useState<NoteTemplate>(
+    (initial.options.notes_template as NoteTemplate | null) ?? "general",
   );
   // A finished meeting opens on its notes; everything else on its transcript.
   const [tab, setTab] = useState(() =>
@@ -311,7 +327,15 @@ export function Transcript({
   const generateNotes = async (section: NotesSection | null = null) => {
     if (!(await flush())) return;
     try {
-      await api.retry(doc.id, true, notesModel, null, section);
+      // A template shapes all of the notes, so only full runs change it.
+      await api.retry(
+        doc.id,
+        true,
+        notesModel,
+        null,
+        section,
+        section ? null : notesTemplate,
+      );
       onUpdated();
       onBack();
     } catch (error) {
@@ -331,6 +355,46 @@ export function Transcript({
   );
   const editNotes = (notes: Notes) =>
     change({ ...doc, notes: { ...notes, reviewed: false } });
+  const sectionTitle = (section: NoteSection) =>
+    t(`workspace.templates.sections.${section.id}`, {
+      defaultValue: section.title,
+    });
+  /** The notes' item lists in order: summary, decisions (unless the template
+   * leaves them out), then the template's own sections. */
+  const itemSections = (notes: Notes) => [
+    {
+      key: "summary",
+      title: t("workspace.summary"),
+      items: notes.summary,
+      regenerate: "summary" as NotesSection | null,
+      update: (items: NoteItem[]) => editNotes({ ...notes, summary: items }),
+    },
+    ...(!notes.template || notes.decisions.length > 0
+      ? [
+          {
+            key: "decisions",
+            title: t("workspace.decisions"),
+            items: notes.decisions,
+            regenerate: "decisions" as NotesSection | null,
+            update: (items: NoteItem[]) =>
+              editNotes({ ...notes, decisions: items }),
+          },
+        ]
+      : []),
+    ...(notes.sections ?? []).map((section, position) => ({
+      key: `section-${section.id}`,
+      title: sectionTitle(section),
+      items: section.items,
+      regenerate: null as NotesSection | null,
+      update: (items: NoteItem[]) =>
+        editNotes({
+          ...notes,
+          sections: (notes.sections ?? []).map((s, i) =>
+            i === position ? { ...s, items } : s,
+          ),
+        }),
+    })),
+  ];
   const matches = useMemo(
     () =>
       doc.segments.filter(
@@ -1160,6 +1224,12 @@ export function Transcript({
                       !doc.notes_candidate?.generated_section ||
                       doc.notes_candidate.generated_section === section,
                   )
+                  .filter(
+                    (section) =>
+                      section !== "decisions" ||
+                      !doc.notes_candidate?.template ||
+                      doc.notes_candidate.decisions.length > 0,
+                  )
                   .map((section) => (
                     <div key={section}>
                       <h3>{t(`workspace.${section}`)}</h3>
@@ -1201,6 +1271,17 @@ export function Transcript({
                               </button>
                             ))}
                           </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                {!doc.notes_candidate.generated_section &&
+                  (doc.notes_candidate.sections ?? []).map((section) => (
+                    <div key={section.id}>
+                      <h3>{sectionTitle(section)}</h3>
+                      {section.items.map((item, index) => (
+                        <div className="ws-note-preview" key={index}>
+                          <p dir="auto">{item.text}</p>
                         </div>
                       ))}
                     </div>
@@ -1267,6 +1348,15 @@ export function Transcript({
                   ]}
                   onSelect={setNotesModel}
                 />
+                <Dropdown
+                  ariaLabel={t("workspace.templates.label")}
+                  selectedValue={notesTemplate}
+                  options={NOTE_TEMPLATES.map((id) => ({
+                    value: id,
+                    label: t(`workspace.templates.names.${id}`),
+                  }))}
+                  onSelect={(value) => setNotesTemplate(value as NoteTemplate)}
+                />
                 <button
                   className="ws-secondary"
                   disabled={!!doc.notes_candidate}
@@ -1285,13 +1375,13 @@ export function Transcript({
             )}
             {doc.notes && (
               <>
-                {(["summary", "decisions"] as const).map((key) => (
-                  <div key={key}>
+                {itemSections(doc.notes).map((group) => (
+                  <div key={group.key}>
                     <div className="ws-actions">
-                      <h2>{t(`workspace.${key}`)}</h2>
-                      {regenerateSection(key)}
+                      <h2>{group.title}</h2>
+                      {group.regenerate && regenerateSection(group.regenerate)}
                     </div>
-                    {doc.notes![key].map((item, index) => (
+                    {group.items.map((item, index) => (
                       <div
                         key={index}
                         className="ws-note-item"
@@ -1304,27 +1394,23 @@ export function Transcript({
                         )}
                         <textarea
                           dir="auto"
-                          aria-label={t(`workspace.${key}`)}
+                          aria-label={group.title}
                           value={item.text}
                           onChange={(e) =>
-                            editNotes({
-                              ...doc.notes!,
-                              [key]: doc.notes![key].map((x, i) =>
+                            group.update(
+                              group.items.map((x, i) =>
                                 i === index
                                   ? { ...x, text: e.target.value }
                                   : x,
                               ),
-                            })
+                            )
                           }
                         />
                         <button
                           onClick={() =>
-                            editNotes({
-                              ...doc.notes!,
-                              [key]: doc.notes![key].filter(
-                                (_, i) => i !== index,
-                              ),
-                            })
+                            group.update(
+                              group.items.filter((_, i) => i !== index),
+                            )
                           }
                         >
                           {t("workspace.removeItem")}
