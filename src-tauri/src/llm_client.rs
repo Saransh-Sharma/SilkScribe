@@ -89,6 +89,10 @@ fn create_client(provider: &PostProcessProvider, api_key: &str) -> Result<reqwes
     let headers = build_headers(provider, api_key)?;
     reqwest::Client::builder()
         .default_headers(headers)
+        // A provider that never answers must not hold up dictation; the
+        // cleanup pipeline also stops waiting at `CLEANUP_TIMEOUT`.
+        .connect_timeout(std::time::Duration::from_secs(5))
+        .timeout(crate::dictation::CLEANUP_TIMEOUT)
         .build()
         .map_err(|e| format!("Failed to build HTTP client: {}", e))
 }
