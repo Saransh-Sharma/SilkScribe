@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "./api";
 import { SaveQueue } from "./saveQueue";
@@ -46,6 +52,17 @@ export function UserNotes({ documentId }: { documentId: string }) {
   const [text, setText] = useState(() => latest.get(documentId) ?? "");
   const [loaded, setLoaded] = useState(() => latest.has(documentId));
   const textarea = useRef<HTMLTextAreaElement>(null);
+  // Where the caret goes after a list continuation. Set right after React
+  // commits the new text, before the next keystroke can land.
+  const pendingCaret = useRef<number | null>(null);
+  useLayoutEffect(() => {
+    if (pendingCaret.current === null || !textarea.current) return;
+    textarea.current.setSelectionRange(
+      pendingCaret.current,
+      pendingCaret.current,
+    );
+    pendingCaret.current = null;
+  });
   const timer = useRef<ReturnType<typeof setTimeout>>();
   const queue = useRef<SaveQueue<string>>();
   if (!queue.current)
@@ -98,10 +115,8 @@ export function UserNotes({ documentId }: { documentId: string }) {
     const next = continueList(text, el.selectionStart, el.selectionEnd);
     if (!next) return;
     event.preventDefault();
+    pendingCaret.current = next.caret;
     update(next.text);
-    requestAnimationFrame(() =>
-      textarea.current?.setSelectionRange(next.caret, next.caret),
-    );
   };
 
   return (
