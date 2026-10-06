@@ -103,6 +103,7 @@ const MeetingOrb: React.FC<{ preview?: MeetingOrbPreview }> = ({ preview }) => {
   const [mode, setMode] = useState<Mode>(preview?.mode ?? "collapsed");
   const [pinned, setPinned] = useState(preview?.pinned ?? false);
   const [following, setFollowing] = useState(true);
+  const [consentCopied, setConsentCopied] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
   const modeRef = useRef<Mode>(mode);
@@ -511,6 +512,23 @@ const MeetingOrb: React.FC<{ preview?: MeetingOrbPreview }> = ({ preview }) => {
                   disabled={!documentId}
                 >
                   {t("meetingOrb.open")}
+                </button>
+                <button
+                  type="button"
+                  className="orb-button orb-button-quiet"
+                  onClick={() => {
+                    void commands
+                      .meetingOrbCopy(t("workspace.consent.message"))
+                      .then((result) => {
+                        if (result.status === "ok") setConsentCopied(true);
+                      });
+                  }}
+                >
+                  {t(
+                    consentCopied
+                      ? "workspace.consent.copied"
+                      : "meetingOrb.letPeopleKnow",
+                  )}
                 </button>
               </>
             )}

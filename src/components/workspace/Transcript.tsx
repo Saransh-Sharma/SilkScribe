@@ -22,6 +22,7 @@ import { SaveQueue } from "./saveQueue";
 import { drafts } from "./drafts";
 import { AudioPlayer } from "../ui/AudioPlayer";
 import { LiveTranscript } from "./LiveTranscript";
+import { UserNotes } from "./UserNotes";
 import { toastError } from "@/lib/utils/toastError";
 
 export function Transcript({
@@ -63,7 +64,12 @@ export function Transcript({
   const [notesModel, setNotesModel] = useState(
     initial.options.notes_model || "qwen3.5-9b",
   );
-  const [tab, setTab] = useState("transcript");
+  // A finished meeting opens on its notes; everything else on its transcript.
+  const [tab, setTab] = useState(() =>
+    initial.source === "meeting" && initial.segments.length
+      ? "notes"
+      : "transcript",
+  );
   const [search, setSearch] = useState("");
   const [playhead, setPlayhead] = useState(0);
   const [editing, setEditing] = useState(false);
@@ -739,11 +745,18 @@ export function Transcript({
             </div>
           )}
           {!doc.segments.length && (
-            <LiveTranscript
-              documentId={doc.id}
-              stored={doc.live_segments}
-              live={doc.stage === "recording" || doc.stage === "paused"}
-            />
+            <div
+              className={
+                doc.source === "meeting" ? "ws-live-layout" : undefined
+              }
+            >
+              {doc.source === "meeting" && <UserNotes documentId={doc.id} />}
+              <LiveTranscript
+                documentId={doc.id}
+                stored={doc.live_segments}
+                live={doc.stage === "recording" || doc.stage === "paused"}
+              />
+            </div>
           )}
           <div className="ws-segments">
             {editing && doc.speakers.length > 0 && (
@@ -1037,6 +1050,7 @@ export function Transcript({
           role="tabpanel"
           aria-labelledby="tab-notes"
         >
+          {doc.source === "meeting" && <UserNotes documentId={doc.id} />}
           <fieldset disabled={locked}>
             {doc.notes_candidate && (
               <section

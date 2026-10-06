@@ -31,6 +31,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
+import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 import SilkScribeWordmark from "../icons/SilkScribeWordmark";
 import type { SidebarSection } from "../Sidebar";
 import {
@@ -67,7 +68,12 @@ export default function Workspace({
   onSetupDictation: () => void;
 }) {
   const { t } = useTranslation();
-  const { settings, refreshSettings } = useSettings();
+  const { settings, refreshSettings, updateSetting } = useSettings();
+  const consentReminder = settings?.meeting_consent_reminder ?? true;
+  const copyConsentMessage = () =>
+    writeText(t("workspace.consent.message"))
+      .then(() => toast.success(t("workspace.consent.copied")))
+      .catch((error) => toastError(t("workspace.errors.copyMessage"), error));
   const osType = useOsType();
   // Offer on-device AI cleanup once, to people who don't have it on every
   // dictation yet and whose Mac can run it.
@@ -868,6 +874,14 @@ export default function Workspace({
               {t("workspace.stopSave")}
             </button>
             {recording.error && <p role="alert">{recording.error}</p>}
+            {consentReminder && recording.seconds < 60 && !recording.paused && (
+              <p className="ws-consent">
+                {t("workspace.consent.reminder")}{" "}
+                <button className="ws-text-button" onClick={copyConsentMessage}>
+                  {t("workspace.consent.copy")}
+                </button>
+              </p>
+            )}
           </div>
         )}
         <div className="ws-content">
@@ -1083,6 +1097,21 @@ export default function Workspace({
                     label={t("workspace.computerAudio")}
                     hint={t("workspace.systemPermission")}
                   />
+                  <WsToggle
+                    checked={consentReminder}
+                    onChange={(value) =>
+                      void updateSetting("meeting_consent_reminder", value)
+                    }
+                    label={t("workspace.consent.setting")}
+                    hint={t("workspace.consent.settingHint")}
+                  />
+                  <button
+                    type="button"
+                    className="ws-text-button"
+                    onClick={copyConsentMessage}
+                  >
+                    {t("workspace.consent.copy")}
+                  </button>
                 </div>
               ) : (
                 <div className="ws-file-selection">

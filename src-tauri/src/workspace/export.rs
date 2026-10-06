@@ -74,6 +74,57 @@ pub fn render_content(
     }
     Ok(output)
 }
+/// Like [`render_content`], plus the notes the person wrote, which count as
+/// notes: they go in when notes are selected, even without AI notes.
+pub fn render_document(
+    doc: &Document,
+    format: &str,
+    content: Option<ExportContent>,
+    user_notes: &str,
+) -> Result<String> {
+    let user_notes = user_notes.trim();
+    let include_notes = content.as_ref().map_or(true, |c| c.notes);
+    if user_notes.is_empty() || !include_notes || !matches!(format, "md" | "txt" | "json") {
+        return render_content(doc, format, content);
+    }
+    let notes_only = content
+        .as_ref()
+        .is_some_and(|c| !c.transcript && doc.notes.is_none());
+    let output = if notes_only {
+        match format {
+            "json" => serde_json::to_string_pretty(&serde_json::json!({ "title": doc.title }))?,
+            _ => format!(
+                "{}\n",
+                if format == "md" {
+                    format!("# {}\n", doc.title)
+                } else {
+                    doc.title.clone()
+                }
+            ),
+        }
+    } else {
+        render_content(doc, format, content)?
+    };
+    insert_user_notes(output, format, user_notes)
+}
+/// Puts "Your notes" right after the title.
+fn insert_user_notes(output: String, format: &str, user_notes: &str) -> Result<String> {
+    if format == "json" {
+        let mut value: serde_json::Value = serde_json::from_str(&output)?;
+        value["user_notes"] = serde_json::json!(user_notes);
+        return Ok(serde_json::to_string_pretty(&value)?);
+    }
+    let heading = if format == "md" {
+        "## Your notes"
+    } else {
+        "Your notes"
+    };
+    let (title, rest) = output.split_once('\n').unwrap_or((output.as_str(), ""));
+    Ok(format!(
+        "{title}\n\n{heading}\n\n{user_notes}\n\n{}",
+        rest.trim_start_matches('\n')
+    ))
+}
 pub fn render(doc: &Document, format: &str) -> Result<String> {
     render_with_evidence(doc, format, &doc.segments)
 }
@@ -379,5 +430,20 @@ mod tests {
         assert_eq!(timestamp(59.9999, ','), "00:01:00,000");
         assert_eq!(timestamp(-1.0, '.'), "00:00:00.000");
         assert_eq!(timestamp(3661.123, ','), "01:01:01,123");
+    }
+}
+#[cfg(test)]
+mod user_notes_tests {
+    use super::*;
+    #[test]
+    fn user_notes_follow_the_title() {
+        let out =
+            insert_user_notes("# Standup\n\n## Summary\n\n- A\n".into(), "md", "- Mine").unwrap();
+        assert_eq!(
+            out,
+            "# Standup\n\n## Your notes\n\n- Mine\n\n## Summary\n\n- A\n"
+        );
+        let json = insert_user_notes("{\"title\":\"Standup\"}".into(), "json", "- Mine").unwrap();
+        assert!(json.contains("\"user_notes\": \"- Mine\""));
     }
 }

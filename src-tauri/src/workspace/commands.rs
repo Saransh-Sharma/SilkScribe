@@ -77,6 +77,34 @@ pub async fn workspace_discard_import_batch(
     .await
     .map_err(|error| error.to_string())?
 }
+/// The notes a person wrote for a document (e.g. during a meeting).
+#[tauri::command]
+#[specta::specta]
+pub async fn workspace_user_notes(app: AppHandle, id: String) -> Result<String, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        ws(&app).store.user_notes(&id).map_err(|e| e.to_string())
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
+/// Saves the notes a person wrote. Works while a meeting records or processes:
+/// they're stored apart from the document.
+#[tauri::command]
+#[specta::specta]
+pub async fn workspace_save_user_notes(
+    app: AppHandle,
+    id: String,
+    body: String,
+) -> Result<(), String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        ws(&app)
+            .store
+            .save_user_notes(&id, &body)
+            .map_err(|e| e.to_string())
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
 #[tauri::command]
 #[specta::specta]
 pub async fn workspace_get_draft(app: AppHandle, id: String) -> Result<Option<Document>, String> {
@@ -220,8 +248,11 @@ pub async fn workspace_export(
     path: String,
     content: Option<export::ExportContent>,
 ) -> Result<(), String> {
-    let doc = ws(&app).store.get(&id).map_err(|e| e.to_string())?;
-    let text = export::render_content(&doc, &format, content).map_err(|e| e.to_string())?;
+    let store = &ws(&app).store;
+    let doc = store.get(&id).map_err(|e| e.to_string())?;
+    let notes = store.user_notes(&id).map_err(|e| e.to_string())?;
+    let text =
+        export::render_document(&doc, &format, content, &notes).map_err(|e| e.to_string())?;
     std::fs::write(path, text).map_err(|e| e.to_string())
 }
 #[tauri::command]
@@ -233,8 +264,10 @@ pub async fn workspace_export_preview(
     content: Option<export::ExportContent>,
 ) -> Result<String, String> {
     tauri::async_runtime::spawn_blocking(move || {
-        let doc = ws(&app).store.get(&id).map_err(|e| e.to_string())?;
-        export::render_content(&doc, &format, content).map_err(|e| e.to_string())
+        let store = &ws(&app).store;
+        let doc = store.get(&id).map_err(|e| e.to_string())?;
+        let notes = store.user_notes(&id).map_err(|e| e.to_string())?;
+        export::render_document(&doc, &format, content, &notes).map_err(|e| e.to_string())
     })
     .await
     .map_err(|e| e.to_string())?

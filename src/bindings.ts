@@ -422,6 +422,17 @@ async dismissAiCleanupCard() : Promise<Result<null, string>> {
 }
 },
 /**
+ * Remind the user to tell people when a meeting starts recording.
+ */
+async changeMeetingConsentReminderSetting(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_meeting_consent_reminder_setting", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Turn on AI cleanup for every dictation with Apple Intelligence, which runs
  * on this Mac. Used by onboarding and the Home suggestion.
  */
@@ -1082,6 +1093,29 @@ async workspaceCaptureDevices() : Promise<Result<CaptureDevice[], string>> {
 async workspaceLiveTranscript() : Promise<LiveTranscript | null> {
     return await TAURI_INVOKE("workspace_live_transcript");
 },
+/**
+ * The notes a person wrote for a document (e.g. during a meeting).
+ */
+async workspaceUserNotes(id: string) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("workspace_user_notes", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Saves the notes a person wrote. Works while a meeting records or processes:
+ * they're stored apart from the document.
+ */
+async workspaceSaveUserNotes(id: string, body: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("workspace_save_user_notes", { id, body }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async meetingOrbSnapshot() : Promise<MeetingOrbSnapshot> {
     return await TAURI_INVOKE("meeting_orb_snapshot");
 },
@@ -1104,6 +1138,18 @@ async meetingOrbDrag(deltaY: number, done: boolean) : Promise<void> {
  */
 async meetingOrbOpenDocument(documentId: string) : Promise<void> {
     await TAURI_INVOKE("meeting_orb_open_document", { documentId });
+},
+/**
+ * Copies text for the orb (the "let people know" message). Its panel never
+ * becomes the key window, so the web clipboard API isn't reliable there.
+ */
+async meetingOrbCopy(text: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("meeting_orb_copy", { text }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 },
 async getHomeDashboardData(limit: number | null, cursor: HomeHistoryCursor | null) : Promise<Result<HomeDashboardPageData, string>> {
     try {
@@ -1218,7 +1264,11 @@ ai_cleanup_on_main?: boolean;
 /**
  * The Home suggestion to clean up every dictation on device was dismissed.
  */
-ai_cleanup_card_dismissed?: boolean; mute_while_recording?: boolean; append_trailing_space?: boolean; app_language?: string; experimental_enabled?: boolean; lazy_stream_close?: boolean; keyboard_implementation?: KeyboardImplementation; theme?: ThemePreference; show_tray_icon?: boolean; paste_delay_ms?: number; typing_tool?: TypingTool; external_script_path: string | null; custom_filler_words?: string[] | null; whisper_accelerator?: WhisperAcceleratorSetting; ort_accelerator?: OrtAcceleratorSetting; whisper_gpu_device?: number; extra_recording_buffer_ms?: number; 
+ai_cleanup_card_dismissed?: boolean; 
+/**
+ * Remind the user to tell people a meeting is being recorded.
+ */
+meeting_consent_reminder?: boolean; mute_while_recording?: boolean; append_trailing_space?: boolean; app_language?: string; experimental_enabled?: boolean; lazy_stream_close?: boolean; keyboard_implementation?: KeyboardImplementation; theme?: ThemePreference; show_tray_icon?: boolean; paste_delay_ms?: number; typing_tool?: TypingTool; external_script_path: string | null; custom_filler_words?: string[] | null; whisper_accelerator?: WhisperAcceleratorSetting; ort_accelerator?: OrtAcceleratorSetting; whisper_gpu_device?: number; extra_recording_buffer_ms?: number; 
 /**
  * Where the meeting orb sits on the right screen edge, as a fraction of the
  * usable height from the top (its centre).

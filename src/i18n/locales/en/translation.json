@@ -886,7 +886,8 @@
     "pause": "Pause",
     "resume": "Resume",
     "stop": "Stop and transcribe",
-    "open": "Open"
+    "open": "Open notes",
+    "letPeopleKnow": "Let people know"
   },
   "feedback": {
     "pasteFailed": {
@@ -1239,7 +1240,10 @@
       "startProcessing": "Couldn’t start processing",
       "deleteTranscript": "Couldn’t delete",
       "enableCleanup": "Couldn’t turn on AI cleanup",
-      "copyOriginal": "Couldn’t copy the original"
+      "copyOriginal": "Couldn’t copy the original",
+      "loadNotes": "Couldn’t load your notes",
+      "saveNotes": "Couldn’t save your notes",
+      "copyMessage": "Couldn’t copy the message"
     },
     "liveTranscript": "Live transcript",
     "liveTranscriptNote": "A more accurate transcript replaces this once processing finishes.",
@@ -1253,7 +1257,17 @@
     "hideOriginal": "Hide original",
     "copyOriginal": "Copy original",
     "copiedOriginal": "Original copied",
-    "originalLabel": "Text before AI cleanup"
+    "originalLabel": "Text before AI cleanup",
+    "yourNotes": "Your notes",
+    "yourNotesPlaceholder": "Type what matters as it happens. Start a line with - for a list.",
+    "consent": {
+      "reminder": "Let people know you’re taking notes.",
+      "copy": "Copy a heads-up message",
+      "copied": "Message copied",
+      "message": "Heads up: I’m taking notes with SilkScribe. It runs on my Mac, and nothing is uploaded.",
+      "setting": "Remind me to tell people",
+      "settingHint": "Shows a reminder when recording starts."
+    }
   },
   "audioPlayer": {
     "play": "Play",

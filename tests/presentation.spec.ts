@@ -341,7 +341,12 @@ test.describe("meeting orb", () => {
 
   test("offers the controls a live meeting needs", async ({ page }) => {
     await page.goto(fixture("view=meeting-orb&mode=expanded&state=recording"));
-    for (const name of ["Pause", "Stop and transcribe", "Open"]) {
+    for (const name of [
+      "Pause",
+      "Stop and transcribe",
+      "Open notes",
+      "Let people know",
+    ]) {
       await expect(
         page.getByRole("button", { name, exact: true }),
       ).toBeVisible();

@@ -38,6 +38,10 @@ impl Store {
         store.conn()?.execute_batch("CREATE TABLE IF NOT EXISTS workspace_drafts (document_id TEXT PRIMARY KEY, body TEXT NOT NULL);")?;
         store.conn()?.execute_batch("CREATE TABLE IF NOT EXISTS workspace_import_batches (request_id TEXT PRIMARY KEY, body TEXT NOT NULL);")?;
         store.conn()?.execute_batch("CREATE TRIGGER IF NOT EXISTS workspace_draft_cleanup AFTER DELETE ON workspace_documents BEGIN DELETE FROM workspace_drafts WHERE document_id=old.id; END;")?;
+        // Notes a person types (e.g. during a meeting) live apart from the
+        // document: processing never rewrites them and they need no sources.
+        store.conn()?.execute_batch("CREATE TABLE IF NOT EXISTS workspace_user_notes (document_id TEXT PRIMARY KEY, body TEXT NOT NULL, updated_at INTEGER NOT NULL);
+            CREATE TRIGGER IF NOT EXISTS workspace_user_notes_cleanup AFTER DELETE ON workspace_documents BEGIN DELETE FROM workspace_user_notes WHERE document_id=old.id; END;")?;
         // Stage indexes allow recovery and queue selection across the entire library.
         store.conn()?.execute_batch("CREATE INDEX IF NOT EXISTS workspace_stage ON workspace_documents(json_extract(body,'$.stage')); ")?;
         // Additive, transactional index migration; the original document remains canonical.
@@ -134,6 +138,36 @@ impl Store {
                 doc.history_id,
                 serde_json::to_string(doc)?
             ],
+        )?;
+        Ok(())
+    }
+    /// The notes a person wrote for a document, or "" if none.
+    pub fn user_notes(&self, id: &str) -> Result<String> {
+        use rusqlite::OptionalExtension;
+        Ok(self
+            .conn()?
+            .query_row(
+                "SELECT body FROM workspace_user_notes WHERE document_id=?1",
+                [id],
+                |r| r.get::<_, String>(0),
+            )
+            .optional()?
+            .unwrap_or_default())
+    }
+    pub fn save_user_notes(&self, id: &str, body: &str) -> Result<()> {
+        let conn = self.conn()?;
+        let exists: bool = conn.query_row(
+            "SELECT EXISTS(SELECT 1 FROM workspace_documents WHERE id=?1)",
+            [id],
+            |r| r.get(0),
+        )?;
+        if !exists {
+            bail!("This transcript was deleted.");
+        }
+        conn.execute(
+            "INSERT INTO workspace_user_notes(document_id,body,updated_at) VALUES(?1,?2,unixepoch())
+            ON CONFLICT(document_id) DO UPDATE SET body=excluded.body,updated_at=excluded.updated_at",
+            params![id, body],
         )?;
         Ok(())
     }
@@ -1575,5 +1609,32 @@ mod tests {
         store.delete(&pipeline.id).unwrap();
         assert!(store.put_processed(&pipeline).is_err());
         assert!(store.get(&pipeline.id).is_err());
+    }
+    #[test]
+    fn user_notes_round_trip_and_go_with_their_document() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::new(dir.path()).unwrap();
+        let doc = document();
+        store.put(&doc).unwrap();
+        assert_eq!(store.user_notes(&doc.id).unwrap(), "");
+        store.save_user_notes(&doc.id, "- Ship Friday").unwrap();
+        store
+            .save_user_notes(&doc.id, "- Ship Friday\n- Ask Sam")
+            .unwrap();
+        assert_eq!(
+            store.user_notes(&doc.id).unwrap(),
+            "- Ship Friday\n- Ask Sam"
+        );
+
+        // Processing rewrites the document; the notes are untouched.
+        store.put_processed(&doc).unwrap();
+        assert_eq!(
+            store.user_notes(&doc.id).unwrap(),
+            "- Ship Friday\n- Ask Sam"
+        );
+
+        store.delete(&doc.id).unwrap();
+        assert_eq!(store.user_notes(&doc.id).unwrap(), "");
+        assert!(store.save_user_notes(&doc.id, "late").is_err());
     }
 }

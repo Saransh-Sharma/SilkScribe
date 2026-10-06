@@ -200,6 +200,15 @@ pub fn meeting_orb_open_document(app: AppHandle, document_id: String) {
     let _ = app.emit("workspace-open-document", document_id);
 }
 
+/// Copies text for the orb (the "let people know" message). Its panel never
+/// becomes the key window, so the web clipboard API isn't reliable there.
+#[tauri::command]
+#[specta::specta]
+pub fn meeting_orb_copy(app: AppHandle, text: String) -> Result<(), String> {
+    use tauri_plugin_clipboard_manager::ClipboardExt;
+    app.clipboard().write_text(text).map_err(|e| e.to_string())
+}
+
 #[cfg(target_os = "macos")]
 mod platform {
     use super::{PointerPayload, COLLAPSED, EDGE_MARGIN, EXPANDED, LABEL};

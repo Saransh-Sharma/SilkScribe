@@ -358,6 +358,12 @@ api.dictationReady = async () => dictation === "ready";
 api.onDeviceCleanupAvailable = async () => params.has("cleanupSuggestion");
 api.enableOnDeviceCleanup = async () => null;
 api.dismissCleanupSuggestion = async () => null;
+// User notes persist across reloads, like the real store.
+api.userNotes = async (id) => localStorage.getItem(`fixture-notes-${id}`) ?? "";
+api.saveUserNotes = async (id, body) => {
+  localStorage.setItem(`fixture-notes-${id}`, body);
+  return null;
+};
 api.devices = async () => [{ id: "default", name: "Studio microphone" }];
 api.captureReadiness = async () => ({
   supported: true,

@@ -133,6 +133,8 @@ const settingUpdaters: {
   ai_cleanup_on_main: (value) =>
     commands.changeAiCleanupOnMainSetting(value as boolean),
   ai_cleanup_card_dismissed: () => commands.dismissAiCleanupCard(),
+  meeting_consent_reminder: (value) =>
+    commands.changeMeetingConsentReminderSetting(value as boolean),
   mute_while_recording: (value) =>
     commands.changeMuteWhileRecordingSetting(value as boolean),
   append_trailing_space: (value) =>

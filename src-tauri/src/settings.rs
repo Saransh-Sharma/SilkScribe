@@ -421,6 +421,9 @@ pub struct AppSettings {
     /// The Home suggestion to clean up every dictation on device was dismissed.
     #[serde(default)]
     pub ai_cleanup_card_dismissed: bool,
+    /// Remind the user to tell people a meeting is being recorded.
+    #[serde(default = "default_true")]
+    pub meeting_consent_reminder: bool,
     #[serde(default)]
     pub mute_while_recording: bool,
     #[serde(default)]
@@ -471,6 +474,10 @@ const CURRENT_SETTINGS_VERSION: u32 = 2;
 
 /// The history limit every install shipped with before version 1.
 const LEGACY_DEFAULT_HISTORY_LIMIT: usize = 5;
+
+fn default_true() -> bool {
+    true
+}
 
 fn default_model() -> String {
     "".to_string()
@@ -973,6 +980,7 @@ pub fn get_default_settings() -> AppSettings {
         post_process_selected_prompt_id: default_post_process_selected_prompt_id(),
         ai_cleanup_on_main: false,
         ai_cleanup_card_dismissed: false,
+        meeting_consent_reminder: true,
         mute_while_recording: false,
         append_trailing_space: false,
         app_language: default_app_language(),

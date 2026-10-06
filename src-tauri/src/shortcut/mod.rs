@@ -851,6 +851,19 @@ pub fn change_ai_cleanup_on_main_setting(app: AppHandle, enabled: bool) -> Resul
     Ok(())
 }
 
+/// Remind the user to tell people when a meeting starts recording.
+#[tauri::command]
+#[specta::specta]
+pub fn change_meeting_consent_reminder_setting(
+    app: AppHandle,
+    enabled: bool,
+) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.meeting_consent_reminder = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
 /// Hide the Home suggestion to clean up every dictation on device.
 #[tauri::command]
 #[specta::specta]

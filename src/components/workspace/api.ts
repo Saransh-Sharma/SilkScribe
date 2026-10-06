@@ -60,6 +60,9 @@ export const api = {
   onDeviceCleanupAvailable: () => commands.checkAppleIntelligenceAvailable(),
   enableOnDeviceCleanup: () => unwrap(commands.enableOnDeviceCleanup()),
   dismissCleanupSuggestion: () => unwrap(commands.dismissAiCleanupCard()),
+  userNotes: (id: string) => unwrap(commands.workspaceUserNotes(id)),
+  saveUserNotes: (id: string, body: string) =>
+    unwrap(commands.workspaceSaveUserNotes(id, body)),
   cancelImport: () => unwrap(commands.workspaceCancelImport()),
   importBatches: () => unwrap(commands.workspaceImportBatches()),
   discardImportBatch: (requestId: string) =>

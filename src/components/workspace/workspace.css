@@ -1152,3 +1152,48 @@
   color: var(--ss-text-secondary);
   white-space: pre-wrap;
 }
+/* Notes a person types for a meeting: beside the live transcript while it
+   records, above the AI notes afterwards. */
+.ws-user-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.ws-user-notes h2 {
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--ss-text-primary);
+}
+.ws-user-notes textarea {
+  width: 100%;
+  min-height: 160px;
+  resize: vertical;
+  padding: 12px 14px;
+  border: 1px solid var(--ss-border-default);
+  border-radius: var(--ss-radius-md);
+  background: var(--ss-bg-elevated);
+  color: var(--ss-text-primary);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.ws-user-notes textarea:focus-visible {
+  outline: 2px solid var(--ss-action-focus);
+  outline-offset: 1px;
+}
+.ws-live-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .ws-live-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.ws-recording-bar > p.ws-consent {
+  color: var(--ss-text-secondary);
+  font-size: 12px;
+}

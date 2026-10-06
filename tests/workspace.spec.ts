@@ -26,6 +26,7 @@ test("transcript edits persist, speaker names can change, notes become stale", a
 }) => {
   await page.goto(fixture);
   await page.getByText("Product design review", { exact: true }).click();
+  await page.getByRole("tab", { name: "Transcript" }).click();
   await page
     .getByRole("button", { name: "Edit transcript", exact: true })
     .click();
@@ -44,6 +45,7 @@ test("transcript edits persist, speaker names can change, notes become stale", a
   ).toBeVisible();
   await page.getByRole("button", { name: "Back", exact: true }).click();
   await page.getByText("Product design review", { exact: true }).click();
+  await page.getByRole("tab", { name: "Transcript" }).click();
   await page
     .getByRole("button", { name: "Edit transcript", exact: true })
     .click();
@@ -110,6 +112,7 @@ test("Back waits for an in-flight save and a newer queued edit", async ({
 }) => {
   await page.goto(fixture + "?delaySave=1");
   await page.getByText("Product design review", { exact: true }).click();
+  await page.getByRole("tab", { name: "Transcript" }).click();
   await page
     .getByRole("button", { name: "Edit transcript", exact: true })
     .click();
@@ -123,6 +126,7 @@ test("Back waits for an in-flight save and a newer queued edit", async ({
     page.getByRole("heading", { name: "Home", exact: true }),
   ).toBeVisible();
   await page.getByText("Product design review", { exact: true }).click();
+  await page.getByRole("tab", { name: "Transcript" }).click();
   await expect(
     page.getByText("The latest edit must survive navigation.", { exact: true }),
   ).toBeVisible();
@@ -177,6 +181,7 @@ test("note evidence retains the generation-time excerpt after a transcript corre
 }) => {
   await page.goto(fixture);
   await page.getByText("Product design review", { exact: true }).click();
+  await page.getByRole("tab", { name: "Transcript" }).click();
   await page
     .getByRole("button", { name: "Edit transcript", exact: true })
     .click();
@@ -233,6 +238,7 @@ test("sidebar navigation also waits for pending transcript saves", async ({
 }) => {
   await page.goto(fixture + "?delaySave=1");
   await page.getByText("Product design review", { exact: true }).click();
+  await page.getByRole("tab", { name: "Transcript" }).click();
   await page
     .getByRole("button", { name: "Edit transcript", exact: true })
     .click();
@@ -244,6 +250,7 @@ test("sidebar navigation also waits for pending transcript saves", async ({
     page.getByRole("heading", { name: "Library", exact: true }),
   ).toBeVisible();
   await page.getByText("Product design review", { exact: true }).click();
+  await page.getByRole("tab", { name: "Transcript" }).click();
   await expect(
     page.getByText("Saved before leaving through the sidebar.", {
       exact: true,
@@ -380,6 +387,7 @@ test("managed draft recovery restores an edit before autosave committed", async 
 }) => {
   await page.goto(fixture + "?delaySave=1");
   await page.getByText("Product design review", { exact: true }).click();
+  await page.getByRole("tab", { name: "Transcript" }).click();
   await page
     .getByRole("button", { name: "Edit transcript", exact: true })
     .click();
@@ -393,6 +401,7 @@ test("managed draft recovery restores an edit before autosave committed", async 
   );
   await page.reload();
   await page.getByText("Product design review", { exact: true }).click();
+  await page.getByRole("tab", { name: "Transcript" }).click();
   await expect(
     page.getByText("Recovered from the managed draft store.", { exact: true }),
   ).toBeVisible();
@@ -503,6 +512,7 @@ test("export preview switches between original text and saved edits", async ({
 }) => {
   await page.goto(fixture);
   await page.getByText("Product design review", { exact: true }).click();
+  await page.getByRole("tab", { name: "Transcript" }).click();
   await page
     .getByRole("button", { name: "Edit transcript", exact: true })
     .click();
@@ -556,6 +566,7 @@ test("four-hour transcript renders bounded pages and records editing latency", a
 }, testInfo) => {
   await page.goto(fixture + "?long=1");
   await page.getByText("Product design review", { exact: true }).click();
+  await page.getByRole("tab", { name: "Transcript" }).click();
   await expect(page.locator(".ws-segment")).toHaveCount(100);
   await page
     .getByRole("button", { name: "Edit transcript", exact: true })
@@ -664,6 +675,45 @@ test("a cleaned-up dictation can show the text before cleanup", async ({
   ).toHaveText("can you send the revised screens before friday");
   await page.getByRole("button", { name: "Hide original" }).click();
   await expect(page.getByLabel("Text before AI cleanup")).toBeHidden();
+});
+
+test("a finished meeting opens on notes the person can write", async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  await page.getByText("Product design review", { exact: true }).click();
+  await expect(page.getByRole("tab", { name: "Notes" })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  const notes = page.getByRole("textbox", { name: "Your notes" });
+  await notes.fill("- Ship Friday");
+  await notes.press("End");
+  await notes.press("Enter");
+  await notes.pressSequentially("Ask Sam");
+  await expect(notes).toHaveValue("- Ship Friday\n- Ask Sam");
+  // Saved apart from the document, so it survives a reload.
+  await expect
+    .poll(() =>
+      page.evaluate(() => localStorage.getItem("fixture-notes-one")),
+    )
+    .toBe("- Ship Friday\n- Ask Sam");
+  await page.reload();
+  await page.getByText("Product design review", { exact: true }).click();
+  await expect(
+    page.getByRole("textbox", { name: "Your notes" }),
+  ).toHaveValue("- Ship Friday\n- Ask Sam");
+});
+
+test("meeting setup offers a heads-up for the people on the call", async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  await page.getByRole("button", { name: "Record meeting" }).first().click();
+  await expect(page.getByText("Remind me to tell people")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Copy a heads-up message" }),
+  ).toBeVisible();
 });
 
 test("Home surfaces recovery work and opens the filtered Library", async ({

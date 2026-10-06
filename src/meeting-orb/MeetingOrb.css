@@ -408,6 +408,7 @@
 /* -------------------------------------------------------------- the footer */
 .orb-footer {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   padding-top: 10px;
   border-top: 1px solid var(--orb-divider);
