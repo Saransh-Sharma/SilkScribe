@@ -419,7 +419,7 @@ impl Workspace {
                         Stage::Failed
                     };
                     current.error = Some(error.to_string());
-                    let _ = this.store.put(&current);
+                    let _ = this.store.put_processed(&current);
                 }
             }
             *this.active.lock().unwrap() = None;
@@ -439,7 +439,7 @@ impl Workspace {
         }
         doc.stage = stage;
         doc.progress = progress;
-        self.store.put(doc)?;
+        self.store.put_processed(doc)?;
         self.emit(app);
         Ok(())
     }
@@ -645,7 +645,7 @@ impl Workspace {
             if !doc.options.speakers {
                 coalesce_segments(&mut doc.segments);
             }
-            self.store.put(&doc)?;
+            self.store.put_processed(&doc)?;
         }
         if !notes_only && doc.options.speakers && !doc.diarized && !doc.segments.is_empty() {
             doc.stage_errors.retain(|e| e.stage != Stage::Diarizing);
@@ -692,7 +692,7 @@ impl Workspace {
                     message: error.to_string(),
                 });
             }
-            self.store.put(&doc)?;
+            self.store.put_processed(&doc)?;
         }
         if let Some(model) = doc.options.notes_model.clone().filter(|_| !speakers_only) {
             if doc.notes.is_none() || notes_only {

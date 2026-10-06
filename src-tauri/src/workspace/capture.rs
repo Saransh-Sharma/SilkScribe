@@ -260,7 +260,7 @@ pub fn control(
             doc.stage = Stage::Interrupted;
             doc.failed_stage = Some(Stage::Recording);
             doc.error = Some(format!("Audio finalization needs recovery: {error}"));
-            ws.store.put(&doc)?;
+            ws.store.put_processed(&doc)?;
             drop(recording);
             end_meeting(app, ws);
             ws.emit(app);
@@ -298,7 +298,7 @@ pub fn control(
     }
     // One write carries both the final stage and the live lines: the queue may
     // pick the document up as soon as it's Queued and re-save its own copy.
-    ws.store.put(&doc)?;
+    ws.store.put_processed(&doc)?;
     drop(recording);
     if stopping {
         end_meeting(app, ws);

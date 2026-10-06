@@ -105,7 +105,7 @@ impl Store {
             self.conn()?
                 .query_row("SELECT lower(hex(randomblob(16)))", [], |row| row.get(0))?;
         doc.progress = 0.0;
-        self.put(doc)
+        self.put_processed(doc)
     }
     pub fn conn(&self) -> Result<Connection> {
         let conn = Connection::open(&self.path)?;
@@ -135,6 +135,39 @@ impl Store {
                 serde_json::to_string(doc)?
             ],
         )?;
+        Ok(())
+    }
+    /// Reads the stored copy, applies `change` and writes it back in one
+    /// transaction, so a concurrent writer's fields aren't lost.
+    pub fn update(&self, id: &str, change: impl FnOnce(&mut Document)) -> Result<Document> {
+        let mut conn = self.conn()?;
+        let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        let body: String = tx.query_row(
+            "SELECT body FROM workspace_documents WHERE id=?1",
+            [id],
+            |r| r.get(0),
+        )?;
+        let mut doc: Document = serde_json::from_str(&body)?;
+        change(&mut doc);
+        tx.execute(
+            "UPDATE workspace_documents SET body=?2 WHERE id=?1",
+            params![id, serde_json::to_string(&doc)?],
+        )?;
+        tx.commit()?;
+        Ok(doc)
+    }
+    /// Writes the copy a long-running writer (processing, meeting capture) has
+    /// held since it started. Fields only people change (title, saved) are kept
+    /// from the stored document rather than reverted, and a document deleted in
+    /// the meantime stays deleted instead of being written back.
+    pub fn put_processed(&self, doc: &Document) -> Result<()> {
+        self.update(&doc.id, |stored| {
+            let title = std::mem::take(&mut stored.title);
+            let saved = stored.saved;
+            *stored = doc.clone();
+            stored.title = title;
+            stored.saved = saved;
+        })?;
         Ok(())
     }
     /// Persist a stable destination before copying. A retry after a process
@@ -1512,5 +1545,35 @@ mod tests {
             store.get("dictation-1").unwrap().segments[0].text,
             "My own words."
         );
+    }
+    #[test]
+    fn processing_writes_keep_user_fields_and_never_resurrect() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::new(dir.path()).unwrap();
+        let mut pipeline = document();
+        pipeline.stage = Stage::Transcribing;
+        store.put(&pipeline).unwrap();
+
+        // Someone renames and saves the document while it processes.
+        store
+            .update(&pipeline.id, |doc| {
+                doc.title = "Renamed".into();
+                doc.saved = true;
+            })
+            .unwrap();
+
+        // The pipeline writes its own, older copy with a new stage.
+        pipeline.stage = Stage::Complete;
+        pipeline.progress = 1.0;
+        store.put_processed(&pipeline).unwrap();
+        let stored = store.get(&pipeline.id).unwrap();
+        assert_eq!(stored.stage, Stage::Complete);
+        assert_eq!(stored.title, "Renamed");
+        assert!(stored.saved);
+        assert_eq!(stored.revision, pipeline.revision);
+
+        store.delete(&pipeline.id).unwrap();
+        assert!(store.put_processed(&pipeline).is_err());
+        assert!(store.get(&pipeline.id).is_err());
     }
 }
