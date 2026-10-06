@@ -402,10 +402,6 @@
         "weeks2": "Po 2 tygodniach",
         "months3": "Po 3 miesiącach"
       },
-      "muteWhileRecording": {
-        "label": "Wycisz podczas nagrywania",
-        "description": "Wycisz dźwięk systemu podczas nagrywania"
-      },
       "keyboardImplementation": {
         "backends": {
           "nativeKeys": "Natywne klawisze"

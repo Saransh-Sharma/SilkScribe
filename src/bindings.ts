@@ -387,6 +387,17 @@ async changeExtraRecordingBufferSetting(ms: number) : Promise<Result<null, strin
     else return { status: "error", error: e  as any };
 }
 },
+/**
+ * How long to wait after writing the clipboard before sending the paste keys.
+ */
+async changePasteDelaySetting(ms: number) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_paste_delay_setting", { ms }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async changeWhisperAcceleratorSetting(accelerator: WhisperAcceleratorSetting) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("change_whisper_accelerator_setting", { accelerator }) };

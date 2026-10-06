@@ -49,6 +49,8 @@ import { Preferences } from "./Preferences";
 import { WsMeter, WsSelect, WsToggle } from "./controls";
 import { LANGUAGES } from "@/lib/constants/languages";
 import { useSettings } from "@/hooks/useSettings";
+import { useOsType } from "@/hooks/useOsType";
+import { formatKeyCombination } from "@/lib/utils/keyboard";
 import { readSetup, writeSetup, readWorkflowOptions } from "./setupStorage";
 import "./workspace.css";
 import { toastError } from "@/lib/utils/toastError";
@@ -65,6 +67,7 @@ export default function Workspace({
 }) {
   const { t } = useTranslation();
   const { settings } = useSettings();
+  const osType = useOsType();
   const [dictationReady, setDictationReady] = useState(false);
   useEffect(() => {
     let current = true;
@@ -1557,7 +1560,11 @@ export default function Workspace({
                         <>
                           {t("workspace.stage.complete")} ·{" "}
                           <kbd>
-                            {settings?.bindings.transcribe?.current_binding}
+                            {formatKeyCombination(
+                              settings?.bindings.transcribe?.current_binding ??
+                                "",
+                              osType,
+                            )}
                           </kbd>
                         </>
                       ) : (

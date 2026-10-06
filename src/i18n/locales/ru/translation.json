@@ -402,10 +402,6 @@
         "weeks2": "Через 2 недели",
         "months3": "Через 3 месяца"
       },
-      "muteWhileRecording": {
-        "label": "Отключить звук во время записи",
-        "description": "Отключение звука системы во время записи"
-      },
       "keyboardImplementation": {
         "backends": {
           "nativeKeys": "Нативные клавиши"

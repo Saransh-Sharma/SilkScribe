@@ -625,6 +625,25 @@ test("model settings remain usable while runtime health fails", async ({
   ).toBeVisible();
 });
 
+test("Home shows the dictation shortcut once dictation is ready", async ({
+  page,
+}) => {
+  await page.goto(`${fixture}?dictation=ready`);
+  const strip = page.getByRole("button", { name: /^Dictation/ });
+  await expect(strip).toContainText("Ready");
+  await expect(strip.locator("kbd")).toHaveText("Option + Space");
+  await expect(page.getByText("Note to Sam", { exact: true })).toBeVisible();
+});
+
+test("Home asks to finish dictation setup when it isn't ready", async ({
+  page,
+}) => {
+  await page.goto(`${fixture}?dictation=setup`);
+  const strip = page.getByRole("button", { name: /^Dictation/ });
+  await expect(strip).toContainText("Not set up yet");
+  await expect(strip.locator("kbd")).toHaveCount(0);
+});
+
 test("Home surfaces recovery work and opens the filtered Library", async ({
   page,
 }) => {

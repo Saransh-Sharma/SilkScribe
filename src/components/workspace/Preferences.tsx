@@ -6,6 +6,7 @@ import { PushToTalk } from "../settings/PushToTalk";
 import { MicrophoneSelector } from "../settings/MicrophoneSelector";
 import { OutputDeviceSelector } from "../settings/OutputDeviceSelector";
 import { AudioFeedback } from "../settings/AudioFeedback";
+import { MuteWhileRecording } from "../settings/MuteWhileRecording";
 import { ThemeSelector } from "../settings/ThemeSelector";
 import { AppLanguageSelector } from "../settings/AppLanguageSelector";
 import { HistoryLimit } from "../settings/HistoryLimit";
@@ -34,6 +35,7 @@ export function Preferences({
           <MicrophoneSelector descriptionMode="inline" grouped />
           <OutputDeviceSelector descriptionMode="inline" grouped />
           <AudioFeedback descriptionMode="inline" grouped />
+          <MuteWhileRecording descriptionMode="inline" grouped />
         </SettingsGroup>
       )}
       {page === "appearance" && (

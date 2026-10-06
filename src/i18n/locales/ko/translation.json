@@ -402,10 +402,6 @@
         "weeks2": "2주 후",
         "months3": "3개월 후"
       },
-      "muteWhileRecording": {
-        "label": "녹음 중 음소거",
-        "description": "녹음 중 시스템 오디오 음소거"
-      },
       "keyboardImplementation": {
         "backends": {
           "nativeKeys": "네이티브 키"

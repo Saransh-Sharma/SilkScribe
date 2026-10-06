@@ -373,6 +373,34 @@ impl Store {
                 live_segments: vec![],
             })?;
         }
+        // Retrying a dictation rewrites its history row. Refresh the Library
+        // copy too, unless it has been edited there (any edit bumps revision).
+        let mut stmt = conn.prepare(
+            "SELECT w.id,h.transcription_text,h.post_processed_text FROM transcription_history h
+            JOIN workspace_documents w ON w.history_id=h.id
+            WHERE json_extract(w.body,'$.revision')=0
+              AND json_array_length(w.body,'$.segments')=1
+              AND (json_extract(w.body,'$.segments[0].original_text') IS NOT h.transcription_text
+                OR json_extract(w.body,'$.segments[0].text') IS NOT coalesce(h.post_processed_text,h.transcription_text))",
+        )?;
+        let stale = stmt
+            .query_map([], |r| {
+                Ok((
+                    r.get::<_, String>(0)?,
+                    r.get::<_, String>(1)?,
+                    r.get::<_, Option<String>>(2)?,
+                ))
+            })?
+            .collect::<std::result::Result<Vec<_>, _>>()?;
+        drop(stmt);
+        for (doc_id, text, processed) in stale {
+            let mut doc = self.get(&doc_id)?;
+            if let [segment] = doc.segments.as_mut_slice() {
+                segment.text = processed.unwrap_or_else(|| text.clone());
+                segment.original_text = text;
+                self.put(&doc)?;
+            }
+        }
         conn.execute("DELETE FROM workspace_documents WHERE history_id IS NOT NULL AND history_id NOT IN (SELECT id FROM transcription_history)", [])?;
         Ok(())
     }
@@ -1453,5 +1481,36 @@ mod tests {
             .unwrap();
         store.sync_history(dir.path()).unwrap();
         assert_eq!(store.list(None, None, 100, 0).unwrap().len(), 1);
+    }
+    #[test]
+    fn retried_dictation_refreshes_its_library_copy_until_edited() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::new(dir.path()).unwrap();
+        let conn = store.conn().unwrap();
+        conn.execute_batch("CREATE TABLE transcription_history(id INTEGER PRIMARY KEY,title TEXT,timestamp INTEGER,file_name TEXT,transcription_text TEXT,post_processed_text TEXT,saved BOOLEAN);INSERT INTO transcription_history VALUES(1,'Dictation',10,'missing.wav','',NULL,0);").unwrap();
+        store.sync_history(dir.path()).unwrap();
+
+        // A retry fills in the text that the first attempt didn't produce.
+        conn.execute("UPDATE transcription_history SET transcription_text='Raw words',post_processed_text='Clean words.' WHERE id=1", []).unwrap();
+        store.sync_history(dir.path()).unwrap();
+        let doc = store.get("dictation-1").unwrap();
+        assert_eq!(doc.segments[0].original_text, "Raw words");
+        assert_eq!(doc.segments[0].text, "Clean words.");
+
+        // Once edited in the Library, the user's version wins.
+        let mut edited = doc.clone();
+        edited.segments[0].text = "My own words.".into();
+        edited.revision = 1;
+        store.put(&edited).unwrap();
+        conn.execute(
+            "UPDATE transcription_history SET post_processed_text='Newer.' WHERE id=1",
+            [],
+        )
+        .unwrap();
+        store.sync_history(dir.path()).unwrap();
+        assert_eq!(
+            store.get("dictation-1").unwrap().segments[0].text,
+            "My own words."
+        );
     }
 }

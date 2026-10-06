@@ -619,6 +619,7 @@ fn command_builder() -> Builder<tauri::Wry> {
             shortcut::change_show_tray_icon_setting,
             shortcut::change_lazy_stream_close_setting,
             shortcut::change_extra_recording_buffer_setting,
+            shortcut::change_paste_delay_setting,
             shortcut::change_whisper_accelerator_setting,
             shortcut::change_ort_accelerator_setting,
             shortcut::change_whisper_gpu_device,

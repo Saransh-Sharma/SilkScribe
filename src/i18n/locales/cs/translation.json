@@ -402,10 +402,6 @@
         "weeks2": "Po 2 týdnech",
         "months3": "Po 3 měsících"
       },
-      "muteWhileRecording": {
-        "label": "Ztlumit při nahrávání",
-        "description": "Ztlumit systémový zvuk během nahrávání"
-      },
       "keyboardImplementation": {
         "backends": {
           "nativeKeys": "Nativní klávesy"

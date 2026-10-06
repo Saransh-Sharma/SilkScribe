@@ -402,10 +402,6 @@
         "weeks2": "Nach 2 Wochen",
         "months3": "Nach 3 Monaten"
       },
-      "muteWhileRecording": {
-        "label": "Während Aufnahme stummschalten",
-        "description": "Systemaudio während der Aufnahme stummschalten"
-      },
       "keyboardImplementation": {
         "backends": {
           "nativeKeys": "Native Tasten"

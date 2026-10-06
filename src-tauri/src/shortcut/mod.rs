@@ -1186,6 +1186,16 @@ pub fn change_extra_recording_buffer_setting(app: AppHandle, ms: u64) -> Result<
     Ok(())
 }
 
+/// How long to wait after writing the clipboard before sending the paste keys.
+#[tauri::command]
+#[specta::specta]
+pub fn change_paste_delay_setting(app: AppHandle, ms: u64) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.paste_delay_ms = ms.clamp(10, 1000);
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
 fn apply_and_reload_accelerator(app: &AppHandle, settings: settings::AppSettings) {
     settings::write_settings(app, settings);
     crate::managers::transcription::apply_accelerator_settings(app);

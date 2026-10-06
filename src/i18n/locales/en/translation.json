@@ -738,8 +738,8 @@
         "description": "Tidy up dictation with AI before it’s pasted."
       },
       "muteWhileRecording": {
-        "label": "Mute While Recording",
-        "description": "Mute system audio during recording"
+        "label": "Mute other audio",
+        "description": "Silences other apps while you dictate, except during a meeting."
       },
       "appendTrailingSpace": {
         "label": "Add a space after pasting"

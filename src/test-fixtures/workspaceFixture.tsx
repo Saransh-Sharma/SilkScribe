@@ -8,6 +8,8 @@ import Workspace from "@/components/workspace/Workspace";
 import { api, type Document } from "@/components/workspace/api";
 import { Toaster } from "sonner";
 import { drafts, draftStorage } from "@/components/workspace/drafts";
+import { useSettingsStore } from "@/stores/settingsStore";
+import type { AppSettings } from "@/bindings";
 import "@/theme.css";
 import "@fontsource/manrope/latin-400.css";
 import "@fontsource/manrope/latin-500.css";
@@ -186,6 +188,53 @@ for (const document of docs) {
   }
 }
 if (params.has("empty")) docs = [];
+// ?dictation=ready|setup seeds the settings store (commands.* aren't mocked)
+// and a dictation document, so Home's dictation strip can be exercised.
+const dictation = params.get("dictation");
+if (dictation) {
+  useSettingsStore.setState({
+    isLoading: false,
+    settings: {
+      bindings: {
+        transcribe: {
+          id: "transcribe",
+          name: "Dictate",
+          description: "Start and stop dictation",
+          default_binding: "fn",
+          current_binding: "option+space",
+        },
+      },
+      push_to_talk: true,
+      selected_model: "parakeet-tdt-0.6b-v3",
+      external_script_path: null,
+    } as AppSettings,
+  });
+  docs.push({
+    ...structuredClone(docs[0] ?? ({} as Document)),
+    id: "dictation-7",
+    title: "Note to Sam",
+    source: "dictation",
+    created_at: 1788950000,
+    duration: 6,
+    saved: false,
+    audio_path: null,
+    segments: [
+      {
+        id: "legacy",
+        start: 0,
+        end: 6,
+        text: "Can you send the revised screens before Friday?",
+        original_text: "can you send the revised screens before friday",
+        speaker: null,
+      },
+    ],
+    speakers: [],
+    turns: [],
+    notes: null,
+    history_id: 7,
+    diarized: false,
+  });
+}
 api.list = async (query = "", filter = "all") =>
   structuredClone(
     docs
@@ -305,7 +354,7 @@ api.status = async () => ({
 });
 api.inspectFiles = async (paths) =>
   paths.map((path) => ({ path, bytes: 1048576, duration: 90, error: null }));
-api.dictationReady = async () => false;
+api.dictationReady = async () => dictation === "ready";
 api.devices = async () => [{ id: "default", name: "Studio microphone" }];
 api.captureReadiness = async () => ({
   supported: true,

@@ -402,10 +402,6 @@
         "weeks2": "2 週後",
         "months3": "3 個月後"
       },
-      "muteWhileRecording": {
-        "label": "錄製時靜音",
-        "description": "錄製期間靜音系統音訊"
-      },
       "keyboardImplementation": {
         "backends": {
           "nativeKeys": "原生按鍵"

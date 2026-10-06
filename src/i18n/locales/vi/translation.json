@@ -402,10 +402,6 @@
         "weeks2": "Sau 2 tuần",
         "months3": "Sau 3 tháng"
       },
-      "muteWhileRecording": {
-        "label": "Tắt tiếng khi ghi âm",
-        "description": "Tắt tiếng âm thanh hệ thống trong khi ghi âm"
-      },
       "keyboardImplementation": {
         "backends": {
           "nativeKeys": "Phím gốc"

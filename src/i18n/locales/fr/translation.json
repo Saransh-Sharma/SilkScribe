@@ -402,10 +402,6 @@
         "weeks2": "Après 2 semaines",
         "months3": "Après 3 mois"
       },
-      "muteWhileRecording": {
-        "label": "Muet pendant l'enregistrement",
-        "description": "Couper le son du système pendant l'enregistrement"
-      },
       "keyboardImplementation": {
         "backends": {
           "nativeKeys": "Touches natives"

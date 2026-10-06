@@ -402,10 +402,6 @@
         "weeks2": "بعد أسبوعين",
         "months3": "بعد 3 أشهر"
       },
-      "muteWhileRecording": {
-        "label": "كتم الصوت أثناء التسجيل",
-        "description": "كتم صوت النظام أثناء التسجيل"
-      },
       "keyboardImplementation": {
         "backends": {
           "nativeKeys": "المفاتيح الأصلية"

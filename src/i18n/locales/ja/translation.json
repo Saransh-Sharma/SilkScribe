@@ -402,10 +402,6 @@
         "weeks2": "2週間後",
         "months3": "3ヶ月後"
       },
-      "muteWhileRecording": {
-        "label": "録音中にミュート",
-        "description": "録音中にシステムオーディオをミュート"
-      },
       "keyboardImplementation": {
         "backends": {
           "nativeKeys": "ネイティブキー"

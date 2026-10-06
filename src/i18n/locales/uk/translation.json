@@ -402,10 +402,6 @@
         "weeks2": "Через 2 тижні",
         "months3": "Через 3 місяці"
       },
-      "muteWhileRecording": {
-        "label": "Вимкнути звук під час запису",
-        "description": "Вимикати системний звук під час запису"
-      },
       "keyboardImplementation": {
         "backends": {
           "nativeKeys": "Нативні клавіші"

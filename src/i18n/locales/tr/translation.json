@@ -402,10 +402,6 @@
         "weeks2": "2 hafta sonra",
         "months3": "3 ay sonra"
       },
-      "muteWhileRecording": {
-        "label": "Kayıt Sırasında Sessize Al",
-        "description": "Kayıt sırasında sistem sesini kapatır"
-      },
       "keyboardImplementation": {
         "backends": {
           "nativeKeys": "Yerel tuşlar"

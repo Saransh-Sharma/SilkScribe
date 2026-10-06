@@ -402,10 +402,6 @@
         "weeks2": "Após 2 semanas",
         "months3": "Após 3 meses"
       },
-      "muteWhileRecording": {
-        "label": "Silenciar Durante Gravação",
-        "description": "Silenciar áudio do sistema durante a gravação"
-      },
       "keyboardImplementation": {
         "backends": {
           "nativeKeys": "Teclas nativas"

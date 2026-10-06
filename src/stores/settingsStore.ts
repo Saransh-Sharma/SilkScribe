@@ -145,6 +145,8 @@ const settingUpdaters: {
     commands.changeLazyStreamCloseSetting(value as boolean),
   extra_recording_buffer_ms: (value) =>
     commands.changeExtraRecordingBufferSetting(value as number),
+  paste_delay_ms: (value) =>
+    commands.changePasteDelaySetting(value as number),
   whisper_accelerator: (value) =>
     commands.changeWhisperAcceleratorSetting(value as any),
   ort_accelerator: (value) =>
