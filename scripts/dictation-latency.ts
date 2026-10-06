@@ -13,7 +13,13 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 
-const STAGES = ["stop_ms", "asr_ms", "text_ms", "paste_ms", "total_ms"] as const;
+const STAGES = [
+  "stop_ms",
+  "asr_ms",
+  "text_ms",
+  "paste_ms",
+  "total_ms",
+] as const;
 type Stage = (typeof STAGES)[number];
 
 interface Sample {
@@ -101,7 +107,10 @@ function summarise(samples: Sample[]) {
     stages: Object.fromEntries(
       STAGES.map((stage) => {
         const sorted = items.map((s) => s.values[stage]).sort((a, b) => a - b);
-        return [stage, { p50: percentile(sorted, 50), p95: percentile(sorted, 95) }];
+        return [
+          stage,
+          { p50: percentile(sorted, 50), p95: percentile(sorted, 95) },
+        ];
       }),
     ),
   }));

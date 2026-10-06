@@ -121,7 +121,11 @@ export function UserNotes({
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing)
+    if (
+      event.key !== "Enter" ||
+      event.shiftKey ||
+      event.nativeEvent.isComposing
+    )
       return;
     const el = event.currentTarget;
     const next = continueList(text, el.selectionStart, el.selectionEnd);
