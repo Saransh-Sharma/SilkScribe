@@ -1,5 +1,5 @@
 use crate::audio_feedback::{play_feedback_sound, play_feedback_sound_blocking, SoundType};
-use crate::dictation::finish_dictation;
+use crate::dictation::{finish_dictation, CleanupOutcome};
 use crate::managers::audio::AudioRecordingManager;
 use crate::managers::history::HistoryManager;
 use crate::managers::transcription::TranscriptionManager;
@@ -16,7 +16,7 @@ use log::{debug, error};
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use std::sync::Arc;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_clipboard_manager::ClipboardExt;
 
@@ -79,6 +79,28 @@ pub(crate) async fn process_transcription_output(
         post_processed_text: finished.cleaned,
         post_process_prompt: finished.prompt,
     }
+}
+
+/// One line per dictation for `scripts/dictation-latency.ts`. Each time is
+/// measured from releasing the shortcut.
+fn log_dictation_timing(
+    engine: &str,
+    cleanup: &CleanupOutcome,
+    audio_ms: usize,
+    stopped: Duration,
+    transcribed: Duration,
+    text_ready: Duration,
+    pasted: Duration,
+) {
+    log::info!(
+        target: "dictation_timing",
+        "engine={engine} cleanup={cleanup:?} audio_ms={audio_ms} stop_ms={} asr_ms={} text_ms={} paste_ms={} total_ms={}",
+        stopped.as_millis(),
+        transcribed.as_millis(),
+        text_ready.as_millis(),
+        pasted.as_millis(),
+        pasted.as_millis(),
+    );
 }
 
 impl ShortcutAction for TranscribeAction {
@@ -193,6 +215,9 @@ impl ShortcutAction for TranscribeAction {
 
             let stop_recording_time = Instant::now();
             if let Some(samples) = rm.stop_recording(&binding_id) {
+                let stopped = stop_time.elapsed();
+                // Recordings are 16 kHz mono.
+                let audio_ms = samples.len() / 16;
                 debug!(
                     "Recording stopped and samples retrieved in {:?}, sample count: {}",
                     stop_recording_time.elapsed(),
@@ -203,6 +228,7 @@ impl ShortcutAction for TranscribeAction {
                 let samples_clone = samples.clone(); // Clone for history saving
                 match tm.transcribe(samples) {
                     Ok(transcription) => {
+                        let transcribed = stop_time.elapsed();
                         debug!(
                             "Transcription completed in {:?}: '{}'",
                             transcription_time.elapsed(),
@@ -215,12 +241,15 @@ impl ShortcutAction for TranscribeAction {
                             }
                             let finished =
                                 finish_dictation(&settings, &transcription, post_process).await;
+                            let text_ready = stop_time.elapsed();
                             // The raw text still goes in, but the user asked for
                             // cleanup and should know they didn't get it.
                             let cleanup_skipped = finished.cleanup.missed();
+                            let cleanup_outcome = finished.cleanup;
                             let post_processed_text = finished.cleaned;
                             let post_process_prompt = finished.prompt;
                             let final_text = finished.delivered;
+                            let engine = tm.get_current_model().unwrap_or_default();
 
                             // Save to history with post-processed text and prompt
                             let hm_clone = Arc::clone(&hm);
@@ -264,6 +293,15 @@ impl ShortcutAction for TranscribeAction {
                                             );
                                         }
                                         play_feedback_sound(&ah_clone, SoundType::Done);
+                                        log_dictation_timing(
+                                            &engine,
+                                            &cleanup_outcome,
+                                            audio_ms,
+                                            stopped,
+                                            transcribed,
+                                            text_ready,
+                                            stop_time.elapsed(),
+                                        );
                                         // A notice needs a beat longer to read than an excerpt.
                                         utils::hide_recording_overlay_after(
                                             &ah_clone,
