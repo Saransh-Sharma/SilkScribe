@@ -655,6 +655,25 @@ test("Home asks to finish dictation setup when it isn't ready", async ({
   await expect(strip.locator("kbd")).toHaveCount(0);
 });
 
+test("Home shows today's dictation and the latest dictations", async ({
+  page,
+}) => {
+  await page.goto(`${fixture}?dictation=ready`);
+  const summary = page.getByRole("region", { name: "Recent dictation" });
+  await expect(summary).toContainText("Words today");
+  await expect(summary).toContainText("42");
+  await expect(summary).toContainText("4 days");
+  await expect(
+    summary.getByText("Can you send the revised screens before Friday?"),
+  ).toBeVisible();
+  await expect(
+    summary.getByRole("button", { name: "Copy original" }),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: /^Dictation/ })).toContainText(
+    "Hold to talk",
+  );
+});
+
 test("Home offers on-device AI cleanup once", async ({ page }) => {
   await page.goto(`${fixture}?dictation=ready&cleanupSuggestion`);
   const card = page.getByRole("region", { name: "Clean up every dictation" });

@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRight, Keyboard, Mic, Waves } from "lucide-react";
+import { ArrowRight, Command, Keyboard, Mic, Waves } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "../ui/Button";
 import OnboardingShell from "./OnboardingShell";
@@ -12,9 +12,10 @@ interface OnboardingProps {
 }
 
 const PLAN_STEPS = [
-  { step: 1, icon: Mic },
-  { step: 2, icon: Keyboard },
-  { step: 3, icon: Waves },
+  { key: "step1", icon: Mic },
+  { key: "step2", icon: Keyboard },
+  { key: "shortcut", icon: Command },
+  { key: "step3", icon: Waves },
 ] as const;
 
 const Onboarding: React.FC<OnboardingProps> = ({
@@ -63,9 +64,9 @@ const Onboarding: React.FC<OnboardingProps> = ({
     >
       <div className="flex h-full items-center p-2 lg:p-4">
         <ol className="w-full max-w-xl space-y-4">
-          {PLAN_STEPS.map(({ step, icon: Icon }) => (
+          {PLAN_STEPS.map(({ key, icon: Icon }) => (
             <li
-              key={step}
+              key={key}
               className="flex items-start gap-4 border-b border-ss-border-subtle py-3.5 last:border-b-0"
             >
               <div className="ss-onboarding-float flex h-11 w-11 shrink-0 items-center justify-center rounded-[16px] bg-ss-brand-highlight/16 text-ss-brand-primary">
@@ -73,10 +74,10 @@ const Onboarding: React.FC<OnboardingProps> = ({
               </div>
               <div>
                 <p className="text-base font-semibold text-ss-text-primary">
-                  {t(`onboarding.welcome.plan.step${step}.title`)}
+                  {t(`onboarding.welcome.plan.${key}.title`)}
                 </p>
                 <p className="mt-1 text-sm leading-relaxed text-ss-text-secondary">
-                  {t(`onboarding.welcome.plan.step${step}.description`)}
+                  {t(`onboarding.welcome.plan.${key}.description`)}
                 </p>
               </div>
             </li>

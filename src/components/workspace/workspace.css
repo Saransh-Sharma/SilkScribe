@@ -1197,3 +1197,61 @@
   color: var(--ss-text-secondary);
   font-size: 12px;
 }
+/* Today's dictation and the latest dictations, under the dictation strip. */
+.ws-dictation-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 0 18px;
+  border-bottom: 1px solid var(--ss-border-subtle);
+}
+.ws-dictation-summary dl {
+  display: flex;
+  gap: 28px;
+}
+.ws-dictation-summary dt {
+  font-size: 11px;
+  color: var(--ss-text-tertiary);
+}
+.ws-dictation-summary dd {
+  font-size: 18px;
+  font-weight: 650;
+  color: var(--ss-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.ws-dictation-summary ul {
+  display: flex;
+  flex-direction: column;
+}
+.ws-dictation-summary li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.ws-dictation-text {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: baseline;
+  gap: 10px;
+  padding: 6px 0;
+  text-align: start;
+  font-size: 13px;
+  color: var(--ss-text-primary);
+}
+.ws-dictation-text span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ws-dictation-text time {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--ss-text-tertiary);
+}
+.ws-dictation-text:hover span {
+  color: var(--ss-brand-primary);
+}

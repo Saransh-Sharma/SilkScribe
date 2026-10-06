@@ -419,27 +419,3 @@ export const PostProcessingSettingsPrompts = React.memo(
   PostProcessingSettingsPromptsComponent,
 );
 PostProcessingSettingsPrompts.displayName = "PostProcessingSettingsPrompts";
-
-export const PostProcessingSettings: React.FC = () => {
-  const { t } = useTranslation();
-
-  return (
-    <AppPage>
-      <SettingsGroup title={t("settings.postProcessing.hotkey.title")}>
-        <ShortcutInput
-          shortcutId="transcribe_with_post_process"
-          descriptionMode="inline"
-          grouped={true}
-        />
-      </SettingsGroup>
-
-      <SettingsGroup title={t("settings.postProcessing.api.title")}>
-        <PostProcessingSettingsApi />
-      </SettingsGroup>
-
-      <SettingsGroup title={t("settings.postProcessing.prompts.title")}>
-        <PostProcessingSettingsPrompts />
-      </SettingsGroup>
-    </AppPage>
-  );
-};

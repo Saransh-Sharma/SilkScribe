@@ -247,6 +247,7 @@
       "microphone": "Microphone",
       "accessibility": "Accessibility",
       "setup": "Setup",
+      "shortcut": "Shortcut",
       "practice": "Try it"
     },
     "welcome": {
@@ -264,6 +265,10 @@
         "step3": {
           "title": "Try it once",
           "description": "A quick test and you’re done."
+        },
+        "shortcut": {
+          "title": "Pick a shortcut",
+          "description": "Hold it to talk, or press to start and stop."
         }
       },
       "continue": "Get started"
@@ -277,10 +282,12 @@
           "title": "Click the box"
         },
         "step2": {
-          "title": "Hold {{shortcut}} and talk"
+          "title": "Hold {{shortcut}} and talk",
+          "toggleTitle": "Press {{shortcut}} and talk"
         },
         "step3": {
-          "title": "Let go"
+          "title": "Let go",
+          "toggleTitle": "Press it again"
         }
       },
       "tipTitle": "Try saying",
@@ -291,10 +298,30 @@
       "finish": "Start using SilkScribe",
       "skip": "Skip for now",
       "finishing": "Finishing up…",
-      "finishFailed": "Couldn’t finish setup. Try again."
+      "finishFailed": "Couldn’t finish setup. Try again.",
+      "descriptionToggle": "Click the box, press {{shortcut}}, say something, then press it again."
     },
     "shared": {
       "stepCounter": "Step {{current}} of {{total}}"
+    },
+    "shortcut": {
+      "title": "Pick your shortcut",
+      "description": "You’ll use it from any app to start dictating.",
+      "modeTitle": "How it works",
+      "hold": {
+        "title": "Hold to talk",
+        "body": "Hold the shortcut while you speak, then let go."
+      },
+      "toggle": {
+        "title": "Press to start and stop",
+        "body": "Press once to start, and again when you’re done."
+      },
+      "cleanup": {
+        "label": "Clean up my text",
+        "description": "Fixes punctuation and filler words with Apple Intelligence, on this Mac."
+      },
+      "continue": "Continue",
+      "cleanupFailed": "Couldn’t turn on AI cleanup"
     }
   },
   "modelSelector": {
@@ -1243,7 +1270,8 @@
       "copyOriginal": "Couldn’t copy the original",
       "loadNotes": "Couldn’t load your notes",
       "saveNotes": "Couldn’t save your notes",
-      "copyMessage": "Couldn’t copy the message"
+      "copyMessage": "Couldn’t copy the message",
+      "copyText": "Couldn’t copy the text"
     },
     "liveTranscript": "Live transcript",
     "liveTranscriptNote": "A more accurate transcript replaces this once processing finishes.",
@@ -1267,7 +1295,16 @@
       "message": "Heads up: I’m taking notes with SilkScribe. It runs on my Mac, and nothing is uploaded.",
       "setting": "Remind me to tell people",
       "settingHint": "Shows a reminder when recording starts."
-    }
+    },
+    "holdToTalk": "Hold to talk",
+    "pressToTalk": "Press to start and stop",
+    "recentDictation": "Recent dictation",
+    "wordsToday": "Words today",
+    "streak": "Streak",
+    "streakDays_one": "{{count}} day",
+    "streakDays_other": "{{count}} days",
+    "copy": "Copy",
+    "copied": "Copied"
   },
   "audioPlayer": {
     "play": "Play",

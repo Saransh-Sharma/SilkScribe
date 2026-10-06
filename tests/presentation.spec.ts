@@ -4,6 +4,31 @@ const fixture = (query: string) =>
   `/playwright/presentation-fixture.html?${query}`;
 
 test.describe("presentation system", () => {
+  test("onboarding lets people pick a shortcut and how it behaves", async ({
+    page,
+  }) => {
+    await page.goto(fixture("view=shortcut"));
+    await expect(page.getByText("Option + Space")).toBeVisible();
+    const hold = page.getByRole("radio", { name: /Hold to talk/ });
+    const toggle = page.getByRole("radio", { name: /Press to start and stop/ });
+    await expect(hold).toBeChecked();
+    await expect(toggle).not.toBeChecked();
+    await expect(page.getByText("Step 5 of 6")).toBeVisible();
+  });
+
+  test("the welcome screen lists every setup step on one row", async ({
+    page,
+  }) => {
+    await page.goto(fixture("view=welcome"));
+    await expect(page.getByText("Pick a shortcut")).toBeVisible();
+    const steps = page.locator("ol[aria-label] > li");
+    await expect(steps).toHaveCount(6);
+    const tops = await steps.evaluateAll((items) =>
+      items.map((item) => Math.round(item.getBoundingClientRect().top)),
+    );
+    expect(new Set(tops).size).toBe(1);
+  });
+
   test("keeps the native shell composed at the minimum viewport", async ({
     page,
   }) => {

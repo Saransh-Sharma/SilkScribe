@@ -23,6 +23,10 @@ import ModelCard, {
   type ModelCardStatus,
 } from "@/components/onboarding/ModelCard";
 import OnboardingShell from "@/components/onboarding/OnboardingShell";
+import Onboarding from "@/components/onboarding/Onboarding";
+import OnboardingShortcut from "@/components/onboarding/OnboardingShortcut";
+import { useSettingsStore } from "@/stores/settingsStore";
+import type { AppSettings } from "@/bindings";
 import { HistoryFeedItem } from "@/components/history/HistoryFeedItem";
 import SilkScribeWordmark from "@/components/icons/SilkScribeWordmark";
 import RecordingOverlay, {
@@ -42,6 +46,15 @@ void i18n.use(initReactI18next).init({
 });
 
 const params = new URLSearchParams(window.location.search);
+// Components that format shortcuts ask Tauri's OS plugin for the platform.
+Object.assign(window, {
+  __TAURI_OS_PLUGIN_INTERNALS__: {
+    os_type: "macos",
+    platform: "macos",
+    arch: "aarch64",
+    version: "15.0",
+  },
+});
 const view = params.get("view") ?? "system";
 const theme = params.get("theme") === "dark" ? "dark" : "light";
 const direction = params.get("dir") === "rtl" ? "rtl" : "ltr";
@@ -289,6 +302,61 @@ const HistoryFixture = () => (
     </div>
   </div>
 );
+
+/** The real welcome screen, as the first launch shows it (and the site's
+ * hero screenshot uses). */
+const WelcomeFixture = () => (
+  <Onboarding
+    onContinue={() => {}}
+    onOpenWorkspace={() => {}}
+    stepLabels={[
+      "Welcome",
+      "Microphone",
+      "Accessibility",
+      "Setup",
+      "Shortcut",
+      "Try it",
+    ]}
+    activeStep={0}
+  />
+);
+
+const ShortcutFixture = () => {
+  // Seed the store: commands.* isn't available outside the app.
+  useState(() =>
+    useSettingsStore.setState({
+      isLoading: false,
+      settings: {
+        bindings: {
+          transcribe: {
+            id: "transcribe",
+            name: "Dictate",
+            description: "Start and stop dictation",
+            default_binding: "fn",
+            current_binding: "option+space",
+          },
+        },
+        push_to_talk: true,
+        keyboard_implementation: "tauri",
+        external_script_path: null,
+      } as AppSettings,
+    }),
+  );
+  return (
+    <OnboardingShortcut
+      onContinue={() => {}}
+      stepLabels={[
+        "Welcome",
+        "Microphone",
+        "Accessibility",
+        "Setup",
+        "Shortcut",
+        "Try it",
+      ]}
+      activeStep={4}
+    />
+  );
+};
 
 const OnboardingFixture = () => (
   <OnboardingShell
@@ -564,6 +632,10 @@ const fixture =
     <HistoryFixture />
   ) : view === "onboarding" ? (
     <OnboardingFixture />
+  ) : view === "welcome" ? (
+    <WelcomeFixture />
+  ) : view === "shortcut" ? (
+    <ShortcutFixture />
   ) : view === "dialog" ? (
     <DialogFixture />
   ) : view === "dropdown" ? (

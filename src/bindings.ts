@@ -1151,9 +1151,12 @@ async meetingOrbCopy(text: string) : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getHomeDashboardData(limit: number | null, cursor: HomeHistoryCursor | null) : Promise<Result<HomeDashboardPageData, string>> {
+/**
+ * Today's dictation, the streak and the latest dictations, for Home.
+ */
+async getDictationSummary() : Promise<Result<DictationSummary, string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("get_home_dashboard_data", { limit, cursor }) };
+    return { status: "ok", data: await TAURI_INVOKE("get_dictation_summary") };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -1287,6 +1290,14 @@ export type BindingResponse = { success: boolean; binding: ShortcutBinding | nul
 export type CaptureDevice = { id: string; name: string }
 export type ClipboardHandling = "dont_modify" | "copy_to_clipboard"
 export type CustomSounds = { start: boolean; stop: boolean }
+/**
+ * Dictation at a glance, for Home.
+ */
+export type DictationSummary = { words_today: number; dictations_today: number; current_streak_days: number; 
+/**
+ * The most recent dictations, newest first.
+ */
+recent: HistoryEntry[] }
 export type Document = { notes_section?: NotesSection | null; attempt_id?: string; id: string; title: string; source: Source; created_at: number; duration: number; stage: Stage; progress: number; error: string | null; failed_stage: Stage | null; saved: boolean; audio_path: string | null; segments: Segment[]; speakers: Speaker[]; turns: SpeakerTurn[]; notes: Notes | null; notes_candidate?: Notes | null; original_turns?: SpeakerTurn[] | null; retry_stage?: Stage | null; options: JobOptions; revision: number; history_id: number | null; diarized: boolean; stage_errors?: StageError[]; 
 /**
  * Quick "You / Others" lines made while a meeting recorded. Shown until the
@@ -1305,8 +1316,6 @@ export type GpuDeviceOption = { id: number; name: string; total_vram_mb: number 
 export type HistoryEntry = { id: number; file_name: string; timestamp: number; saved: boolean; title: string; transcription_text: string; post_processed_text: string | null; post_process_prompt: string | null; post_process_requested: boolean }
 export type HistoryFilter = "all" | "saved" | "failed"
 export type HistoryUpdatePayload = { action: "added"; entry: HistoryEntry } | { action: "updated"; entry: HistoryEntry } | { action: "deleted"; id: number } | { action: "toggled"; id: number }
-export type HomeDashboardPageData = { summary: UsageSummary; entries: HistoryEntry[]; next_cursor: HomeHistoryCursor | null; is_backfilling: boolean }
-export type HomeHistoryCursor = { timestamp: number; id: number }
 /**
  * Result of changing keyboard implementation
  */
@@ -1406,7 +1415,6 @@ export type Stage = "recording" | "paused" | "queued" | "preparing" | "transcrib
 export type StageError = { stage: Stage; message: string }
 export type ThemePreference = "system" | "light" | "dark"
 export type TypingTool = "auto" | "wtype" | "kwtype" | "dotool" | "ydotool" | "xdotool"
-export type UsageSummary = { current_streak_days: number; total_words: number; average_wpm: number; total_transcriptions: number; longest_streak_days: number }
 export type WhisperAcceleratorSetting = "auto" | "cpu" | "gpu"
 export type WindowsMicrophonePermissionStatus = { supported: boolean; overall_access: PermissionAccess; device_access: PermissionAccess; app_access: PermissionAccess; desktop_app_access: PermissionAccess }
 export type WorkflowAssessment = { can_process: boolean; issues: ReadinessIssue[]; languages: string[]; timing: string; transcription_model: string; available_memory_bytes: number; notes_observation: MemoryObservation | null }

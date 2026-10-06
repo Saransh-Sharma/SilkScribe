@@ -356,6 +356,26 @@ api.inspectFiles = async (paths) =>
   paths.map((path) => ({ path, bytes: 1048576, duration: 90, error: null }));
 api.dictationReady = async () => dictation === "ready";
 api.onDeviceCleanupAvailable = async () => params.has("cleanupSuggestion");
+api.dictationSummary = async () => ({
+  words_today: dictation ? 42 : 0,
+  dictations_today: dictation ? 3 : 0,
+  current_streak_days: dictation ? 4 : 0,
+  recent: dictation
+    ? [
+        {
+          id: 7,
+          file_name: "silkscribe-7.wav",
+          timestamp: 1788950000,
+          saved: false,
+          title: "Note to Sam",
+          transcription_text: "can you send the revised screens before friday",
+          post_processed_text: "Can you send the revised screens before Friday?",
+          post_process_prompt: null,
+          post_process_requested: true,
+        },
+      ]
+    : [],
+});
 api.enableOnDeviceCleanup = async () => null;
 api.dismissCleanupSuggestion = async () => null;
 // User notes persist across reloads, like the real store.

@@ -12,9 +12,10 @@ import Workspace from "./components/workspace/Workspace";
 import Onboarding, {
   OnboardingPractice,
   OnboardingSetup,
+  OnboardingShortcut,
   PermissionStep,
 } from "./components/onboarding";
-import { SidebarSection, SECTIONS_CONFIG } from "./components/Sidebar";
+import { SETTINGS_SECTIONS } from "./components/settings/sections";
 import { ErrorBoundary } from "./components/ui";
 import { useSettings } from "./hooks/useSettings";
 import { useSettingsStore } from "./stores/settingsStore";
@@ -30,6 +31,7 @@ type OnboardingStep =
   | "microphone_permission"
   | "accessibility_permission"
   | "setup"
+  | "shortcut"
   | "practice"
   | "done";
 
@@ -56,21 +58,6 @@ const getSystemTheme = (): ResolvedTheme => {
   }
 
   return "light";
-};
-
-const renderSettingsContent = (
-  section: SidebarSection,
-  onNavigate: (section: SidebarSection) => void,
-  onStartPermissionRepair: () => void,
-) => {
-  const ActiveComponent =
-    SECTIONS_CONFIG[section]?.component || SECTIONS_CONFIG.general.component;
-  return (
-    <ActiveComponent
-      onNavigate={onNavigate}
-      onStartPermissionRepair={onStartPermissionRepair}
-    />
-  );
 };
 
 function App() {
@@ -137,6 +124,7 @@ function App() {
     i18n.t("onboarding.progress.microphone"),
     i18n.t("onboarding.progress.accessibility"),
     i18n.t("onboarding.progress.setup"),
+    i18n.t("onboarding.progress.shortcut"),
     i18n.t("onboarding.progress.practice"),
   ];
 
@@ -491,9 +479,22 @@ function App() {
       <>
         {toaster}
         <OnboardingSetup
-          onReady={() => setOnboardingStep("practice")}
+          onReady={() => setOnboardingStep("shortcut")}
           stepLabels={onboardingStepLabels}
           activeStep={3}
+        />
+      </>
+    );
+  }
+
+  if (onboardingStep === "shortcut") {
+    return (
+      <>
+        {toaster}
+        <OnboardingShortcut
+          onContinue={() => setOnboardingStep("practice")}
+          stepLabels={onboardingStepLabels}
+          activeStep={4}
         />
       </>
     );
@@ -506,7 +507,7 @@ function App() {
         <OnboardingPractice
           onComplete={handlePracticeComplete}
           stepLabels={onboardingStepLabels}
-          activeStep={4}
+          activeStep={5}
         />
       </>
     );
@@ -518,11 +519,10 @@ function App() {
       <div dir={direction} data-theme={resolvedTheme}>
         <ErrorBoundary>
           <Workspace
-            renderSettings={(section, navigate) =>
-              renderSettingsContent(section, navigate, () => {
-                void handleStartPermissionRepair();
-              })
-            }
+            renderSettings={(section) => {
+              const Section = SETTINGS_SECTIONS[section];
+              return <Section />;
+            }}
             onSetupDictation={() => {
               void handleStartPermissionRepair();
             }}

@@ -33,7 +33,8 @@ import {
 import { toast } from "sonner";
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 import SilkScribeWordmark from "../icons/SilkScribeWordmark";
-import type { SidebarSection } from "../Sidebar";
+import UpdateChecker from "../update-checker";
+import type { SettingsSection } from "../settings/sections";
 import {
   api,
   busy,
@@ -61,10 +62,7 @@ export default function Workspace({
   renderSettings,
   onSetupDictation,
 }: {
-  renderSettings: (
-    section: SidebarSection,
-    navigate: (section: SidebarSection) => void,
-  ) => ReactNode;
+  renderSettings: (section: SettingsSection) => ReactNode;
   onSetupDictation: () => void;
 }) {
   const { t } = useTranslation();
@@ -75,6 +73,40 @@ export default function Workspace({
       .then(() => toast.success(t("workspace.consent.copied")))
       .catch((error) => toastError(t("workspace.errors.copyMessage"), error));
   const osType = useOsType();
+  const [dictationSummary, setDictationSummary] = useState<
+    import("@/bindings").DictationSummary | null
+  >(null);
+  useEffect(() => {
+    let current = true;
+    const load = () => {
+      void api
+        .dictationSummary()
+        .then((summary) => current && setDictationSummary(summary))
+        .catch(() => {});
+    };
+    load();
+    let off: (() => void) | undefined;
+    void listen("history-updated", load)
+      .then((unlisten) => {
+        if (current) off = unlisten;
+        else unlisten();
+      })
+      .catch(() => {});
+    window.addEventListener("focus", load);
+    return () => {
+      current = false;
+      off?.();
+      window.removeEventListener("focus", load);
+    };
+  }, []);
+  const copyText = (text: string, original = false) =>
+    writeText(text)
+      .then(() =>
+        toast.success(
+          t(original ? "workspace.copiedOriginal" : "workspace.copied"),
+        ),
+      )
+      .catch((error) => toastError(t("workspace.errors.copyText"), error));
   // Offer on-device AI cleanup once, to people who don't have it on every
   // dictation yet and whose Mac can run it.
   const [cleanupSuggested, setCleanupSuggested] = useState(false);
@@ -124,7 +156,7 @@ export default function Workspace({
   }, [settings?.selected_model]);
   const [page, setPage] = useState("home");
   const [settingsPage, setSettingsPage] = useState<
-    SidebarSection | "local" | "audio" | "appearance"
+    "general" | "audio" | "models" | "local" | "appearance" | "history"
   >("general");
   const [documents, setDocuments] = useState<DocumentSummary[]>([]);
   const [attention, setAttention] = useState<DocumentSummary[]>([]);
@@ -750,6 +782,8 @@ export default function Workspace({
             <ShieldCheck size={15} />
             {t("workspace.localOnly")}
           </p>
+          {/* Checks at launch and handles the tray's "Check for Updates…". */}
+          <UpdateChecker className="ws-update-checker" />
           <nav>
             <button
               aria-current={page === "settings" ? "page" : undefined}
@@ -1501,7 +1535,7 @@ export default function Workspace({
                       <summary>
                         {t("workspace.advancedDictationModels")}
                       </summary>
-                      {renderSettings("models", setSettingsPage)}
+                      {renderSettings("models")}
                     </details>
                   )}
                 </div>
@@ -1536,13 +1570,11 @@ export default function Workspace({
                   {settingsPage === "history" && settings?.debug_mode && (
                     <details>
                       <summary>{t("workspace.debug")}</summary>
-                      {renderSettings("debug", setSettingsPage)}
+                      {renderSettings("debug")}
                     </details>
                   )}
                 </>
-              ) : (
-                renderSettings(settingsPage as SidebarSection, setSettingsPage)
-              )}
+              ) : null}
             </section>
           ) : (
             <>
@@ -1611,7 +1643,13 @@ export default function Workspace({
                                 "",
                               osType,
                             )}
-                          </kbd>
+                          </kbd>{" "}
+                          ·{" "}
+                          {t(
+                            settings?.push_to_talk === false
+                              ? "workspace.pressToTalk"
+                              : "workspace.holdToTalk",
+                          )}
                         </>
                       ) : (
                         t("workspace.dictationHelp")
@@ -1619,6 +1657,87 @@ export default function Workspace({
                     </span>
                     <ArrowUpRight size={16} />
                   </button>
+                  {dictationSummary &&
+                    dictationSummary.recent.some(
+                      (entry) => entry.transcription_text.trim() !== "",
+                    ) && (
+                      <section
+                        className="ws-dictation-summary"
+                        aria-label={t("workspace.recentDictation")}
+                      >
+                        <dl>
+                          <div>
+                            <dt>{t("workspace.wordsToday")}</dt>
+                            <dd>
+                              {dictationSummary.words_today.toLocaleString()}
+                            </dd>
+                          </div>
+                          <div>
+                            <dt>{t("workspace.streak")}</dt>
+                            <dd>
+                              {t("workspace.streakDays", {
+                                count: dictationSummary.current_streak_days,
+                              })}
+                            </dd>
+                          </div>
+                        </dl>
+                        <ul>
+                          {dictationSummary.recent
+                            .filter(
+                              (entry) => entry.transcription_text.trim() !== "",
+                            )
+                            .map((entry) => {
+                              const text =
+                                entry.post_processed_text ??
+                                entry.transcription_text;
+                              const original =
+                                entry.post_processed_text &&
+                                entry.post_processed_text !==
+                                  entry.transcription_text
+                                  ? entry.transcription_text
+                                  : null;
+                              return (
+                                <li key={entry.id}>
+                                  <button
+                                    className="ws-dictation-text"
+                                    onClick={() =>
+                                      void openDocument(
+                                        `dictation-${entry.id}`,
+                                      )
+                                    }
+                                  >
+                                    <span dir="auto">{text}</span>
+                                    <time>
+                                      {new Date(
+                                        entry.timestamp * 1000,
+                                      ).toLocaleTimeString([], {
+                                        hour: "numeric",
+                                        minute: "2-digit",
+                                      })}
+                                    </time>
+                                  </button>
+                                  <button
+                                    className="ws-text-button"
+                                    onClick={() => void copyText(text)}
+                                  >
+                                    {t("workspace.copy")}
+                                  </button>
+                                  {original && (
+                                    <button
+                                      className="ws-text-button"
+                                      onClick={() =>
+                                        void copyText(original, true)
+                                      }
+                                    >
+                                      {t("workspace.copyOriginal")}
+                                    </button>
+                                  )}
+                                </li>
+                              );
+                            })}
+                        </ul>
+                      </section>
+                    )}
                   {cleanupSuggested && (
                     <section
                       className="ws-suggestion"

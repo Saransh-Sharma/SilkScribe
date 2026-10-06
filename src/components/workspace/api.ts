@@ -56,6 +56,8 @@ export const api = {
     }
     return installed;
   },
+  /** Today's dictation, the streak and the latest dictations. */
+  dictationSummary: () => unwrap(commands.getDictationSummary()),
   /** Apple Intelligence can clean up dictation on this Mac. */
   onDeviceCleanupAvailable: () => commands.checkAppleIntelligenceAvailable(),
   enableOnDeviceCleanup: () => unwrap(commands.enableOnDeviceCleanup()),

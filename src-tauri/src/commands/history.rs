@@ -1,6 +1,4 @@
-use crate::managers::history::{
-    HistoryFilter, HistoryManager, HomeDashboardPageData, HomeHistoryCursor, PaginatedHistory,
-};
+use crate::managers::history::{DictationSummary, HistoryFilter, HistoryManager, PaginatedHistory};
 use crate::managers::transcription::TranscriptionManager;
 use std::sync::Arc;
 use tauri::{AppHandle, State};
@@ -35,17 +33,14 @@ pub async fn search_history_entries(
         .map_err(|e| e.to_string())
 }
 
+/// Today's dictation, the streak and the latest dictations, for Home.
 #[tauri::command]
 #[specta::specta]
-pub async fn get_home_dashboard_data(
-    _app: AppHandle,
+pub async fn get_dictation_summary(
     history_manager: State<'_, Arc<HistoryManager>>,
-    limit: Option<u32>,
-    cursor: Option<HomeHistoryCursor>,
-) -> Result<HomeDashboardPageData, String> {
+) -> Result<DictationSummary, String> {
     history_manager
-        .get_home_dashboard_data(limit, cursor)
-        .await
+        .get_dictation_summary(5)
         .map_err(|e| e.to_string())
 }
 

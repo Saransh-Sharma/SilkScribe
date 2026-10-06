@@ -56,7 +56,10 @@ const OnboardingShell: React.FC<OnboardingShellProps> = ({
               </div>
 
               <ol
-                className="grid grid-cols-5 gap-0"
+                className="grid gap-0"
+                style={{
+                  gridTemplateColumns: `repeat(${stepLabels.length}, minmax(0, 1fr))`,
+                }}
                 aria-label={t("onboarding.shared.stepCounter", {
                   current: activeStep + 1,
                   total: stepLabels.length,

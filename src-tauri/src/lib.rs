@@ -719,7 +719,7 @@ fn command_builder() -> Builder<tauri::Wry> {
             meeting_orb::meeting_orb_drag,
             meeting_orb::meeting_orb_open_document,
             meeting_orb::meeting_orb_copy,
-            commands::history::get_home_dashboard_data,
+            commands::history::get_dictation_summary,
             commands::history::get_history_entries,
             commands::history::search_history_entries,
             commands::history::toggle_history_entry_saved,

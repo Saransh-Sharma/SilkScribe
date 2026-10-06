@@ -33,6 +33,8 @@ const OnboardingPractice: React.FC<OnboardingPracticeProps> = ({
     ? formatKeyCombination(transcribeBinding, osType)
     : t("onboarding.practice.shortcutFallback");
   const trialCompleted = trialText.trim().length > 0;
+  // "Hold and let go" or "press, then press again", matching the chosen mode.
+  const holdMode = settings?.push_to_talk ?? true;
 
   const handleFinish = async () => {
     setIsCompleting(true);
@@ -55,9 +57,12 @@ const OnboardingPractice: React.FC<OnboardingPracticeProps> = ({
       stepLabels={stepLabels}
       activeStep={activeStep}
       title={t("onboarding.practice.title")}
-      description={t("onboarding.practice.description", {
-        shortcut: shortcutLabel,
-      })}
+      description={t(
+        holdMode
+          ? "onboarding.practice.description"
+          : "onboarding.practice.descriptionToggle",
+        { shortcut: shortcutLabel },
+      )}
       compactHeader
       footer={
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -94,9 +99,12 @@ const OnboardingPractice: React.FC<OnboardingPracticeProps> = ({
                     {step}
                   </div>
                   <p className="text-sm font-semibold text-ss-text-primary">
-                    {t(`onboarding.practice.steps.step${step}.title`, {
-                      shortcut: shortcutLabel,
-                    })}
+                    {t(
+                      holdMode || step === 1
+                        ? `onboarding.practice.steps.step${step}.title`
+                        : `onboarding.practice.steps.step${step}.toggleTitle`,
+                      { shortcut: shortcutLabel },
+                    )}
                   </p>
                 </div>
               </li>
