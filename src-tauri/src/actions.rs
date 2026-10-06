@@ -8,9 +8,9 @@ use crate::shortcut;
 use crate::tray::{change_tray_icon, TrayIconState};
 use crate::utils::{
     self, show_command_processing_overlay, show_command_recording_overlay, show_empty_overlay,
-    show_error_overlay_with_reason, show_processing_overlay, show_processing_overlay_for,
-    show_recording_overlay, show_success_overlay_with_notice, show_success_overlay_with_preview,
-    show_transcribing_overlay,
+    show_error_overlay_with_reason, show_locked_recording_overlay, show_processing_overlay,
+    show_processing_overlay_for, show_recording_overlay, show_success_overlay_with_notice,
+    show_success_overlay_with_preview, show_transcribing_overlay,
 };
 use crate::TranscriptionCoordinator;
 use log::{debug, error};
@@ -62,6 +62,8 @@ enum PasteFailureCode {
 pub trait ShortcutAction: Send + Sync {
     fn start(&self, app: &AppHandle, binding_id: &str, shortcut_str: &str);
     fn stop(&self, app: &AppHandle, binding_id: &str, shortcut_str: &str);
+    /// A tap turned the recording hands-free; the next press stops it.
+    fn lock(&self, _app: &AppHandle) {}
 }
 
 // Transcribe Action
@@ -227,6 +229,10 @@ fn begin_recording(app: &AppHandle, binding_id: &str) -> bool {
 }
 
 impl ShortcutAction for TranscribeAction {
+    fn lock(&self, app: &AppHandle) {
+        show_locked_recording_overlay(app, false);
+    }
+
     fn start(&self, app: &AppHandle, binding_id: &str, _shortcut_str: &str) {
         let start_time = Instant::now();
         debug!("TranscribeAction::start called for binding: {}", binding_id);
@@ -556,6 +562,10 @@ fn command_selection(
 }
 
 impl ShortcutAction for CommandAction {
+    fn lock(&self, app: &AppHandle) {
+        show_locked_recording_overlay(app, true);
+    }
+
     fn start(&self, app: &AppHandle, binding_id: &str, _shortcut_str: &str) {
         // Without a provider there's nothing to run the command, so don't
         // make the person talk first to find out.

@@ -363,6 +363,10 @@ impl Default for OrtAcceleratorSetting {
 pub struct AppSettings {
     pub bindings: HashMap<String, ShortcutBinding>,
     pub push_to_talk: bool,
+    /// With push-to-talk, a quick tap keeps recording hands-free until the
+    /// next press. On for new installs; existing ones opt in (see migration 3).
+    #[serde(default = "default_tap_to_lock")]
+    pub tap_to_lock: bool,
     #[serde(default = "default_audio_feedback")]
     pub audio_feedback: bool,
     #[serde(default = "default_audio_feedback_volume")]
@@ -509,7 +513,11 @@ pub struct AppSettings {
 /// 1: raised the default history limit from 5 to `default_history_limit()`.
 /// 2: outside macOS, "paste and keep my clipboard" (which typed the text) is
 ///    now spelled out as "type it out".
-const CURRENT_SETTINGS_VERSION: u32 = 2;
+const CURRENT_SETTINGS_VERSION: u32 = 3;
+
+fn default_tap_to_lock() -> bool {
+    true
+}
 
 /// The history limit every install shipped with before version 1.
 const LEGACY_DEFAULT_HISTORY_LIMIT: usize = 5;
@@ -920,6 +928,15 @@ fn apply_settings_migrations(
         updated = true;
     }
 
+    if settings.settings_version < 3 {
+        // A tap used to start and stop at once. Locking the mic on instead
+        // would surprise someone who never asked for it, so existing installs
+        // keep the old behaviour until they turn it on.
+        settings.tap_to_lock = false;
+        settings.settings_version = 3;
+        updated = true;
+    }
+
     let normalized_paste_method = normalize_paste_method_for_platform(settings.paste_method);
     if settings.paste_method != normalized_paste_method {
         settings.paste_method = normalized_paste_method;
@@ -997,6 +1014,7 @@ pub fn get_default_settings() -> AppSettings {
     AppSettings {
         bindings,
         push_to_talk: true,
+        tap_to_lock: default_tap_to_lock(),
         audio_feedback: true,
         audio_feedback_volume: default_audio_feedback_volume(),
         sound_theme: default_sound_theme(),
@@ -1321,6 +1339,22 @@ mod tests {
         #[cfg(not(target_os = "macos"))]
         assert_eq!(settings.paste_method, PasteMethod::Direct);
         assert_eq!(settings.settings_version, CURRENT_SETTINGS_VERSION);
+    }
+
+    #[test]
+    fn tap_to_lock_is_new_installs_only() {
+        assert!(get_default_settings().tap_to_lock);
+        let mut existing = legacy_settings(500);
+        assert!(existing.tap_to_lock, "serde default before migrating");
+        apply_settings_migrations(&mut existing, None);
+        assert!(!existing.tap_to_lock);
+        // Turning it on afterwards sticks.
+        existing.tap_to_lock = true;
+        apply_settings_migrations(&mut existing, None);
+        assert!(existing.tap_to_lock);
+        let mut fresh = get_default_settings();
+        assert!(!apply_settings_migrations(&mut fresh, None) || fresh.tap_to_lock);
+        assert!(fresh.tap_to_lock);
     }
 
     #[test]

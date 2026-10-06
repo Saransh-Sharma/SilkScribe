@@ -295,6 +295,7 @@
       "placeholder": "Your words will appear here",
       "success": "It works!",
       "readyToFinish": "You’re ready to go.",
+      "readyToFinishTap": "You’re ready to go. Tap {{shortcut}} to keep listening hands-free.",
       "finish": "Start using SilkScribe",
       "skip": "Skip for now",
       "finishing": "Finishing up…",
@@ -434,6 +435,10 @@
       "pushToTalk": {
         "label": "Hold to talk",
         "description": "When off, press once to start and again to stop."
+      },
+      "tapToLock": {
+        "label": "Tap for hands-free",
+        "description": "A quick tap keeps listening until you press again."
       },
       "theme": {
         "title": "Theme",
@@ -984,6 +989,10 @@
       "tag": "Command",
       "editing": "Editing",
       "writing": "Writing"
+    },
+    "handsFree": {
+      "listening": "Listening hands-free. Press the shortcut again to finish, or Esc to cancel.",
+      "tag": "Hands-free"
     }
   },
   "meetingOrb": {
@@ -1403,6 +1412,7 @@
       "settingHint": "Shows a reminder when recording starts."
     },
     "holdToTalk": "Hold to talk",
+    "holdOrTap": "Hold to talk, or tap for hands-free",
     "pressToTalk": "Press to start and stop",
     "recentDictation": "Recent dictation",
     "wordsToday": "Words today",

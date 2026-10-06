@@ -215,6 +215,8 @@ if (dictation) {
         },
       },
       push_to_talk: true,
+      // ?tapToLock: a quick tap goes hands-free.
+      tap_to_lock: params.has("tapToLock"),
       selected_model: "parakeet-tdt-0.6b-v3",
       external_script_path: null,
     } as AppSettings,
@@ -417,6 +419,8 @@ api.addToDictionary = async (heard, write) =>
 commands.updateCustomWords = async () => ({ status: "ok", data: null });
 commands.updateReplacements = async () => ({ status: "ok", data: null });
 commands.updateSnippets = async () => ({ status: "ok", data: null });
+commands.changeTapToLockSetting = async () => ({ status: "ok", data: null });
+commands.changePttSetting = async () => ({ status: "ok", data: null });
 api.dismissCleanupSuggestion = async () => null;
 // User notes persist across reloads, like the real store.
 api.userNotes = async (id) => localStorage.getItem(`fixture-notes-${id}`) ?? "";

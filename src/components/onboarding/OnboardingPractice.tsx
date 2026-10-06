@@ -67,7 +67,14 @@ const OnboardingPractice: React.FC<OnboardingPracticeProps> = ({
       footer={
         <div className="flex flex-wrap items-center justify-between gap-4">
           <p className="max-w-2xl text-sm leading-relaxed text-ss-text-secondary">
-            {trialCompleted ? t("onboarding.practice.readyToFinish") : null}
+            {trialCompleted
+              ? t(
+                  holdMode && settings?.tap_to_lock
+                    ? "onboarding.practice.readyToFinishTap"
+                    : "onboarding.practice.readyToFinish",
+                  { shortcut: shortcutLabel },
+                )
+              : null}
           </p>
 
           <Button

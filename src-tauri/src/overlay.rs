@@ -60,6 +60,8 @@ struct OverlayPayload {
     /// A spoken command rather than dictation: "command" while recording,
     /// then "edit" (a selection) or "write" (at the cursor) while it runs.
     mode: Option<String>,
+    /// Recording hands-free after a tap; the next press stops it.
+    locked: bool,
     /// Screen edge the overlay is anchored to, so it can animate in from there.
     position: String,
     can_cancel: bool,
@@ -382,6 +384,7 @@ fn create_overlay_payload(
         context_style: None,
         context_nearby: false,
         mode: None,
+        locked: false,
         position: match settings.overlay_position {
             OverlayPosition::Top => "top",
             OverlayPosition::Bottom | OverlayPosition::None => "bottom",
@@ -464,6 +467,18 @@ pub fn show_command_recording_overlay(app_handle: &AppHandle) {
     }
     let mut payload = create_overlay_payload(&settings, "recording", None, None);
     payload.mode = Some("command".to_string());
+    show_overlay_payload(app_handle, payload);
+}
+
+/// Shows that a tap turned the recording hands-free.
+pub fn show_locked_recording_overlay(app_handle: &AppHandle, command: bool) {
+    let settings = settings::get_settings(app_handle);
+    if settings.overlay_position == OverlayPosition::None {
+        return;
+    }
+    let mut payload = create_overlay_payload(&settings, "recording", None, None);
+    payload.mode = command.then(|| "command".to_string());
+    payload.locked = true;
     show_overlay_payload(app_handle, payload);
 }
 

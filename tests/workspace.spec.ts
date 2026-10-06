@@ -646,6 +646,24 @@ test("Home shows the dictation shortcut once dictation is ready", async ({
   await expect(page.getByText("Note to Sam", { exact: true })).toBeVisible();
 });
 
+test("a tap can make dictation hands-free", async ({ page }) => {
+  await page.goto(`${fixture}?dictation=ready&tapToLock`);
+  const strip = page.getByRole("button", { name: /^Dictation/ });
+  await expect(strip).toContainText("Hold to talk, or tap for hands-free");
+
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
+  await page.getByRole("button", { name: "Dictation", exact: true }).click();
+  const tap = page.getByRole("switch", { name: "Tap for hands-free" });
+  await expect(tap).toBeChecked();
+  await tap.focus();
+  await page.keyboard.press("Space");
+  await expect(tap).not.toBeChecked();
+  // It only applies to holding the shortcut.
+  await page.getByRole("switch", { name: "Hold to talk" }).focus();
+  await page.keyboard.press("Space");
+  await expect(tap).toHaveCount(0);
+});
+
 test("Home asks to finish dictation setup when it isn't ready", async ({
   page,
 }) => {

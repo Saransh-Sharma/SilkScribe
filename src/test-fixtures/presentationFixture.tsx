@@ -487,6 +487,8 @@ const OverlayFixture = () => {
         detailCode: params.get("code") ?? undefined,
       }
     : {};
+  // `locked=1`: hands-free after a tap.
+  const locked = params.get("locked") === "1" ? { locked: true } : {};
   return (
     <div
       className="h-[100dvh]"
@@ -500,6 +502,7 @@ const OverlayFixture = () => {
           canCancel: false,
           ...(withDetail ? SAMPLE_DETAIL[state] : {}),
           ...commandPayload,
+          ...locked,
         }}
       />
     </div>

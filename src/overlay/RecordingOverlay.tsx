@@ -46,6 +46,8 @@ interface OverlayEventPayload {
   /** A spoken command: "command" while recording, then "edit" (a selection)
    *  or "write" (at the cursor) while it runs. */
   mode?: OverlayMode;
+  /** Recording hands-free after a tap; the next press stops it. */
+  locked?: boolean;
   /** Screen edge the overlay is anchored to, so it can enter from that side. */
   position?: "top" | "bottom";
   canCancel: boolean;
@@ -196,6 +198,7 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
         contextStyle: candidate.contextStyle,
         contextNearby: candidate.contextNearby,
         mode: candidate.mode,
+        locked: candidate.locked,
         position: candidate.position,
         canCancel: candidate.canCancel ?? next === "recording",
       };
@@ -304,13 +307,16 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
 
   const showElapsed = isRecording && elapsedSeconds >= 5;
   const isCommand = isRecording && mode === "command";
-  const stateLabel = isCommand
-    ? t("overlay.command.listening")
-    : state === "processing" && mode === "edit"
-      ? t("overlay.command.editing")
-      : state === "processing" && mode === "write"
-        ? t("overlay.command.writing")
-        : ariaForState(state);
+  const isLocked = isRecording && Boolean(payload.locked);
+  const stateLabel = isLocked
+    ? t("overlay.handsFree.listening")
+    : isCommand
+      ? t("overlay.command.listening")
+      : state === "processing" && mode === "edit"
+        ? t("overlay.command.editing")
+        : state === "processing" && mode === "write"
+          ? t("overlay.command.writing")
+          : ariaForState(state);
 
   // A transcript excerpt is the most useful thing we can show, so it wins over
   // the generic per-state detail line.
@@ -383,14 +389,16 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
           <div className="overlay-ring" />
         </div>
 
-        {isCommand || showElapsed ? (
+        {isCommand || isLocked || showElapsed ? (
           <div
             className="overlay-timer"
             data-mode={isCommand ? "command" : undefined}
+            data-locked={isLocked ? "true" : undefined}
             aria-hidden="true"
           >
             {[
               isCommand ? t("overlay.command.tag") : null,
+              isLocked ? t("overlay.handsFree.tag") : null,
               showElapsed ? formatElapsed(elapsedSeconds) : null,
             ]
               .filter(Boolean)

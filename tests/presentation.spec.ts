@@ -283,6 +283,22 @@ test.describe("deterministic product states", () => {
     await expect(page.locator(".overlay-label")).toHaveText("Writing");
   });
 
+  test("shows when a tap made the recording hands-free", async ({ page }) => {
+    await page.setViewportSize({ width: 460, height: 180 });
+    await page.goto(fixture("view=overlay&state=recording&locked=1"));
+    await expect(page.getByRole("status")).toHaveAttribute(
+      "aria-label",
+      /hands-free.*Esc to cancel/,
+    );
+    await expect(page.locator(".overlay-timer")).toHaveText("Hands-free");
+    await page.goto(
+      fixture("view=overlay&state=recording&locked=1&mode=command"),
+    );
+    await expect(page.locator(".overlay-timer")).toHaveText(
+      "Command · Hands-free",
+    );
+  });
+
   test("explains a command that couldn't run without overflowing", async ({
     page,
   }) => {

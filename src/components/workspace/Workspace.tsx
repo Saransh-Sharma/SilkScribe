@@ -1731,7 +1731,9 @@ export default function Workspace({
                           {t(
                             settings?.push_to_talk === false
                               ? "workspace.pressToTalk"
-                              : "workspace.holdToTalk",
+                              : settings?.tap_to_lock
+                                ? "workspace.holdOrTap"
+                                : "workspace.holdToTalk",
                           )}
                         </>
                       ) : (
