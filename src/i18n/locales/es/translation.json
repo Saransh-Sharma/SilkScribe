@@ -12,7 +12,7 @@
     "meetingStop": "Detener y transcribir reunión"
   },
   "sidebar": {
-    "home": "Home",
+    "home": "Inicio",
     "general": "General",
     "models": "Modelos",
     "advanced": "Avanzado",
@@ -159,25 +159,25 @@
     "setup": {
       "title": "Preparando tu motor",
       "description": "Configurando el mejor motor para {{language}}.",
-      "defaultLanguage": "your language",
+      "defaultLanguage": "tu idioma",
       "engineTitle": "Lo hemos elegido por ti",
       "engineBody": "Es el que mejor encaja con este Mac y con {{language}}.",
-      "progressLabel": "Progress",
+      "progressLabel": "Progreso",
       "sizeLabel": "Tamaño",
-      "speedLabel": "Speed",
+      "speedLabel": "Velocidad",
       "etaLabel": "Tiempo restante",
       "speedValue": "{{speed}} MB/s",
       "notAvailable": "—",
       "preparingDetail": "Preparando…",
-      "shortcutTitle": "Your shortcut",
+      "shortcutTitle": "Tu atajo",
       "shortcutBody": "Mantén pulsado {{shortcut}}, habla y suelta.",
-      "retry": "Try again",
+      "retry": "Reintentar",
       "ready": "Listo para probar.",
       "states": {
         "resolving": "Eligiendo tu motor",
-        "downloading": "Downloading",
-        "preparing": "Preparing",
-        "ready": "Ready",
+        "downloading": "Descargando",
+        "preparing": "Preparando",
+        "ready": "Listo",
         "error": "No terminó"
       },
       "panelHelp": {
@@ -191,16 +191,16 @@
         "downloadModel": "No se pudo completar la descarga",
         "selectModel": "No se pudo preparar tu motor"
       },
-      "tipsBadge": "Helpful while you wait",
-      "previousCard": "Previous tip",
-      "nextCard": "Next tip",
-      "goToCard": "Go to tip {{index}}",
+      "tipsBadge": "Útil mientras esperas",
+      "previousCard": "Consejo anterior",
+      "nextCard": "Siguiente consejo",
+      "goToCard": "Ir al consejo {{index}}",
       "tips": {
         "cards": {
           "shortcutHabit": {
             "title": "One shortcut, one quick habit",
             "description": "SilkScribe is built around a very simple rhythm: hold, speak, release.",
-            "point1": "Hold {{shortcut}} while you speak.",
+            "point1": "Mantén pulsado {{shortcut}} mientras hablas.",
             "point2": "Release it when you are done talking.",
             "point3": "SilkScribe turns that short burst into text right away."
           },
@@ -243,10 +243,10 @@
       }
     },
     "progress": {
-      "welcome": "Welcome",
-      "microphone": "Microphone",
+      "welcome": "Bienvenida",
+      "microphone": "Micrófono",
       "accessibility": "Accesibilidad",
-      "setup": "Setup",
+      "setup": "Configuración",
       "shortcut": "Atajo",
       "practice": "Pruébalo"
     },
@@ -255,7 +255,7 @@
       "description": "Habla en lugar de escribir, en cualquier app. La configuración lleva un minuto.",
       "plan": {
         "step1": {
-          "title": "Allow the microphone",
+          "title": "Permitir el micrófono",
           "description": "Para poder oírte."
         },
         "step2": {
@@ -263,7 +263,7 @@
           "description": "Para poder escribir en tus apps."
         },
         "step3": {
-          "title": "Try it once",
+          "title": "Pruébalo una vez",
           "description": "Una prueba rápida y listo."
         },
         "shortcut": {
@@ -296,8 +296,8 @@
       "success": "¡Funciona!",
       "readyToFinish": "Ya está todo listo.",
       "readyToFinishTap": "Ya está todo listo. Pulsa brevemente {{shortcut}} para seguir escuchando con manos libres.",
-      "finish": "Start using SilkScribe",
-      "skip": "Skip for now",
+      "finish": "Empezar a usar SilkScribe",
+      "skip": "Omitir por ahora",
       "finishing": "Terminando…",
       "finishFailed": "No se pudo terminar la configuración. Inténtalo de nuevo.",
       "descriptionToggle": "Haz clic en el cuadro, pulsa {{shortcut}}, di algo y vuelve a pulsarlo."

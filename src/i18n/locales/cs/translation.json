@@ -12,7 +12,7 @@
     "meetingStop": "Zastavit a přepsat schůzku"
   },
   "sidebar": {
-    "home": "Home",
+    "home": "Domů",
     "general": "Obecné",
     "models": "Modely",
     "advanced": "Pokročilé",
@@ -159,25 +159,25 @@
     "setup": {
       "title": "Připravujeme modul pro přepis",
       "description": "Nastavujeme nejlepší modul pro jazyk {{language}}.",
-      "defaultLanguage": "your language",
+      "defaultLanguage": "vámi zvolený",
       "engineTitle": "Vybrali jsme za vás",
       "engineBody": "Nejlépe se hodí pro tento Mac a jazyk {{language}}.",
-      "progressLabel": "Progress",
+      "progressLabel": "Průběh",
       "sizeLabel": "Velikost",
-      "speedLabel": "Speed",
+      "speedLabel": "Rychlost",
       "etaLabel": "Zbývající čas",
       "speedValue": "{{speed}} MB/s",
       "notAvailable": "—",
       "preparingDetail": "Příprava…",
-      "shortcutTitle": "Your shortcut",
+      "shortcutTitle": "Vaše zkratka",
       "shortcutBody": "Podržte {{shortcut}}, mluvte a pak pusťte.",
-      "retry": "Try again",
+      "retry": "Zkusit znovu",
       "ready": "Připraveno k vyzkoušení.",
       "states": {
         "resolving": "Vybíráme modul",
-        "downloading": "Downloading",
-        "preparing": "Preparing",
-        "ready": "Ready",
+        "downloading": "Stahování",
+        "preparing": "Příprava",
+        "ready": "Připraveno",
         "error": "Nedokončeno"
       },
       "panelHelp": {
@@ -191,16 +191,16 @@
         "downloadModel": "Stahování se nepodařilo dokončit",
         "selectModel": "Modul se nepodařilo připravit"
       },
-      "tipsBadge": "Helpful while you wait",
-      "previousCard": "Previous tip",
-      "nextCard": "Next tip",
-      "goToCard": "Go to tip {{index}}",
+      "tipsBadge": "Užitečné během čekání",
+      "previousCard": "Předchozí tip",
+      "nextCard": "Další tip",
+      "goToCard": "Přejít na tip {{index}}",
       "tips": {
         "cards": {
           "shortcutHabit": {
             "title": "One shortcut, one quick habit",
             "description": "SilkScribe is built around a very simple rhythm: hold, speak, release.",
-            "point1": "Hold {{shortcut}} while you speak.",
+            "point1": "Při mluvení držte {{shortcut}}.",
             "point2": "Release it when you are done talking.",
             "point3": "SilkScribe turns that short burst into text right away."
           },
@@ -243,10 +243,10 @@
       }
     },
     "progress": {
-      "welcome": "Welcome",
-      "microphone": "Microphone",
+      "welcome": "Vítejte",
+      "microphone": "Mikrofon",
       "accessibility": "Zpřístupnění",
-      "setup": "Setup",
+      "setup": "Nastavení",
       "shortcut": "Zkratka",
       "practice": "Vyzkoušet"
     },
@@ -255,7 +255,7 @@
       "description": "Mluvte místo psaní, v jakékoli aplikaci. Nastavení zabere asi minutu.",
       "plan": {
         "step1": {
-          "title": "Allow the microphone",
+          "title": "Povolte mikrofon",
           "description": "Abychom vás slyšeli."
         },
         "step2": {
@@ -263,7 +263,7 @@
           "description": "Abychom mohli psát do vašich aplikací."
         },
         "step3": {
-          "title": "Try it once",
+          "title": "Vyzkoušejte to",
           "description": "Krátký test a je hotovo."
         },
         "shortcut": {
@@ -296,8 +296,8 @@
       "success": "Funguje to!",
       "readyToFinish": "Můžete začít.",
       "readyToFinishTap": "Můžete začít. Klepnutím na {{shortcut}} zapnete poslech bez držení klávesy.",
-      "finish": "Start using SilkScribe",
-      "skip": "Skip for now",
+      "finish": "Začít používat SilkScribe",
+      "skip": "Teď přeskočit",
       "finishing": "Dokončování…",
       "finishFailed": "Nastavení se nepodařilo dokončit. Zkuste to znovu.",
       "descriptionToggle": "Klikněte do pole, stiskněte {{shortcut}}, něco řekněte a pak stiskněte znovu."

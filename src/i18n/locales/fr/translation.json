@@ -12,7 +12,7 @@
     "meetingStop": "Arrêter et transcrire la réunion"
   },
   "sidebar": {
-    "home": "Home",
+    "home": "Accueil",
     "general": "Général",
     "models": "Modèles",
     "advanced": "Avancé",
@@ -159,25 +159,25 @@
     "setup": {
       "title": "Préparation de votre moteur",
       "description": "Installation du meilleur moteur pour {{language}}.",
-      "defaultLanguage": "your language",
+      "defaultLanguage": "votre langue",
       "engineTitle": "Nous l’avons choisi pour vous",
       "engineBody": "C’est le plus adapté à ce Mac et à {{language}}.",
-      "progressLabel": "Progress",
+      "progressLabel": "Progression",
       "sizeLabel": "Taille",
-      "speedLabel": "Speed",
+      "speedLabel": "Vitesse",
       "etaLabel": "Temps restant",
       "speedValue": "{{speed}} MB/s",
       "notAvailable": "—",
       "preparingDetail": "Préparation…",
-      "shortcutTitle": "Your shortcut",
+      "shortcutTitle": "Votre raccourci",
       "shortcutBody": "Maintenez {{shortcut}}, parlez, puis relâchez.",
-      "retry": "Try again",
+      "retry": "Réessayer",
       "ready": "Prêt à essayer.",
       "states": {
         "resolving": "Choix de votre moteur",
-        "downloading": "Downloading",
-        "preparing": "Preparing",
-        "ready": "Ready",
+        "downloading": "Téléchargement",
+        "preparing": "Préparation",
+        "ready": "Prêt",
         "error": "Inachevé"
       },
       "panelHelp": {
@@ -191,16 +191,16 @@
         "downloadModel": "Impossible de terminer le téléchargement",
         "selectModel": "Impossible de préparer votre moteur"
       },
-      "tipsBadge": "Helpful while you wait",
-      "previousCard": "Previous tip",
-      "nextCard": "Next tip",
-      "goToCard": "Go to tip {{index}}",
+      "tipsBadge": "Utile pendant l’attente",
+      "previousCard": "Astuce précédente",
+      "nextCard": "Astuce suivante",
+      "goToCard": "Aller à l’astuce {{index}}",
       "tips": {
         "cards": {
           "shortcutHabit": {
             "title": "One shortcut, one quick habit",
             "description": "SilkScribe is built around a very simple rhythm: hold, speak, release.",
-            "point1": "Hold {{shortcut}} while you speak.",
+            "point1": "Maintenez {{shortcut}} pendant que vous parlez.",
             "point2": "Release it when you are done talking.",
             "point3": "SilkScribe turns that short burst into text right away."
           },
@@ -243,10 +243,10 @@
       }
     },
     "progress": {
-      "welcome": "Welcome",
-      "microphone": "Microphone",
+      "welcome": "Bienvenue",
+      "microphone": "Micro",
       "accessibility": "Accessibilité",
-      "setup": "Setup",
+      "setup": "Configuration",
       "shortcut": "Raccourci",
       "practice": "Essayer"
     },
@@ -255,7 +255,7 @@
       "description": "Parlez au lieu de taper, dans n’importe quelle app. La configuration prend environ une minute.",
       "plan": {
         "step1": {
-          "title": "Allow the microphone",
+          "title": "Autoriser le micro",
           "description": "Pour que nous puissions vous entendre."
         },
         "step2": {
@@ -263,7 +263,7 @@
           "description": "Pour que nous puissions écrire dans vos apps."
         },
         "step3": {
-          "title": "Try it once",
+          "title": "Essayez une fois",
           "description": "Un petit test et c’est fini."
         },
         "shortcut": {
@@ -296,8 +296,8 @@
       "success": "Ça marche !",
       "readyToFinish": "Vous êtes prêt.",
       "readyToFinishTap": "Vous êtes prêt. Touchez brièvement {{shortcut}} pour continuer à dicter sans les mains.",
-      "finish": "Start using SilkScribe",
-      "skip": "Skip for now",
+      "finish": "Commencer à utiliser SilkScribe",
+      "skip": "Passer pour l’instant",
       "finishing": "Finalisation…",
       "finishFailed": "Impossible de terminer la configuration. Réessayez.",
       "descriptionToggle": "Cliquez dans la zone, appuyez sur {{shortcut}}, dites quelque chose, puis appuyez de nouveau."

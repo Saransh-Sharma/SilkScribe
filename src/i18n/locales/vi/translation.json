@@ -12,7 +12,7 @@
     "meetingStop": "Dừng và chép lời cuộc họp"
   },
   "sidebar": {
-    "home": "Home",
+    "home": "Trang chủ",
     "general": "Chung",
     "models": "Mô hình",
     "advanced": "Nâng cao",
@@ -159,25 +159,25 @@
     "setup": {
       "title": "Đang chuẩn bị công cụ của bạn",
       "description": "Đang thiết lập công cụ tốt nhất cho {{language}}.",
-      "defaultLanguage": "your language",
+      "defaultLanguage": "ngôn ngữ của bạn",
       "engineTitle": "Chúng tôi đã chọn giúp bạn",
       "engineBody": "Đây là lựa chọn phù hợp nhất cho máy Mac này và {{language}}.",
-      "progressLabel": "Progress",
+      "progressLabel": "Tiến độ",
       "sizeLabel": "Dung lượng",
-      "speedLabel": "Speed",
+      "speedLabel": "Tốc độ",
       "etaLabel": "Thời gian còn lại",
       "speedValue": "{{speed}} MB/s",
       "notAvailable": "—",
       "preparingDetail": "Đang chuẩn bị…",
-      "shortcutTitle": "Your shortcut",
+      "shortcutTitle": "Phím tắt của bạn",
       "shortcutBody": "Giữ {{shortcut}}, nói, rồi thả ra.",
-      "retry": "Try again",
+      "retry": "Thử lại",
       "ready": "Sẵn sàng để thử.",
       "states": {
         "resolving": "Đang chọn công cụ",
-        "downloading": "Downloading",
-        "preparing": "Preparing",
-        "ready": "Ready",
+        "downloading": "Đang tải xuống",
+        "preparing": "Đang chuẩn bị",
+        "ready": "Sẵn sàng",
         "error": "Chưa hoàn tất"
       },
       "panelHelp": {
@@ -191,16 +191,16 @@
         "downloadModel": "Không hoàn tất được việc tải xuống",
         "selectModel": "Không chuẩn bị được công cụ của bạn"
       },
-      "tipsBadge": "Helpful while you wait",
-      "previousCard": "Previous tip",
-      "nextCard": "Next tip",
-      "goToCard": "Go to tip {{index}}",
+      "tipsBadge": "Hữu ích trong lúc chờ",
+      "previousCard": "Mẹo trước",
+      "nextCard": "Mẹo tiếp theo",
+      "goToCard": "Đến mẹo {{index}}",
       "tips": {
         "cards": {
           "shortcutHabit": {
             "title": "One shortcut, one quick habit",
             "description": "SilkScribe is built around a very simple rhythm: hold, speak, release.",
-            "point1": "Hold {{shortcut}} while you speak.",
+            "point1": "Giữ {{shortcut}} trong khi nói.",
             "point2": "Release it when you are done talking.",
             "point3": "SilkScribe turns that short burst into text right away."
           },
@@ -243,10 +243,10 @@
       }
     },
     "progress": {
-      "welcome": "Welcome",
-      "microphone": "Microphone",
+      "welcome": "Chào mừng",
+      "microphone": "Micrô",
       "accessibility": "Trợ năng",
-      "setup": "Setup",
+      "setup": "Thiết lập",
       "shortcut": "Phím tắt",
       "practice": "Dùng thử"
     },
@@ -255,7 +255,7 @@
       "description": "Nói thay vì gõ, trong bất kỳ ứng dụng nào. Thiết lập mất khoảng một phút.",
       "plan": {
         "step1": {
-          "title": "Allow the microphone",
+          "title": "Cho phép micrô",
           "description": "Để chúng tôi nghe được bạn."
         },
         "step2": {
@@ -263,7 +263,7 @@
           "description": "Để chúng tôi gõ vào ứng dụng của bạn."
         },
         "step3": {
-          "title": "Try it once",
+          "title": "Thử một lần",
           "description": "Thử nhanh một lần là xong."
         },
         "shortcut": {
@@ -296,8 +296,8 @@
       "success": "Hoạt động rồi!",
       "readyToFinish": "Bạn đã sẵn sàng.",
       "readyToFinishTap": "Bạn đã sẵn sàng. Chạm nhanh {{shortcut}} để tiếp tục nghe mà không cần giữ phím.",
-      "finish": "Start using SilkScribe",
-      "skip": "Skip for now",
+      "finish": "Bắt đầu dùng SilkScribe",
+      "skip": "Bỏ qua lúc này",
       "finishing": "Đang hoàn tất…",
       "finishFailed": "Không hoàn tất được thiết lập. Thử lại nhé.",
       "descriptionToggle": "Bấm vào ô, nhấn {{shortcut}}, nói gì đó, rồi nhấn lần nữa."
