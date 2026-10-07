@@ -33,6 +33,7 @@
 - The mic opens at its current sample rate on macOS, so a call in progress isn't disturbed.
 - On macOS, pasting puts back what was on your clipboard (images and files included), and clipboard managers skip the pasted text. Windows and Linux type the text instead of describing a restore they can't do.
 - AI cleanup gives up after 30 seconds and pastes the transcript, so a provider that never answers can't hold up dictation.
+- Translations: the missing strings in all 16 languages are first drafts awaiting native review, and the translation check now also checks placeholders and each language's plural forms.
 
 ### Fixed
 

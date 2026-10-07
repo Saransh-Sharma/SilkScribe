@@ -1,6 +1,15 @@
 {
   "tray": {
-    "copyLastTranscript": "Sao chép bản chép lời mới nhất"
+    "settings": "Cài đặt…",
+    "checkUpdates": "Kiểm tra bản cập nhật…",
+    "copyLastTranscript": "Sao chép bản chép lời mới nhất",
+    "copyLastOriginal": "Sao chép bản ghi gần nhất trước khi chỉnh sửa",
+    "unloadModel": "Giải phóng công cụ",
+    "quit": "Thoát SilkScribe",
+    "cancel": "Hủy ghi âm",
+    "meetingPause": "Tạm dừng cuộc họp",
+    "meetingResume": "Tiếp tục cuộc họp",
+    "meetingStop": "Dừng và chép lời cuộc họp"
   },
   "sidebar": {
     "home": "Home",
@@ -16,88 +25,171 @@
   "onboarding": {
     "recommended": "Đề xuất",
     "download": "Tải xuống",
+    "downloading": "Đang tải xuống…",
+    "customModelDescription": "Công cụ tùy chỉnh · không được hỗ trợ chính thức",
     "modelCard": {
       "accuracy": "độ chính xác",
       "speed": "tốc độ"
     },
     "models": {
       "small": {
-        "name": "Whisper Small"
+        "name": "Whisper Small",
+        "description": "Nhanh và nhẹ"
       },
       "medium": {
-        "name": "Whisper Medium"
+        "name": "Whisper Medium",
+        "description": "Chính xác hơn, chậm hơn một chút"
       },
       "turbo": {
-        "name": "Whisper Turbo"
+        "name": "Whisper Turbo",
+        "description": "Nhanh và chính xác — lựa chọn toàn diện"
       },
       "large": {
-        "name": "Whisper Large"
+        "name": "Whisper Large",
+        "description": "Whisper chính xác nhất, nhưng chậm"
       },
       "parakeet-tdt-0.6b-v2": {
-        "name": "Parakeet V2"
+        "name": "Parakeet V2",
+        "description": "Tốt nhất cho tiếng Anh"
       },
       "parakeet-tdt-0.6b-v3": {
-        "name": "Parakeet V3"
+        "name": "Parakeet V3",
+        "description": "Nhanh và chính xác · 25 ngôn ngữ châu Âu"
       },
       "moonshine-base": {
-        "name": "Moonshine Base"
+        "name": "Moonshine Base",
+        "description": "Rất nhanh · tiếng Anh · tốt với giọng địa phương"
       },
       "moonshine-tiny-streaming-en": {
-        "name": "Moonshine V2 Tiny"
+        "name": "Moonshine V2 Tiny",
+        "description": "Nhanh nhất · tiếng Anh"
       },
       "moonshine-small-streaming-en": {
-        "name": "Moonshine V2 Small"
+        "name": "Moonshine V2 Small",
+        "description": "Nhanh và cân bằng · tiếng Anh"
       },
       "moonshine-medium-streaming-en": {
-        "name": "Moonshine V2 Medium"
+        "name": "Moonshine V2 Medium",
+        "description": "Chất lượng Moonshine tốt nhất · tiếng Anh"
       },
       "breeze-asr": {
-        "name": "Breeze ASR"
+        "name": "Breeze ASR",
+        "description": "Tiếng Quan Thoại Đài Loan, xen tiếng Anh"
       },
       "sense-voice-int8": {
-        "name": "SenseVoice"
+        "name": "SenseVoice",
+        "description": "Rất nhanh · tiếng Trung, Anh, Nhật, Hàn, Quảng Đông"
       }
     },
     "permissions": {
       "shared": {
+        "repairEyebrow": "Cần bạn đồng ý",
+        "openingPrompt": "Đang mở…",
+        "iEnabledIt": "Tôi đã bật",
         "checkAgain": "Kiểm tra lại",
         "continue": "Tiếp tục",
         "repairAction": "Mở sửa chữa có hướng dẫn",
         "appName": "SilkScribe",
         "statuses": {
+          "checking": "Đang kiểm tra…",
+          "needed": "Chưa được cho phép",
+          "error": "Không kiểm tra được",
+          "requesting": "Đang chờ macOS…",
           "waiting_for_user": "Đang chờ bạn",
           "granted": "Đã cho phép"
         }
       },
       "microphone": {
+        "title": "Để SilkScribe nghe bạn",
+        "description": "Chúng tôi chỉ nghe khi bạn đang đọc chính tả.",
+        "primaryAction": "Cho phép micrô",
+        "steps": {
+          "step1": "Bấm “Cho phép micrô”.",
+          "step2": "Chọn “Cho phép” trong hộp thoại của macOS."
+        },
+        "manualHint": "Không thấy hộp thoại? Bật trong Cài đặt hệ thống → Quyền riêng tư & Bảo mật → Micrô.",
+        "privateNote": "Âm thanh của bạn không bao giờ rời khỏi máy Mac này.",
         "guide": {
           "windowLabel": "Lời nhắc macOS",
+          "title": "Chọn “Cho phép”",
+          "body": "Hộp thoại xuất hiện bên ngoài cửa sổ này.",
           "promptTitle": "“SilkScribe” muốn truy cập micrô",
+          "promptBody": "SilkScribe chuyển giọng nói của bạn thành văn bản trên máy Mac này. Ứng dụng chỉ nghe khi bạn đọc chính tả hoặc ghi âm.",
           "deny": "Không cho phép",
           "allow": "Cho phép",
-          "allowed": "Đã cho phép"
+          "allowed": "Đã cho phép",
+          "previewAlt": "Hộp thoại micrô của macOS với nút “Cho phép” được làm nổi bật"
+        },
+        "statusHelp": {
+          "checking": "Chỉ mất một giây.",
+          "needed": "Bấm “Cho phép micrô” để tiếp tục.",
+          "error": "Thử lại, hoặc bật trong Cài đặt hệ thống.",
+          "requesting": "Tìm hộp thoại của macOS.",
+          "waiting_for_user": "Hoàn tất trong macOS, rồi quay lại đây.",
+          "granted": "Đã sẵn sàng."
         }
       },
       "accessibility": {
+        "title": "Để SilkScribe gõ giúp bạn",
+        "description": "Trợ năng cho phép chúng tôi dán lời bạn nói ngay tại con trỏ.",
+        "primaryAction": "Mở cài đặt Trợ năng",
         "steps": {
-          "step2": "Nếu macOS đưa bạn tới Cài đặt Hệ thống, hãy tiếp tục ở đó."
+          "step1": "Bấm “Mở cài đặt Trợ năng”.",
+          "step2": "Nếu macOS đưa bạn tới Cài đặt Hệ thống, hãy tiếp tục ở đó.",
+          "step3": "Quay lại đây."
         },
+        "manualHint": "Hoặc vào Cài đặt hệ thống → Quyền riêng tư & Bảo mật → Trợ năng.",
+        "privateNote": "Chúng tôi chỉ dùng quyền này để dán nội dung bạn đọc.",
         "guide": {
-          "windowLabel": "Cài đặt Hệ thống"
+          "windowLabel": "Cài đặt Hệ thống",
+          "title": "Bật SilkScribe",
+          "body": "Tìm SilkScribe trong danh sách và bật lên.",
+          "previewAlt": "Cài đặt Trợ năng của macOS với SilkScribe đã bật"
+        },
+        "statusHelp": {
+          "checking": "Chỉ mất một giây.",
+          "needed": "Bấm “Mở cài đặt Trợ năng” để tiếp tục.",
+          "error": "Thử lại, hoặc bật trong Cài đặt hệ thống.",
+          "requesting": "Đang mở Cài đặt hệ thống…",
+          "waiting_for_user": "Bật SilkScribe rồi quay lại đây. Đã bật rồi? Tắt đi rồi bật lại.",
+          "granted": "Đã sẵn sàng."
         }
       }
     },
     "setup": {
+      "title": "Đang chuẩn bị công cụ của bạn",
+      "description": "Đang thiết lập công cụ tốt nhất cho {{language}}.",
       "defaultLanguage": "your language",
+      "engineTitle": "Chúng tôi đã chọn giúp bạn",
+      "engineBody": "Đây là lựa chọn phù hợp nhất cho máy Mac này và {{language}}.",
       "progressLabel": "Progress",
+      "sizeLabel": "Dung lượng",
       "speedLabel": "Speed",
+      "etaLabel": "Thời gian còn lại",
       "speedValue": "{{speed}} MB/s",
+      "notAvailable": "—",
+      "preparingDetail": "Đang chuẩn bị…",
       "shortcutTitle": "Your shortcut",
+      "shortcutBody": "Giữ {{shortcut}}, nói, rồi thả ra.",
       "retry": "Try again",
+      "ready": "Sẵn sàng để thử.",
       "states": {
+        "resolving": "Đang chọn công cụ",
         "downloading": "Downloading",
         "preparing": "Preparing",
-        "ready": "Ready"
+        "ready": "Ready",
+        "error": "Chưa hoàn tất"
+      },
+      "panelHelp": {
+        "resolving": "Đang tìm lựa chọn phù hợp nhất cho máy Mac này.",
+        "downloading": "Việc này chỉ diễn ra một lần.",
+        "preparing": "Sắp xong rồi.",
+        "error": "Kiểm tra kết nối rồi thử lại."
+      },
+      "errors": {
+        "loadModels": "Không tải được danh sách công cụ",
+        "downloadModel": "Không hoàn tất được việc tải xuống",
+        "selectModel": "Không chuẩn bị được công cụ của bạn"
       },
       "tipsBadge": "Helpful while you wait",
       "previousCard": "Previous tip",
@@ -153,30 +245,96 @@
     "progress": {
       "welcome": "Welcome",
       "microphone": "Microphone",
-      "setup": "Setup"
+      "accessibility": "Trợ năng",
+      "setup": "Setup",
+      "shortcut": "Phím tắt",
+      "practice": "Dùng thử"
     },
     "welcome": {
+      "title": "Chào mừng đến với SilkScribe",
+      "description": "Nói thay vì gõ, trong bất kỳ ứng dụng nào. Thiết lập mất khoảng một phút.",
       "plan": {
         "step1": {
-          "title": "Allow the microphone"
+          "title": "Allow the microphone",
+          "description": "Để chúng tôi nghe được bạn."
+        },
+        "step2": {
+          "title": "Cho phép Trợ năng",
+          "description": "Để chúng tôi gõ vào ứng dụng của bạn."
         },
         "step3": {
-          "title": "Try it once"
+          "title": "Try it once",
+          "description": "Thử nhanh một lần là xong."
+        },
+        "shortcut": {
+          "title": "Chọn phím tắt",
+          "description": "Giữ để nói, hoặc nhấn để bắt đầu và dừng."
         }
-      }
+      },
+      "continue": "Bắt đầu"
     },
     "practice": {
+      "title": "Thử xem",
+      "description": "Bấm vào ô, giữ {{shortcut}} và nói gì đó.",
+      "shortcutFallback": "phím tắt của bạn",
+      "steps": {
+        "step1": {
+          "title": "Bấm vào ô"
+        },
+        "step2": {
+          "title": "Giữ {{shortcut}} và nói",
+          "toggleTitle": "Nhấn {{shortcut}} và nói"
+        },
+        "step3": {
+          "title": "Thả ra",
+          "toggleTitle": "Nhấn lần nữa"
+        }
+      },
+      "tipTitle": "Thử nói",
+      "tipBody": "“Để xem cái này chạy tốt thế nào.”",
+      "placeholder": "Lời bạn nói sẽ xuất hiện ở đây",
+      "success": "Hoạt động rồi!",
+      "readyToFinish": "Bạn đã sẵn sàng.",
+      "readyToFinishTap": "Bạn đã sẵn sàng. Chạm nhanh {{shortcut}} để tiếp tục nghe mà không cần giữ phím.",
       "finish": "Start using SilkScribe",
-      "skip": "Skip for now"
+      "skip": "Skip for now",
+      "finishing": "Đang hoàn tất…",
+      "finishFailed": "Không hoàn tất được thiết lập. Thử lại nhé.",
+      "descriptionToggle": "Bấm vào ô, nhấn {{shortcut}}, nói gì đó, rồi nhấn lần nữa."
+    },
+    "shared": {
+      "stepCounter": "Bước {{current}}/{{total}}"
+    },
+    "shortcut": {
+      "title": "Chọn phím tắt của bạn",
+      "description": "Bạn sẽ dùng nó trong mọi ứng dụng để bắt đầu đọc chính tả.",
+      "modeTitle": "Cách hoạt động",
+      "hold": {
+        "title": "Giữ để nói",
+        "body": "Giữ phím tắt trong khi nói, rồi thả ra."
+      },
+      "toggle": {
+        "title": "Nhấn để bắt đầu và dừng",
+        "body": "Nhấn một lần để bắt đầu, nhấn lần nữa khi xong."
+      },
+      "cleanup": {
+        "label": "Chỉnh sửa văn bản của tôi",
+        "description": "Sửa dấu câu và từ đệm bằng Apple Intelligence, ngay trên máy Mac này."
+      },
+      "continue": "Tiếp tục",
+      "cleanupFailed": "Không bật được chỉnh sửa bằng AI"
     }
   },
   "modelSelector": {
     "custom": "Tùy chỉnh",
     "active": "Đang hoạt động",
     "statusLabel": "Trạng thái mô hình: {{status}}",
+    "switching": "Đang chuyển…",
     "noModelsAvailable": "Không có mô hình nào",
     "extracting": "Đang giải nén {{modelName}}...",
     "extractingMultiple": "Đang giải nén {{count}} mô hình...",
+    "extractingGeneric": "Đang giải nén…",
+    "downloading": "Đang tải xuống · {{percentage}}%",
     "downloadingMultiple": "Đang tải xuống {{count}} mô hình...",
     "modelReady": "Mô Hình Sẵn Sàng",
     "loading": "Đang tải {{modelName}}...",
@@ -189,6 +347,8 @@
     "downloadSpeed": "{{speed}} MB/s",
     "cancel": "Hủy",
     "cancelDownload": "Hủy tải xuống",
+    "retryDownload": "Thử lại",
+    "downloadErrorTitle": "Tải xuống chưa xong",
     "downloadProgress": {
       "downloadedOf": "{{downloaded}} trên {{total}}",
       "speed": "{{speed}}/giây",
@@ -199,13 +359,19 @@
       "unknownEta": "Đang tính thời gian"
     },
     "capabilities": {
+      "languageSelection": "Nhiều ngôn ngữ",
+      "singleLanguage": "Một ngôn ngữ",
+      "multiLanguage": "Đa ngôn ngữ",
+      "languageOnly": "Chỉ {{language}}",
+      "translation": "Dịch sang tiếng Anh",
       "translate": "Dịch sang tiếng Anh"
     },
     "downloadErrors": {
       "preflightFailed": "SilkScribe không thể kiểm tra dung lượng ổ đĩa trước khi tải xuống: {{detail}}",
       "insufficientSpace": "SilkScribe cần {{required}} dung lượng trống để tải mô hình này. Hiện có {{available}}.",
       "downloadFailed": "SilkScribe không thể tải mô hình xuống: {{detail}}",
-      "extractionFailed": "SilkScribe không thể giải nén mô hình: {{detail}}"
+      "extractionFailed": "SilkScribe không thể giải nén mô hình: {{detail}}",
+      "unknown": "Tải xuống chưa xong."
     }
   },
   "settings": {
@@ -225,13 +391,57 @@
         "appDescription": "Chọn cảm giác của chính ứng dụng SilkScribe."
       },
       "shortcut": {
+        "title": "Phím tắt đọc chính tả",
+        "loading": "Đang tải…",
+        "none": "Chưa đặt phím tắt",
         "notFound": "Không tìm thấy phím tắt",
+        "pressKeys": "Nhấn một phím tắt…",
+        "reset": "Đặt lại mặc định",
+        "bindings": {
+          "transcribe": {
+            "name": "Phím tắt đọc chính tả",
+            "description": "Dùng được trong mọi ứng dụng."
+          },
+          "cancel": {
+            "name": "Phím tắt hủy",
+            "description": "Dừng mà không chép lời."
+          },
+          "transcribe_with_post_process": {
+            "name": "Phím tắt chỉnh sửa bằng AI",
+            "description": "Đọc chính tả và chỉnh văn bản gọn gàng bằng AI."
+          },
+          "command": {
+            "name": "Phím tắt lệnh",
+            "description": "Chọn văn bản rồi nói cách sửa, hoặc nói điều cần viết."
+          }
+        },
+        "errors": {
+          "restore": "Không khôi phục được phím tắt trước đó",
+          "set": "Không lưu được phím tắt: {{error}}",
+          "reset": "Không đặt lại được phím tắt"
+        },
         "success": {
           "saved": "Đã lưu phím tắt",
           "reset": "Đã đặt lại phím tắt"
         }
       },
+      "language": {
+        "title": "Ngôn ngữ nói",
+        "description": "Chọn ngôn ngữ của bạn để chính xác hơn, hoặc để chúng tôi tự nhận diện.",
+        "searchPlaceholder": "Tìm ngôn ngữ",
+        "noResults": "Không có kết quả",
+        "auto": "Tự nhận diện"
+      },
+      "pushToTalk": {
+        "label": "Giữ để nói",
+        "description": "Khi tắt, nhấn một lần để bắt đầu và nhấn lần nữa để dừng."
+      },
+      "tapToLock": {
+        "label": "Chạm để rảnh tay",
+        "description": "Chạm nhanh sẽ tiếp tục nghe cho tới khi bạn nhấn lần nữa."
+      },
       "theme": {
+        "title": "Giao diện",
         "options": {
           "system": "Hệ thống",
           "light": "Sáng",
@@ -239,9 +449,37 @@
         }
       }
     },
+    "models": {
+      "currentModel": "Công cụ hiện tại",
+      "currentModelSettings": "Cài đặt công cụ",
+      "yourModels": "Đã cài",
+      "availableModels": "Công cụ khác",
+      "noActiveModelTitle": "Chưa có công cụ",
+      "noActiveModelDescription": "Tải một công cụ bên dưới để bắt đầu đọc chính tả.",
+      "noExtraInstalled": "Đây là công cụ duy nhất của bạn.",
+      "deleteConfirm": "Bạn sẽ cần tải lại để dùng.",
+      "deleteActiveConfirm": "Đây là công cụ hiện tại, nên đọc chính tả sẽ dừng cho tới khi bạn chọn công cụ khác.",
+      "deleteTitle": "Xóa {{modelName}}?",
+      "filters": {
+        "allLanguages": "Tất cả ngôn ngữ"
+      },
+      "noModelsMatch": "Không có công cụ phù hợp",
+      "deleteConfirmAction": "Xóa"
+    },
     "sound": {
       "microphone": {
-        "title": "Micrô"
+        "title": "Micrô",
+        "placeholder": "Chọn micrô",
+        "loading": "Đang tải…"
+      },
+      "audioFeedback": {
+        "label": "Hiệu ứng âm thanh",
+        "description": "Phát âm thanh khi bắt đầu và kết thúc đọc chính tả."
+      },
+      "outputDevice": {
+        "title": "Phát âm thanh qua",
+        "placeholder": "Chọn đầu ra",
+        "loading": "Đang tải…"
       },
       "volume": {
         "title": "Âm lượng",
@@ -249,10 +487,10 @@
       },
       "soundTheme": {
         "options": {
+          "silk": "Silk",
           "marimba": "Marimba",
           "pop": "Pop",
-          "custom": "Tùy chỉnh",
-          "silk": "Silk"
+          "custom": "Tùy chỉnh"
         },
         "preview": "Nghe thử chủ đề âm thanh (phát bắt đầu rồi dừng)",
         "title": "Chủ đề âm thanh",
@@ -272,19 +510,33 @@
       "pageDescription": "Hầu hết mọi người có thể để nguyên. Dùng chúng khi bạn cần SilkScribe hoạt động khác đi trên máy của mình.",
       "groups": {
         "app": "Ứng dụng",
+        "output": "Dán",
         "transcription": "Chuyển đổi",
         "history": "Lịch sử",
-        "experimental": "Thử nghiệm"
+        "support": "Khắc phục sự cố",
+        "experimental": "Thử nghiệm",
+        "runtime": "Hiệu năng"
       },
       "groupDescriptions": {
-        "history": "Cài đặt lưu giữ và dọn dẹp cho bản phiên âm và bản ghi."
+        "history": "Cài đặt lưu giữ và dọn dẹp cho bản phiên âm và bản ghi.",
+        "experimental": "Vẫn đang phát triển — có thể thay đổi hoặc gặp lỗi."
+      },
+      "experimentalToggle": {
+        "label": "Tính năng thử nghiệm",
+        "description": "Dùng thử các tính năng chúng tôi còn đang hoàn thiện."
+      },
+      "lazyStreamClose": {
+        "label": "Giữ micrô bật một lúc",
+        "description": "Đọc chính tả liên tiếp nhanh hơn. Có thể làm giảm chất lượng âm thanh Bluetooth."
       },
       "acceleration": {
         "whisper": {
-          "title": "Tăng tốc Whisper"
+          "title": "Tăng tốc Whisper",
+          "description": "Tự động sẽ dùng GPU khi có."
         },
         "ort": {
-          "title": "Tăng tốc ONNX"
+          "title": "Tăng tốc ONNX",
+          "description": "Một số tùy chọn đang thử nghiệm."
         },
         "gpuDevice": {
           "auto": "Tự động"
@@ -297,16 +549,55 @@
           "rocm": "ROCm"
         }
       },
+      "startHidden": {
+        "label": "Khởi động ở chế độ nền",
+        "description": "Mở trong thanh menu mà không hiện cửa sổ này."
+      },
+      "autostart": {
+        "label": "Mở khi đăng nhập"
+      },
+      "showTrayIcon": {
+        "label": "Hiện biểu tượng trên thanh menu"
+      },
       "overlay": {
+        "title": "Chỉ báo ghi âm",
+        "description": "Hiện khi bạn đang đọc chính tả.",
         "options": {
+          "none": "Ẩn",
           "bottom": "Dưới",
           "top": "Trên"
         }
       },
       "pasteMethod": {
+        "title": "Cách dán",
+        "description": "Dán chèn toàn bộ văn bản một lần. Gõ nhập từng phím một.",
+        "options": {
+          "clipboard": "Dán ({{modifier}}+V)",
+          "clipboardCtrlShiftV": "Dán (Ctrl+Shift+V)",
+          "clipboardShiftInsert": "Dán (Shift+Insert)",
+          "direct": "Gõ",
+          "none": "Không dán (chỉ sao chép)",
+          "externalScript": "Script tùy chỉnh"
+        },
         "externalScriptPlaceholder": "/duong-dan/toi/script.sh"
       },
+      "typingTool": {
+        "title": "Công cụ gõ",
+        "description": "Dùng cho chế độ Gõ.",
+        "options": {
+          "auto": "Tự động (khuyên dùng)"
+        }
+      },
+      "clipboardHandling": {
+        "title": "Sau khi dán",
+        "options": {
+          "dontModify": "Trả lại nội dung cũ của bộ nhớ tạm",
+          "copyToClipboard": "Giữ văn bản trong bộ nhớ tạm"
+        }
+      },
       "autoSubmit": {
+        "title": "Nhấn một phím sau khi dán",
+        "description": "Tiện để gửi tin nhắn trò chuyện.",
         "options": {
           "off": "Tắt",
           "enter": "Enter",
@@ -316,42 +607,95 @@
         }
       },
       "translateToEnglish": {
-        "label": "Dịch sang tiếng Anh"
+        "label": "Dịch sang tiếng Anh",
+        "description": "Nói bất kỳ ngôn ngữ nào, nhận văn bản tiếng Anh."
       },
       "modelUnload": {
+        "title": "Giải phóng công cụ khi rảnh",
+        "description": "Giải phóng bộ nhớ. Lần đọc chính tả tiếp theo sẽ khởi động chậm hơn một chút.",
         "options": {
           "never": "Không bao giờ",
+          "immediately": "Ngay lập tức",
           "min2": "Sau 2 phút",
           "min5": "Sau 5 phút",
           "min10": "Sau 10 phút",
           "min15": "Sau 15 phút",
-          "hour1": "Sau 1 giờ"
+          "hour1": "Sau 1 giờ",
+          "sec5": "Sau 5 giây (gỡ lỗi)"
         }
       },
       "customWords": {
+        "title": "Từ vựng",
+        "description": "Tên và thuật ngữ cần viết theo cách của bạn.",
+        "placeholder": "Thêm từ hoặc tên",
         "add": "Thêm",
-        "remove": "Xóa {{word}}"
+        "remove": "Xóa {{word}}",
+        "duplicate": "“{{word}}” đã có trong danh sách"
+      },
+      "overlayAppearance": {
+        "title": "Giao diện chỉ báo",
+        "options": {
+          "auto": "Theo ứng dụng",
+          "light": "Sáng",
+          "dark": "Tối"
+        }
+      },
+      "liveText": {
+        "label": "Văn bản trực tiếp khi đọc chính tả",
+        "description": "Hiện từ ngữ ngay khi bạn nói, với các công cụ nhanh. Văn bản cuối có thể đến chậm hơn một chút."
       }
     },
     "postProcessing": {
+      "hotkey": {
+        "title": "Phím tắt"
+      },
       "api": {
+        "title": "Kết nối",
         "provider": {
-          "title": "Nhà cung cấp"
+          "title": "Nhà cung cấp",
+          "description": "Mọi API tương thích OpenAI đều dùng được.",
+          "custom": "Tùy chỉnh"
+        },
+        "appleIntelligence": {
+          "unavailable": "Apple Intelligence không có trên máy Mac này. Cần chip Apple, macOS Tahoe 26 trở lên và đã bật Apple Intelligence."
         },
         "baseUrl": {
           "title": "URL cơ sở",
-          "placeholder": "https://api.openai.com/v1"
+          "description": "Chỉ sửa được khi chọn Tùy chỉnh.",
+          "placeholder": "https://api.openai.com/v1",
+          "managed": "Do nhà cung cấp đặt"
         },
         "apiKey": {
+          "title": "Khóa API",
           "placeholder": "sk-..."
         },
         "model": {
           "title": "Mô hình",
-          "placeholderNoOptions": "Nhập tên mô hình"
+          "descriptionCustom": "Tên mô hình mà điểm cuối của bạn yêu cầu.",
+          "placeholderWithOptions": "Tìm mô hình",
+          "placeholderNoOptions": "Nhập tên mô hình",
+          "refreshModels": "Làm mới"
         }
       },
       "prompts": {
-        "cancel": "Hủy"
+        "title": "Prompt",
+        "selectedPrompt": {
+          "title": "Prompt"
+        },
+        "noPrompts": "Chưa có prompt",
+        "selectPrompt": "Chọn một prompt",
+        "createNew": "Prompt mới",
+        "promptLabel": "Tên",
+        "promptLabelPlaceholder": "VD: Sửa ngữ pháp",
+        "promptInstructions": "Hướng dẫn",
+        "promptInstructionsPlaceholder": "Sửa ngữ pháp và dấu câu trong: ${output}",
+        "promptTip": "Đặt <code>${output}</code> ở chỗ cần chèn bản ghi.",
+        "updatePrompt": "Lưu thay đổi",
+        "deletePrompt": "Xóa prompt",
+        "createPrompt": "Tạo prompt",
+        "cancel": "Hủy",
+        "selectToEdit": "Chọn một prompt để sửa.",
+        "createFirst": "Tạo một prompt để tự động chỉnh gọn nội dung bạn đọc."
       }
     },
     "history": {
@@ -395,22 +739,72 @@
       "retry": "Thử lại"
     },
     "debug": {
+      "logDirectory": {
+        "title": "Thư mục nhật ký"
+      },
+      "logLevel": {
+        "title": "Mức nhật ký"
+      },
+      "updateChecks": {
+        "label": "Tự động kiểm tra bản cập nhật"
+      },
+      "wordCorrectionThreshold": {
+        "title": "Mức khớp từ vựng",
+        "description": "Cao hơn sẽ bắt được nhiều từ hơn nhưng có thể sửa quá tay."
+      },
+      "historyLimit": {
+        "title": "Giữ tối đa",
+        "entries": "lần đọc chính tả"
+      },
       "recordingRetention": {
+        "title": "Xóa âm thanh đọc chính tả",
+        "description": "Chỉ xóa âm thanh. Bản ghi vẫn được giữ.",
         "never": "Không bao giờ",
         "preserveLimit": "Giữ {{count}} bản mới nhất",
         "days3": "Sau 3 ngày",
         "weeks2": "Sau 2 tuần",
-        "months3": "Sau 3 tháng"
+        "months3": "Sau 3 tháng",
+        "placeholder": "Chọn…"
+      },
+      "alwaysOnMicrophone": {
+        "label": "Micrô luôn bật",
+        "description": "Khởi động nhanh hơn, nhưng micrô luôn hoạt động."
+      },
+      "clamshellMicrophone": {
+        "title": "Micrô khi gập màn hình"
+      },
+      "postProcessingToggle": {
+        "label": "Dùng chỉnh sửa bằng AI",
+        "description": "Sửa dấu câu và từ đệm bằng mô hình ngôn ngữ trước khi dán."
+      },
+      "muteWhileRecording": {
+        "label": "Tắt tiếng âm thanh khác",
+        "description": "Tắt tiếng các ứng dụng khác khi bạn đọc chính tả, trừ lúc đang họp."
+      },
+      "appendTrailingSpace": {
+        "label": "Thêm dấu cách sau khi dán"
       },
       "keyboardImplementation": {
+        "title": "Cơ chế phím tắt",
+        "bindingsReset": "Phím tắt của bạn không tương thích nên chúng tôi đã đặt lại.",
         "backends": {
+          "tauri": "Tiêu chuẩn",
           "nativeKeys": "Phím gốc"
-        }
+        },
+        "error": "Không chuyển được cơ chế phím tắt"
       },
       "paths": {
         "appData": "Dữ liệu ứng dụng:",
         "models": "Mô hình:",
         "settings": "Cài đặt:"
+      },
+      "pasteDelay": {
+        "title": "Độ trễ khi dán",
+        "description": "Thời gian chờ trước khi dán, tính bằng ms. Tăng lên nếu văn bản bị cắt."
+      },
+      "recordingBuffer": {
+        "title": "Ghi thêm sau khi thả phím",
+        "description": "Bắt được phần cuối của từ sau cùng."
       }
     },
     "about": {
@@ -418,6 +812,105 @@
       "version": {
         "title": "Phiên bản",
         "description": "Phiên bản hiện tại của SilkScribe"
+      },
+      "appDataDirectory": {
+        "title": "Thư mục dữ liệu"
+      }
+    },
+    "aiCleanup": {
+      "title": "Chỉnh sửa bằng AI",
+      "everyDictation": {
+        "label": "Chỉnh sửa mọi lần đọc chính tả",
+        "description": "Phím tắt chính cũng được chỉnh sửa bằng AI, không chỉ phím tắt bên dưới."
+      },
+      "level": {
+        "title": "Kiểu chỉnh sửa"
+      },
+      "levels": {
+        "light": "Nhẹ",
+        "standard": "Tiêu chuẩn",
+        "rewrite": "Viết lại"
+      },
+      "levelHelp": {
+        "light": "Chỉ dấu câu, chữ hoa và số.",
+        "standard": "Bỏ thêm từ đệm và chỗ lặp từ.",
+        "rewrite": "Viết lại cho rõ ràng, mạch lạc.",
+        "custom": "Dùng prompt của riêng bạn."
+      },
+      "onDevice": "Chạy trên máy Mac này. Lời bạn nói không bị tải lên.",
+      "cloud": "Văn bản bạn đọc được gửi tới {{provider}} để chỉnh sửa.",
+      "prompts": "Prompt",
+      "nearbyText": {
+        "label": "Dùng văn bản xung quanh",
+        "description": "Đọc văn bản quanh con trỏ để viết đúng tên và thuật ngữ. Văn bản ở lại trên máy Mac này, và các ô mật khẩu không bao giờ được đọc.",
+        "descriptionCloud": "Đọc văn bản quanh con trỏ để viết đúng tên, khi chỉnh sửa chạy trên máy Mac này. Các ô mật khẩu không bao giờ được đọc."
+      },
+      "shareNearbyText": {
+        "label": "Gửi cả văn bản xung quanh tới {{provider}}",
+        "description": "Mặc định tắt: văn bản quanh con trỏ ở lại trên máy Mac này."
+      }
+    },
+    "styles": {
+      "title": "Văn phong",
+      "enable": {
+        "label": "Theo ứng dụng đang dùng",
+        "description": "Chỉnh sửa bằng AI viết thân mật khi trò chuyện, trang trọng trong email và giữ nguyên mã như bạn nói."
+      },
+      "categories": {
+        "messaging": "Tin nhắn và trò chuyện",
+        "email": "Email",
+        "documents": "Tài liệu và ghi chú",
+        "code": "Mã và terminal",
+        "ai_chat": "Trợ lý AI",
+        "other": "Mọi thứ khác"
+      },
+      "tones": {
+        "casual": "Thân mật",
+        "neutral": "Trung tính",
+        "formal": "Trang trọng"
+      },
+      "fixed": {
+        "code": "Giữ nguyên mã và lệnh như bạn nói",
+        "ai_chat": "Giữ yêu cầu của bạn thành một prompt rõ ràng"
+      },
+      "apps": {
+        "title": "Ứng dụng bạn đã đọc chính tả vào",
+        "description": "Chuyển ứng dụng sang loại khác nếu nó bị xử lý sai.",
+        "builtIn": "Mặc định"
+      }
+    },
+    "dictionary": {
+      "title": "Từ điển",
+      "remove": "Xóa {{phrase}}",
+      "replacements": {
+        "title": "Thay thế",
+        "description": "Luôn viết một từ hoặc cụm từ theo cách của bạn.",
+        "said": "Khi tôi nói",
+        "saidExample": "VD: ko",
+        "written": "Viết thành",
+        "writtenExample": "VD: không",
+        "add": "Thêm thay thế"
+      },
+      "snippets": {
+        "title": "Đoạn mẫu",
+        "description": "Nói một cụm ngắn để chèn đoạn văn dài hơn, như địa chỉ của bạn.",
+        "trigger": "Cụm từ kích hoạt",
+        "triggerExample": "VD: địa chỉ của tôi",
+        "text": "Nội dung đoạn mẫu",
+        "textExample": "Văn bản cần chèn",
+        "add": "Thêm đoạn mẫu"
+      },
+      "file": {
+        "title": "Sao lưu hoặc chuyển",
+        "description": "Nhập danh sách từ hoặc tệp từ điển, hoặc xuất từ điển của bạn.",
+        "import": "Nhập…",
+        "export": "Xuất…",
+        "kind": "Từ điển",
+        "defaultName": "Từ điển SilkScribe.json",
+        "imported_other": "Đã thêm {{count}} mục",
+        "exported": "Đã xuất từ điển",
+        "importFailed": "Không nhập được từ điển",
+        "exportFailed": "Không xuất được từ điển"
       }
     }
   },
@@ -441,24 +934,116 @@
     }
   },
   "common": {
+    "loading": "Đang tải…",
     "versionLabel": "v{{version}}",
     "cancel": "Hủy",
     "delete": "Xóa",
     "open": "Mở",
     "default": "Mặc định",
+    "noOptionsFound": "Không có kết quả",
+    "moreInformation": "Thêm thông tin",
     "errorBoundary": {
+      "description": "Không tải được màn hình này. Cài đặt và bản ghi âm của bạn vẫn an toàn.",
       "reload": "Tải lại",
-      "openLogs": "Mở nhật ký"
-    }
+      "openLogs": "Mở nhật ký",
+      "title": "Đã xảy ra lỗi"
+    },
+    "choose": "Chọn…"
+  },
+  "errors": {
+    "loadDirectory": "Không mở được thư mục này: {{error}}"
+  },
+  "appLanguage": {
+    "title": "Ngôn ngữ ứng dụng"
   },
   "overlay": {
+    "listening": "Đang nghe",
     "transcribing": "Đang phiên âm",
+    "processing": "Đang chỉnh sửa",
     "success": "Xong",
-    "cancelled": "Đã hủy"
+    "failed": "Không được",
+    "cancelled": "Đã hủy",
+    "empty": "Không nghe rõ",
+    "detail": {
+      "cancelled": "Chưa dán gì",
+      "empty": "Không phát hiện giọng nói",
+      "pasteCopied": "Đã sao chép — hãy tự dán",
+      "pasteFailed": "Không dán hay sao chép được",
+      "cleanupSkipped": "Đã dán, chưa chỉnh sửa bằng AI",
+      "transcriptionFailed": "Chép lời chưa xong",
+      "recordingFailed": "Không bắt đầu ghi âm được",
+      "commandNeedsSetup": "Hãy thiết lập chỉnh sửa bằng AI trước",
+      "commandFailed": "Không có gì thay đổi",
+      "commandTimedOut": "Hết thời gian, không có gì thay đổi",
+      "commandTooLong": "Chọn ít văn bản hơn",
+      "commandPassword": "Không dùng trong ô mật khẩu",
+      "commandNotText": "Hãy chọn văn bản"
+    },
+    "style": {
+      "casual": "Thân mật",
+      "neutral": "Trung tính",
+      "formal": "Trang trọng",
+      "code": "Mã",
+      "ai_chat": "Prompt AI"
+    },
+    "nearbyText": "Văn bản xung quanh",
+    "command": {
+      "listening": "Đang chờ lệnh",
+      "tag": "Lệnh",
+      "editing": "Đang sửa",
+      "writing": "Đang viết"
+    },
+    "handsFree": {
+      "listening": "Đang nghe rảnh tay. Nhấn phím tắt lần nữa để kết thúc, hoặc Esc để hủy.",
+      "tag": "Rảnh tay"
+    }
+  },
+  "meetingOrb": {
+    "orbLabel": "Đang ghi cuộc họp, {{state}}",
+    "pinHint": "Bấm để giữ mở. Kéo để di chuyển.",
+    "cardLabel": "Bản ghi trực tiếp của cuộc họp",
+    "transcriptLabel": "Bản ghi đến lúc này",
+    "untitled": "Cuộc họp chưa đặt tên",
+    "recording": "Đang ghi",
+    "paused": "Đã tạm dừng",
+    "finishing": "Đang hoàn tất…",
+    "needsAttention": "Cần chú ý",
+    "microphone": "Micrô của bạn",
+    "computerAudio": "Âm thanh máy tính",
+    "micGated": "Micrô của bạn không được ghi vào cuộc họp khi bạn đang đọc chính tả",
+    "you": "Bạn",
+    "others": "Người khác",
+    "listening": "Đang nghe…",
+    "listeningBody": "Lời nói sẽ hiện ở đây khi mọi người nói.",
+    "unavailableTitle": "Không có bản ghi trực tiếp",
+    "unavailableBody": "Tải một công cụ đọc chính tả để xem lời nói ngay lúc đó. Việc ghi âm vẫn hoạt động.",
+    "catchingUp": "Đang bắt kịp…",
+    "jumpToLatest": "Đến mới nhất",
+    "pause": "Tạm dừng",
+    "resume": "Tiếp tục",
+    "stop": "Dừng và chép lời",
+    "open": "Mở ghi chú",
+    "letPeopleKnow": "Báo cho mọi người",
+    "prompt": {
+      "title": "Ghi chú cho cuộc gọi {{app}} này?",
+      "titleEvent": "Ghi chú cho “{{title}}”?",
+      "body": "SilkScribe ghi micrô của bạn và {{app}} trên máy Mac này. Không có gì được tải lên.",
+      "bodyEvent": "SilkScribe ghi micrô của bạn và âm thanh máy tính trên máy Mac này. Không có gì được tải lên.",
+      "start": "Bắt đầu ghi chú",
+      "notNow": "Để sau"
+    }
   },
   "feedback": {
     "pasteFailed": {
-      "copiedTitle": "Đã sao chép vào bảng nhớ tạm"
+      "copiedTitle": "Đã sao chép vào bảng nhớ tạm",
+      "copiedDescription": "Không dán được ở đây, nên nội dung đã sẵn sàng để bạn tự dán.",
+      "copyFailedTitle": "Không dán hay sao chép được",
+      "copyFailedDescription": "Thử lại, hoặc tìm trong Thư viện của bạn."
+    },
+    "dictationOff": {
+      "title": "Đọc chính tả đang tắt",
+      "description": "Cho phép quyền Micrô và Trợ năng để dùng phím tắt.",
+      "action": "Khắc phục"
     }
   },
   "home": {
@@ -527,51 +1112,110 @@
     "home": "Trang chủ",
     "library": "Thư viện",
     "settings": "Cài đặt",
+    "navigation": "Chính",
     "recordMeeting": "Ghi cuộc họp",
     "importAudio": "Nhập âm thanh",
     "localOnly": "Tất cả đều được xử lý trên thiết bị này",
+    "onDevice": "Chạy trên thiết bị của bạn",
+    "homeTitle": "Sẵn sàng khi bạn cần",
+    "homeDescription": "Ghi một cuộc họp, nhập âm thanh, hoặc tiếp tục chỗ bạn đang làm.",
+    "libraryDescription": "Mọi lần đọc chính tả, cuộc họp và tệp — đều tìm kiếm được.",
+    "meetingShort": "Micrô của bạn và âm thanh máy tính",
+    "importShort": "Biến tệp âm thanh thành bản ghi",
     "dictation": "Ghi âm",
+    "dictationHelp": "Chưa thiết lập · Hoàn tất thiết lập",
     "inProgress": "Đang thực hiện",
+    "recent": "Gần đây",
+    "viewLibrary": "Xem tất cả",
     "transcripts": "Bản ghi chép",
+    "searchLibrary": "Tìm trong bản ghi",
     "clearSearch": "Xóa tìm kiếm",
     "loading": "Đang tải các bản ghi chép của bạn…",
+    "emptyTitle": "Chưa có gì ở đây",
+    "emptyDescription": "Ghi một cuộc họp hoặc thả một tệp âm thanh vào để bắt đầu.",
+    "noResults": "Không có kết quả",
     "trySearch": "Thử tìm kiếm hoặc bộ lọc khác.",
     "loadMore": "Xem thêm",
     "back": "Quay lại",
     "title": "Tiêu đề",
     "saved": "Đã lưu",
     "saving": "Đang lưu…",
+    "saveFailed": "Không lưu được thay đổi",
     "export": "Xuất",
+    "exported": "Đã xuất",
     "delete": "Xóa bản ghi",
+    "deleteHelp": "Ghi chú và âm thanh của nó cũng bị xóa. Tệp gốc của bạn vẫn ở nguyên chỗ cũ.",
     "deleteAudio": "Xóa âm thanh",
+    "deleteAudioHelp": "Bạn vẫn giữ bản ghi và ghi chú, nhưng không phát lại được nữa.",
     "cancel": "Hủy",
+    "retry": "Thử lại",
+    "speed": "Tốc độ",
+    "documentViews": "Chế độ xem",
     "transcript": "Bản ghi",
     "notes": "Ghi chú",
     "speakers": "Người nói",
+    "searchTranscript": "Tìm",
+    "transcriptPending": "Bản ghi của bạn sẽ hiện ở đây khi sẵn sàng.",
     "speaker": "Người nói",
+    "unknownSpeaker": "Không rõ",
     "segment": "Bản ghi tại",
+    "restoreOriginal": "Khôi phục bản gốc",
+    "speakerHelp": "Tên chỉ áp dụng cho bản ghi âm này.",
+    "noSpeakers": "Không tìm thấy người nói nào trong bản ghi âm này.",
     "speakerName": "Tên người nói",
     "mergeSpeaker": "Gộp vào…",
+    "notesStale": "Bạn đã sửa bản ghi. Tạo lại để cập nhật các thay đổi.",
+    "noNotes": "Chưa có ghi chú.",
+    "regenerate": "Tạo lại",
     "summary": "Tóm tắt",
     "decisions": "Quyết định",
     "actions": "Việc cần làm",
     "action": "Việc cần làm",
+    "done": "Xong",
     "owner": "Chủ sở hữu",
+    "due": "Hạn",
+    "audioFiles": "Âm thanh",
     "cancelJob": "Hủy {{title}}",
+    "transcriptionModel": "Công cụ",
+    "currentDictationModel": "Giống đọc chính tả",
     "language": "Ngôn ngữ",
+    "autoLanguage": "Tự nhận diện",
     "detectSpeakers": "Xác định người nói",
+    "localNotes": "Ghi chú AI",
+    "noAutomaticNotes": "Không ghi chú",
+    "microphoneLevel": "Mức micrô",
     "systemLevel": "Mức độ âm thanh máy tính",
     "resume": "Tiếp tục",
     "pause": "Tạm dừng",
+    "stopTranscribe": "Dừng và chép lời",
+    "meetingHelp": "Chúng tôi ghi cả hai phía, rồi chép lời khi bạn dừng.",
+    "importHelp": "Chọn tệp và cách xử lý. Bạn vẫn làm việc tiếp được trong lúc chép lời.",
     "meetingTitle": "Họp chưa đặt tên",
     "microphone": "Micro",
     "defaultMicrophone": "Mặc định của hệ thống",
     "computerAudio": "Bao gồm âm thanh máy tính",
+    "systemPermission": "macOS sẽ hỏi quyền Ghi màn hình & âm thanh hệ thống.",
+    "removeFile": "Gỡ",
+    "chooseFiles": "Chọn tệp…",
+    "processing": "Xử lý",
+    "setupNeeded": "Một số công cụ chưa được thiết lập. Hãy ghi ngay và xử lý sau.",
+    "modelSetup": "Thiết lập công cụ",
     "working": "Đang xử lý…",
     "startRecording": "Bắt đầu ghi âm",
+    "startTranscription": "Chép lời",
+    "modelsLanguage": "Công cụ & ngôn ngữ",
     "storage": "Lưu trữ & quyền riêng tư",
+    "localIntelligence": "Công cụ",
+    "localModelsHelp": "Chỉ tải những gì bạn cần. Mọi thứ chạy trên máy Mac này — công cụ lớn cần nhiều bộ nhớ hơn.",
+    "runtimeReady": "Sẵn sàng chạy trên máy Mac này.",
+    "runtimeMissing": "Bản dựng này chưa chạy được các công cụ này. Đọc chính tả vẫn hoạt động.",
+    "unpublished": "Chưa có",
+    "downloading": "Đang tải xuống…",
     "installed": "Đã cài đặt",
     "download": "Tải xuống",
+    "dropAudio": "Thả để chép lời",
+    "workspaceFirst": "Chỉ chép lời tệp",
+    "workspaceFirstHelp": "Không cần quyền micrô hay Trợ năng.",
     "source": {
       "dictation": "Ghi âm",
       "meeting": "Họp",
@@ -586,13 +1230,17 @@
     },
     "purpose": {
       "asr": "Chuyển văn bản",
+      "alignment": "Mốc thời gian từng từ",
+      "speakers": "Người nói",
       "notes": "Tóm tắt & mục cần làm"
     },
     "stage": {
       "recording": "Đang ghi âm",
       "paused": "Đã tạm dừng",
       "queued": "Đã xếp hàng",
+      "preparing": "Đang chuẩn bị",
       "transcribing": "Đang chuyển văn bản",
+      "diarizing": "Đang nhận diện người nói",
       "notes": "Viết ghi chú",
       "complete": "Sẵn sàng",
       "failed": "Cần xử lý",
@@ -602,34 +1250,267 @@
     "audio": "Âm thanh",
     "appearance": "Giao diện",
     "debug": "Nhà phát triển",
+    "retentionHelp": "Cuộc họp và tệp đã nhập được giữ cho tới khi bạn xóa. Các cài đặt này chỉ áp dụng cho âm thanh đọc chính tả.",
+    "dictationRetention": "Âm thanh đọc chính tả",
     "skipToContent": "Bỏ qua đến nội dung",
+    "memoryGuidance": "Cần khoảng {{gb}} GB bộ nhớ",
     "notesModel9": "Qwen3.5 · 9B",
     "notesModel27": "Qwen3.6 · 27B",
+    "draftConflict": "Chúng tôi tìm thấy một bản nháp chưa lưu từ phiên bản cũ hơn.",
+    "recoverDraft": "Khôi phục bản nháp",
+    "keepSaved": "Giữ bản đã lưu",
+    "transcriptReadyWarning": "Bản ghi đã xong · một số bước chưa hoàn tất",
+    "retryEnhancement": "Thử lại",
+    "withoutEnhancements": "Bỏ qua người nói và ghi chú",
     "recordForLater": "Ghi âm ngay, chuyển văn bản sau",
+    "returnToSetup": "Quay lại thiết lập",
+    "advancedDictationModels": "Công cụ đọc chính tả khác",
     "activity": "Hoạt động",
     "close": "Đóng",
+    "noActiveJobs": "Không có gì đang xử lý",
     "presetFast": "Bản ghi nhanh",
     "presetDetailed": "Bản ghi chi tiết",
     "presetNotes": "Bản ghi + ghi chú",
+    "processingDetails": "Công cụ và tùy chọn",
+    "stopSave": "Dừng và lưu âm thanh",
+    "finishEditing": "Xong",
     "editTranscript": "Chỉnh sửa bản ghi",
     "followPlayback": "Theo dõi phát lại",
     "previous": "Trước",
     "next": "Tiếp theo",
+    "undoMerge": "Hoàn tác gộp",
+    "evidence": "Từ bản ghi",
+    "playEvidence": "Phát",
+    "pauseDownload": "Tạm dừng",
+    "removeModel": "Gỡ công cụ",
+    "removeModelHelp": "Bản ghi của bạn vẫn còn. Bạn có thể tải lại bất cứ lúc nào.",
+    "storageUsage": "Dung lượng",
+    "audioStorage": "Bản ghi âm",
+    "modelStorage": "Công cụ",
+    "freeStorage": "Dung lượng trống",
+    "setupModels": "Thiết lập công cụ",
+    "skipEnhancement": "Bỏ qua",
     "generateNotes": "Tạo ghi chú",
     "addItem": "Thêm mục",
     "removeItem": "Xóa mục",
     "newSpeaker": "Thêm người nói",
+    "speakerSample": "Nghe mẫu",
+    "exportPreview": "Xuất",
+    "confirmExport": "Chọn nơi lưu…",
+    "readiness": {
+      "download": "Tải {{model}} để dùng tính năng này.",
+      "unpublished": "{{model}} chưa có.",
+      "unavailable": "{{model}} không có trong bản dựng này.",
+      "native_download": "Tải {{model}} hoặc chọn công cụ đọc chính tả khác.",
+      "runtime": "Bản dựng này thiếu một thành phần cần thiết.",
+      "fallback_download": "Tự nhận diện cần Whisper large-v3 cho một số ngôn ngữ. Hãy tải về, hoặc chọn một ngôn ngữ.",
+      "language": "Công cụ này không hỗ trợ ngôn ngữ đó. Hãy chọn ngôn ngữ hoặc công cụ khác.",
+      "memory": "Không đủ bộ nhớ trống cho {{model}}. Hãy đóng bớt ứng dụng hoặc chọn công cụ ghi chú nhỏ hơn."
+    },
+    "newNotesReview": "Ghi chú mới",
+    "newNotesHelp": "Ghi chú hiện tại ở bên dưới. Hãy so sánh trước khi thay thế.",
+    "replaceNotes": "Thay ghi chú",
+    "keepCurrentNotes": "Giữ bản hiện tại",
     "speakerCount_one": "người nói {{count}}",
     "speakerCount_other": "người nói {{count}}",
+    "timing": {
+      "aligned": "Mốc thời gian theo từng từ",
+      "aligned_or_segments": "Mốc thời gian theo từ khi hỗ trợ, nếu không thì theo câu",
+      "segments": "Mốc thời gian theo câu"
+    },
+    "memoryAvailable": "Còn trống khoảng {{gb}} GB",
+    "memoryObserved": "Đã dùng tới {{gb}} GB ở đây. Âm thanh dài hơn có thể cần nhiều hơn.",
+    "memoryUnmeasured": "Chưa đo trên máy Mac này",
+    "checkingFiles": "Đang kiểm tra tệp…",
+    "durationUnknown": "Không rõ thời lượng",
+    "importProblems": "Một số tệp không nhập được",
     "dismiss": "Bỏ qua",
-    "selectedTurns": "Lượt nói đã chọn",
+    "verifyModel": "Kiểm tra tệp",
+    "modelVerified": "Tệp ổn",
+    "modelDamaged": "Tệp bị hỏng · Tải lại",
+    "finishingAudio": "Đang hoàn tất…",
+    "selectPage": "Chọn tất cả trên trang này",
     "clearSelection": "Xóa lựa chọn",
+    "selectedTurns": "Lượt nói đã chọn",
+    "assignSelectedSpeaker": "Gán người nói",
     "selectTurn": "Chọn lượt tại {{time}}",
-    "unfinishedImports": "Nhập liệu chưa hoàn thành"
+    "exportOriginalText": "Xuất văn bản gốc",
+    "notesReviewed": "Tôi đã đối chiếu ghi chú này với bản ghi",
+    "unfinishedImports": "Nhập liệu chưa hoàn thành",
+    "resumeImport": "Tiếp tục nhập",
+    "discardImport": "Hủy bỏ",
+    "captureUnsupported": "Hiện chỉ máy Mac mới ghi được cuộc họp. Bạn vẫn có thể nhập âm thanh.",
+    "microphoneReady": "Đã cho phép micrô",
+    "microphonePermissionNeeded": "Cho phép micrô để ghi giọng nói của bạn.",
+    "allowMicrophone": "Cho phép micrô",
+    "computerAudioReady": "Đã cho phép âm thanh máy tính",
+    "computerPermissionNeeded": "Cho phép Ghi màn hình & âm thanh hệ thống để thu âm thanh máy tính.",
+    "allowComputerAudio": "Cho phép âm thanh máy tính",
+    "microphoneUnavailable": "Micrô đó không dùng được. Hãy chọn micrô khác.",
+    "replaceOnlySection": "Chỉ thay phần này",
+    "sectionReplacementHelp": "Các ghi chú khác vẫn giữ nguyên.",
+    "deleteTitle": "Xóa bản ghi này?",
+    "deleteAudioTitle": "Xóa âm thanh?",
+    "matchCount_other": "{{count}} kết quả",
+    "mergeTitle": "Gộp người nói?",
+    "merge": "Gộp",
+    "mergePreview_other": "Chuyển {{count}} lượt nói từ {{from}} sang {{to}}. Bạn có thể hoàn tác.",
+    "remove": "Gỡ",
+    "removeModelTitle": "Gỡ {{name}}?",
+    "activeCount_other": "{{count}} đang xử lý",
+    "errors": {
+      "addFiles": "Không thêm được các tệp đó",
+      "loadDevices": "Không tải được danh sách micrô",
+      "startImport": "Không bắt đầu nhập được",
+      "controlRecording": "Không cập nhật được bản ghi âm",
+      "openTranscript": "Không mở được bản ghi này",
+      "cancelJob": "Không hủy được",
+      "removeEngine": "Không gỡ được công cụ",
+      "discardImport": "Không hủy được việc nhập",
+      "requestAccess": "Không yêu cầu được quyền truy cập",
+      "removeFile": "Không gỡ được tệp",
+      "installEngine": "Không tải được công cụ",
+      "verifyEngine": "Không kiểm tra được tệp",
+      "loadMore": "Không tải thêm được bản ghi",
+      "loadLibrary": "Không tải được các bản ghi của bạn",
+      "saveTranscript": "Không lưu được thay đổi",
+      "exportTranscript": "Không xuất được",
+      "updateNotes": "Không cập nhật được ghi chú",
+      "generateNotes": "Không tạo được ghi chú",
+      "discardDraft": "Không hủy được bản nháp",
+      "startProcessing": "Không bắt đầu xử lý được",
+      "deleteTranscript": "Không xóa được",
+      "enableCleanup": "Không bật được chỉnh sửa bằng AI",
+      "copyOriginal": "Không sao chép được bản gốc",
+      "loadNotes": "Không tải được ghi chú của bạn",
+      "saveNotes": "Không lưu được ghi chú của bạn",
+      "copyMessage": "Không sao chép được tin nhắn",
+      "copyText": "Không sao chép được văn bản",
+      "saveStyle": "Không lưu được văn phong",
+      "startMeeting": "Không bắt đầu cuộc họp được",
+      "addToDictionary": "Không thêm được vào từ điển",
+      "connectCalendar": "Không kết nối được lịch của bạn"
+    },
+    "liveTranscript": "Bản ghi trực tiếp",
+    "liveTranscriptNote": "Một bản ghi chính xác hơn sẽ thay thế bản này khi xử lý xong.",
+    "cleanupCard": {
+      "title": "Chỉnh sửa mọi lần đọc chính tả",
+      "body": "Sửa dấu câu và từ đệm bằng Apple Intelligence. Chạy ngay trên máy Mac này.",
+      "turnOn": "Bật",
+      "notNow": "Để sau"
+    },
+    "showOriginal": "Hiện bản gốc",
+    "hideOriginal": "Ẩn bản gốc",
+    "copyOriginal": "Sao chép bản gốc",
+    "copiedOriginal": "Đã sao chép bản gốc",
+    "originalLabel": "Văn bản trước khi chỉnh sửa bằng AI",
+    "yourNotes": "Ghi chú của bạn",
+    "yourNotesPlaceholder": "Ghi lại điều quan trọng ngay khi nó diễn ra. Bắt đầu dòng bằng - để tạo danh sách.",
+    "consent": {
+      "reminder": "Hãy báo cho mọi người biết bạn đang ghi chú.",
+      "copy": "Sao chép lời thông báo",
+      "copied": "Đã sao chép tin nhắn",
+      "message": "Thông báo: Tôi đang ghi chú bằng SilkScribe. Ứng dụng chạy trên máy Mac của tôi và không tải gì lên.",
+      "setting": "Nhắc tôi báo cho mọi người",
+      "settingHint": "Hiện lời nhắc khi bắt đầu ghi."
+    },
+    "holdToTalk": "Giữ để nói",
+    "holdOrTap": "Giữ để nói, hoặc chạm để rảnh tay",
+    "pressToTalk": "Nhấn để bắt đầu và dừng",
+    "recentDictation": "Đọc chính tả gần đây",
+    "wordsToday": "Số từ hôm nay",
+    "streak": "Chuỗi ngày",
+    "streakDays_other": "{{count}} ngày",
+    "copy": "Sao chép",
+    "copied": "Đã sao chép",
+    "enhanceNotes": "Bổ sung ghi chú",
+    "youWrote": "Bạn đã viết",
+    "callTitle": "Cuộc gọi {{app}}",
+    "captureFrom": {
+      "label": "Thu âm thanh từ",
+      "allApps": "Mọi ứng dụng"
+    },
+    "suggestNotes": {
+      "label": "Gợi ý ghi chú khi cuộc gọi bắt đầu",
+      "hint": "Hiện gợi ý khi Zoom, Teams, FaceTime hoặc ứng dụng gọi khác bắt đầu dùng micrô."
+    },
+    "dictionary": {
+      "add": "Thêm vào từ điển",
+      "heard": "Nghe thành",
+      "heardHelp": "Để trống để chỉ dạy cách viết",
+      "write": "Viết thành",
+      "writeHelp": "Cách nó luôn được hiển thị",
+      "save": "Thêm",
+      "added": {
+        "word": "Đã thêm vào từ vựng",
+        "replacement": "Đã thêm thành một thay thế"
+      }
+    },
+    "templates": {
+      "label": "Mẫu ghi chú",
+      "names": {
+        "general": "Chung",
+        "one_on_one": "1:1",
+        "standup": "Họp đứng",
+        "customer_call": "Cuộc gọi khách hàng",
+        "interview": "Phỏng vấn",
+        "lecture": "Bài giảng"
+      },
+      "sections": {
+        "updates": "Cập nhật",
+        "feedback": "Góp ý",
+        "blockers": "Vướng mắc",
+        "done": "Đã xong",
+        "next": "Tiếp theo",
+        "context": "Bối cảnh khách hàng",
+        "pain_points": "Điểm khó khăn",
+        "requests": "Yêu cầu",
+        "background": "Kinh nghiệm",
+        "strengths": "Điểm mạnh",
+        "concerns": "Điểm cần lưu ý",
+        "concepts": "Khái niệm chính",
+        "definitions": "Định nghĩa",
+        "questions": "Câu hỏi"
+      }
+    },
+    "upcoming": {
+      "title": "Sắp tới",
+      "now": "Bây giờ",
+      "tomorrow": "Ngày mai {{time}}",
+      "takeNotes": "Ghi chú"
+    },
+    "calendarCard": {
+      "title": "Xem các cuộc họp sắp tới ở đây",
+      "body": "Kết nối lịch để đặt tên ghi chú theo cuộc họp và nhận lời nhắc khi họp bắt đầu. Lịch ở lại trên máy Mac này."
+    },
+    "calendar": {
+      "title": "Lịch",
+      "description": "Hiện các cuộc họp sắp tới ở Trang chủ và đặt tên ghi chú theo chúng. Lịch của bạn ở lại trên máy Mac này.",
+      "connect": "Kết nối lịch",
+      "disconnect": "Ngắt kết nối lịch",
+      "reminders": "Nhắc tôi khi cuộc họp bắt đầu",
+      "remindersHint": "Gợi ý ghi chú trước một phút",
+      "denied": "Quyền truy cập lịch đang tắt. Hãy bật trong Cài đặt hệ thống → Quyền riêng tư & Bảo mật → Lịch.",
+      "openSettings": "Mở Cài đặt hệ thống"
+    },
+    "ask": {
+      "title": "Hỏi về các cuộc họp",
+      "label": "Đặt câu hỏi về các cuộc họp",
+      "placeholder": "Hỏi về các cuộc họp và ghi chú của bạn…",
+      "submit": "Hỏi",
+      "thinking": "Đang đọc các cuộc họp… Câu hỏi đầu tiên có thể mất một phút trong lúc tải công cụ ghi chú.",
+      "nothingFound": "Không có gì trong Thư viện nhắc tới điều đó.",
+      "checkSources": "Câu trả lời lấy từ các bản ghi của bạn. Hãy kiểm tra nguồn trước khi dựa vào.",
+      "yourNotes": "Ghi chú của bạn",
+      "openSource": "Mở {{source}}",
+      "shortcut": "⌘K"
+    }
   },
   "audioPlayer": {
     "play": "Phát",
     "pause": "Tạm dừng",
-    "seek": "Vị trí phát lại"
+    "seek": "Vị trí phát lại",
+    "error": "Không phát được âm thanh này.",
+    "retry": "Thử lại"
   }
 }

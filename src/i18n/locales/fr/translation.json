@@ -1,6 +1,15 @@
 {
   "tray": {
-    "copyLastTranscript": "Copier la dernière transcription"
+    "settings": "Réglages…",
+    "checkUpdates": "Rechercher les mises à jour…",
+    "copyLastTranscript": "Copier la dernière transcription",
+    "copyLastOriginal": "Copier la dernière transcription avant nettoyage",
+    "unloadModel": "Décharger le moteur",
+    "quit": "Quitter SilkScribe",
+    "cancel": "Annuler l’enregistrement",
+    "meetingPause": "Mettre la réunion en pause",
+    "meetingResume": "Reprendre la réunion",
+    "meetingStop": "Arrêter et transcrire la réunion"
   },
   "sidebar": {
     "home": "Home",
@@ -16,88 +25,171 @@
   "onboarding": {
     "recommended": "Recommandé",
     "download": "Télécharger",
+    "downloading": "Téléchargement…",
+    "customModelDescription": "Moteur personnalisé · non pris en charge officiellement",
     "modelCard": {
       "accuracy": "précision",
       "speed": "vitesse"
     },
     "models": {
       "small": {
-        "name": "Whisper Small"
+        "name": "Whisper Small",
+        "description": "Rapide et léger"
       },
       "medium": {
-        "name": "Whisper Medium"
+        "name": "Whisper Medium",
+        "description": "Plus précis, un peu plus lent"
       },
       "turbo": {
-        "name": "Whisper Turbo"
+        "name": "Whisper Turbo",
+        "description": "Rapide et précis — un excellent polyvalent"
       },
       "large": {
-        "name": "Whisper Large"
+        "name": "Whisper Large",
+        "description": "Le Whisper le plus précis, mais lent"
       },
       "parakeet-tdt-0.6b-v2": {
-        "name": "Parakeet V2"
+        "name": "Parakeet V2",
+        "description": "Idéal pour l’anglais"
       },
       "parakeet-tdt-0.6b-v3": {
-        "name": "Parakeet V3"
+        "name": "Parakeet V3",
+        "description": "Rapide et précis · 25 langues européennes"
       },
       "moonshine-base": {
-        "name": "Moonshine Base"
+        "name": "Moonshine Base",
+        "description": "Très rapide · anglais · gère bien les accents"
       },
       "moonshine-tiny-streaming-en": {
-        "name": "Moonshine V2 Tiny"
+        "name": "Moonshine V2 Tiny",
+        "description": "Le plus rapide · anglais"
       },
       "moonshine-small-streaming-en": {
-        "name": "Moonshine V2 Small"
+        "name": "Moonshine V2 Small",
+        "description": "Rapide et équilibré · anglais"
       },
       "moonshine-medium-streaming-en": {
-        "name": "Moonshine V2 Medium"
+        "name": "Moonshine V2 Medium",
+        "description": "La meilleure qualité Moonshine · anglais"
       },
       "breeze-asr": {
-        "name": "Breeze ASR"
+        "name": "Breeze ASR",
+        "description": "Mandarin de Taïwan, mêlé d’anglais"
       },
       "sense-voice-int8": {
-        "name": "SenseVoice"
+        "name": "SenseVoice",
+        "description": "Très rapide · chinois, anglais, japonais, coréen, cantonais"
       }
     },
     "permissions": {
       "shared": {
+        "repairEyebrow": "Votre accord est nécessaire",
+        "openingPrompt": "Ouverture…",
+        "iEnabledIt": "Je l’ai activé",
         "checkAgain": "Vérifier à nouveau",
         "continue": "Continuer",
         "repairAction": "Ouvrir la réparation guidée",
         "appName": "SilkScribe",
         "statuses": {
+          "checking": "Vérification…",
+          "needed": "Pas encore autorisé",
+          "error": "Vérification impossible",
+          "requesting": "En attente de macOS…",
           "waiting_for_user": "En attente de vous",
           "granted": "Autorisé"
         }
       },
       "microphone": {
+        "title": "Laissez SilkScribe vous entendre",
+        "description": "Nous n’écoutons que pendant que vous dictez.",
+        "primaryAction": "Autoriser le micro",
+        "steps": {
+          "step1": "Cliquez sur « Autoriser le micro ».",
+          "step2": "Choisissez « Autoriser » dans la demande de macOS."
+        },
+        "manualHint": "Pas de demande ? Activez-le dans Réglages Système → Confidentialité et sécurité → Micro.",
+        "privateNote": "Votre audio ne quitte jamais ce Mac.",
         "guide": {
           "windowLabel": "Demande macOS",
+          "title": "Choisissez « Autoriser »",
+          "body": "La demande s’affiche en dehors de cette fenêtre.",
           "promptTitle": "« SilkScribe » souhaite accéder au micro",
+          "promptBody": "SilkScribe transforme votre voix en texte sur ce Mac. Il n’écoute que pendant que vous dictez ou enregistrez.",
           "deny": "Ne pas autoriser",
           "allow": "Autoriser",
-          "allowed": "Autorisé"
+          "allowed": "Autorisé",
+          "previewAlt": "La demande d’accès au micro de macOS, avec « Autoriser » mis en évidence"
+        },
+        "statusHelp": {
+          "checking": "Cela ne prend qu’une seconde.",
+          "needed": "Cliquez sur « Autoriser le micro » pour continuer.",
+          "error": "Réessayez, ou activez-le dans Réglages Système.",
+          "requesting": "Repérez la demande de macOS.",
+          "waiting_for_user": "Terminez dans macOS, puis revenez ici.",
+          "granted": "Tout est prêt."
         }
       },
       "accessibility": {
+        "title": "Laissez SilkScribe écrire pour vous",
+        "description": "L’accessibilité nous permet de coller vos mots directement au curseur.",
+        "primaryAction": "Ouvrir les réglages d’accessibilité",
         "steps": {
-          "step2": "Si macOS vous envoie dans Réglages Système, continuez là-bas."
+          "step1": "Cliquez sur « Ouvrir les réglages d’accessibilité ».",
+          "step2": "Si macOS vous envoie dans Réglages Système, continuez là-bas.",
+          "step3": "Revenez ici."
         },
+        "manualHint": "Ou allez dans Réglages Système → Confidentialité et sécurité → Accessibilité.",
+        "privateNote": "Nous l’utilisons uniquement pour coller votre dictée.",
         "guide": {
-          "windowLabel": "Réglages Système"
+          "windowLabel": "Réglages Système",
+          "title": "Activez SilkScribe",
+          "body": "Trouvez SilkScribe dans la liste et activez-le.",
+          "previewAlt": "Les réglages d’accessibilité de macOS avec SilkScribe activé"
+        },
+        "statusHelp": {
+          "checking": "Cela ne prend qu’une seconde.",
+          "needed": "Cliquez sur « Ouvrir les réglages d’accessibilité » pour continuer.",
+          "error": "Réessayez, ou activez-le dans Réglages Système.",
+          "requesting": "Ouverture de Réglages Système…",
+          "waiting_for_user": "Activez SilkScribe, puis revenez ici. Déjà activé ? Désactivez-le puis réactivez-le.",
+          "granted": "Tout est prêt."
         }
       }
     },
     "setup": {
+      "title": "Préparation de votre moteur",
+      "description": "Installation du meilleur moteur pour {{language}}.",
       "defaultLanguage": "your language",
+      "engineTitle": "Nous l’avons choisi pour vous",
+      "engineBody": "C’est le plus adapté à ce Mac et à {{language}}.",
       "progressLabel": "Progress",
+      "sizeLabel": "Taille",
       "speedLabel": "Speed",
+      "etaLabel": "Temps restant",
       "speedValue": "{{speed}} MB/s",
+      "notAvailable": "—",
+      "preparingDetail": "Préparation…",
       "shortcutTitle": "Your shortcut",
+      "shortcutBody": "Maintenez {{shortcut}}, parlez, puis relâchez.",
       "retry": "Try again",
+      "ready": "Prêt à essayer.",
       "states": {
+        "resolving": "Choix de votre moteur",
         "downloading": "Downloading",
         "preparing": "Preparing",
-        "ready": "Ready"
+        "ready": "Ready",
+        "error": "Inachevé"
+      },
+      "panelHelp": {
+        "resolving": "Recherche du meilleur choix pour ce Mac.",
+        "downloading": "Cela n’arrive qu’une fois.",
+        "preparing": "Presque terminé.",
+        "error": "Vérifiez votre connexion et réessayez."
+      },
+      "errors": {
+        "loadModels": "Impossible de charger la liste des moteurs",
+        "downloadModel": "Impossible de terminer le téléchargement",
+        "selectModel": "Impossible de préparer votre moteur"
       },
       "tipsBadge": "Helpful while you wait",
       "previousCard": "Previous tip",
@@ -153,30 +245,96 @@
     "progress": {
       "welcome": "Welcome",
       "microphone": "Microphone",
-      "setup": "Setup"
+      "accessibility": "Accessibilité",
+      "setup": "Setup",
+      "shortcut": "Raccourci",
+      "practice": "Essayer"
     },
     "welcome": {
+      "title": "Bienvenue dans SilkScribe",
+      "description": "Parlez au lieu de taper, dans n’importe quelle app. La configuration prend environ une minute.",
       "plan": {
         "step1": {
-          "title": "Allow the microphone"
+          "title": "Allow the microphone",
+          "description": "Pour que nous puissions vous entendre."
+        },
+        "step2": {
+          "title": "Autoriser l’accessibilité",
+          "description": "Pour que nous puissions écrire dans vos apps."
         },
         "step3": {
-          "title": "Try it once"
+          "title": "Try it once",
+          "description": "Un petit test et c’est fini."
+        },
+        "shortcut": {
+          "title": "Choisir un raccourci",
+          "description": "Maintenez-le pour parler, ou appuyez pour démarrer et arrêter."
         }
-      }
+      },
+      "continue": "Commencer"
     },
     "practice": {
+      "title": "Essayez",
+      "description": "Cliquez dans la zone, maintenez {{shortcut}} et dites quelque chose.",
+      "shortcutFallback": "votre raccourci",
+      "steps": {
+        "step1": {
+          "title": "Cliquez dans la zone"
+        },
+        "step2": {
+          "title": "Maintenez {{shortcut}} et parlez",
+          "toggleTitle": "Appuyez sur {{shortcut}} et parlez"
+        },
+        "step3": {
+          "title": "Relâchez",
+          "toggleTitle": "Appuyez de nouveau"
+        }
+      },
+      "tipTitle": "Essayez de dire",
+      "tipBody": "« Voyons si ça marche bien. »",
+      "placeholder": "Vos mots s’afficheront ici",
+      "success": "Ça marche !",
+      "readyToFinish": "Vous êtes prêt.",
+      "readyToFinishTap": "Vous êtes prêt. Touchez brièvement {{shortcut}} pour continuer à dicter sans les mains.",
       "finish": "Start using SilkScribe",
-      "skip": "Skip for now"
+      "skip": "Skip for now",
+      "finishing": "Finalisation…",
+      "finishFailed": "Impossible de terminer la configuration. Réessayez.",
+      "descriptionToggle": "Cliquez dans la zone, appuyez sur {{shortcut}}, dites quelque chose, puis appuyez de nouveau."
+    },
+    "shared": {
+      "stepCounter": "Étape {{current}} sur {{total}}"
+    },
+    "shortcut": {
+      "title": "Choisissez votre raccourci",
+      "description": "Vous l’utiliserez dans n’importe quelle app pour commencer à dicter.",
+      "modeTitle": "Fonctionnement",
+      "hold": {
+        "title": "Maintenir pour parler",
+        "body": "Maintenez le raccourci pendant que vous parlez, puis relâchez."
+      },
+      "toggle": {
+        "title": "Appuyer pour démarrer et arrêter",
+        "body": "Appuyez une fois pour démarrer, puis de nouveau quand vous avez fini."
+      },
+      "cleanup": {
+        "label": "Nettoyer mon texte",
+        "description": "Corrige la ponctuation et les mots de remplissage avec Apple Intelligence, sur ce Mac."
+      },
+      "continue": "Continuer",
+      "cleanupFailed": "Impossible d’activer le nettoyage par IA"
     }
   },
   "modelSelector": {
     "custom": "Personnalisé",
     "active": "Actif",
     "statusLabel": "État du modèle : {{status}}",
+    "switching": "Changement…",
     "noModelsAvailable": "Aucun modèle disponible",
     "extracting": "Extraction de {{modelName}}...",
     "extractingMultiple": "Extraction de {{count}} modèles...",
+    "extractingGeneric": "Décompression…",
+    "downloading": "Téléchargement · {{percentage}} %",
     "downloadingMultiple": "Téléchargement de {{count}} modèles...",
     "modelReady": "Modèle Prêt",
     "loading": "Chargement de {{modelName}}...",
@@ -189,6 +347,8 @@
     "downloadSpeed": "{{speed}} Mo/s",
     "cancel": "Annuler",
     "cancelDownload": "Annuler le téléchargement",
+    "retryDownload": "Réessayer",
+    "downloadErrorTitle": "Le téléchargement n’a pas abouti",
     "downloadProgress": {
       "downloadedOf": "{{downloaded}} sur {{total}}",
       "speed": "{{speed}}/s",
@@ -199,13 +359,19 @@
       "unknownEta": "Calcul du temps"
     },
     "capabilities": {
+      "languageSelection": "Nombreuses langues",
+      "singleLanguage": "Une langue",
+      "multiLanguage": "Multilingue",
+      "languageOnly": "{{language}} uniquement",
+      "translation": "Traduit en anglais",
       "translate": "Traduire en anglais"
     },
     "downloadErrors": {
       "preflightFailed": "SilkScribe n'a pas pu vérifier l'espace disque avant le téléchargement : {{detail}}",
       "insufficientSpace": "SilkScribe a besoin de {{required}} d'espace libre pour télécharger ce modèle. {{available}} disponible(s).",
       "downloadFailed": "SilkScribe n'a pas pu télécharger le modèle : {{detail}}",
-      "extractionFailed": "SilkScribe n'a pas pu extraire le modèle : {{detail}}"
+      "extractionFailed": "SilkScribe n'a pas pu extraire le modèle : {{detail}}",
+      "unknown": "Le téléchargement n’a pas abouti."
     }
   },
   "settings": {
@@ -225,13 +391,57 @@
         "appDescription": "Choisissez le ressenti de l'app SilkScribe elle-même."
       },
       "shortcut": {
+        "title": "Raccourci de dictée",
+        "loading": "Chargement…",
+        "none": "Aucun raccourci défini",
         "notFound": "Raccourci non trouvé",
+        "pressKeys": "Appuyez sur un raccourci…",
+        "reset": "Rétablir la valeur par défaut",
+        "bindings": {
+          "transcribe": {
+            "name": "Raccourci de dictée",
+            "description": "Fonctionne dans toutes les apps."
+          },
+          "cancel": {
+            "name": "Raccourci d’annulation",
+            "description": "Arrête sans transcrire."
+          },
+          "transcribe_with_post_process": {
+            "name": "Raccourci de nettoyage par IA",
+            "description": "Dicte et met le texte au propre avec l’IA."
+          },
+          "command": {
+            "name": "Raccourci de commande",
+            "description": "Sélectionnez du texte et dites comment le modifier, ou dites quoi écrire."
+          }
+        },
+        "errors": {
+          "restore": "Impossible de rétablir votre raccourci précédent",
+          "set": "Impossible d’enregistrer le raccourci : {{error}}",
+          "reset": "Impossible de réinitialiser le raccourci"
+        },
         "success": {
           "saved": "Raccourci enregistré",
           "reset": "Raccourci réinitialisé"
         }
       },
+      "language": {
+        "title": "Langue parlée",
+        "description": "Choisissez la vôtre pour plus de précision, ou laissez-nous la détecter.",
+        "searchPlaceholder": "Rechercher une langue",
+        "noResults": "Aucun résultat",
+        "auto": "Détection automatique"
+      },
+      "pushToTalk": {
+        "label": "Maintenir pour parler",
+        "description": "Désactivé : appuyez une fois pour démarrer, puis de nouveau pour arrêter."
+      },
+      "tapToLock": {
+        "label": "Toucher pour dicter sans les mains",
+        "description": "Un appui bref continue d’écouter jusqu’à ce que vous appuyiez de nouveau."
+      },
       "theme": {
+        "title": "Thème",
         "options": {
           "system": "Système",
           "light": "Clair",
@@ -239,9 +449,37 @@
         }
       }
     },
+    "models": {
+      "currentModel": "Moteur actuel",
+      "currentModelSettings": "Réglages du moteur",
+      "yourModels": "Installés",
+      "availableModels": "Autres moteurs",
+      "noActiveModelTitle": "Aucun moteur pour l’instant",
+      "noActiveModelDescription": "Téléchargez-en un ci-dessous pour commencer à dicter.",
+      "noExtraInstalled": "C’est votre seul moteur.",
+      "deleteConfirm": "Vous devrez le télécharger de nouveau pour l’utiliser.",
+      "deleteActiveConfirm": "C’est votre moteur actuel : la dictée s’arrêtera jusqu’à ce que vous en choisissiez un autre.",
+      "deleteTitle": "Supprimer {{modelName}} ?",
+      "filters": {
+        "allLanguages": "Toutes les langues"
+      },
+      "noModelsMatch": "Aucun moteur ne correspond",
+      "deleteConfirmAction": "Supprimer"
+    },
     "sound": {
       "microphone": {
-        "title": "Microphone"
+        "title": "Microphone",
+        "placeholder": "Choisir un micro",
+        "loading": "Chargement…"
+      },
+      "audioFeedback": {
+        "label": "Effets sonores",
+        "description": "Jouer un son quand la dictée commence et se termine."
+      },
+      "outputDevice": {
+        "title": "Jouer les sons sur",
+        "placeholder": "Choisir une sortie",
+        "loading": "Chargement…"
       },
       "volume": {
         "title": "Volume",
@@ -249,10 +487,10 @@
       },
       "soundTheme": {
         "options": {
+          "silk": "Soie",
           "marimba": "Marimba",
           "pop": "Pop",
-          "custom": "Personnalisé",
-          "silk": "Soie"
+          "custom": "Personnalisé"
         },
         "preview": "Écouter le thème sonore (joue le début puis la fin)",
         "title": "Thème sonore",
@@ -272,19 +510,33 @@
       "pageDescription": "La plupart des gens peuvent les laisser tels quels. Utilisez-les lorsque SilkScribe doit se comporter différemment sur votre machine.",
       "groups": {
         "app": "Application",
+        "output": "Collage",
         "transcription": "Transcription",
         "history": "Historique",
-        "experimental": "Expérimental"
+        "support": "Dépannage",
+        "experimental": "Expérimental",
+        "runtime": "Performances"
       },
       "groupDescriptions": {
-        "history": "Réglages de conservation et de nettoyage des transcriptions et enregistrements."
+        "history": "Réglages de conservation et de nettoyage des transcriptions et enregistrements.",
+        "experimental": "En cours de développement — ces options peuvent changer ou ne pas fonctionner."
+      },
+      "experimentalToggle": {
+        "label": "Fonctionnalités expérimentales",
+        "description": "Essayez des fonctionnalités encore en chantier."
+      },
+      "lazyStreamClose": {
+        "label": "Garder le micro allumé un instant",
+        "description": "Dictées enchaînées plus rapides. Peut réduire la qualité audio Bluetooth."
       },
       "acceleration": {
         "whisper": {
-          "title": "Accélération Whisper"
+          "title": "Accélération Whisper",
+          "description": "Automatique utilise le GPU s’il est disponible."
         },
         "ort": {
-          "title": "Accélération ONNX"
+          "title": "Accélération ONNX",
+          "description": "Certaines options sont expérimentales."
         },
         "gpuDevice": {
           "auto": "Automatique"
@@ -297,16 +549,55 @@
           "rocm": "ROCm"
         }
       },
+      "startHidden": {
+        "label": "Démarrer en arrière-plan",
+        "description": "S’ouvre dans la barre des menus sans afficher cette fenêtre."
+      },
+      "autostart": {
+        "label": "Ouvrir à la connexion"
+      },
+      "showTrayIcon": {
+        "label": "Afficher l’icône dans la barre des menus"
+      },
       "overlay": {
+        "title": "Indicateur d’enregistrement",
+        "description": "S’affiche pendant que vous dictez.",
         "options": {
+          "none": "Masqué",
           "bottom": "Bas",
           "top": "Haut"
         }
       },
       "pasteMethod": {
+        "title": "Méthode de collage",
+        "description": "Coller insère tout le texte d’un coup. Taper le saisit touche par touche.",
+        "options": {
+          "clipboard": "Coller ({{modifier}}+V)",
+          "clipboardCtrlShiftV": "Coller (Ctrl+Maj+V)",
+          "clipboardShiftInsert": "Coller (Maj+Inser)",
+          "direct": "Taper",
+          "none": "Ne pas coller (copier seulement)",
+          "externalScript": "Script personnalisé"
+        },
         "externalScriptPlaceholder": "/chemin/vers/votre/script.sh"
       },
+      "typingTool": {
+        "title": "Outil de saisie",
+        "description": "Utilisé par « Taper ».",
+        "options": {
+          "auto": "Automatique (recommandé)"
+        }
+      },
+      "clipboardHandling": {
+        "title": "Après le collage",
+        "options": {
+          "dontModify": "Remettre le contenu de mon presse-papiers",
+          "copyToClipboard": "Garder le texte dans le presse-papiers"
+        }
+      },
       "autoSubmit": {
+        "title": "Appuyer sur une touche après le collage",
+        "description": "Pratique pour envoyer des messages de chat.",
         "options": {
           "off": "Désactivé",
           "enter": "Entrée",
@@ -316,42 +607,95 @@
         }
       },
       "translateToEnglish": {
-        "label": "Traduire en anglais"
+        "label": "Traduire en anglais",
+        "description": "Parlez n’importe quelle langue, obtenez du texte en anglais."
       },
       "modelUnload": {
+        "title": "Décharger le moteur en cas d’inactivité",
+        "description": "Libère de la mémoire. Votre prochaine dictée démarre un peu plus lentement.",
         "options": {
           "never": "Jamais",
+          "immediately": "Immédiatement",
           "min2": "Après 2 minutes",
           "min5": "Après 5 minutes",
           "min10": "Après 10 minutes",
           "min15": "Après 15 minutes",
-          "hour1": "Après 1 heure"
+          "hour1": "Après 1 heure",
+          "sec5": "Après 5 secondes (débogage)"
         }
       },
       "customWords": {
+        "title": "Vocabulaire",
+        "description": "Noms et termes à écrire à votre façon.",
+        "placeholder": "Ajouter un mot ou un nom",
         "add": "Ajouter",
-        "remove": "Supprimer {{word}}"
+        "remove": "Supprimer {{word}}",
+        "duplicate": "« {{word}} » est déjà dans votre liste"
+      },
+      "overlayAppearance": {
+        "title": "Thème de l’indicateur",
+        "options": {
+          "auto": "Comme l’app",
+          "light": "Clair",
+          "dark": "Sombre"
+        }
+      },
+      "liveText": {
+        "label": "Texte en direct pendant la dictée",
+        "description": "Affiche les mots pendant que vous parlez, avec les moteurs rapides. Le texte final peut prendre un peu plus de temps."
       }
     },
     "postProcessing": {
+      "hotkey": {
+        "title": "Raccourci"
+      },
       "api": {
+        "title": "Connexion",
         "provider": {
-          "title": "Fournisseur"
+          "title": "Fournisseur",
+          "description": "Toute API compatible OpenAI fonctionne.",
+          "custom": "Personnalisé"
+        },
+        "appleIntelligence": {
+          "unavailable": "Apple Intelligence n’est pas disponible sur ce Mac. Il faut une puce Apple, macOS Tahoe 26 ou ultérieur, et Apple Intelligence activé."
         },
         "baseUrl": {
           "title": "URL de base",
-          "placeholder": "https://api.openai.com/v1"
+          "description": "Modifiable uniquement pour « Personnalisé ».",
+          "placeholder": "https://api.openai.com/v1",
+          "managed": "Défini par le fournisseur"
         },
         "apiKey": {
+          "title": "Clé d’API",
           "placeholder": "sk-..."
         },
         "model": {
           "title": "Modèle",
-          "placeholderNoOptions": "Tapez un nom de modèle"
+          "descriptionCustom": "Le nom du modèle attendu par votre point d’accès.",
+          "placeholderWithOptions": "Rechercher des modèles",
+          "placeholderNoOptions": "Tapez un nom de modèle",
+          "refreshModels": "Actualiser"
         }
       },
       "prompts": {
-        "cancel": "Annuler"
+        "title": "Prompts",
+        "selectedPrompt": {
+          "title": "Prompt"
+        },
+        "noPrompts": "Aucun prompt pour l’instant",
+        "selectPrompt": "Choisir un prompt",
+        "createNew": "Nouveau prompt",
+        "promptLabel": "Nom",
+        "promptLabelPlaceholder": "p. ex. Corriger la grammaire",
+        "promptInstructions": "Instructions",
+        "promptInstructionsPlaceholder": "Corrige la grammaire et la ponctuation de : ${output}",
+        "promptTip": "Placez <code>${output}</code> là où la transcription doit apparaître.",
+        "updatePrompt": "Enregistrer les modifications",
+        "deletePrompt": "Supprimer le prompt",
+        "createPrompt": "Créer le prompt",
+        "cancel": "Annuler",
+        "selectToEdit": "Choisissez un prompt pour le modifier.",
+        "createFirst": "Créez un prompt pour mettre votre dictée au propre automatiquement."
       }
     },
     "history": {
@@ -395,22 +739,72 @@
       "retry": "Réessayer"
     },
     "debug": {
+      "logDirectory": {
+        "title": "Dossier des journaux"
+      },
+      "logLevel": {
+        "title": "Niveau de journalisation"
+      },
+      "updateChecks": {
+        "label": "Rechercher les mises à jour automatiquement"
+      },
+      "wordCorrectionThreshold": {
+        "title": "Correspondance du vocabulaire",
+        "description": "Plus élevé, il repère plus de mots mais peut trop corriger."
+      },
+      "historyLimit": {
+        "title": "Conserver jusqu’à",
+        "entries": "dictées"
+      },
       "recordingRetention": {
+        "title": "Supprimer l’audio des dictées",
+        "description": "Seul l’audio est supprimé. Les transcriptions sont conservées.",
         "never": "Jamais",
         "preserveLimit": "Conserver les {{count}} plus récents",
         "days3": "Après 3 jours",
         "weeks2": "Après 2 semaines",
-        "months3": "Après 3 mois"
+        "months3": "Après 3 mois",
+        "placeholder": "Choisir…"
+      },
+      "alwaysOnMicrophone": {
+        "label": "Micro toujours allumé",
+        "description": "Démarre plus vite, mais votre micro reste actif."
+      },
+      "clamshellMicrophone": {
+        "title": "Micro écran rabattu"
+      },
+      "postProcessingToggle": {
+        "label": "Utiliser le nettoyage par IA",
+        "description": "Corrige la ponctuation et les mots de remplissage avec un modèle de langage avant le collage."
+      },
+      "muteWhileRecording": {
+        "label": "Couper le son des autres apps",
+        "description": "Coupe le son des autres apps pendant que vous dictez, sauf pendant une réunion."
+      },
+      "appendTrailingSpace": {
+        "label": "Ajouter une espace après le collage"
       },
       "keyboardImplementation": {
+        "title": "Moteur des raccourcis",
+        "bindingsReset": "Vos raccourcis n’étaient pas compatibles, nous les avons donc réinitialisés.",
         "backends": {
+          "tauri": "Standard",
           "nativeKeys": "Touches natives"
-        }
+        },
+        "error": "Impossible de changer le moteur des raccourcis"
       },
       "paths": {
         "appData": "Données de l'application :",
         "models": "Modèles :",
         "settings": "Paramètres :"
+      },
+      "pasteDelay": {
+        "title": "Délai de collage",
+        "description": "Attente avant le collage, en ms. Augmentez-la si le texte collé est tronqué."
+      },
+      "recordingBuffer": {
+        "title": "Continuer à enregistrer après avoir relâché",
+        "description": "Capte la fin de votre dernier mot."
       }
     },
     "about": {
@@ -418,6 +812,107 @@
       "version": {
         "title": "Version",
         "description": "Version actuelle de SilkScribe"
+      },
+      "appDataDirectory": {
+        "title": "Dossier des données"
+      }
+    },
+    "aiCleanup": {
+      "title": "Nettoyage par IA",
+      "everyDictation": {
+        "label": "Nettoyer chaque dictée",
+        "description": "Votre raccourci principal bénéficie aussi du nettoyage par IA, pas seulement celui ci-dessous."
+      },
+      "level": {
+        "title": "Style de nettoyage"
+      },
+      "levels": {
+        "light": "Léger",
+        "standard": "Standard",
+        "rewrite": "Réécriture"
+      },
+      "levelHelp": {
+        "light": "Ponctuation, majuscules et nombres uniquement.",
+        "standard": "Supprime aussi les mots de remplissage et les hésitations.",
+        "rewrite": "Réécrit pour plus de clarté et de structure.",
+        "custom": "Utilise votre propre prompt."
+      },
+      "onDevice": "S’exécute sur ce Mac. Vos mots ne sont pas envoyés.",
+      "cloud": "Votre texte dicté est envoyé à {{provider}} pour être nettoyé.",
+      "prompts": "Prompts",
+      "nearbyText": {
+        "label": "Utiliser le texte voisin",
+        "description": "Lit le texte autour de votre curseur pour bien orthographier les noms et les termes. Il reste sur ce Mac, et les champs de mot de passe ne sont jamais lus.",
+        "descriptionCloud": "Lit le texte autour de votre curseur pour bien orthographier les noms, lorsque le nettoyage s’exécute sur ce Mac. Les champs de mot de passe ne sont jamais lus."
+      },
+      "shareNearbyText": {
+        "label": "Envoyer aussi le texte voisin à {{provider}}",
+        "description": "Désactivé par défaut : le texte autour de votre curseur reste sur ce Mac."
+      }
+    },
+    "styles": {
+      "title": "Styles",
+      "enable": {
+        "label": "S’adapter à l’app utilisée",
+        "description": "Le nettoyage par IA écrit de façon décontractée dans les chats, formelle dans les e-mails, et garde le code tel que dicté."
+      },
+      "categories": {
+        "messaging": "Messages et chat",
+        "email": "E-mail",
+        "documents": "Documents et notes",
+        "code": "Code et terminaux",
+        "ai_chat": "Assistants IA",
+        "other": "Tout le reste"
+      },
+      "tones": {
+        "casual": "Décontracté",
+        "neutral": "Neutre",
+        "formal": "Formel"
+      },
+      "fixed": {
+        "code": "Garde le code et les commandes tels que dictés",
+        "ai_chat": "Formule votre demande en prompt clair"
+      },
+      "apps": {
+        "title": "Apps dans lesquelles vous avez dicté",
+        "description": "Classez une app dans une autre catégorie si elle est mal traitée.",
+        "builtIn": "Par défaut"
+      }
+    },
+    "dictionary": {
+      "title": "Dictionnaire",
+      "remove": "Supprimer {{phrase}}",
+      "replacements": {
+        "title": "Remplacements",
+        "description": "Toujours écrire un mot ou une expression à votre façon.",
+        "said": "Quand je dis",
+        "saidExample": "p. ex. chais pas",
+        "written": "Écrire",
+        "writtenExample": "p. ex. je ne sais pas",
+        "add": "Ajouter le remplacement"
+      },
+      "snippets": {
+        "title": "Extraits",
+        "description": "Dites une courte expression pour insérer un texte plus long, comme votre adresse.",
+        "trigger": "Expression déclencheuse",
+        "triggerExample": "p. ex. mon adresse",
+        "text": "Texte de l’extrait",
+        "textExample": "Texte à insérer",
+        "add": "Ajouter l’extrait"
+      },
+      "file": {
+        "title": "Sauvegarder ou transférer",
+        "description": "Importez une liste de mots ou un fichier de dictionnaire, ou exportez le vôtre.",
+        "import": "Importer…",
+        "export": "Exporter…",
+        "kind": "Dictionnaire",
+        "defaultName": "Dictionnaire SilkScribe.json",
+        "imported_one": "{{count}} entrée ajoutée",
+        "imported_many": "{{count}} d’entrées ajoutées",
+        "imported_other": "{{count}} entrées ajoutées",
+        "exported": "Dictionnaire exporté",
+        "importFailed": "Impossible d’importer le dictionnaire",
+        "exportFailed": "Impossible d’exporter le dictionnaire"
       }
     }
   },
@@ -441,24 +936,116 @@
     }
   },
   "common": {
+    "loading": "Chargement…",
     "versionLabel": "v{{version}}",
     "cancel": "Annuler",
     "delete": "Supprimer",
     "open": "Ouvrir",
     "default": "Par défaut",
+    "noOptionsFound": "Aucun résultat",
+    "moreInformation": "Plus d’infos",
     "errorBoundary": {
+      "description": "Cet écran n’a pas pu se charger. Vos réglages et vos enregistrements ne risquent rien.",
       "reload": "Recharger",
-      "openLogs": "Ouvrir les journaux"
-    }
+      "openLogs": "Ouvrir les journaux",
+      "title": "Un problème est survenu"
+    },
+    "choose": "Choisir…"
+  },
+  "errors": {
+    "loadDirectory": "Impossible d’ouvrir ce dossier : {{error}}"
+  },
+  "appLanguage": {
+    "title": "Langue de l’app"
   },
   "overlay": {
+    "listening": "Écoute",
     "transcribing": "Transcription",
+    "processing": "Nettoyage",
     "success": "Terminé",
-    "cancelled": "Annulé"
+    "failed": "Échec",
+    "cancelled": "Annulé",
+    "empty": "Rien entendu",
+    "detail": {
+      "cancelled": "Rien n’a été collé",
+      "empty": "Aucune parole détectée",
+      "pasteCopied": "Copié à la place — collez-le vous-même",
+      "pasteFailed": "Impossible de coller ou de copier",
+      "cleanupSkipped": "Collé sans nettoyage par IA",
+      "transcriptionFailed": "La transcription n’a pas abouti",
+      "recordingFailed": "Impossible de lancer l’enregistrement",
+      "commandNeedsSetup": "Configurez d’abord le nettoyage par IA",
+      "commandFailed": "Rien n’a changé",
+      "commandTimedOut": "Délai dépassé, rien n’a changé",
+      "commandTooLong": "Sélectionnez moins de texte",
+      "commandPassword": "Pas dans les mots de passe",
+      "commandNotText": "Sélectionnez du texte"
+    },
+    "style": {
+      "casual": "Décontracté",
+      "neutral": "Neutre",
+      "formal": "Formel",
+      "code": "Code",
+      "ai_chat": "Prompt IA"
+    },
+    "nearbyText": "Texte voisin",
+    "command": {
+      "listening": "En attente d’une commande",
+      "tag": "Commande",
+      "editing": "Modification",
+      "writing": "Rédaction"
+    },
+    "handsFree": {
+      "listening": "Écoute sans les mains. Appuyez de nouveau sur le raccourci pour terminer, ou sur Esc pour annuler.",
+      "tag": "Mains libres"
+    }
+  },
+  "meetingOrb": {
+    "orbLabel": "Enregistrement de réunion, {{state}}",
+    "pinHint": "Cliquez pour garder ouvert. Faites glisser pour déplacer.",
+    "cardLabel": "Transcription en direct de la réunion",
+    "transcriptLabel": "Transcription jusqu’ici",
+    "untitled": "Réunion sans titre",
+    "recording": "Enregistrement",
+    "paused": "En pause",
+    "finishing": "Finalisation…",
+    "needsAttention": "Action requise",
+    "microphone": "Votre micro",
+    "computerAudio": "Audio de l’ordinateur",
+    "micGated": "Votre micro est exclu de la réunion pendant que vous dictez",
+    "you": "Vous",
+    "others": "Les autres",
+    "listening": "Écoute…",
+    "listeningBody": "Les mots apparaissent ici au fil de la conversation.",
+    "unavailableTitle": "Pas de transcription en direct",
+    "unavailableBody": "Téléchargez un moteur de dictée pour voir les mots en direct. L’enregistrement fonctionne quand même.",
+    "catchingUp": "Rattrapage…",
+    "jumpToLatest": "Aller au plus récent",
+    "pause": "Pause",
+    "resume": "Reprendre",
+    "stop": "Arrêter et transcrire",
+    "open": "Ouvrir les notes",
+    "letPeopleKnow": "Prévenir les participants",
+    "prompt": {
+      "title": "Prendre des notes pour cet appel {{app}} ?",
+      "titleEvent": "Prendre des notes pour « {{title}} » ?",
+      "body": "SilkScribe enregistre votre micro et {{app}} sur ce Mac. Rien n’est envoyé.",
+      "bodyEvent": "SilkScribe enregistre votre micro et l’audio de l’ordinateur sur ce Mac. Rien n’est envoyé.",
+      "start": "Prendre des notes",
+      "notNow": "Plus tard"
+    }
   },
   "feedback": {
     "pasteFailed": {
-      "copiedTitle": "Copié dans le presse-papiers"
+      "copiedTitle": "Copié dans le presse-papiers",
+      "copiedDescription": "Impossible de coller ici, mais le texte est prêt à être collé.",
+      "copyFailedTitle": "Impossible de coller ou de copier",
+      "copyFailedDescription": "Réessayez, ou retrouvez-le dans votre bibliothèque."
+    },
+    "dictationOff": {
+      "title": "La dictée est désactivée",
+      "description": "Autorisez l’accès au micro et à l’accessibilité pour utiliser votre raccourci.",
+      "action": "Corriger"
     }
   },
   "home": {
@@ -527,51 +1114,110 @@
     "home": "Accueil",
     "library": "Bibliothèque",
     "settings": "Paramètres",
+    "navigation": "Principal",
     "recordMeeting": "Enregistrer une réunion",
     "importAudio": "Importer un audio",
     "localOnly": "Tout reste sur cet appareil",
+    "onDevice": "S’exécute sur votre appareil",
+    "homeTitle": "Prêt quand vous l’êtes",
+    "homeDescription": "Enregistrez une réunion, importez de l’audio ou reprenez là où vous en étiez.",
+    "libraryDescription": "Chaque dictée, réunion et fichier — tout est consultable.",
+    "meetingShort": "Votre micro et l’audio de l’ordinateur",
+    "importShort": "Transformez des fichiers audio en transcriptions",
     "dictation": "Dictaphone",
+    "dictationHelp": "Pas encore configurée · Terminer la configuration",
     "inProgress": "En cours",
+    "recent": "Récents",
+    "viewLibrary": "Tout voir",
     "transcripts": "Transcriptions",
+    "searchLibrary": "Rechercher dans les transcriptions",
     "clearSearch": "Effacer la recherche",
     "loading": "Chargement de vos transcriptions…",
+    "emptyTitle": "Rien ici pour l’instant",
+    "emptyDescription": "Enregistrez une réunion ou déposez un fichier audio pour commencer.",
+    "noResults": "Aucun résultat",
     "trySearch": "Essayez une recherche ou un filtre différent.",
     "loadMore": "Charger plus",
     "back": "Retour",
     "title": "Titre",
     "saved": "Enregistré",
     "saving": "Enregistrement…",
+    "saveFailed": "Impossible d’enregistrer les modifications",
     "export": "Exporter",
+    "exported": "Exporté",
     "delete": "Supprimer la transcription",
+    "deleteHelp": "Ses notes et son audio sont aussi supprimés. Votre fichier d’origine reste en place.",
     "deleteAudio": "Supprimer l'audio",
+    "deleteAudioHelp": "Vous gardez la transcription et les notes, mais ne pourrez plus réécouter l’audio.",
     "cancel": "Annuler",
+    "retry": "Réessayer",
+    "speed": "Vitesse",
+    "documentViews": "Vues",
     "transcript": "Transcription",
     "notes": "Notes",
     "speakers": "Intervenant·e·s",
+    "searchTranscript": "Rechercher",
+    "transcriptPending": "Votre transcription s’affichera ici dès qu’elle sera prête.",
     "speaker": "Intervenant",
+    "unknownSpeaker": "Inconnu",
     "segment": "Transcription à",
+    "restoreOriginal": "Restaurer l’original",
+    "speakerHelp": "Les noms ne s’appliquent qu’à cet enregistrement.",
+    "noSpeakers": "Aucun intervenant trouvé dans cet enregistrement.",
     "speakerName": "Nom de l'intervenant",
     "mergeSpeaker": "Fusionner dans…",
+    "notesStale": "Vous avez modifié la transcription. Régénérez les notes pour intégrer vos changements.",
+    "noNotes": "Pas encore de notes.",
+    "regenerate": "Régénérer",
     "summary": "Résumé",
     "decisions": "Décisions",
     "actions": "Points d'action",
     "action": "Point d'action",
+    "done": "Fait",
     "owner": "Propriétaire",
+    "due": "Échéance",
+    "audioFiles": "Audio",
     "cancelJob": "Annuler {{title}}",
+    "transcriptionModel": "Moteur",
+    "currentDictationModel": "Comme la dictée",
     "language": "Langue",
+    "autoLanguage": "Détection automatique",
     "detectSpeakers": "Identifier les orateurs",
+    "localNotes": "Notes IA",
+    "noAutomaticNotes": "Pas de notes",
+    "microphoneLevel": "Niveau du micro",
     "systemLevel": "Niveau audio système",
     "resume": "Reprendre",
     "pause": "Mettre en pause",
+    "stopTranscribe": "Arrêter et transcrire",
+    "meetingHelp": "Nous enregistrons les deux côtés, puis transcrivons quand vous arrêtez.",
+    "importHelp": "Choisissez les fichiers et leur traitement. Continuez à travailler pendant la transcription.",
     "meetingTitle": "Réunion sans titre",
     "microphone": "Microphone",
     "defaultMicrophone": "Par défaut du système",
     "computerAudio": "Inclure l'audio de l'ordinateur",
+    "systemPermission": "macOS demandera l’accès à l’enregistrement de l’écran et de l’audio du système.",
+    "removeFile": "Retirer",
+    "chooseFiles": "Choisir des fichiers…",
+    "processing": "Traitement",
+    "setupNeeded": "Certains moteurs ne sont pas encore configurés. Enregistrez maintenant, traitez plus tard.",
+    "modelSetup": "Configurer les moteurs",
     "working": "Traitement en cours…",
     "startRecording": "Commencer l'enregistrement",
+    "startTranscription": "Transcrire",
+    "modelsLanguage": "Moteurs et langue",
     "storage": "Stockage et confidentialité",
+    "localIntelligence": "Moteurs",
+    "localModelsHelp": "Ne téléchargez que ce dont vous avez besoin. Tout s’exécute sur ce Mac — les gros moteurs demandent plus de mémoire.",
+    "runtimeReady": "Prêt à fonctionner sur ce Mac.",
+    "runtimeMissing": "Cette version ne peut pas encore exécuter ces moteurs. La dictée fonctionne quand même.",
+    "unpublished": "Pas encore disponible",
+    "downloading": "Téléchargement…",
     "installed": "Installé",
     "download": "Télécharger",
+    "dropAudio": "Déposez pour transcrire",
+    "workspaceFirst": "Transcrire seulement des fichiers",
+    "workspaceFirstHelp": "Aucun accès au micro ni à l’accessibilité nécessaire.",
     "source": {
       "dictation": "Dictée",
       "meeting": "Réunion",
@@ -586,13 +1232,17 @@
     },
     "purpose": {
       "asr": "Transcription",
+      "alignment": "Minutage des mots",
+      "speakers": "Intervenants",
       "notes": "Résumés et tâches"
     },
     "stage": {
       "recording": "Enregistrement",
       "paused": "En pause",
       "queued": "En file d'attente",
+      "preparing": "Préparation",
       "transcribing": "Transcription",
+      "diarizing": "Identification des intervenants",
       "notes": "Rédaction des notes",
       "complete": "Prêt",
       "failed": "Besoin d'attention",
@@ -602,34 +1252,276 @@
     "audio": "Audio",
     "appearance": "Apparence",
     "debug": "Développeur",
+    "retentionHelp": "Les réunions et imports restent jusqu’à ce que vous les supprimiez. Ces réglages ne concernent que l’audio des dictées.",
+    "dictationRetention": "Audio des dictées",
     "skipToContent": "Aller au contenu",
+    "memoryGuidance": "Nécessite environ {{gb}} Go de mémoire",
     "notesModel9": "Qwen3.5 · 9B",
     "notesModel27": "Qwen3.6 · 27B",
+    "draftConflict": "Nous avons trouvé un brouillon non enregistré d’une version plus ancienne.",
+    "recoverDraft": "Récupérer le brouillon",
+    "keepSaved": "Garder la version enregistrée",
+    "transcriptReadyWarning": "Transcription prête · certaines étapes n’ont pas abouti",
+    "retryEnhancement": "Réessayer",
+    "withoutEnhancements": "Passer les intervenants et les notes",
     "recordForLater": "Enregistrer maintenant, transcrire plus tard",
+    "returnToSetup": "Retour à la configuration",
+    "advancedDictationModels": "Autres moteurs de dictée",
     "activity": "Activité",
     "close": "Fermer",
+    "noActiveJobs": "Aucun traitement en cours",
     "presetFast": "Transcription rapide",
     "presetDetailed": "Transcription détaillée",
     "presetNotes": "Transcription + notes",
+    "processingDetails": "Moteurs et options",
+    "stopSave": "Arrêter et enregistrer l’audio",
+    "finishEditing": "Terminé",
     "editTranscript": "Modifier la transcription",
     "followPlayback": "Suivre la lecture",
     "previous": "Précédent",
     "next": "Suivant",
+    "undoMerge": "Annuler la fusion",
+    "evidence": "Extrait de la transcription",
+    "playEvidence": "Lire",
+    "pauseDownload": "Pause",
+    "removeModel": "Supprimer le moteur",
+    "removeModelHelp": "Vos transcriptions restent. Vous pourrez le retélécharger à tout moment.",
+    "storageUsage": "Stockage",
+    "audioStorage": "Enregistrements",
+    "modelStorage": "Moteurs",
+    "freeStorage": "Espace libre",
+    "setupModels": "Configurer les moteurs",
+    "skipEnhancement": "Passer",
     "generateNotes": "Générer des notes",
     "addItem": "Ajouter un élément",
     "removeItem": "Supprimer un élément",
     "newSpeaker": "Ajouter un orateur",
-    "speakerCount_one": "{{count}} orateur",
-    "speakerCount_other": "{{count}} orateurs",
+    "speakerSample": "Écouter un extrait",
+    "exportPreview": "Exporter",
+    "confirmExport": "Choisir où enregistrer…",
+    "readiness": {
+      "download": "Téléchargez {{model}} pour utiliser cette option.",
+      "unpublished": "{{model}} n’est pas encore disponible.",
+      "unavailable": "{{model}} n’est pas inclus dans cette version.",
+      "native_download": "Téléchargez {{model}} ou choisissez un autre moteur de dictée.",
+      "runtime": "Il manque à cette version un composant nécessaire.",
+      "fallback_download": "La détection automatique a besoin de Whisper large-v3 pour certaines langues. Téléchargez-le ou choisissez une langue.",
+      "language": "Ce moteur ne prend pas en charge cette langue. Choisissez une autre langue ou un autre moteur.",
+      "memory": "Pas assez de mémoire libre pour {{model}}. Fermez quelques apps ou choisissez un moteur de notes plus petit."
+    },
+    "newNotesReview": "Nouvelles notes",
+    "newNotesHelp": "Vos notes actuelles sont ci-dessous. Comparez avant de remplacer.",
+    "replaceNotes": "Remplacer les notes",
+    "keepCurrentNotes": "Garder les actuelles",
+    "speakerCount_one": "{{count}} intervenant",
+    "speakerCount_many": "{{count}} d’intervenants",
+    "speakerCount_other": "{{count}} intervenants",
+    "timing": {
+      "aligned": "Horodatage par mot",
+      "aligned_or_segments": "Horodatage par mot si possible, sinon par phrase",
+      "segments": "Horodatage par phrase"
+    },
+    "memoryAvailable": "Environ {{gb}} Go libres",
+    "memoryObserved": "A utilisé jusqu’à {{gb}} Go ici. Un audio plus long peut en demander plus.",
+    "memoryUnmeasured": "Pas encore mesuré sur ce Mac",
+    "checkingFiles": "Vérification des fichiers…",
+    "durationUnknown": "Durée inconnue",
+    "importProblems": "Certains fichiers n’ont pas pu être importés",
     "dismiss": "Fermer",
+    "verifyModel": "Vérifier les fichiers",
+    "modelVerified": "Les fichiers sont en bon état",
+    "modelDamaged": "Fichiers endommagés · Retélécharger",
+    "finishingAudio": "Finalisation…",
+    "selectPage": "Tout sélectionner sur cette page",
     "clearSelection": "Effacer la sélection",
     "selectedTurns": "Interventions sélectionnées",
+    "assignSelectedSpeaker": "Attribuer un intervenant",
     "selectTurn": "Sélectionner le tour à {{time}}",
-    "unfinishedImports": "Imports inachevés"
+    "exportOriginalText": "Exporter le texte d’origine",
+    "notesReviewed": "J’ai vérifié ces notes par rapport à la transcription",
+    "unfinishedImports": "Imports inachevés",
+    "resumeImport": "Reprendre l’import",
+    "discardImport": "Abandonner",
+    "captureUnsupported": "L’enregistrement de réunions n’existe que sur Mac pour l’instant. Vous pouvez toujours importer de l’audio.",
+    "microphoneReady": "Micro autorisé",
+    "microphonePermissionNeeded": "Autorisez le micro pour enregistrer votre voix.",
+    "allowMicrophone": "Autoriser le micro",
+    "computerAudioReady": "Audio de l’ordinateur autorisé",
+    "computerPermissionNeeded": "Autorisez l’enregistrement de l’écran et de l’audio du système pour capter l’audio de l’ordinateur.",
+    "allowComputerAudio": "Autoriser l’audio de l’ordinateur",
+    "microphoneUnavailable": "Ce micro n’est pas disponible. Choisissez-en un autre.",
+    "replaceOnlySection": "Remplacer seulement cette section",
+    "sectionReplacementHelp": "Vos autres notes restent telles quelles.",
+    "deleteTitle": "Supprimer cette transcription ?",
+    "deleteAudioTitle": "Supprimer l’audio ?",
+    "matchCount_one": "{{count}} résultat",
+    "matchCount_many": "{{count}} de résultats",
+    "matchCount_other": "{{count}} résultats",
+    "mergeTitle": "Fusionner les intervenants ?",
+    "merge": "Fusionner",
+    "mergePreview_one": "Déplacer {{count}} prise de parole de {{from}} vers {{to}}. Vous pourrez annuler.",
+    "mergePreview_many": "Déplacer {{count}} de prises de parole de {{from}} vers {{to}}. Vous pourrez annuler.",
+    "mergePreview_other": "Déplacer {{count}} prises de parole de {{from}} vers {{to}}. Vous pourrez annuler.",
+    "remove": "Supprimer",
+    "removeModelTitle": "Supprimer {{name}} ?",
+    "activeCount_one": "{{count}} en cours",
+    "activeCount_many": "{{count}} en cours",
+    "activeCount_other": "{{count}} en cours",
+    "errors": {
+      "addFiles": "Impossible d’ajouter ces fichiers",
+      "loadDevices": "Impossible de charger les micros",
+      "startImport": "Impossible de lancer l’import",
+      "controlRecording": "Impossible de mettre à jour l’enregistrement",
+      "openTranscript": "Impossible d’ouvrir cette transcription",
+      "cancelJob": "Impossible d’annuler",
+      "removeEngine": "Impossible de supprimer le moteur",
+      "discardImport": "Impossible d’abandonner l’import",
+      "requestAccess": "Impossible de demander l’accès",
+      "removeFile": "Impossible de retirer le fichier",
+      "installEngine": "Impossible de télécharger le moteur",
+      "verifyEngine": "Impossible de vérifier les fichiers",
+      "loadMore": "Impossible de charger plus de transcriptions",
+      "loadLibrary": "Impossible de charger vos transcriptions",
+      "saveTranscript": "Impossible d’enregistrer les modifications",
+      "exportTranscript": "Impossible d’exporter",
+      "updateNotes": "Impossible de mettre à jour les notes",
+      "generateNotes": "Impossible de générer les notes",
+      "discardDraft": "Impossible d’abandonner le brouillon",
+      "startProcessing": "Impossible de lancer le traitement",
+      "deleteTranscript": "Impossible de supprimer",
+      "enableCleanup": "Impossible d’activer le nettoyage par IA",
+      "copyOriginal": "Impossible de copier l’original",
+      "loadNotes": "Impossible de charger vos notes",
+      "saveNotes": "Impossible d’enregistrer vos notes",
+      "copyMessage": "Impossible de copier le message",
+      "copyText": "Impossible de copier le texte",
+      "saveStyle": "Impossible d’enregistrer le style",
+      "startMeeting": "Impossible de lancer la réunion",
+      "addToDictionary": "Impossible d’ajouter à votre dictionnaire",
+      "connectCalendar": "Impossible de connecter votre calendrier"
+    },
+    "liveTranscript": "Transcription en direct",
+    "liveTranscriptNote": "Une transcription plus précise la remplacera une fois le traitement terminé.",
+    "cleanupCard": {
+      "title": "Nettoyer chaque dictée",
+      "body": "Corrigez la ponctuation et les mots de remplissage avec Apple Intelligence. Tout se fait sur ce Mac.",
+      "turnOn": "Activer",
+      "notNow": "Plus tard"
+    },
+    "showOriginal": "Afficher l’original",
+    "hideOriginal": "Masquer l’original",
+    "copyOriginal": "Copier l’original",
+    "copiedOriginal": "Original copié",
+    "originalLabel": "Texte avant le nettoyage par IA",
+    "yourNotes": "Vos notes",
+    "yourNotesPlaceholder": "Notez l’essentiel au fil de l’eau. Commencez une ligne par - pour faire une liste.",
+    "consent": {
+      "reminder": "Prévenez les participants que vous prenez des notes.",
+      "copy": "Copier un message d’information",
+      "copied": "Message copié",
+      "message": "Pour info : je prends des notes avec SilkScribe. Il fonctionne sur mon Mac, et rien n’est envoyé.",
+      "setting": "Me rappeler de prévenir les participants",
+      "settingHint": "Affiche un rappel au début de l’enregistrement."
+    },
+    "holdToTalk": "Maintenir pour parler",
+    "holdOrTap": "Maintenir pour parler, ou toucher pour dicter sans les mains",
+    "pressToTalk": "Appuyer pour démarrer et arrêter",
+    "recentDictation": "Dictées récentes",
+    "wordsToday": "Mots aujourd’hui",
+    "streak": "Série",
+    "streakDays_one": "{{count}} jour",
+    "streakDays_many": "{{count}} de jours",
+    "streakDays_other": "{{count}} jours",
+    "copy": "Copier",
+    "copied": "Copié",
+    "enhanceNotes": "Améliorer les notes",
+    "youWrote": "Écrit par vous",
+    "callTitle": "Appel {{app}}",
+    "captureFrom": {
+      "label": "Capter l’audio de",
+      "allApps": "Toutes les apps"
+    },
+    "suggestNotes": {
+      "label": "Proposer des notes au début d’un appel",
+      "hint": "Affiche une proposition quand Zoom, Teams, FaceTime ou une autre app d’appel commence à utiliser le micro."
+    },
+    "dictionary": {
+      "add": "Ajouter au dictionnaire",
+      "heard": "Entendu comme",
+      "heardHelp": "Laissez vide pour seulement apprendre l’orthographe",
+      "write": "Écrire comme",
+      "writeHelp": "Comment il doit toujours apparaître",
+      "save": "Ajouter",
+      "added": {
+        "word": "Ajouté à votre vocabulaire",
+        "replacement": "Ajouté comme remplacement"
+      }
+    },
+    "templates": {
+      "label": "Modèle de notes",
+      "names": {
+        "general": "Général",
+        "one_on_one": "Tête-à-tête",
+        "standup": "Point quotidien",
+        "customer_call": "Appel client",
+        "interview": "Entretien",
+        "lecture": "Cours"
+      },
+      "sections": {
+        "updates": "Actualités",
+        "feedback": "Retours",
+        "blockers": "Blocages",
+        "done": "Fait",
+        "next": "Ensuite",
+        "context": "Contexte client",
+        "pain_points": "Points de friction",
+        "requests": "Demandes",
+        "background": "Parcours",
+        "strengths": "Points forts",
+        "concerns": "Réserves",
+        "concepts": "Notions clés",
+        "definitions": "Définitions",
+        "questions": "Questions"
+      }
+    },
+    "upcoming": {
+      "title": "À venir",
+      "now": "Maintenant",
+      "tomorrow": "Demain {{time}}",
+      "takeNotes": "Prendre des notes"
+    },
+    "calendarCard": {
+      "title": "Voyez vos prochaines réunions ici",
+      "body": "Connectez votre calendrier pour nommer vos notes d’après les réunions et recevoir un rappel au début. Il reste sur ce Mac."
+    },
+    "calendar": {
+      "title": "Calendrier",
+      "description": "Affiche les réunions à venir sur l’accueil et nomme les notes d’après elles. Votre calendrier reste sur ce Mac.",
+      "connect": "Connecter le calendrier",
+      "disconnect": "Déconnecter le calendrier",
+      "reminders": "Me rappeler au début des réunions",
+      "remindersHint": "Propose de prendre des notes une minute avant",
+      "denied": "L’accès au calendrier est désactivé. Activez-le dans Réglages Système → Confidentialité et sécurité → Calendriers.",
+      "openSettings": "Ouvrir Réglages Système"
+    },
+    "ask": {
+      "title": "Interroger vos réunions",
+      "label": "Poser une question sur vos réunions",
+      "placeholder": "Posez une question sur vos réunions et vos notes…",
+      "submit": "Demander",
+      "thinking": "Lecture de vos réunions… La première question peut prendre une minute, le temps de charger le moteur de notes.",
+      "nothingFound": "Rien dans votre bibliothèque n’en parle.",
+      "checkSources": "Les réponses viennent de vos transcriptions. Vérifiez les sources avant de vous y fier.",
+      "yourNotes": "Vos notes",
+      "openSource": "Ouvrir {{source}}",
+      "shortcut": "⌘K"
+    }
   },
   "audioPlayer": {
     "play": "Lecture",
     "pause": "Pause",
-    "seek": "Position de lecture"
+    "seek": "Position de lecture",
+    "error": "Impossible de lire cet audio.",
+    "retry": "Réessayer"
   }
 }

@@ -1,6 +1,15 @@
 {
   "tray": {
-    "copyLastTranscript": "最新の文字起こしをコピー"
+    "settings": "設定…",
+    "checkUpdates": "アップデートを確認…",
+    "copyLastTranscript": "最新の文字起こしをコピー",
+    "copyLastOriginal": "クリーンアップ前の最新の文字起こしをコピー",
+    "unloadModel": "エンジンをアンロード",
+    "quit": "SilkScribe を終了",
+    "cancel": "録音をキャンセル",
+    "meetingPause": "会議を一時停止",
+    "meetingResume": "会議を再開",
+    "meetingStop": "会議を停止して文字起こし"
   },
   "sidebar": {
     "home": "ホーム",
@@ -16,88 +25,171 @@
   "onboarding": {
     "recommended": "おすすめ",
     "download": "ダウンロード",
+    "downloading": "ダウンロード中…",
+    "customModelDescription": "カスタムエンジン · 公式サポート対象外",
     "modelCard": {
       "accuracy": "精度",
       "speed": "速度"
     },
     "models": {
       "small": {
-        "name": "Whisper Small"
+        "name": "Whisper Small",
+        "description": "高速で軽量"
       },
       "medium": {
-        "name": "Whisper Medium"
+        "name": "Whisper Medium",
+        "description": "より高精度、やや低速"
       },
       "turbo": {
-        "name": "Whisper Turbo"
+        "name": "Whisper Turbo",
+        "description": "高速かつ高精度 — バランスの良い万能型"
       },
       "large": {
-        "name": "Whisper Large"
+        "name": "Whisper Large",
+        "description": "Whisper で最も高精度、ただし低速"
       },
       "parakeet-tdt-0.6b-v2": {
-        "name": "Parakeet V2"
+        "name": "Parakeet V2",
+        "description": "英語に最適"
       },
       "parakeet-tdt-0.6b-v3": {
-        "name": "Parakeet V3"
+        "name": "Parakeet V3",
+        "description": "高速かつ高精度 · ヨーロッパの 25 言語"
       },
       "moonshine-base": {
-        "name": "Moonshine Base"
+        "name": "Moonshine Base",
+        "description": "非常に高速 · 英語 · なまりに強い"
       },
       "moonshine-tiny-streaming-en": {
-        "name": "Moonshine V2 Tiny"
+        "name": "Moonshine V2 Tiny",
+        "description": "最速 · 英語"
       },
       "moonshine-small-streaming-en": {
-        "name": "Moonshine V2 Small"
+        "name": "Moonshine V2 Small",
+        "description": "高速でバランス良好 · 英語"
       },
       "moonshine-medium-streaming-en": {
-        "name": "Moonshine V2 Medium"
+        "name": "Moonshine V2 Medium",
+        "description": "Moonshine で最高品質 · 英語"
       },
       "breeze-asr": {
-        "name": "Breeze ASR"
+        "name": "Breeze ASR",
+        "description": "台湾華語、英語混じりにも対応"
       },
       "sense-voice-int8": {
-        "name": "SenseVoice"
+        "name": "SenseVoice",
+        "description": "非常に高速 · 中国語、英語、日本語、韓国語、広東語"
       }
     },
     "permissions": {
       "shared": {
+        "repairEyebrow": "許可が必要",
+        "openingPrompt": "開いています…",
+        "iEnabledIt": "オンにしました",
         "checkAgain": "もう一度確認",
         "continue": "続ける",
         "repairAction": "ガイド付き修復を開く",
         "appName": "SilkScribe",
         "statuses": {
+          "checking": "確認中…",
+          "needed": "まだ許可されていません",
+          "error": "確認できませんでした",
+          "requesting": "macOS を待っています…",
           "waiting_for_user": "あなたの操作を待っています",
           "granted": "許可済み"
         }
       },
       "microphone": {
+        "title": "SilkScribe があなたの声を聞けるようにしましょう",
+        "description": "聞き取るのは口述中だけです。",
+        "primaryAction": "マイクを許可",
+        "steps": {
+          "step1": "「マイクを許可」をクリックします。",
+          "step2": "macOS の確認画面で「許可」を選びます。"
+        },
+        "manualHint": "確認画面が表示されない場合は、「システム設定」→「プライバシーとセキュリティ」→「マイク」でオンにしてください。",
+        "privateNote": "音声がこの Mac の外に出ることはありません。",
         "guide": {
           "windowLabel": "macOS の確認",
+          "title": "「許可」を選択",
+          "body": "確認画面はこのウインドウの外に表示されます。",
           "promptTitle": "“SilkScribe” がマイクへのアクセスを求めています",
+          "promptBody": "SilkScribe はこの Mac 上であなたの声をテキストに変換します。聞き取るのは口述中または録音中だけです。",
           "deny": "許可しない",
           "allow": "許可",
-          "allowed": "許可済み"
+          "allowed": "許可済み",
+          "previewAlt": "「許可」が強調表示された macOS のマイク確認画面"
+        },
+        "statusHelp": {
+          "checking": "すぐに終わります。",
+          "needed": "続けるには「マイクを許可」をクリックしてください。",
+          "error": "もう一度試すか、システム設定でオンにしてください。",
+          "requesting": "macOS の確認画面を探してください。",
+          "waiting_for_user": "macOS で操作を終えたら、ここに戻ってください。",
+          "granted": "準備ができました。"
         }
       },
       "accessibility": {
+        "title": "SilkScribe に入力を任せましょう",
+        "description": "アクセシビリティを許可すると、話した言葉をカーソル位置に直接ペーストできます。",
+        "primaryAction": "アクセシビリティ設定を開く",
         "steps": {
-          "step2": "macOS がシステム設定を開いたら、そのまま続行します。"
+          "step1": "「アクセシビリティ設定を開く」をクリックします。",
+          "step2": "macOS がシステム設定を開いたら、そのまま続行します。",
+          "step3": "ここに戻ります。"
         },
+        "manualHint": "または「システム設定」→「プライバシーとセキュリティ」→「アクセシビリティ」を開いてください。",
+        "privateNote": "口述したテキストのペーストにのみ使用します。",
         "guide": {
-          "windowLabel": "システム設定"
+          "windowLabel": "システム設定",
+          "title": "SilkScribe をオンにする",
+          "body": "リストで SilkScribe を探してオンにします。",
+          "previewAlt": "SilkScribe がオンになった macOS のアクセシビリティ設定"
+        },
+        "statusHelp": {
+          "checking": "すぐに終わります。",
+          "needed": "続けるには「アクセシビリティ設定を開く」をクリックしてください。",
+          "error": "もう一度試すか、システム設定でオンにしてください。",
+          "requesting": "システム設定を開いています…",
+          "waiting_for_user": "SilkScribe をオンにしてから戻ってください。すでにオンの場合は、一度オフにしてから再度オンにしてください。",
+          "granted": "準備ができました。"
         }
       }
     },
     "setup": {
+      "title": "エンジンを準備しています",
+      "description": "{{language}} に最適なエンジンをセットアップしています。",
       "defaultLanguage": "あなたの言語",
+      "engineTitle": "最適なものを選びました",
+      "engineBody": "この Mac と {{language}} に最適なエンジンです。",
       "progressLabel": "進行状況",
+      "sizeLabel": "サイズ",
       "speedLabel": "速度",
+      "etaLabel": "残り時間",
       "speedValue": "{{speed}} MB/s",
+      "notAvailable": "—",
+      "preparingDetail": "準備中…",
       "shortcutTitle": "あなたのショートカット",
+      "shortcutBody": "{{shortcut}} を押したまま話し、話し終えたら離します。",
       "retry": "もう一度試す",
+      "ready": "試す準備ができました。",
       "states": {
+        "resolving": "エンジンを選択中",
         "downloading": "ダウンロード中",
         "preparing": "準備中",
-        "ready": "準備完了"
+        "ready": "準備完了",
+        "error": "完了しませんでした"
+      },
+      "panelHelp": {
+        "resolving": "この Mac に最適なエンジンを探しています。",
+        "downloading": "これは最初の 1 回だけです。",
+        "preparing": "もうすぐです。",
+        "error": "接続を確認して、もう一度お試しください。"
+      },
+      "errors": {
+        "loadModels": "エンジンの一覧を読み込めませんでした",
+        "downloadModel": "ダウンロードを完了できませんでした",
+        "selectModel": "エンジンを準備できませんでした"
       },
       "tipsBadge": "待っている間のヒント",
       "previousCard": "前のヒント",
@@ -153,30 +245,96 @@
     "progress": {
       "welcome": "ようこそ",
       "microphone": "マイク",
-      "setup": "セットアップ"
+      "accessibility": "アクセシビリティ",
+      "setup": "セットアップ",
+      "shortcut": "ショートカット",
+      "practice": "試す"
     },
     "welcome": {
+      "title": "SilkScribe へようこそ",
+      "description": "どのアプリでも、タイプする代わりに話しましょう。セットアップは 1 分ほどで終わります。",
       "plan": {
         "step1": {
-          "title": "マイクを許可する"
+          "title": "マイクを許可する",
+          "description": "あなたの声を聞き取るためです。"
+        },
+        "step2": {
+          "title": "アクセシビリティを許可する",
+          "description": "アプリに文字を入力するためです。"
         },
         "step3": {
-          "title": "一度試してみる"
+          "title": "一度試してみる",
+          "description": "簡単なテストをすれば完了です。"
+        },
+        "shortcut": {
+          "title": "ショートカットを選ぶ",
+          "description": "押したまま話すか、押して開始・停止します。"
         }
-      }
+      },
+      "continue": "始める"
     },
     "practice": {
+      "title": "試してみましょう",
+      "description": "ボックスをクリックし、{{shortcut}} を押したまま何か話してください。",
+      "shortcutFallback": "ショートカット",
+      "steps": {
+        "step1": {
+          "title": "ボックスをクリック"
+        },
+        "step2": {
+          "title": "{{shortcut}} を押したまま話す",
+          "toggleTitle": "{{shortcut}} を押して話す"
+        },
+        "step3": {
+          "title": "離す",
+          "toggleTitle": "もう一度押す"
+        }
+      },
+      "tipTitle": "こう話してみましょう",
+      "tipBody": "「どのくらいうまく動くか試してみよう」",
+      "placeholder": "話した言葉がここに表示されます",
+      "success": "うまくいきました！",
+      "readyToFinish": "準備が整いました。",
+      "readyToFinishTap": "準備が整いました。{{shortcut}} をタップすると、ハンズフリーで聞き取りを続けます。",
       "finish": "SilkScribe を使い始める",
-      "skip": "今はスキップ"
+      "skip": "今はスキップ",
+      "finishing": "仕上げています…",
+      "finishFailed": "セットアップを完了できませんでした。もう一度お試しください。",
+      "descriptionToggle": "ボックスをクリックし、{{shortcut}} を押して何か話したら、もう一度押してください。"
+    },
+    "shared": {
+      "stepCounter": "ステップ {{current}}/{{total}}"
+    },
+    "shortcut": {
+      "title": "ショートカットを選びましょう",
+      "description": "どのアプリからでも、これで口述を始められます。",
+      "modeTitle": "使い方",
+      "hold": {
+        "title": "押したまま話す",
+        "body": "話している間ショートカットを押し続け、話し終えたら離します。"
+      },
+      "toggle": {
+        "title": "押して開始・停止",
+        "body": "1 回押すと開始し、終わったらもう一度押します。"
+      },
+      "cleanup": {
+        "label": "テキストを整える",
+        "description": "この Mac 上の Apple Intelligence で、句読点やつなぎ言葉を整えます。"
+      },
+      "continue": "続ける",
+      "cleanupFailed": "AI クリーンアップをオンにできませんでした"
     }
   },
   "modelSelector": {
     "custom": "カスタム",
     "active": "アクティブ",
     "statusLabel": "モデルの状態: {{status}}",
+    "switching": "切り替え中…",
     "noModelsAvailable": "利用可能なモデルがありません",
     "extracting": "{{modelName}}を展開中...",
     "extractingMultiple": "{{count}}個のモデルを展開中...",
+    "extractingGeneric": "展開中…",
+    "downloading": "ダウンロード中 · {{percentage}}%",
     "downloadingMultiple": "{{count}}個のモデルをダウンロード中...",
     "modelReady": "モデル準備完了",
     "loading": "{{modelName}}を読み込み中...",
@@ -189,6 +347,8 @@
     "downloadSpeed": "{{speed}} MB/s",
     "cancel": "キャンセル",
     "cancelDownload": "ダウンロードをキャンセル",
+    "retryDownload": "もう一度試す",
+    "downloadErrorTitle": "ダウンロードが完了しませんでした",
     "downloadProgress": {
       "downloadedOf": "{{total}} 中 {{downloaded}}",
       "speed": "{{speed}}/秒",
@@ -199,13 +359,19 @@
       "unknownEta": "残り時間を計算中"
     },
     "capabilities": {
+      "languageSelection": "多数の言語",
+      "singleLanguage": "単一言語",
+      "multiLanguage": "多言語",
+      "languageOnly": "{{language}} のみ",
+      "translation": "英語に翻訳",
       "translate": "英語に翻訳"
     },
     "downloadErrors": {
       "preflightFailed": "SilkScribe はダウンロード前にディスク空き容量を確認できませんでした: {{detail}}",
       "insufficientSpace": "このモデルのダウンロードには {{required}} の空き容量が必要です。使用可能: {{available}}。",
       "downloadFailed": "SilkScribe はモデルをダウンロードできませんでした: {{detail}}",
-      "extractionFailed": "SilkScribe はモデルを展開できませんでした: {{detail}}"
+      "extractionFailed": "SilkScribe はモデルを展開できませんでした: {{detail}}",
+      "unknown": "ダウンロードが完了しませんでした。"
     }
   },
   "settings": {
@@ -225,13 +391,57 @@
         "appDescription": "SilkScribe アプリ自体の使い心地を選びます。"
       },
       "shortcut": {
+        "title": "口述用ショートカット",
+        "loading": "読み込み中…",
+        "none": "ショートカット未設定",
         "notFound": "ショートカットが見つかりません",
+        "pressKeys": "ショートカットを押してください…",
+        "reset": "デフォルトに戻す",
+        "bindings": {
+          "transcribe": {
+            "name": "口述用ショートカット",
+            "description": "どのアプリでも使えます。"
+          },
+          "cancel": {
+            "name": "キャンセル用ショートカット",
+            "description": "文字起こしせずに停止します。"
+          },
+          "transcribe_with_post_process": {
+            "name": "AI クリーンアップ用ショートカット",
+            "description": "口述し、AI でテキストを整えます。"
+          },
+          "command": {
+            "name": "コマンド用ショートカット",
+            "description": "テキストを選択して変更内容を話すか、書きたい内容を話します。"
+          }
+        },
+        "errors": {
+          "restore": "以前のショートカットを復元できませんでした",
+          "set": "ショートカットを保存できませんでした: {{error}}",
+          "reset": "ショートカットをリセットできませんでした"
+        },
         "success": {
           "saved": "ショートカットを保存しました",
           "reset": "ショートカットをリセットしました"
         }
       },
+      "language": {
+        "title": "話す言語",
+        "description": "精度を高めるには言語を選ぶか、自動検出に任せてください。",
+        "searchPlaceholder": "言語を検索",
+        "noResults": "一致するものはありません",
+        "auto": "自動検出"
+      },
+      "pushToTalk": {
+        "label": "押したまま話す",
+        "description": "オフの場合は、1 回押すと開始し、もう一度押すと停止します。"
+      },
+      "tapToLock": {
+        "label": "タップでハンズフリー",
+        "description": "素早くタップすると、もう一度押すまで聞き取りを続けます。"
+      },
       "theme": {
+        "title": "テーマ",
         "options": {
           "system": "システム",
           "light": "ライト",
@@ -239,9 +449,37 @@
         }
       }
     },
+    "models": {
+      "currentModel": "現在のエンジン",
+      "currentModelSettings": "エンジン設定",
+      "yourModels": "インストール済み",
+      "availableModels": "その他のエンジン",
+      "noActiveModelTitle": "エンジンがまだありません",
+      "noActiveModelDescription": "口述を始めるには、下からエンジンをダウンロードしてください。",
+      "noExtraInstalled": "インストールされているエンジンはこれだけです。",
+      "deleteConfirm": "使うには再度ダウンロードが必要になります。",
+      "deleteActiveConfirm": "現在のエンジンのため、別のエンジンを選ぶまで口述は使えなくなります。",
+      "deleteTitle": "{{modelName}} を削除しますか？",
+      "filters": {
+        "allLanguages": "すべての言語"
+      },
+      "noModelsMatch": "一致するエンジンはありません",
+      "deleteConfirmAction": "削除"
+    },
     "sound": {
       "microphone": {
-        "title": "マイク"
+        "title": "マイク",
+        "placeholder": "マイクを選択",
+        "loading": "読み込み中…"
+      },
+      "audioFeedback": {
+        "label": "効果音",
+        "description": "口述の開始時と終了時に音を鳴らします。"
+      },
+      "outputDevice": {
+        "title": "サウンドの出力先",
+        "placeholder": "出力先を選択",
+        "loading": "読み込み中…"
       },
       "volume": {
         "title": "音量",
@@ -249,10 +487,10 @@
       },
       "soundTheme": {
         "options": {
+          "silk": "Silk",
           "marimba": "マリンバ",
           "pop": "ポップ",
-          "custom": "カスタム",
-          "silk": "Silk"
+          "custom": "カスタム"
         },
         "preview": "サウンドテーマを試聴（開始→停止の順に再生）",
         "title": "サウンドテーマ",
@@ -272,19 +510,33 @@
       "pageDescription": "ほとんどの人はそのままで大丈夫です。お使いの環境で SilkScribe の動作を変えたいときに使ってください。",
       "groups": {
         "app": "アプリ",
+        "output": "ペースト",
         "transcription": "文字起こし",
         "history": "履歴",
-        "experimental": "実験的"
+        "support": "トラブルシューティング",
+        "experimental": "実験的",
+        "runtime": "パフォーマンス"
       },
       "groupDescriptions": {
-        "history": "文字起こしと録音の保持とクリーンアップの設定。"
+        "history": "文字起こしと録音の保持とクリーンアップの設定。",
+        "experimental": "開発中の機能です。変更されたり、正しく動作しなかったりする場合があります。"
+      },
+      "experimentalToggle": {
+        "label": "実験的な機能",
+        "description": "開発中の機能を試せます。"
+      },
+      "lazyStreamClose": {
+        "label": "マイクをしばらくオンのままにする",
+        "description": "続けて口述するときに速くなります。Bluetooth の音質が下がることがあります。"
       },
       "acceleration": {
         "whisper": {
-          "title": "Whisper アクセラレーション"
+          "title": "Whisper アクセラレーション",
+          "description": "「自動」では、利用可能な場合に GPU を使用します。"
         },
         "ort": {
-          "title": "ONNX アクセラレーション"
+          "title": "ONNX アクセラレーション",
+          "description": "一部のオプションは実験的です。"
         },
         "gpuDevice": {
           "auto": "自動"
@@ -297,16 +549,55 @@
           "rocm": "ROCm"
         }
       },
+      "startHidden": {
+        "label": "バックグラウンドで起動",
+        "description": "このウインドウを表示せず、メニューバーで起動します。"
+      },
+      "autostart": {
+        "label": "ログイン時に開く"
+      },
+      "showTrayIcon": {
+        "label": "メニューバーにアイコンを表示"
+      },
       "overlay": {
+        "title": "録音インジケーター",
+        "description": "口述中に表示されます。",
         "options": {
+          "none": "非表示",
           "bottom": "下",
           "top": "上"
         }
       },
       "pasteMethod": {
+        "title": "ペースト方法",
+        "description": "「ペースト」はテキストを一度に挿入し、「タイプ入力」は 1 文字ずつ入力します。",
+        "options": {
+          "clipboard": "ペースト（{{modifier}}+V）",
+          "clipboardCtrlShiftV": "ペースト（Ctrl+Shift+V）",
+          "clipboardShiftInsert": "ペースト（Shift+Insert）",
+          "direct": "タイプ入力",
+          "none": "ペーストしない（コピーのみ）",
+          "externalScript": "カスタムスクリプト"
+        },
         "externalScriptPlaceholder": "/path/to/your/script.sh"
       },
+      "typingTool": {
+        "title": "入力ツール",
+        "description": "「タイプ入力」で使用します。",
+        "options": {
+          "auto": "自動（推奨）"
+        }
+      },
+      "clipboardHandling": {
+        "title": "ペースト後",
+        "options": {
+          "dontModify": "クリップボードの内容を元に戻す",
+          "copyToClipboard": "テキストをクリップボードに残す"
+        }
+      },
       "autoSubmit": {
+        "title": "ペースト後にキーを押す",
+        "description": "チャットメッセージの送信に便利です。",
         "options": {
           "off": "オフ",
           "enter": "Enter",
@@ -316,42 +607,95 @@
         }
       },
       "translateToEnglish": {
-        "label": "英語に翻訳"
+        "label": "英語に翻訳",
+        "description": "どの言語で話しても、英語のテキストになります。"
       },
       "modelUnload": {
+        "title": "使用していないときにエンジンをアンロード",
+        "description": "メモリを解放します。次の口述の開始が少し遅くなります。",
         "options": {
           "never": "しない",
+          "immediately": "すぐに",
           "min2": "2分後",
           "min5": "5分後",
           "min10": "10分後",
           "min15": "15分後",
-          "hour1": "1時間後"
+          "hour1": "1時間後",
+          "sec5": "5秒後（デバッグ）"
         }
       },
       "customWords": {
+        "title": "語彙",
+        "description": "あなたが指定したとおりに表記する名前や用語です。",
+        "placeholder": "単語や名前を追加",
         "add": "追加",
-        "remove": "{{word}}を削除"
+        "remove": "{{word}}を削除",
+        "duplicate": "「{{word}}」はすでにリストにあります"
+      },
+      "overlayAppearance": {
+        "title": "インジケーターのテーマ",
+        "options": {
+          "auto": "アプリに合わせる",
+          "light": "ライト",
+          "dark": "ダーク"
+        }
+      },
+      "liveText": {
+        "label": "口述中のライブテキスト",
+        "description": "高速なエンジンでは、話しながら言葉が表示されます。最終的なテキストは少し遅れることがあります。"
       }
     },
     "postProcessing": {
+      "hotkey": {
+        "title": "ショートカット"
+      },
       "api": {
+        "title": "接続",
         "provider": {
-          "title": "プロバイダー"
+          "title": "プロバイダー",
+          "description": "OpenAI 互換の API ならどれでも使えます。",
+          "custom": "カスタム"
+        },
+        "appleIntelligence": {
+          "unavailable": "この Mac では Apple Intelligence を利用できません。Apple シリコン、macOS Tahoe 26 以降、および Apple Intelligence がオンになっていることが必要です。"
         },
         "baseUrl": {
           "title": "ベースURL",
-          "placeholder": "https://api.openai.com/v1"
+          "description": "「カスタム」の場合のみ編集できます。",
+          "placeholder": "https://api.openai.com/v1",
+          "managed": "プロバイダーが設定"
         },
         "apiKey": {
+          "title": "API キー",
           "placeholder": "sk-..."
         },
         "model": {
           "title": "モデル",
-          "placeholderNoOptions": "モデル名を入力"
+          "descriptionCustom": "エンドポイントが想定するモデル名です。",
+          "placeholderWithOptions": "モデルを検索",
+          "placeholderNoOptions": "モデル名を入力",
+          "refreshModels": "更新"
         }
       },
       "prompts": {
-        "cancel": "キャンセル"
+        "title": "プロンプト",
+        "selectedPrompt": {
+          "title": "プロンプト"
+        },
+        "noPrompts": "プロンプトはまだありません",
+        "selectPrompt": "プロンプトを選択",
+        "createNew": "新規プロンプト",
+        "promptLabel": "名前",
+        "promptLabelPlaceholder": "例: 文法を修正",
+        "promptInstructions": "指示",
+        "promptInstructionsPlaceholder": "次の文の文法と句読点を修正してください: ${output}",
+        "promptTip": "文字起こしを入れる位置に <code>${output}</code> を記述してください。",
+        "updatePrompt": "変更を保存",
+        "deletePrompt": "プロンプトを削除",
+        "createPrompt": "プロンプトを作成",
+        "cancel": "キャンセル",
+        "selectToEdit": "編集するプロンプトを選んでください。",
+        "createFirst": "プロンプトを作成すると、口述したテキストを自動で整えられます。"
       }
     },
     "history": {
@@ -395,22 +739,72 @@
       "retry": "再試行"
     },
     "debug": {
+      "logDirectory": {
+        "title": "ログフォルダ"
+      },
+      "logLevel": {
+        "title": "ログレベル"
+      },
+      "updateChecks": {
+        "label": "アップデートを自動的に確認"
+      },
+      "wordCorrectionThreshold": {
+        "title": "語彙の照合",
+        "description": "高くするとより多くの単語を拾えますが、修正しすぎることがあります。"
+      },
+      "historyLimit": {
+        "title": "最大保持数",
+        "entries": "件の口述"
+      },
       "recordingRetention": {
+        "title": "口述の音声を削除",
+        "description": "削除されるのは音声だけで、文字起こしは残ります。",
         "never": "しない",
         "preserveLimit": "最新{{count}}件を保持",
         "days3": "3日後",
         "weeks2": "2週間後",
-        "months3": "3ヶ月後"
+        "months3": "3ヶ月後",
+        "placeholder": "選択…"
+      },
+      "alwaysOnMicrophone": {
+        "label": "マイクを常にオン",
+        "description": "開始は速くなりますが、マイクはオンのままになります。"
+      },
+      "clamshellMicrophone": {
+        "title": "蓋を閉じているときのマイク"
+      },
+      "postProcessingToggle": {
+        "label": "AI クリーンアップを使用",
+        "description": "ペーストする前に、言語モデルで句読点やつなぎ言葉を整えます。"
+      },
+      "muteWhileRecording": {
+        "label": "ほかの音声をミュート",
+        "description": "口述中はほかのアプリの音を消します（会議中を除く）。"
+      },
+      "appendTrailingSpace": {
+        "label": "ペースト後にスペースを追加"
       },
       "keyboardImplementation": {
+        "title": "ショートカットのバックエンド",
+        "bindingsReset": "ショートカットに互換性がなかったため、リセットしました。",
         "backends": {
+          "tauri": "標準",
           "nativeKeys": "ネイティブキー"
-        }
+        },
+        "error": "ショートカットのバックエンドを切り替えられませんでした"
       },
       "paths": {
         "appData": "アプリデータ:",
         "models": "モデル:",
         "settings": "設定:"
+      },
+      "pasteDelay": {
+        "title": "ペーストの遅延",
+        "description": "ペーストまでの待ち時間（ミリ秒）です。ペーストが途中で切れる場合は値を上げてください。"
+      },
+      "recordingBuffer": {
+        "title": "離した後も録音を続ける",
+        "description": "最後の言葉の終わりまで拾います。"
       }
     },
     "about": {
@@ -418,6 +812,105 @@
       "version": {
         "title": "バージョン",
         "description": "SilkScribeの現在のバージョン"
+      },
+      "appDataDirectory": {
+        "title": "データフォルダ"
+      }
+    },
+    "aiCleanup": {
+      "title": "AI クリーンアップ",
+      "everyDictation": {
+        "label": "すべての口述をクリーンアップ",
+        "description": "下のショートカットだけでなく、メインのショートカットにも AI クリーンアップが適用されます。"
+      },
+      "level": {
+        "title": "クリーンアップのスタイル"
+      },
+      "levels": {
+        "light": "軽め",
+        "standard": "標準",
+        "rewrite": "書き直し"
+      },
+      "levelHelp": {
+        "light": "句読点、大文字小文字、数字のみを整えます。",
+        "standard": "つなぎ言葉や言いよどみも取り除きます。",
+        "rewrite": "わかりやすさと構成を重視して書き直します。",
+        "custom": "独自のプロンプトを使用します。"
+      },
+      "onDevice": "この Mac 上で実行されます。話した内容はアップロードされません。",
+      "cloud": "クリーンアップのため、口述したテキストは {{provider}} に送信されます。",
+      "prompts": "プロンプト",
+      "nearbyText": {
+        "label": "周囲のテキストを使用",
+        "description": "カーソル周辺のテキストを読み取り、名前や用語を正しく表記します。テキストはこの Mac から出ることはなく、パスワード欄は読み取りません。",
+        "descriptionCloud": "クリーンアップをこの Mac 上で実行するときは、カーソル周辺のテキストを読み取って名前を正しく表記します。パスワード欄は読み取りません。"
+      },
+      "shareNearbyText": {
+        "label": "周囲のテキストも {{provider}} に送信",
+        "description": "デフォルトではオフです。カーソル周辺のテキストはこの Mac から出ません。"
+      }
+    },
+    "styles": {
+      "title": "スタイル",
+      "enable": {
+        "label": "使用中のアプリに合わせる",
+        "description": "AI クリーンアップが、チャットではくだけた文体、メールではていねいな文体で書き、コードは話したとおりに残します。"
+      },
+      "categories": {
+        "messaging": "メッセージとチャット",
+        "email": "メール",
+        "documents": "書類とメモ",
+        "code": "コードとターミナル",
+        "ai_chat": "AI アシスタント",
+        "other": "その他すべて"
+      },
+      "tones": {
+        "casual": "カジュアル",
+        "neutral": "ニュートラル",
+        "formal": "フォーマル"
+      },
+      "fixed": {
+        "code": "コードとコマンドを話したとおりに保持",
+        "ai_chat": "依頼をわかりやすいプロンプトとして保持"
+      },
+      "apps": {
+        "title": "口述したことのあるアプリ",
+        "description": "扱いが正しくないアプリは、別の種類に移動してください。",
+        "builtIn": "組み込み"
+      }
+    },
+    "dictionary": {
+      "title": "辞書",
+      "remove": "{{phrase}} を削除",
+      "replacements": {
+        "title": "置換",
+        "description": "単語やフレーズを常に指定した表記で書きます。",
+        "said": "話す言葉",
+        "saidExample": "例: よろしく",
+        "written": "表記",
+        "writtenExample": "例: よろしくお願いいたします",
+        "add": "置換を追加"
+      },
+      "snippets": {
+        "title": "スニペット",
+        "description": "短いフレーズを話すと、住所などの長いテキストを挿入できます。",
+        "trigger": "スニペットのフレーズ",
+        "triggerExample": "例: 自分の住所",
+        "text": "スニペットのテキスト",
+        "textExample": "挿入するテキスト",
+        "add": "スニペットを追加"
+      },
+      "file": {
+        "title": "バックアップと移行",
+        "description": "単語リストや辞書ファイルをインポートするか、自分の辞書をエクスポートします。",
+        "import": "インポート…",
+        "export": "エクスポート…",
+        "kind": "辞書",
+        "defaultName": "SilkScribe 辞書.json",
+        "imported_other": "{{count}} 件を追加しました",
+        "exported": "辞書をエクスポートしました",
+        "importFailed": "辞書をインポートできませんでした",
+        "exportFailed": "辞書をエクスポートできませんでした"
       }
     }
   },
@@ -441,24 +934,116 @@
     }
   },
   "common": {
+    "loading": "読み込み中…",
     "versionLabel": "v{{version}}",
     "cancel": "キャンセル",
     "delete": "削除",
     "open": "開く",
     "default": "デフォルト",
+    "noOptionsFound": "一致するものはありません",
+    "moreInformation": "詳細",
     "errorBoundary": {
+      "description": "この画面を読み込めませんでした。設定と録音は無事です。",
       "reload": "再読み込み",
-      "openLogs": "ログを開く"
-    }
+      "openLogs": "ログを開く",
+      "title": "問題が発生しました"
+    },
+    "choose": "選択…"
+  },
+  "errors": {
+    "loadDirectory": "このフォルダを開けませんでした: {{error}}"
+  },
+  "appLanguage": {
+    "title": "アプリの言語"
   },
   "overlay": {
+    "listening": "聞き取り中",
     "transcribing": "文字起こし中",
+    "processing": "クリーンアップ中",
     "success": "完了",
-    "cancelled": "キャンセル済み"
+    "failed": "失敗しました",
+    "cancelled": "キャンセル済み",
+    "empty": "聞き取れませんでした",
+    "detail": {
+      "cancelled": "何もペーストされませんでした",
+      "empty": "音声が検出されませんでした",
+      "pasteCopied": "代わりにコピーしました — 手動でペーストしてください",
+      "pasteFailed": "ペーストもコピーもできませんでした",
+      "cleanupSkipped": "AI クリーンアップなしでペーストしました",
+      "transcriptionFailed": "文字起こしが完了しませんでした",
+      "recordingFailed": "録音を開始できませんでした",
+      "commandNeedsSetup": "先に AI クリーンアップを設定してください",
+      "commandFailed": "変更はありません",
+      "commandTimedOut": "タイムアウトしたため変更はありません",
+      "commandTooLong": "選択するテキストを減らしてください",
+      "commandPassword": "パスワード欄では使えません",
+      "commandNotText": "テキストを選択してください"
+    },
+    "style": {
+      "casual": "カジュアル",
+      "neutral": "ニュートラル",
+      "formal": "フォーマル",
+      "code": "コード",
+      "ai_chat": "AI プロンプト"
+    },
+    "nearbyText": "周囲のテキスト",
+    "command": {
+      "listening": "コマンドを聞き取り中",
+      "tag": "コマンド",
+      "editing": "編集中",
+      "writing": "作成中"
+    },
+    "handsFree": {
+      "listening": "ハンズフリーで聞き取り中。終了するにはショートカットをもう一度押し、キャンセルするには Esc を押します。",
+      "tag": "ハンズフリー"
+    }
+  },
+  "meetingOrb": {
+    "orbLabel": "会議の録音、{{state}}",
+    "pinHint": "クリックで開いたままにします。ドラッグで移動します。",
+    "cardLabel": "会議のライブ文字起こし",
+    "transcriptLabel": "ここまでの文字起こし",
+    "untitled": "未命名の会議",
+    "recording": "録音中",
+    "paused": "一時停止中",
+    "finishing": "仕上げています…",
+    "needsAttention": "対応が必要",
+    "microphone": "あなたのマイク",
+    "computerAudio": "コンピューター音声",
+    "micGated": "口述中は、あなたのマイクは会議の録音から除外されます",
+    "you": "あなた",
+    "others": "ほかの参加者",
+    "listening": "聞き取り中…",
+    "listeningBody": "話した内容がここに表示されます。",
+    "unavailableTitle": "ライブ文字起こしは利用できません",
+    "unavailableBody": "口述用エンジンをダウンロードすると、話した内容がリアルタイムで表示されます。録音は引き続き行われます。",
+    "catchingUp": "反映中…",
+    "jumpToLatest": "最新へ移動",
+    "pause": "一時停止",
+    "resume": "再開",
+    "stop": "停止して文字起こし",
+    "open": "メモを開く",
+    "letPeopleKnow": "参加者に知らせる",
+    "prompt": {
+      "title": "この {{app}} 通話のメモを取りますか？",
+      "titleEvent": "「{{title}}」のメモを取りますか？",
+      "body": "SilkScribe はこの Mac 上であなたのマイクと {{app}} を録音します。何もアップロードされません。",
+      "bodyEvent": "SilkScribe はこの Mac 上であなたのマイクとコンピューター音声を録音します。何もアップロードされません。",
+      "start": "メモを開始",
+      "notNow": "今はしない"
+    }
   },
   "feedback": {
     "pasteFailed": {
-      "copiedTitle": "クリップボードにコピーしました"
+      "copiedTitle": "クリップボードにコピーしました",
+      "copiedDescription": "ここにはペーストできなかったため、手動でペーストできるようコピーしておきました。",
+      "copyFailedTitle": "ペーストもコピーもできませんでした",
+      "copyFailedDescription": "もう一度試すか、ライブラリで探してください。"
+    },
+    "dictationOff": {
+      "title": "口述はオフです",
+      "description": "ショートカットを使うには、マイクとアクセシビリティへのアクセスを許可してください。",
+      "action": "修正する"
     }
   },
   "home": {
@@ -527,51 +1112,110 @@
     "home": "ホーム",
     "library": "ライブラリ",
     "settings": "設定",
+    "navigation": "メイン",
     "recordMeeting": "会議を録音",
     "importAudio": "音声ファイルをインポート",
     "localOnly": "すべてはこのデバイスで処理されます",
+    "onDevice": "このデバイスで動作",
+    "homeTitle": "いつでも始められます",
+    "homeDescription": "会議を録音したり、音声をインポートしたり、前回の続きから始めたりできます。",
+    "libraryDescription": "口述、会議、ファイルのすべてを検索できます。",
+    "meetingShort": "あなたのマイクとコンピューター音声",
+    "importShort": "音声ファイルを文字起こし",
     "dictation": "口述",
+    "dictationHelp": "未設定 · セットアップを完了",
     "inProgress": "進行中",
+    "recent": "最近",
+    "viewLibrary": "すべて表示",
     "transcripts": "文字起こし",
+    "searchLibrary": "文字起こしを検索",
     "clearSearch": "検索をクリア",
     "loading": "文字起こしを読み込んでいます…",
+    "emptyTitle": "まだ何もありません",
+    "emptyDescription": "会議を録音するか、音声ファイルをドロップして始めましょう。",
+    "noResults": "一致するものはありません",
     "trySearch": "別の検索条件やフィルターを試してください",
     "loadMore": "さらに読み込む",
     "back": "戻る",
     "title": "タイトル",
     "saved": "保存済み",
     "saving": "保存中…",
+    "saveFailed": "変更を保存できませんでした",
     "export": "エクスポート",
+    "exported": "エクスポートしました",
     "delete": "書き出しを削除",
+    "deleteHelp": "メモと音声も削除されます。元のファイルはそのまま残ります。",
     "deleteAudio": "音声を削除",
+    "deleteAudioHelp": "文字起こしとメモは残りますが、再生はできなくなります。",
     "cancel": "キャンセル",
+    "retry": "もう一度試す",
+    "speed": "速度",
+    "documentViews": "表示",
     "transcript": "書き出し",
     "notes": "メモ",
     "speakers": "話者",
+    "searchTranscript": "検索",
+    "transcriptPending": "文字起こしの準備ができると、ここに表示されます。",
     "speaker": "話者",
+    "unknownSpeaker": "不明",
     "segment": "書き出しの位置",
+    "restoreOriginal": "元のテキストに戻す",
+    "speakerHelp": "名前はこの録音にのみ適用されます。",
+    "noSpeakers": "この録音では話者が見つかりませんでした。",
     "speakerName": "話者名",
     "mergeSpeaker": "統合する…",
+    "notesStale": "文字起こしが編集されています。変更を反映するには再生成してください。",
+    "noNotes": "メモはまだありません。",
+    "regenerate": "再生成",
     "summary": "サマリー",
     "decisions": "決定事項",
     "actions": "アクション項目",
     "action": "アクション項目",
+    "done": "完了",
     "owner": "所有者",
+    "due": "期限",
+    "audioFiles": "音声",
     "cancelJob": "{{title}} をキャンセル",
+    "transcriptionModel": "エンジン",
+    "currentDictationModel": "口述と同じ",
     "language": "言語",
+    "autoLanguage": "自動検出",
     "detectSpeakers": "話者を識別",
+    "localNotes": "AI メモ",
+    "noAutomaticNotes": "メモなし",
+    "microphoneLevel": "マイクレベル",
     "systemLevel": "システム音量",
     "resume": "再開",
     "pause": "一時停止",
+    "stopTranscribe": "停止して文字起こし",
+    "meetingHelp": "双方の音声を録音し、停止すると文字起こしします。",
+    "importHelp": "ファイルと処理方法を選んでください。文字起こし中も作業を続けられます。",
     "meetingTitle": "未命名の会議",
     "microphone": "マイク",
     "defaultMicrophone": "システムデフォルト",
     "computerAudio": "コンピューター音声を含める",
+    "systemPermission": "macOS から「画面収録とシステムオーディオ録音」へのアクセスを求められます。",
+    "removeFile": "削除",
+    "chooseFiles": "ファイルを選択…",
+    "processing": "処理中",
+    "setupNeeded": "一部のエンジンがまだセットアップされていません。今は録音だけして、後で処理できます。",
+    "modelSetup": "エンジンをセットアップ",
     "working": "処理中…",
     "startRecording": "録画を開始",
+    "startTranscription": "文字起こし",
+    "modelsLanguage": "エンジンと言語",
     "storage": "ストレージとプライバシー",
+    "localIntelligence": "エンジン",
+    "localModelsHelp": "必要なものだけダウンロードしてください。すべてこの Mac 上で動作します — 大きなエンジンほど多くのメモリが必要です。",
+    "runtimeReady": "この Mac で実行する準備ができています。",
+    "runtimeMissing": "このビルドではまだこれらのエンジンを実行できません。口述は引き続き使えます。",
+    "unpublished": "まだ利用できません",
+    "downloading": "ダウンロード中…",
     "installed": "インストール済み",
     "download": "ダウンロード",
+    "dropAudio": "ドロップして文字起こし",
+    "workspaceFirst": "ファイルの文字起こしだけ使う",
+    "workspaceFirstHelp": "マイクやアクセシビリティへのアクセスは不要です。",
     "source": {
       "dictation": "口述",
       "meeting": "会議",
@@ -586,13 +1230,17 @@
     },
     "purpose": {
       "asr": "文字起こし",
+      "alignment": "単語のタイミング",
+      "speakers": "話者",
       "notes": "要約とアクション項目"
     },
     "stage": {
       "recording": "録音中",
       "paused": "一時停止",
       "queued": "キュー中",
+      "preparing": "準備中",
       "transcribing": "文字起こし中",
+      "diarizing": "話者を識別中",
       "notes": "メモの作成中",
       "complete": "完了",
       "failed": "対応が必要",
@@ -602,34 +1250,267 @@
     "audio": "音声",
     "appearance": "外観",
     "debug": "開発者",
+    "retentionHelp": "会議とインポートは、削除するまで保持されます。これらの設定は口述の音声にのみ適用されます。",
+    "dictationRetention": "口述の音声",
     "skipToContent": "コンテンツへ移動",
+    "memoryGuidance": "約 {{gb}} GB のメモリが必要",
     "notesModel9": "Qwen3.5 · 9B",
     "notesModel27": "Qwen3.6 · 27B",
+    "draftConflict": "以前のバージョンの未保存の下書きが見つかりました。",
+    "recoverDraft": "下書きを復元",
+    "keepSaved": "保存済みの内容を残す",
+    "transcriptReadyWarning": "文字起こし完了 · 一部の処理が完了しませんでした",
+    "retryEnhancement": "もう一度試す",
+    "withoutEnhancements": "話者とメモをスキップ",
     "recordForLater": "今すぐ録音し、後でトランスクリプト",
+    "returnToSetup": "セットアップに戻る",
+    "advancedDictationModels": "その他の口述用エンジン",
     "activity": "アクティビティ",
     "close": "閉じる",
+    "noActiveJobs": "処理中の項目はありません",
     "presetFast": "速いトランスクリプト",
     "presetDetailed": "詳細なトランスクリプト",
     "presetNotes": "トランスクリプト + メモ",
+    "processingDetails": "エンジンとオプション",
+    "stopSave": "停止して音声を保存",
+    "finishEditing": "完了",
     "editTranscript": "トランスクリプトを編集",
     "followPlayback": "再生に追従",
     "previous": "前へ",
     "next": "次へ",
+    "undoMerge": "統合を取り消す",
+    "evidence": "文字起こしより",
+    "playEvidence": "再生",
+    "pauseDownload": "一時停止",
+    "removeModel": "エンジンを削除",
+    "removeModelHelp": "文字起こしは残ります。いつでも再ダウンロードできます。",
+    "storageUsage": "ストレージ",
+    "audioStorage": "録音",
+    "modelStorage": "エンジン",
+    "freeStorage": "空き容量",
+    "setupModels": "エンジンをセットアップ",
+    "skipEnhancement": "スキップ",
     "generateNotes": "メモを生成",
     "addItem": "アイテムを追加",
     "removeItem": "アイテムを削除",
     "newSpeaker": "話者を追加",
+    "speakerSample": "サンプルを再生",
+    "exportPreview": "エクスポート",
+    "confirmExport": "保存先を選択…",
+    "readiness": {
+      "download": "これを使うには {{model}} をダウンロードしてください。",
+      "unpublished": "{{model}} はまだ利用できません。",
+      "unavailable": "{{model}} はこのビルドに含まれていません。",
+      "native_download": "{{model}} をダウンロードするか、別の口述用エンジンを選んでください。",
+      "runtime": "このビルドには、これに必要なコンポーネントが含まれていません。",
+      "fallback_download": "一部の言語の自動検出には Whisper large-v3 が必要です。ダウンロードするか、言語を選んでください。",
+      "language": "このエンジンはその言語に対応していません。別の言語またはエンジンを選んでください。",
+      "memory": "{{model}} に必要な空きメモリが足りません。いくつかのアプリを閉じるか、より小さいメモ用エンジンを選んでください。"
+    },
+    "newNotesReview": "新しいメモ",
+    "newNotesHelp": "現在のメモは下にあります。置き換える前に比較してください。",
+    "replaceNotes": "メモを置き換える",
+    "keepCurrentNotes": "現在のメモを残す",
     "speakerCount_one": "{{count}} 話者",
     "speakerCount_other": "{{count}} 話者",
+    "timing": {
+      "aligned": "単語単位のタイムスタンプ",
+      "aligned_or_segments": "対応している場合は単語単位、それ以外は文単位のタイムスタンプ",
+      "segments": "文単位のタイムスタンプ"
+    },
+    "memoryAvailable": "約 {{gb}} GB の空き",
+    "memoryObserved": "この Mac では最大 {{gb}} GB を使用しました。音声が長いと、さらに必要になる場合があります。",
+    "memoryUnmeasured": "この Mac ではまだ測定されていません",
+    "checkingFiles": "ファイルを確認中…",
+    "durationUnknown": "長さ不明",
+    "importProblems": "一部のファイルをインポートできませんでした",
     "dismiss": "閉じる",
-    "selectedTurns": "選択した発言",
+    "verifyModel": "ファイルを検証",
+    "modelVerified": "ファイルに問題はありません",
+    "modelDamaged": "ファイルが破損しています · 再ダウンロードしてください",
+    "finishingAudio": "仕上げています…",
+    "selectPage": "このページをすべて選択",
     "clearSelection": "選択をクリア",
+    "selectedTurns": "選択した発言",
+    "assignSelectedSpeaker": "話者を割り当てる",
     "selectTurn": "{{time}} のターンを選択",
-    "unfinishedImports": "完了していないインポート"
+    "exportOriginalText": "元のテキストをエクスポート",
+    "notesReviewed": "このメモを文字起こしと照らし合わせて確認しました",
+    "unfinishedImports": "完了していないインポート",
+    "resumeImport": "インポートを再開",
+    "discardImport": "破棄",
+    "captureUnsupported": "会議の録音は現在 Mac でのみ利用できます。音声のインポートは引き続き使えます。",
+    "microphoneReady": "マイクを許可済み",
+    "microphonePermissionNeeded": "声を録音するには、マイクを許可してください。",
+    "allowMicrophone": "マイクを許可",
+    "computerAudioReady": "コンピューター音声を許可済み",
+    "computerPermissionNeeded": "コンピューター音声を取り込むには、「画面収録とシステムオーディオ録音」を許可してください。",
+    "allowComputerAudio": "コンピューター音声を許可",
+    "microphoneUnavailable": "そのマイクは利用できません。別のマイクを選んでください。",
+    "replaceOnlySection": "このセクションだけを置き換える",
+    "sectionReplacementHelp": "ほかのメモはそのまま残ります。",
+    "deleteTitle": "この文字起こしを削除しますか？",
+    "deleteAudioTitle": "音声を削除しますか？",
+    "matchCount_other": "{{count}} 件一致",
+    "mergeTitle": "話者を統合しますか？",
+    "merge": "統合",
+    "mergePreview_other": "{{count}} 件の発言を {{from}} から {{to}} に移動します。元に戻すこともできます。",
+    "remove": "削除",
+    "removeModelTitle": "{{name}} を削除しますか？",
+    "activeCount_other": "{{count}} 件進行中",
+    "errors": {
+      "addFiles": "ファイルを追加できませんでした",
+      "loadDevices": "マイクを読み込めませんでした",
+      "startImport": "インポートを開始できませんでした",
+      "controlRecording": "録音を更新できませんでした",
+      "openTranscript": "この文字起こしを開けませんでした",
+      "cancelJob": "キャンセルできませんでした",
+      "removeEngine": "エンジンを削除できませんでした",
+      "discardImport": "インポートを破棄できませんでした",
+      "requestAccess": "アクセスを要求できませんでした",
+      "removeFile": "ファイルを削除できませんでした",
+      "installEngine": "エンジンをダウンロードできませんでした",
+      "verifyEngine": "ファイルを確認できませんでした",
+      "loadMore": "文字起こしをさらに読み込めませんでした",
+      "loadLibrary": "文字起こしを読み込めませんでした",
+      "saveTranscript": "変更を保存できませんでした",
+      "exportTranscript": "エクスポートできませんでした",
+      "updateNotes": "メモを更新できませんでした",
+      "generateNotes": "メモを生成できませんでした",
+      "discardDraft": "下書きを破棄できませんでした",
+      "startProcessing": "処理を開始できませんでした",
+      "deleteTranscript": "削除できませんでした",
+      "enableCleanup": "AI クリーンアップをオンにできませんでした",
+      "copyOriginal": "元のテキストをコピーできませんでした",
+      "loadNotes": "メモを読み込めませんでした",
+      "saveNotes": "メモを保存できませんでした",
+      "copyMessage": "メッセージをコピーできませんでした",
+      "copyText": "テキストをコピーできませんでした",
+      "saveStyle": "スタイルを保存できませんでした",
+      "startMeeting": "会議を開始できませんでした",
+      "addToDictionary": "辞書に追加できませんでした",
+      "connectCalendar": "カレンダーに接続できませんでした"
+    },
+    "liveTranscript": "ライブ文字起こし",
+    "liveTranscriptNote": "処理が完了すると、より正確な文字起こしに置き換わります。",
+    "cleanupCard": {
+      "title": "すべての口述をクリーンアップ",
+      "body": "Apple Intelligence で句読点やつなぎ言葉を整えます。この Mac 上で動作します。",
+      "turnOn": "オンにする",
+      "notNow": "今はしない"
+    },
+    "showOriginal": "元のテキストを表示",
+    "hideOriginal": "元のテキストを非表示",
+    "copyOriginal": "元のテキストをコピー",
+    "copiedOriginal": "元のテキストをコピーしました",
+    "originalLabel": "AI クリーンアップ前のテキスト",
+    "yourNotes": "あなたのメモ",
+    "yourNotesPlaceholder": "大事なことをその場で入力しましょう。行頭に - を付けるとリストになります。",
+    "consent": {
+      "reminder": "メモを取っていることを参加者に伝えましょう。",
+      "copy": "お知らせメッセージをコピー",
+      "copied": "メッセージをコピーしました",
+      "message": "お知らせ: SilkScribe でメモを取っています。私の Mac 上で動作し、何もアップロードされません。",
+      "setting": "参加者への告知をリマインド",
+      "settingHint": "録音の開始時にリマインダーを表示します。"
+    },
+    "holdToTalk": "押したまま話す",
+    "holdOrTap": "押したまま話すか、タップでハンズフリー",
+    "pressToTalk": "押して開始・停止",
+    "recentDictation": "最近の口述",
+    "wordsToday": "今日の語数",
+    "streak": "連続記録",
+    "streakDays_other": "{{count}} 日",
+    "copy": "コピー",
+    "copied": "コピーしました",
+    "enhanceNotes": "メモを充実させる",
+    "youWrote": "あなたが書いた内容",
+    "callTitle": "{{app}} 通話",
+    "captureFrom": {
+      "label": "音声の取り込み元",
+      "allApps": "すべてのアプリ"
+    },
+    "suggestNotes": {
+      "label": "通話開始時にメモを提案",
+      "hint": "Zoom、Teams、FaceTime などの通話アプリがマイクを使い始めると、確認を表示します。"
+    },
+    "dictionary": {
+      "add": "辞書に追加",
+      "heard": "聞き取られた表記",
+      "heardHelp": "表記だけを覚えさせる場合は空欄のままにします",
+      "write": "正しい表記",
+      "writeHelp": "常にこの表記で表示されます",
+      "save": "追加",
+      "added": {
+        "word": "語彙に追加しました",
+        "replacement": "置換として追加しました"
+      }
+    },
+    "templates": {
+      "label": "メモのテンプレート",
+      "names": {
+        "general": "一般",
+        "one_on_one": "1on1",
+        "standup": "スタンドアップ",
+        "customer_call": "顧客との通話",
+        "interview": "面接",
+        "lecture": "講義"
+      },
+      "sections": {
+        "updates": "進捗",
+        "feedback": "フィードバック",
+        "blockers": "ブロッカー",
+        "done": "完了",
+        "next": "次にやること",
+        "context": "顧客の状況",
+        "pain_points": "課題",
+        "requests": "要望",
+        "background": "経歴",
+        "strengths": "強み",
+        "concerns": "懸念点",
+        "concepts": "重要な概念",
+        "definitions": "定義",
+        "questions": "質問"
+      }
+    },
+    "upcoming": {
+      "title": "今後の予定",
+      "now": "今",
+      "tomorrow": "明日 {{time}}",
+      "takeNotes": "メモを取る"
+    },
+    "calendarCard": {
+      "title": "次の会議をここで確認",
+      "body": "カレンダーを接続すると、メモに会議名が付き、会議の開始時にリマインダーが届きます。データはこの Mac から出ません。"
+    },
+    "calendar": {
+      "title": "カレンダー",
+      "description": "今後の会議をホームに表示し、メモに会議名を付けます。カレンダーのデータはこの Mac から出ません。",
+      "connect": "カレンダーを接続",
+      "disconnect": "カレンダーの接続を解除",
+      "reminders": "会議の開始時に通知",
+      "remindersHint": "開始 1 分前にメモを取るか確認します",
+      "denied": "カレンダーへのアクセスがオフになっています。「システム設定」→「プライバシーとセキュリティ」→「カレンダー」でオンにしてください。",
+      "openSettings": "システム設定を開く"
+    },
+    "ask": {
+      "title": "会議に質問",
+      "label": "会議について質問",
+      "placeholder": "会議やメモについて質問…",
+      "submit": "質問",
+      "thinking": "会議を読み込んでいます… 最初の質問では、メモ用エンジンの読み込みに 1 分ほどかかることがあります。",
+      "nothingFound": "ライブラリには、それに関する内容がありません。",
+      "checkSources": "回答は文字起こしに基づいています。頼る前に出典を確認してください。",
+      "yourNotes": "あなたのメモ",
+      "openSource": "{{source}} を開く",
+      "shortcut": "⌘K"
+    }
   },
   "audioPlayer": {
     "play": "再生",
     "pause": "一時停止",
-    "seek": "再生位置"
+    "seek": "再生位置",
+    "error": "この音声を再生できませんでした。",
+    "retry": "もう一度試す"
   }
 }

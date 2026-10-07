@@ -1,6 +1,15 @@
 {
   "tray": {
-    "copyLastTranscript": "Скопіювати останню транскрипцію"
+    "settings": "Параметри…",
+    "checkUpdates": "Перевірити оновлення…",
+    "copyLastTranscript": "Скопіювати останню транскрипцію",
+    "copyLastOriginal": "Скопіювати останню транскрипцію до очищення",
+    "unloadModel": "Вивантажити рушій",
+    "quit": "Вийти з SilkScribe",
+    "cancel": "Скасувати запис",
+    "meetingPause": "Призупинити зустріч",
+    "meetingResume": "Продовжити зустріч",
+    "meetingStop": "Зупинити й транскрибувати зустріч"
   },
   "sidebar": {
     "home": "Головна",
@@ -16,88 +25,171 @@
   "onboarding": {
     "recommended": "Рекомендовано",
     "download": "Завантажити",
+    "downloading": "Завантаження…",
+    "customModelDescription": "Власний рушій · офіційно не підтримується",
     "modelCard": {
       "accuracy": "точність",
       "speed": "швидкість"
     },
     "models": {
       "small": {
-        "name": "Whisper Small"
+        "name": "Whisper Small",
+        "description": "Швидкий і легкий"
       },
       "medium": {
-        "name": "Whisper Medium"
+        "name": "Whisper Medium",
+        "description": "Точніший, але трохи повільніший"
       },
       "turbo": {
-        "name": "Whisper Turbo"
+        "name": "Whisper Turbo",
+        "description": "Швидкий і точний — чудовий універсал"
       },
       "large": {
-        "name": "Whisper Large"
+        "name": "Whisper Large",
+        "description": "Найточніший Whisper, але повільний"
       },
       "parakeet-tdt-0.6b-v2": {
-        "name": "Parakeet V2"
+        "name": "Parakeet V2",
+        "description": "Найкращий для англійської"
       },
       "parakeet-tdt-0.6b-v3": {
-        "name": "Parakeet V3"
+        "name": "Parakeet V3",
+        "description": "Швидкий і точний · 25 європейських мов"
       },
       "moonshine-base": {
-        "name": "Moonshine Base"
+        "name": "Moonshine Base",
+        "description": "Дуже швидкий · англійська · добре розуміє акценти"
       },
       "moonshine-tiny-streaming-en": {
-        "name": "Moonshine V2 Tiny"
+        "name": "Moonshine V2 Tiny",
+        "description": "Найшвидший · англійська"
       },
       "moonshine-small-streaming-en": {
-        "name": "Moonshine V2 Small"
+        "name": "Moonshine V2 Small",
+        "description": "Швидкий і збалансований · англійська"
       },
       "moonshine-medium-streaming-en": {
-        "name": "Moonshine V2 Medium"
+        "name": "Moonshine V2 Medium",
+        "description": "Найвища якість Moonshine · англійська"
       },
       "breeze-asr": {
-        "name": "Breeze ASR"
+        "name": "Breeze ASR",
+        "description": "Тайванська мандаринська з домішками англійської"
       },
       "sense-voice-int8": {
-        "name": "SenseVoice"
+        "name": "SenseVoice",
+        "description": "Дуже швидкий · китайська, англійська, японська, корейська, кантонська"
       }
     },
     "permissions": {
       "shared": {
+        "repairEyebrow": "Потрібен ваш дозвіл",
+        "openingPrompt": "Відкриття…",
+        "iEnabledIt": "Уже ввімкнено",
         "checkAgain": "Перевірити ще раз",
         "continue": "Продовжити",
         "repairAction": "Відкрити покрокове відновлення",
         "appName": "SilkScribe",
         "statuses": {
+          "checking": "Перевірка…",
+          "needed": "Ще не дозволено",
+          "error": "Не вдалося перевірити",
+          "requesting": "Очікування macOS…",
           "waiting_for_user": "Чекає на вас",
           "granted": "Дозволено"
         }
       },
       "microphone": {
+        "title": "Дозвольте SilkScribe чути вас",
+        "description": "Ми слухаємо лише тоді, коли ви диктуєте.",
+        "primaryAction": "Дозволити мікрофон",
+        "steps": {
+          "step1": "Натисніть «Дозволити мікрофон».",
+          "step2": "Виберіть «Дозволити» в запиті macOS."
+        },
+        "manualHint": "Запиту немає? Увімкніть доступ тут: Системні параметри → Приватність і безпека → Мікрофон.",
+        "privateNote": "Ваше аудіо ніколи не залишає цей Mac.",
         "guide": {
           "windowLabel": "Запит macOS",
+          "title": "Виберіть «Дозволити»",
+          "body": "Запит з’являється поза цим вікном.",
           "promptTitle": "«SilkScribe» хоче отримати доступ до мікрофона",
+          "promptBody": "SilkScribe перетворює ваш голос на текст на цьому Mac. Застосунок слухає лише тоді, коли ви диктуєте чи записуєте.",
           "deny": "Не дозволяти",
           "allow": "Дозволити",
-          "allowed": "Дозволено"
+          "allowed": "Дозволено",
+          "previewAlt": "Запит macOS на доступ до мікрофона з виділеною кнопкою «Дозволити»"
+        },
+        "statusHelp": {
+          "checking": "Це займе лише секунду.",
+          "needed": "Натисніть «Дозволити мікрофон», щоб продовжити.",
+          "error": "Спробуйте ще раз або увімкніть доступ у Системних параметрах.",
+          "requesting": "Знайдіть запит macOS.",
+          "waiting_for_user": "Завершіть у macOS і поверніться сюди.",
+          "granted": "Усе готово."
         }
       },
       "accessibility": {
+        "title": "Дозвольте SilkScribe друкувати за вас",
+        "description": "Універсальний доступ дає нам змогу вставляти ваші слова прямо в місце курсора.",
+        "primaryAction": "Відкрити параметри Універсального доступу",
         "steps": {
-          "step2": "Якщо macOS перенаправить вас до Системних параметрів, продовжуйте там."
+          "step1": "Натисніть «Відкрити параметри Універсального доступу».",
+          "step2": "Якщо macOS перенаправить вас до Системних параметрів, продовжуйте там.",
+          "step3": "Поверніться сюди."
         },
+        "manualHint": "Або відкрийте Системні параметри → Приватність і безпека → Універсальний доступ.",
+        "privateNote": "Ми використовуємо це лише для вставлення вашої диктовки.",
         "guide": {
-          "windowLabel": "Системні параметри"
+          "windowLabel": "Системні параметри",
+          "title": "Увімкніть SilkScribe",
+          "body": "Знайдіть SilkScribe у списку й увімкніть перемикач.",
+          "previewAlt": "Параметри Універсального доступу macOS з увімкненим SilkScribe"
+        },
+        "statusHelp": {
+          "checking": "Це займе лише секунду.",
+          "needed": "Натисніть «Відкрити параметри Універсального доступу», щоб продовжити.",
+          "error": "Спробуйте ще раз або увімкніть доступ у Системних параметрах.",
+          "requesting": "Відкриття Системних параметрів…",
+          "waiting_for_user": "Увімкніть SilkScribe і поверніться сюди. Уже ввімкнено? Вимкніть і ввімкніть знову.",
+          "granted": "Усе готово."
         }
       }
     },
     "setup": {
+      "title": "Готуємо ваш рушій",
+      "description": "Налаштовуємо найкращий рушій. Мова: {{language}}.",
       "defaultLanguage": "ваша мова",
+      "engineTitle": "Ми вибрали його за вас",
+      "engineBody": "Він найкраще підходить для цього Mac. Мова: {{language}}.",
       "progressLabel": "Прогрес",
+      "sizeLabel": "Розмір",
       "speedLabel": "Швидкість",
+      "etaLabel": "Залишилося",
       "speedValue": "{{speed}} MB/s",
+      "notAvailable": "—",
+      "preparingDetail": "Підготовка…",
       "shortcutTitle": "Ваша комбінація клавіш",
+      "shortcutBody": "Утримуйте {{shortcut}}, говоріть, потім відпустіть.",
       "retry": "Спробувати ще раз",
+      "ready": "Можна спробувати.",
       "states": {
+        "resolving": "Вибираємо рушій",
         "downloading": "Завантаження",
         "preparing": "Підготовка",
-        "ready": "Готово"
+        "ready": "Готово",
+        "error": "Не завершено"
+      },
+      "panelHelp": {
+        "resolving": "Шукаємо найкращий варіант для цього Mac.",
+        "downloading": "Це потрібно лише один раз.",
+        "preparing": "Майже готово.",
+        "error": "Перевірте з’єднання й спробуйте ще раз."
+      },
+      "errors": {
+        "loadModels": "Не вдалося завантажити список рушіїв",
+        "downloadModel": "Не вдалося завершити завантаження",
+        "selectModel": "Не вдалося підготувати рушій"
       },
       "tipsBadge": "Корисно, поки ви чекаєте",
       "previousCard": "Попередня порада",
@@ -153,30 +245,96 @@
     "progress": {
       "welcome": "Ласкаво просимо",
       "microphone": "Мікрофон",
-      "setup": "Налаштування"
+      "accessibility": "Універсальний доступ",
+      "setup": "Налаштування",
+      "shortcut": "Комбінація клавіш",
+      "practice": "Спробувати"
     },
     "welcome": {
+      "title": "Ласкаво просимо до SilkScribe",
+      "description": "Говоріть замість друкування в будь-якому застосунку. Налаштування займе близько хвилини.",
       "plan": {
         "step1": {
-          "title": "Дозвольте мікрофон"
+          "title": "Дозвольте мікрофон",
+          "description": "Щоб ми могли вас чути."
+        },
+        "step2": {
+          "title": "Дозвольте Універсальний доступ",
+          "description": "Щоб ми могли друкувати у ваших застосунках."
         },
         "step3": {
-          "title": "Спробуйте один раз"
+          "title": "Спробуйте один раз",
+          "description": "Швидка перевірка — і все готово."
+        },
+        "shortcut": {
+          "title": "Виберіть комбінацію клавіш",
+          "description": "Утримуйте її, щоб говорити, або натискайте, щоб почати й зупинити."
         }
-      }
+      },
+      "continue": "Почати"
     },
     "practice": {
+      "title": "Спробуйте",
+      "description": "Клацніть у поле, утримуйте {{shortcut}} і щось скажіть.",
+      "shortcutFallback": "вашу комбінацію клавіш",
+      "steps": {
+        "step1": {
+          "title": "Клацніть у поле"
+        },
+        "step2": {
+          "title": "Утримуйте {{shortcut}} і говоріть",
+          "toggleTitle": "Натисніть {{shortcut}} і говоріть"
+        },
+        "step3": {
+          "title": "Відпустіть",
+          "toggleTitle": "Натисніть ще раз"
+        }
+      },
+      "tipTitle": "Скажіть, наприклад",
+      "tipBody": "«Подивімося, наскільки добре це працює»",
+      "placeholder": "Тут з’являться ваші слова",
+      "success": "Працює!",
+      "readyToFinish": "Усе готово.",
+      "readyToFinishTap": "Усе готово. Коротко натисніть {{shortcut}}, щоб диктувати без утримання клавіш.",
       "finish": "Почати користуватися SilkScribe",
-      "skip": "Пропустити поки"
+      "skip": "Пропустити поки",
+      "finishing": "Завершення…",
+      "finishFailed": "Не вдалося завершити налаштування. Спробуйте ще раз.",
+      "descriptionToggle": "Клацніть у поле, натисніть {{shortcut}}, щось скажіть, а потім натисніть ще раз."
+    },
+    "shared": {
+      "stepCounter": "Крок {{current}} з {{total}}"
+    },
+    "shortcut": {
+      "title": "Виберіть комбінацію клавіш",
+      "description": "Ви запускатимете нею диктування з будь-якого застосунку.",
+      "modeTitle": "Як це працює",
+      "hold": {
+        "title": "Утримуйте, щоб говорити",
+        "body": "Утримуйте комбінацію клавіш, поки говорите, потім відпустіть."
+      },
+      "toggle": {
+        "title": "Натискайте, щоб почати й зупинити",
+        "body": "Натисніть один раз, щоб почати, і ще раз, коли закінчите."
+      },
+      "cleanup": {
+        "label": "Очищати мій текст",
+        "description": "Виправляє пунктуацію й прибирає слова-паразити за допомогою Apple Intelligence на цьому Mac."
+      },
+      "continue": "Продовжити",
+      "cleanupFailed": "Не вдалося ввімкнути ШІ-очищення"
     }
   },
   "modelSelector": {
     "custom": "Користувацька",
     "active": "Активна",
     "statusLabel": "Стан моделі: {{status}}",
+    "switching": "Перемикання…",
     "noModelsAvailable": "Немає доступних моделей",
     "extracting": "Розпакування {{modelName}}...",
     "extractingMultiple": "Розпакування {{count}} моделей...",
+    "extractingGeneric": "Розпакування…",
+    "downloading": "Завантаження · {{percentage}}%",
     "downloadingMultiple": "Завантаження {{count}} моделей...",
     "modelReady": "Модель готова",
     "loading": "Завантаження {{modelName}}...",
@@ -189,6 +347,8 @@
     "downloadSpeed": "{{speed}} MB/s",
     "cancel": "Скасувати",
     "cancelDownload": "Скасувати завантаження",
+    "retryDownload": "Спробувати ще раз",
+    "downloadErrorTitle": "Завантаження не завершилося",
     "downloadProgress": {
       "downloadedOf": "{{downloaded}} з {{total}}",
       "speed": "{{speed}}/с",
@@ -199,13 +359,19 @@
       "unknownEta": "Обчислення часу"
     },
     "capabilities": {
+      "languageSelection": "Багато мов",
+      "singleLanguage": "Одна мова",
+      "multiLanguage": "Багатомовний",
+      "languageOnly": "Лише {{language}}",
+      "translation": "Перекладає англійською",
       "translate": "Перекласти на англійську"
     },
     "downloadErrors": {
       "preflightFailed": "SilkScribe не вдалося перевірити місце на диску перед завантаженням: {{detail}}",
       "insufficientSpace": "Для завантаження цієї моделі SilkScribe потрібно {{required}} вільного місця. Доступно {{available}}.",
       "downloadFailed": "SilkScribe не вдалося завантажити модель: {{detail}}",
-      "extractionFailed": "SilkScribe не вдалося розпакувати модель: {{detail}}"
+      "extractionFailed": "SilkScribe не вдалося розпакувати модель: {{detail}}",
+      "unknown": "Завантаження не завершилося."
     }
   },
   "settings": {
@@ -225,13 +391,57 @@
         "appDescription": "Виберіть, яким має бути сам застосунок SilkScribe."
       },
       "shortcut": {
+        "title": "Комбінація для диктування",
+        "loading": "Завантаження…",
+        "none": "Комбінацію не задано",
         "notFound": "Скорочення не знайдено",
+        "pressKeys": "Натисніть комбінацію…",
+        "reset": "Відновити типову",
+        "bindings": {
+          "transcribe": {
+            "name": "Комбінація для диктування",
+            "description": "Працює в будь-якому застосунку."
+          },
+          "cancel": {
+            "name": "Комбінація для скасування",
+            "description": "Зупиняє без транскрибування."
+          },
+          "transcribe_with_post_process": {
+            "name": "Комбінація для ШІ-очищення",
+            "description": "Диктує й упорядковує текст за допомогою ШІ."
+          },
+          "command": {
+            "name": "Комбінація для команд",
+            "description": "Виділіть текст і скажіть, як його змінити, або скажіть, що написати."
+          }
+        },
+        "errors": {
+          "restore": "Не вдалося відновити попередню комбінацію",
+          "set": "Не вдалося зберегти комбінацію: {{error}}",
+          "reset": "Не вдалося скинути комбінацію"
+        },
         "success": {
           "saved": "Комбінацію клавіш збережено",
           "reset": "Комбінацію клавіш скинуто"
         }
       },
+      "language": {
+        "title": "Мова мовлення",
+        "description": "Виберіть свою для кращої точності або дозвольте нам визначити її.",
+        "searchPlaceholder": "Пошук мов",
+        "noResults": "Немає збігів",
+        "auto": "Автовизначення"
+      },
+      "pushToTalk": {
+        "label": "Утримувати, щоб говорити",
+        "description": "Якщо вимкнено, натисніть один раз, щоб почати, і ще раз, щоб зупинити."
+      },
+      "tapToLock": {
+        "label": "Коротке натискання — без рук",
+        "description": "Після короткого натискання ми слухаємо, доки ви не натиснете знову."
+      },
       "theme": {
+        "title": "Тема",
         "options": {
           "system": "Система",
           "light": "Світлий",
@@ -239,9 +449,37 @@
         }
       }
     },
+    "models": {
+      "currentModel": "Поточний рушій",
+      "currentModelSettings": "Параметри рушія",
+      "yourModels": "Встановлені",
+      "availableModels": "Інші рушії",
+      "noActiveModelTitle": "Рушія ще немає",
+      "noActiveModelDescription": "Завантажте один нижче, щоб почати диктувати.",
+      "noExtraInstalled": "Це ваш єдиний рушій.",
+      "deleteConfirm": "Щоб користуватися ним знову, доведеться завантажити його ще раз.",
+      "deleteActiveConfirm": "Це ваш поточний рушій, тож диктування буде недоступне, доки ви не виберете інший.",
+      "deleteTitle": "Видалити {{modelName}}?",
+      "filters": {
+        "allLanguages": "Усі мови"
+      },
+      "noModelsMatch": "Немає відповідних рушіїв",
+      "deleteConfirmAction": "Видалити"
+    },
     "sound": {
       "microphone": {
-        "title": "Мікрофон"
+        "title": "Мікрофон",
+        "placeholder": "Виберіть мікрофон",
+        "loading": "Завантаження…"
+      },
+      "audioFeedback": {
+        "label": "Звукові ефекти",
+        "description": "Відтворювати звук, коли диктування починається й закінчується."
+      },
+      "outputDevice": {
+        "title": "Відтворювати звуки через",
+        "placeholder": "Виберіть пристрій виводу",
+        "loading": "Завантаження…"
       },
       "volume": {
         "title": "Гучність",
@@ -249,10 +487,10 @@
       },
       "soundTheme": {
         "options": {
+          "silk": "Шовк",
           "marimba": "Марімба",
           "pop": "Поп",
-          "custom": "Власний",
-          "silk": "Шовк"
+          "custom": "Власний"
         },
         "preview": "Прослухати звукову тему (програє старт, потім стоп)",
         "title": "Тема звукових підказок",
@@ -272,19 +510,33 @@
       "pageDescription": "Більшості ці параметри можна не чіпати. Використовуйте їх, коли потрібно, щоб SilkScribe поводився інакше на вашому пристрої.",
       "groups": {
         "app": "Додаток",
+        "output": "Вставлення",
         "transcription": "Транскрипція",
         "history": "Історія",
-        "experimental": "Експериментальне"
+        "support": "Усунення неполадок",
+        "experimental": "Експериментальне",
+        "runtime": "Продуктивність"
       },
       "groupDescriptions": {
-        "history": "Параметри зберігання та очищення транскрипцій і записів."
+        "history": "Параметри зберігання та очищення транскрипцій і записів.",
+        "experimental": "Ще в розробці — можуть змінитися або перестати працювати."
+      },
+      "experimentalToggle": {
+        "label": "Експериментальні функції",
+        "description": "Випробуйте функції, над якими ми ще працюємо."
+      },
+      "lazyStreamClose": {
+        "label": "Ненадовго залишати мікрофон увімкненим",
+        "description": "Швидше диктування поспіль. Може знизити якість звуку Bluetooth."
       },
       "acceleration": {
         "whisper": {
-          "title": "Прискорення Whisper"
+          "title": "Прискорення Whisper",
+          "description": "«Авто» використовує GPU, коли він доступний."
         },
         "ort": {
-          "title": "Прискорення ONNX"
+          "title": "Прискорення ONNX",
+          "description": "Деякі варіанти експериментальні."
         },
         "gpuDevice": {
           "auto": "Авто"
@@ -297,16 +549,55 @@
           "rocm": "ROCm"
         }
       },
+      "startHidden": {
+        "label": "Запускати у фоні",
+        "description": "Відкривати в рядку меню, не показуючи це вікно."
+      },
+      "autostart": {
+        "label": "Відкривати під час входу"
+      },
+      "showTrayIcon": {
+        "label": "Значок у рядку меню"
+      },
       "overlay": {
+        "title": "Індикатор запису",
+        "description": "Показується, поки ви диктуєте.",
         "options": {
+          "none": "Приховано",
           "bottom": "Внизу",
           "top": "Вгорі"
         }
       },
       "pasteMethod": {
+        "title": "Спосіб вставлення",
+        "description": "«Вставити» додає весь текст одразу. «Надрукувати» вводить його посимвольно.",
+        "options": {
+          "clipboard": "Вставити ({{modifier}}+V)",
+          "clipboardCtrlShiftV": "Вставити (Ctrl+Shift+V)",
+          "clipboardShiftInsert": "Вставити (Shift+Insert)",
+          "direct": "Надрукувати",
+          "none": "Не вставляти (лише копіювати)",
+          "externalScript": "Власний скрипт"
+        },
         "externalScriptPlaceholder": "/path/to/your/script.sh"
       },
+      "typingTool": {
+        "title": "Інструмент введення",
+        "description": "Використовується для «Надрукувати».",
+        "options": {
+          "auto": "Авто (рекомендовано)"
+        }
+      },
+      "clipboardHandling": {
+        "title": "Після вставлення",
+        "options": {
+          "dontModify": "Повернути попередній вміст буфера обміну",
+          "copyToClipboard": "Залишити текст у буфері обміну"
+        }
+      },
       "autoSubmit": {
+        "title": "Натискати клавішу після вставлення",
+        "description": "Зручно для надсилання повідомлень у чатах.",
         "options": {
           "off": "Вимк.",
           "enter": "Enter",
@@ -316,42 +607,95 @@
         }
       },
       "translateToEnglish": {
-        "label": "Перекласти на англійську"
+        "label": "Перекласти на англійську",
+        "description": "Говоріть будь-якою мовою — отримуйте текст англійською."
       },
       "modelUnload": {
+        "title": "Вивантажувати рушій під час простою",
+        "description": "Звільняє пам’ять. Наступне диктування почнеться трохи повільніше.",
         "options": {
           "never": "Ніколи",
+          "immediately": "Одразу",
           "min2": "Через 2 хвилини",
           "min5": "Через 5 хвилин",
           "min10": "Через 10 хвилин",
           "min15": "Через 15 хвилин",
-          "hour1": "Через 1 годину"
+          "hour1": "Через 1 годину",
+          "sec5": "Через 5 секунд (дебаг)"
         }
       },
       "customWords": {
+        "title": "Власні слова",
+        "description": "Імена й терміни, які ми маємо писати по-вашому.",
+        "placeholder": "Додайте слово чи ім’я",
         "add": "Додати",
-        "remove": "Видалити {{word}}"
+        "remove": "Видалити {{word}}",
+        "duplicate": "«{{word}}» уже є у вашому списку"
+      },
+      "overlayAppearance": {
+        "title": "Тема індикатора",
+        "options": {
+          "auto": "Як у застосунку",
+          "light": "Світла",
+          "dark": "Темна"
+        }
+      },
+      "liveText": {
+        "label": "Текст наживо під час диктування",
+        "description": "Показує слова, поки ви говорите, зі швидкими рушіями. Остаточний текст може з’явитися трохи пізніше."
       }
     },
     "postProcessing": {
+      "hotkey": {
+        "title": "Комбінація клавіш"
+      },
       "api": {
+        "title": "Підключення",
         "provider": {
-          "title": "Провайдер"
+          "title": "Провайдер",
+          "description": "Підходить будь-який API, сумісний з OpenAI.",
+          "custom": "Власний"
+        },
+        "appleIntelligence": {
+          "unavailable": "Apple Intelligence на цьому Mac недоступно. Потрібні Apple silicon, macOS Tahoe 26 або новіша версія та ввімкнена функція Apple Intelligence."
         },
         "baseUrl": {
           "title": "Базова URL-адреса",
-          "placeholder": "https://api.openai.com/v1"
+          "description": "Редагується лише для варіанта «Власний».",
+          "placeholder": "https://api.openai.com/v1",
+          "managed": "Задано провайдером"
         },
         "apiKey": {
+          "title": "Ключ API",
           "placeholder": "sk-..."
         },
         "model": {
           "title": "Модель",
-          "placeholderNoOptions": "Введіть назву моделі"
+          "descriptionCustom": "Назва моделі, яку очікує ваш API.",
+          "placeholderWithOptions": "Пошук моделей",
+          "placeholderNoOptions": "Введіть назву моделі",
+          "refreshModels": "Оновити"
         }
       },
       "prompts": {
-        "cancel": "Скасувати"
+        "title": "Промпти",
+        "selectedPrompt": {
+          "title": "Промпт"
+        },
+        "noPrompts": "Промптів ще немає",
+        "selectPrompt": "Виберіть промпт",
+        "createNew": "Новий промпт",
+        "promptLabel": "Назва",
+        "promptLabelPlaceholder": "напр. Виправити граматику",
+        "promptInstructions": "Інструкції",
+        "promptInstructionsPlaceholder": "Виправ граматику й пунктуацію в тексті: ${output}",
+        "promptTip": "Вставте <code>${output}</code> там, де має бути транскрипція.",
+        "updatePrompt": "Зберегти зміни",
+        "deletePrompt": "Видалити промпт",
+        "createPrompt": "Створити промпт",
+        "cancel": "Скасувати",
+        "selectToEdit": "Виберіть промпт, щоб його редагувати.",
+        "createFirst": "Створіть промпт, щоб автоматично впорядковувати диктування."
       }
     },
     "history": {
@@ -395,22 +739,72 @@
       "retry": "Повторити"
     },
     "debug": {
+      "logDirectory": {
+        "title": "Папка журналів"
+      },
+      "logLevel": {
+        "title": "Рівень журналювання"
+      },
+      "updateChecks": {
+        "label": "Автоматично перевіряти оновлення"
+      },
+      "wordCorrectionThreshold": {
+        "title": "Зіставлення зі словником",
+        "description": "Вище значення охоплює більше слів, але може виправляти зайве."
+      },
+      "historyLimit": {
+        "title": "Зберігати до",
+        "entries": "диктувань"
+      },
       "recordingRetention": {
+        "title": "Видаляти аудіо диктувань",
+        "description": "Видаляється лише аудіо. Транскрипції зберігаються.",
         "never": "Ніколи",
         "preserveLimit": "Зберігати останні {{count}}",
         "days3": "Через 3 дні",
         "weeks2": "Через 2 тижні",
-        "months3": "Через 3 місяці"
+        "months3": "Через 3 місяці",
+        "placeholder": "Виберіть…"
+      },
+      "alwaysOnMicrophone": {
+        "label": "Постійно ввімкнений мікрофон",
+        "description": "Запуск швидший, але мікрофон залишається активним."
+      },
+      "clamshellMicrophone": {
+        "title": "Мікрофон при закритій кришці"
+      },
+      "postProcessingToggle": {
+        "label": "Використовувати ШІ-очищення",
+        "description": "Виправляє пунктуацію й прибирає слова-паразити за допомогою мовної моделі перед вставленням."
+      },
+      "muteWhileRecording": {
+        "label": "Вимикати інший звук",
+        "description": "Глушить інші застосунки, поки ви диктуєте, окрім часу зустрічей."
+      },
+      "appendTrailingSpace": {
+        "label": "Додавати пробіл після вставлення"
       },
       "keyboardImplementation": {
+        "title": "Обробник комбінацій клавіш",
+        "bindingsReset": "Ваші комбінації клавіш були несумісні, тому ми їх скинули.",
         "backends": {
+          "tauri": "Стандартний",
           "nativeKeys": "Нативні клавіші"
-        }
+        },
+        "error": "Не вдалося змінити обробник комбінацій клавіш"
       },
       "paths": {
         "appData": "Дані програми:",
         "models": "Моделі:",
         "settings": "Налаштування:"
+      },
+      "pasteDelay": {
+        "title": "Затримка вставлення",
+        "description": "Очікування перед вставленням, у мс. Збільште, якщо вставлений текст обрізається."
+      },
+      "recordingBuffer": {
+        "title": "Записувати ще трохи після відпускання",
+        "description": "Вловлює кінець вашого останнього слова."
       }
     },
     "about": {
@@ -418,6 +812,108 @@
       "version": {
         "title": "Версія",
         "description": "Поточна версія SilkScribe"
+      },
+      "appDataDirectory": {
+        "title": "Папка даних"
+      }
+    },
+    "aiCleanup": {
+      "title": "ШІ-очищення",
+      "everyDictation": {
+        "label": "Очищати кожне диктування",
+        "description": "ШІ-очищення застосовується й до основної комбінації клавіш, а не лише до наведеної нижче."
+      },
+      "level": {
+        "title": "Стиль очищення"
+      },
+      "levels": {
+        "light": "Легкий",
+        "standard": "Стандартний",
+        "rewrite": "Переписування"
+      },
+      "levelHelp": {
+        "light": "Лише пунктуація, великі літери й числа.",
+        "standard": "Також прибирає слова-паразити й запинки.",
+        "rewrite": "Переписує текст для ясності й кращої структури.",
+        "custom": "Використовує ваш власний промпт."
+      },
+      "onDevice": "Працює на цьому Mac. Ваші слова нікуди не надсилаються.",
+      "cloud": "Ваш продиктований текст надсилається до {{provider}} для очищення.",
+      "prompts": "Промпти",
+      "nearbyText": {
+        "label": "Використовувати текст поруч",
+        "description": "Читає текст навколо курсора, щоб правильно писати імена й терміни. Він залишається на цьому Mac, а поля паролів ніколи не читаються.",
+        "descriptionCloud": "Читає текст навколо курсора, щоб правильно писати імена, коли очищення працює на цьому Mac. Поля паролів ніколи не читаються."
+      },
+      "shareNearbyText": {
+        "label": "Також надсилати текст поруч до {{provider}}",
+        "description": "Типово вимкнено: текст навколо курсора залишається на цьому Mac."
+      }
+    },
+    "styles": {
+      "title": "Стилі",
+      "enable": {
+        "label": "Підлаштовуватися під застосунок",
+        "description": "ШІ-очищення пише невимушено в чатах, офіційно в листах, а код залишає таким, як ви його продиктували."
+      },
+      "categories": {
+        "messaging": "Повідомлення й чати",
+        "email": "Електронна пошта",
+        "documents": "Документи й нотатки",
+        "code": "Код і термінали",
+        "ai_chat": "ШІ-асистенти",
+        "other": "Усе інше"
+      },
+      "tones": {
+        "casual": "Невимушений",
+        "neutral": "Нейтральний",
+        "formal": "Офіційний"
+      },
+      "fixed": {
+        "code": "Залишає код і команди такими, як продиктовано",
+        "ai_chat": "Оформлює ваш запит як чіткий промпт"
+      },
+      "apps": {
+        "title": "Застосунки, у які ви диктували",
+        "description": "Перемістіть застосунок до іншої категорії, якщо стиль йому не підходить.",
+        "builtIn": "Вбудований"
+      }
+    },
+    "dictionary": {
+      "title": "Словник",
+      "remove": "Видалити {{phrase}}",
+      "replacements": {
+        "title": "Заміни",
+        "description": "Слово чи фраза завжди писатимуться по-вашому.",
+        "said": "Коли я кажу",
+        "saidExample": "напр. шо",
+        "written": "Писати",
+        "writtenExample": "напр. що",
+        "add": "Додати заміну"
+      },
+      "snippets": {
+        "title": "Фрагменти",
+        "description": "Скажіть коротку фразу, щоб вставити довший текст, наприклад вашу адресу.",
+        "trigger": "Фраза для фрагмента",
+        "triggerExample": "напр. моя адреса",
+        "text": "Текст фрагмента",
+        "textExample": "Текст для вставлення",
+        "add": "Додати фрагмент"
+      },
+      "file": {
+        "title": "Резервна копія або перенесення",
+        "description": "Імпортуйте список слів чи файл словника або експортуйте свій.",
+        "import": "Імпортувати…",
+        "export": "Експортувати…",
+        "kind": "Словник",
+        "defaultName": "Словник SilkScribe.json",
+        "imported_one": "Додано {{count}} запис",
+        "imported_few": "Додано {{count}} записи",
+        "imported_many": "Додано {{count}} записів",
+        "imported_other": "Додано {{count}} запису",
+        "exported": "Словник експортовано",
+        "importFailed": "Не вдалося імпортувати словник",
+        "exportFailed": "Не вдалося експортувати словник"
       }
     }
   },
@@ -441,24 +937,116 @@
     }
   },
   "common": {
+    "loading": "Завантаження…",
     "versionLabel": "v{{version}}",
     "cancel": "Скасувати",
     "delete": "Видалити",
     "open": "Відкрити",
     "default": "За замовчуванням",
+    "noOptionsFound": "Немає збігів",
+    "moreInformation": "Докладніше",
     "errorBoundary": {
+      "description": "Цей екран не завантажився. Ваші налаштування й записи в безпеці.",
       "reload": "Перезавантажити",
-      "openLogs": "Відкрити журнали"
-    }
+      "openLogs": "Відкрити журнали",
+      "title": "Щось пішло не так"
+    },
+    "choose": "Виберіть…"
+  },
+  "errors": {
+    "loadDirectory": "Не вдалося відкрити цю папку: {{error}}"
+  },
+  "appLanguage": {
+    "title": "Мова застосунку"
   },
   "overlay": {
+    "listening": "Слухаю",
     "transcribing": "Транскрипція",
+    "processing": "Очищення",
     "success": "Готово",
-    "cancelled": "Скасовано"
+    "failed": "Не вдалося",
+    "cancelled": "Скасовано",
+    "empty": "Не розчуто",
+    "detail": {
+      "cancelled": "Нічого не вставлено",
+      "empty": "Мовлення не виявлено",
+      "pasteCopied": "Скопійовано — вставте самостійно",
+      "pasteFailed": "Не вдалося вставити чи скопіювати",
+      "cleanupSkipped": "Вставлено без ШІ-очищення",
+      "transcriptionFailed": "Транскрипція не завершилася",
+      "recordingFailed": "Не вдалося почати запис",
+      "commandNeedsSetup": "Спершу налаштуйте ШІ-очищення",
+      "commandFailed": "Нічого не змінено",
+      "commandTimedOut": "Час вичерпано, нічого не змінено",
+      "commandTooLong": "Виділіть менше тексту",
+      "commandPassword": "Недоступно в полях паролів",
+      "commandNotText": "Виділіть текст"
+    },
+    "style": {
+      "casual": "Невимушений",
+      "neutral": "Нейтральний",
+      "formal": "Офіційний",
+      "code": "Код",
+      "ai_chat": "ШІ-промпт"
+    },
+    "nearbyText": "Текст поруч",
+    "command": {
+      "listening": "Слухаю команду",
+      "tag": "Команда",
+      "editing": "Редагування",
+      "writing": "Написання"
+    },
+    "handsFree": {
+      "listening": "Слухаю без рук. Натисніть комбінацію ще раз, щоб завершити, або Esc, щоб скасувати.",
+      "tag": "Без рук"
+    }
+  },
+  "meetingOrb": {
+    "orbLabel": "Запис зустрічі, {{state}}",
+    "pinHint": "Клацніть, щоб закріпити. Перетягніть, щоб перемістити.",
+    "cardLabel": "Транскрипція зустрічі наживо",
+    "transcriptLabel": "Транскрипція на цей момент",
+    "untitled": "Зустріч без назви",
+    "recording": "Запис",
+    "paused": "Призупинено",
+    "finishing": "Завершення…",
+    "needsAttention": "Потребує уваги",
+    "microphone": "Ваш мікрофон",
+    "computerAudio": "Аудіо комп’ютера",
+    "micGated": "Поки ви диктуєте, ваш мікрофон не записується в зустріч",
+    "you": "Ви",
+    "others": "Інші",
+    "listening": "Слухаю…",
+    "listeningBody": "Слова з’являтимуться тут, коли люди говоритимуть.",
+    "unavailableTitle": "Немає транскрипції наживо",
+    "unavailableBody": "Завантажте рушій для диктування, щоб бачити слова під час розмови. Запис усе одно працює.",
+    "catchingUp": "Наздоганяємо…",
+    "jumpToLatest": "До останнього",
+    "pause": "Призупинити",
+    "resume": "Продовжити",
+    "stop": "Зупинити й транскрибувати",
+    "open": "Відкрити нотатки",
+    "letPeopleKnow": "Повідомити учасників",
+    "prompt": {
+      "title": "Робити нотатки для цього дзвінка в {{app}}?",
+      "titleEvent": "Робити нотатки для «{{title}}»?",
+      "body": "SilkScribe записує ваш мікрофон і {{app}} на цьому Mac. Нічого не вивантажується.",
+      "bodyEvent": "SilkScribe записує ваш мікрофон і аудіо комп’ютера на цьому Mac. Нічого не вивантажується.",
+      "start": "Почати нотатки",
+      "notNow": "Не зараз"
+    }
   },
   "feedback": {
     "pasteFailed": {
-      "copiedTitle": "Скопійовано в буфер обміну"
+      "copiedTitle": "Скопійовано в буфер обміну",
+      "copiedDescription": "Не вдалося вставити тут, тож текст готовий, щоб ви вставили його самі.",
+      "copyFailedTitle": "Не вдалося вставити чи скопіювати",
+      "copyFailedDescription": "Спробуйте ще раз або знайдіть текст у Бібліотеці."
+    },
+    "dictationOff": {
+      "title": "Диктування вимкнено",
+      "description": "Надайте доступ до мікрофона й Універсального доступу, щоб використовувати комбінацію клавіш.",
+      "action": "Виправити"
     }
   },
   "home": {
@@ -527,51 +1115,110 @@
     "home": "Головна",
     "library": "Бібліотека",
     "settings": "Налаштування",
+    "navigation": "Основне",
     "recordMeeting": "Записати зустріч",
     "importAudio": "Імпортувати аудіо",
     "localOnly": "Усе обробляється на цьому пристрої",
+    "onDevice": "Працює на вашому пристрої",
+    "homeTitle": "Готові, коли ви готові",
+    "homeDescription": "Запишіть зустріч, імпортуйте аудіо або продовжте з того місця, де зупинилися.",
+    "libraryDescription": "Усі диктування, зустрічі й файли — з пошуком.",
+    "meetingShort": "Ваш мікрофон і аудіо комп’ютера",
+    "importShort": "Перетворюйте аудіофайли на транскрипції",
     "dictation": "Диктовка",
+    "dictationHelp": "Ще не налаштовано · Завершити налаштування",
     "inProgress": "В процесі",
+    "recent": "Нещодавні",
+    "viewLibrary": "Переглянути все",
     "transcripts": "Транскрипції",
+    "searchLibrary": "Пошук транскрипцій",
     "clearSearch": "Очистити пошук",
     "loading": "Завантаження ваших транскрипцій…",
+    "emptyTitle": "Тут поки порожньо",
+    "emptyDescription": "Запишіть зустріч або перетягніть аудіофайл, щоб почати.",
+    "noResults": "Немає збігів",
     "trySearch": "Спробуйте інший пошук або фільтр.",
     "loadMore": "Завантажити більше",
     "back": "Назад",
     "title": "Назва",
     "saved": "Збережено",
     "saving": "Збереження…",
+    "saveFailed": "Не вдалося зберегти зміни",
     "export": "Експортувати",
+    "exported": "Експортовано",
     "delete": "Видалити транскрипт",
+    "deleteHelp": "Її нотатки й аудіо теж буде видалено. Ваш оригінальний файл залишиться на місці.",
     "deleteAudio": "Видалити аудіо",
+    "deleteAudioHelp": "Транскрипція й нотатки залишаться, але відтворити запис ви не зможете.",
     "cancel": "Скасувати",
+    "retry": "Спробувати ще раз",
+    "speed": "Швидкість",
+    "documentViews": "Подання",
     "transcript": "Транскрипт",
     "notes": "Нотатки",
     "speakers": "Диктори",
+    "searchTranscript": "Знайти",
+    "transcriptPending": "Транскрипція з’явиться тут, щойно буде готова.",
     "speaker": "Диктор",
+    "unknownSpeaker": "Невідомий",
     "segment": "Транскрипт у",
+    "restoreOriginal": "Відновити оригінал",
+    "speakerHelp": "Імена застосовуються лише до цього запису.",
+    "noSpeakers": "У цьому записі не знайдено спікерів.",
     "speakerName": "Ім'я диктора",
     "mergeSpeaker": "Об'єднати в…",
+    "notesStale": "Ви змінили транскрипцію. Створіть нотатки заново, щоб урахувати зміни.",
+    "noNotes": "Нотаток ще немає.",
+    "regenerate": "Створити заново",
     "summary": "Резюме",
     "decisions": "Рішення",
     "actions": "Дії",
     "action": "Дія",
+    "done": "Готово",
     "owner": "Власник",
+    "due": "Термін",
+    "audioFiles": "Аудіо",
     "cancelJob": "Скасувати {{title}}",
+    "transcriptionModel": "Рушій",
+    "currentDictationModel": "Як для диктування",
     "language": "Мова",
+    "autoLanguage": "Автовизначення",
     "detectSpeakers": "Виявити спікерів",
+    "localNotes": "ШІ-нотатки",
+    "noAutomaticNotes": "Без нотаток",
+    "microphoneLevel": "Рівень мікрофона",
     "systemLevel": "Рівень аудіо комп'ютера",
     "resume": "Продовжити",
     "pause": "Пауза",
+    "stopTranscribe": "Зупинити й транскрибувати",
+    "meetingHelp": "Ми запишемо обидві сторони й транскрибуємо, коли ви зупините запис.",
+    "importHelp": "Виберіть файли й спосіб обробки. Працюйте далі, поки вони транскрибуються.",
     "meetingTitle": "Незаписана зустріч",
     "microphone": "Мікрофон",
     "defaultMicrophone": "Системний за замовчуванням",
     "computerAudio": "Включити аудіо комп'ютера",
+    "systemPermission": "macOS попросить дозвіл у розділі «Запис екрана та системного аудіо».",
+    "removeFile": "Вилучити",
+    "chooseFiles": "Вибрати файли…",
+    "processing": "Обробка",
+    "setupNeeded": "Деякі рушії ще не налаштовано. Запишіть зараз, а обробіть пізніше.",
+    "modelSetup": "Налаштувати рушії",
     "working": "Обробка…",
     "startRecording": "Почати запис",
+    "startTranscription": "Транскрибувати",
+    "modelsLanguage": "Рушії й мова",
     "storage": "Зберігання та конфіденційність",
+    "localIntelligence": "Рушії",
+    "localModelsHelp": "Завантажуйте лише те, що потрібно. Усе працює на цьому Mac — більші рушії потребують більше пам’яті.",
+    "runtimeReady": "Готово до роботи на цьому Mac.",
+    "runtimeMissing": "Ця збірка поки не може запускати ці рушії. Диктування працює.",
+    "unpublished": "Поки недоступно",
+    "downloading": "Завантаження…",
     "installed": "Встановлено",
     "download": "Завантажити",
+    "dropAudio": "Відпустіть, щоб транскрибувати",
+    "workspaceFirst": "Лише транскрибувати файли",
+    "workspaceFirstHelp": "Доступ до мікрофона й Універсального доступу не потрібен.",
     "source": {
       "dictation": "Диктофон",
       "meeting": "Зустріч",
@@ -586,13 +1233,17 @@
     },
     "purpose": {
       "asr": "Транскрибація",
+      "alignment": "Часові мітки слів",
+      "speakers": "Спікери",
       "notes": "Підсумки та дії"
     },
     "stage": {
       "recording": "Запис",
       "paused": "Пауза",
       "queued": "У черзі",
+      "preparing": "Підготовка",
       "transcribing": "Транскрибація",
+      "diarizing": "Пошук спікерів",
       "notes": "Написання нотаток",
       "complete": "Готово",
       "failed": "Потребує уваги",
@@ -602,34 +1253,281 @@
     "audio": "Аудіо",
     "appearance": "Зовнішній вигляд",
     "debug": "Розробник",
+    "retentionHelp": "Зустрічі й імпортовані файли зберігаються, доки ви їх не видалите. Ці параметри стосуються лише аудіо диктувань.",
+    "dictationRetention": "Аудіо диктувань",
     "skipToContent": "Перейти до вмісту",
+    "memoryGuidance": "Потрібно близько {{gb}} ГБ пам’яті",
     "notesModel9": "Qwen3.5 · 9B",
     "notesModel27": "Qwen3.6 · 27B",
+    "draftConflict": "Ми знайшли незбережену чернетку з попередньої версії.",
+    "recoverDraft": "Відновити чернетку",
+    "keepSaved": "Залишити збережене",
+    "transcriptReadyWarning": "Транскрипція готова · деякі кроки не завершилися",
+    "retryEnhancement": "Спробувати ще раз",
+    "withoutEnhancements": "Пропустити спікерів і нотатки",
     "recordForLater": "Записати зараз, транскрибувати пізніше",
+    "returnToSetup": "Назад до налаштування",
+    "advancedDictationModels": "Інші рушії для диктування",
     "activity": "Активність",
     "close": "Закрити",
+    "noActiveJobs": "Нічого не обробляється",
     "presetFast": "Швидка транскрипція",
     "presetDetailed": "Детальна транскрипція",
     "presetNotes": "Транскрипція + нотатки",
+    "processingDetails": "Рушії й параметри",
+    "stopSave": "Зупинити й зберегти аудіо",
+    "finishEditing": "Готово",
     "editTranscript": "Редагувати транскрипцію",
     "followPlayback": "Слідкувати за відтворенням",
     "previous": "Попередня",
     "next": "Далі",
+    "undoMerge": "Скасувати об’єднання",
+    "evidence": "З транскрипції",
+    "playEvidence": "Відтворити",
+    "pauseDownload": "Призупинити",
+    "removeModel": "Видалити рушій",
+    "removeModelHelp": "Ваші транскрипції залишаться. Рушій можна будь-коли завантажити знову.",
+    "storageUsage": "Сховище",
+    "audioStorage": "Записи",
+    "modelStorage": "Рушії",
+    "freeStorage": "Вільне місце",
+    "setupModels": "Налаштувати рушії",
+    "skipEnhancement": "Пропустити",
     "generateNotes": "Створити нотатки",
     "addItem": "Додати елемент",
     "removeItem": "Видалити елемент",
     "newSpeaker": "Додати спікера",
+    "speakerSample": "Прослухати зразок",
+    "exportPreview": "Експорт",
+    "confirmExport": "Виберіть, куди зберегти…",
+    "readiness": {
+      "download": "Завантажте {{model}}, щоб скористатися цим.",
+      "unpublished": "{{model}} поки недоступний.",
+      "unavailable": "{{model}} не входить до цієї збірки.",
+      "native_download": "Завантажте {{model}} або виберіть інший рушій для диктування.",
+      "runtime": "У цій збірці бракує компонента, потрібного для цього.",
+      "fallback_download": "Для деяких мов автовизначення потребує Whisper large-v3. Завантажте його або виберіть мову.",
+      "language": "Цей рушій не підтримує цю мову. Виберіть іншу мову або рушій.",
+      "memory": "Недостатньо вільної пам’яті для {{model}}. Закрийте деякі застосунки або виберіть менший рушій нотаток."
+    },
+    "newNotesReview": "Нові нотатки",
+    "newNotesHelp": "Ваші поточні нотатки нижче. Порівняйте, перш ніж замінювати.",
+    "replaceNotes": "Замінити нотатки",
+    "keepCurrentNotes": "Залишити поточні",
     "speakerCount_one": "{{count}} спікер",
-    "speakerCount_other": "{{count}} спікерів",
+    "speakerCount_few": "{{count}} спікери",
+    "speakerCount_many": "{{count}} спікерів",
+    "speakerCount_other": "{{count}} спікера",
+    "timing": {
+      "aligned": "Часові мітки на рівні слів",
+      "aligned_or_segments": "Часові мітки на рівні слів, де це підтримується, інакше — на рівні речень",
+      "segments": "Часові мітки на рівні речень"
+    },
+    "memoryAvailable": "Вільно близько {{gb}} ГБ",
+    "memoryObserved": "На цьому Mac використовував до {{gb}} ГБ. Довше аудіо може потребувати більше.",
+    "memoryUnmeasured": "На цьому Mac ще не вимірювалося",
+    "checkingFiles": "Перевірка файлів…",
+    "durationUnknown": "Невідома тривалість",
+    "importProblems": "Деякі файли не вдалося імпортувати",
     "dismiss": "Закрити",
-    "selectedTurns": "Вибрані репліки",
+    "verifyModel": "Перевірити файли",
+    "modelVerified": "Файли в порядку",
+    "modelDamaged": "Файли пошкоджено · Завантажте знову",
+    "finishingAudio": "Завершення…",
+    "selectPage": "Вибрати все на цій сторінці",
     "clearSelection": "Скасувати вибір",
+    "selectedTurns": "Вибрані репліки",
+    "assignSelectedSpeaker": "Призначити спікера",
     "selectTurn": "Обрати діалог у {{time}}",
-    "unfinishedImports": "Незавершені імпорти"
+    "exportOriginalText": "Експортувати оригінальний текст",
+    "notesReviewed": "Нотатки звірено з транскрипцією",
+    "unfinishedImports": "Незавершені імпорти",
+    "resumeImport": "Продовжити імпорт",
+    "discardImport": "Відкинути",
+    "captureUnsupported": "Запис зустрічей поки доступний лише на Mac. Імпортувати аудіо все одно можна.",
+    "microphoneReady": "Мікрофон дозволено",
+    "microphonePermissionNeeded": "Дозвольте доступ до мікрофона, щоб записувати ваш голос.",
+    "allowMicrophone": "Дозволити мікрофон",
+    "computerAudioReady": "Аудіо комп’ютера дозволено",
+    "computerPermissionNeeded": "Надайте доступ у розділі «Запис екрана та системного аудіо», щоб записувати аудіо комп’ютера.",
+    "allowComputerAudio": "Дозволити аудіо комп’ютера",
+    "microphoneUnavailable": "Цей мікрофон недоступний. Виберіть інший.",
+    "replaceOnlySection": "Замінити лише цей розділ",
+    "sectionReplacementHelp": "Інші нотатки залишаться без змін.",
+    "deleteTitle": "Видалити цю транскрипцію?",
+    "deleteAudioTitle": "Видалити аудіо?",
+    "matchCount_one": "{{count}} збіг",
+    "matchCount_few": "{{count}} збіги",
+    "matchCount_many": "{{count}} збігів",
+    "matchCount_other": "{{count}} збігу",
+    "mergeTitle": "Об’єднати спікерів?",
+    "merge": "Об’єднати",
+    "mergePreview_one": "Перемістити {{count}} репліку ({{from}} → {{to}}). Це можна скасувати.",
+    "mergePreview_few": "Перемістити {{count}} репліки ({{from}} → {{to}}). Це можна скасувати.",
+    "mergePreview_many": "Перемістити {{count}} реплік ({{from}} → {{to}}). Це можна скасувати.",
+    "mergePreview_other": "Перемістити {{count}} репліки ({{from}} → {{to}}). Це можна скасувати.",
+    "remove": "Видалити",
+    "removeModelTitle": "Видалити {{name}}?",
+    "activeCount_one": "{{count}} в обробці",
+    "activeCount_few": "{{count}} в обробці",
+    "activeCount_many": "{{count}} в обробці",
+    "activeCount_other": "{{count}} в обробці",
+    "errors": {
+      "addFiles": "Не вдалося додати ці файли",
+      "loadDevices": "Не вдалося завантажити список мікрофонів",
+      "startImport": "Не вдалося почати імпорт",
+      "controlRecording": "Не вдалося змінити стан запису",
+      "openTranscript": "Не вдалося відкрити цю транскрипцію",
+      "cancelJob": "Не вдалося скасувати",
+      "removeEngine": "Не вдалося видалити рушій",
+      "discardImport": "Не вдалося відкинути імпорт",
+      "requestAccess": "Не вдалося запитати доступ",
+      "removeFile": "Не вдалося вилучити файл",
+      "installEngine": "Не вдалося завантажити рушій",
+      "verifyEngine": "Не вдалося перевірити файли",
+      "loadMore": "Не вдалося завантажити більше транскрипцій",
+      "loadLibrary": "Не вдалося завантажити ваші транскрипції",
+      "saveTranscript": "Не вдалося зберегти зміни",
+      "exportTranscript": "Не вдалося експортувати",
+      "updateNotes": "Не вдалося оновити нотатки",
+      "generateNotes": "Не вдалося створити нотатки",
+      "discardDraft": "Не вдалося відкинути чернетку",
+      "startProcessing": "Не вдалося почати обробку",
+      "deleteTranscript": "Не вдалося видалити",
+      "enableCleanup": "Не вдалося ввімкнути ШІ-очищення",
+      "copyOriginal": "Не вдалося скопіювати оригінал",
+      "loadNotes": "Не вдалося завантажити нотатки",
+      "saveNotes": "Не вдалося зберегти нотатки",
+      "copyMessage": "Не вдалося скопіювати повідомлення",
+      "copyText": "Не вдалося скопіювати текст",
+      "saveStyle": "Не вдалося зберегти стиль",
+      "startMeeting": "Не вдалося почати зустріч",
+      "addToDictionary": "Не вдалося додати до словника",
+      "connectCalendar": "Не вдалося підключити календар"
+    },
+    "liveTranscript": "Транскрипція наживо",
+    "liveTranscriptNote": "Після завершення обробки її замінить точніша транскрипція.",
+    "cleanupCard": {
+      "title": "Очищати кожне диктування",
+      "body": "Виправляйте пунктуацію й прибирайте слова-паразити за допомогою Apple Intelligence. Працює на цьому Mac.",
+      "turnOn": "Увімкнути",
+      "notNow": "Не зараз"
+    },
+    "showOriginal": "Показати оригінал",
+    "hideOriginal": "Приховати оригінал",
+    "copyOriginal": "Скопіювати оригінал",
+    "copiedOriginal": "Оригінал скопійовано",
+    "originalLabel": "Текст до ШІ-очищення",
+    "yourNotes": "Ваші нотатки",
+    "yourNotesPlaceholder": "Записуйте важливе по ходу. Почніть рядок із -, щоб створити список.",
+    "consent": {
+      "reminder": "Повідомте учасників, що ви робите нотатки.",
+      "copy": "Скопіювати попередження",
+      "copied": "Повідомлення скопійовано",
+      "message": "До відома: я роблю нотатки за допомогою SilkScribe. Застосунок працює на моєму Mac, і нічого не вивантажується.",
+      "setting": "Нагадувати повідомити учасників",
+      "settingHint": "Показує нагадування, коли починається запис."
+    },
+    "holdToTalk": "Утримуйте, щоб говорити",
+    "holdOrTap": "Утримуйте, щоб говорити, або коротко натисніть для режиму без рук",
+    "pressToTalk": "Натискайте, щоб почати й зупинити",
+    "recentDictation": "Нещодавнє диктування",
+    "wordsToday": "Слів сьогодні",
+    "streak": "Серія",
+    "streakDays_one": "{{count}} день",
+    "streakDays_few": "{{count}} дні",
+    "streakDays_many": "{{count}} днів",
+    "streakDays_other": "{{count}} дня",
+    "copy": "Скопіювати",
+    "copied": "Скопійовано",
+    "enhanceNotes": "Покращити нотатки",
+    "youWrote": "Це написали ви",
+    "callTitle": "Дзвінок у {{app}}",
+    "captureFrom": {
+      "label": "Записувати аудіо з",
+      "allApps": "Усіх застосунків"
+    },
+    "suggestNotes": {
+      "label": "Пропонувати нотатки на початку дзвінка",
+      "hint": "Показує запит, коли Zoom, Teams, FaceTime чи інший застосунок для дзвінків починає використовувати мікрофон."
+    },
+    "dictionary": {
+      "add": "Додати до словника",
+      "heard": "Розпізнано як",
+      "heardHelp": "Залиште порожнім, щоб лише запам’ятати написання",
+      "write": "Писати як",
+      "writeHelp": "Як це завжди має виглядати",
+      "save": "Додати",
+      "added": {
+        "word": "Додано до словника",
+        "replacement": "Додано як заміну"
+      }
+    },
+    "templates": {
+      "label": "Шаблон нотаток",
+      "names": {
+        "general": "Загальний",
+        "one_on_one": "1:1",
+        "standup": "Стендап",
+        "customer_call": "Дзвінок із клієнтом",
+        "interview": "Співбесіда",
+        "lecture": "Лекція"
+      },
+      "sections": {
+        "updates": "Оновлення",
+        "feedback": "Відгуки",
+        "blockers": "Перешкоди",
+        "done": "Зроблено",
+        "next": "Далі",
+        "context": "Контекст клієнта",
+        "pain_points": "Проблеми",
+        "requests": "Запити",
+        "background": "Досвід",
+        "strengths": "Сильні сторони",
+        "concerns": "Сумніви",
+        "concepts": "Ключові поняття",
+        "definitions": "Визначення",
+        "questions": "Запитання"
+      }
+    },
+    "upcoming": {
+      "title": "Найближчі",
+      "now": "Зараз",
+      "tomorrow": "Завтра о {{time}}",
+      "takeNotes": "Робити нотатки"
+    },
+    "calendarCard": {
+      "title": "Ваші наступні зустрічі — тут",
+      "body": "Підключіть календар, щоб нотатки отримували назви зустрічей, а ви — нагадування на їхньому початку. Дані залишаються на цьому Mac."
+    },
+    "calendar": {
+      "title": "Календар",
+      "description": "Показує найближчі зустрічі на Головній і дає нотаткам їхні назви. Ваш календар залишається на цьому Mac.",
+      "connect": "Підключити календар",
+      "disconnect": "Відключити календар",
+      "reminders": "Нагадувати на початку зустрічей",
+      "remindersHint": "Пропонує робити нотатки за хвилину до початку",
+      "denied": "Доступ до календаря вимкнено. Увімкніть його тут: Системні параметри → Приватність і безпека → Календарі.",
+      "openSettings": "Відкрити Системні параметри"
+    },
+    "ask": {
+      "title": "Запитання до зустрічей",
+      "label": "Запитання про ваші зустрічі",
+      "placeholder": "Запитайте про зустрічі й нотатки…",
+      "submit": "Запитати",
+      "thinking": "Читаємо ваші зустрічі… Перше запитання може зайняти хвилину, поки завантажується рушій нотаток.",
+      "nothingFound": "У вашій Бібліотеці про це нічого немає.",
+      "checkSources": "Відповіді беруться з ваших транскрипцій. Перевірте джерела, перш ніж на них покладатися.",
+      "yourNotes": "Ваші нотатки",
+      "openSource": "Відкрити {{source}}",
+      "shortcut": "⌘K"
+    }
   },
   "audioPlayer": {
     "play": "Відтворити",
     "pause": "Пауза",
-    "seek": "Позиція відтворення"
+    "seek": "Позиція відтворення",
+    "error": "Не вдалося відтворити це аудіо.",
+    "retry": "Спробувати ще раз"
   }
 }

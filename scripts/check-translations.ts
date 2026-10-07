@@ -16,6 +16,25 @@ interface ValidationResult {
   missing: string[][];
   extra: string[][];
   staleEnglish: string[][];
+  /** Translations that drop or rename a {{placeholder}}. */
+  placeholders: string[][];
+  /** Plural families missing a form this language needs. */
+  plurals: string[][];
+}
+
+const PLURAL_SUFFIX = /^(.*)_(zero|one|two|few|many|other)$/;
+
+/** The plural forms a language needs, e.g. one/few/many/other for Russian. */
+function pluralCategories(lang: string): string[] {
+  return new Intl.PluralRules(lang).resolvedOptions().pluralCategories;
+}
+
+/** The placeholder names in a string, sorted. */
+function placeholders(value: unknown): string {
+  return [...String(value).matchAll(/\{\{\s*(\w+)[^}]*\}\}/g)]
+    .map((match) => match[1])
+    .sort()
+    .join(",");
 }
 
 function getLanguages(): string[] {
@@ -197,17 +216,81 @@ function validateTranslations(): void {
         missing: [],
         extra: [],
         staleEnglish: [],
+        placeholders: [],
+        plurals: [],
       };
       continue;
     }
 
-    const missing = referenceKeyPaths.filter(
-      (keyPath) => !hasKeyPath(langData, keyPath),
-    );
+    const categories = pluralCategories(lang);
+    // A plural form English doesn't use (Russian `_few`) belongs to a family
+    // English has; it isn't extra, and English's `_one` isn't missing where
+    // the language has no such form.
+    const isPluralForm = (keyPath: string[]) => {
+      const match = keyPath[keyPath.length - 1].match(PLURAL_SUFFIX);
+      return (
+        !!match &&
+        hasKeyPath(referenceData, [
+          ...keyPath.slice(0, -1),
+          `${match[1]}_other`,
+        ])
+      );
+    };
+    const missing = referenceKeyPaths.filter((keyPath) => {
+      if (hasKeyPath(langData, keyPath)) return false;
+      const form = keyPath[keyPath.length - 1].match(PLURAL_SUFFIX)?.[2];
+      return !(form && isPluralForm(keyPath) && !categories.includes(form));
+    });
     const langKeyPaths = getAllKeyPaths(langData);
     const extra = langKeyPaths.filter(
-      (keyPath) => !hasKeyPath(referenceData, keyPath),
+      (keyPath) =>
+        !hasKeyPath(referenceData, keyPath) &&
+        !(
+          isPluralForm(keyPath) &&
+          categories.includes(
+            keyPath[keyPath.length - 1].match(PLURAL_SUFFIX)![2],
+          )
+        ),
     );
+    const placeholderIssues = langKeyPaths.filter((keyPath) => {
+      const match = keyPath[keyPath.length - 1].match(PLURAL_SUFFIX);
+      // A plural form is compared with English's `_other`.
+      const referencePath =
+        match && isPluralForm(keyPath) && !hasKeyPath(referenceData, keyPath)
+          ? [...keyPath.slice(0, -1), `${match[1]}_other`]
+          : keyPath;
+      if (!hasKeyPath(referenceData, referencePath)) return false;
+      const expected = placeholders(
+        getKeyPathValue(referenceData, referencePath),
+      );
+      const actual = placeholders(getKeyPathValue(langData, keyPath));
+      // Forms like Japanese `_other` may leave out {{count}}; nothing else may.
+      const without = (list: string) =>
+        list
+          .split(",")
+          .filter((name) => name && name !== "count")
+          .join(",");
+      return match
+        ? without(expected) !== without(actual)
+        : expected !== actual;
+    });
+    const families = new Map<string, string[]>();
+    for (const keyPath of langKeyPaths) {
+      const match = keyPath[keyPath.length - 1].match(PLURAL_SUFFIX);
+      if (!match || !isPluralForm(keyPath)) continue;
+      families.set([...keyPath.slice(0, -1), match[1]].join("\u0000"), keyPath);
+    }
+    const pluralIssues = [...families.keys()]
+      .map((family) => family.split("\u0000"))
+      .filter((family) =>
+        categories.some(
+          (form) =>
+            !hasKeyPath(langData, [
+              ...family.slice(0, -1),
+              `${family[family.length - 1]}_${form}`,
+            ]),
+        ),
+      );
     const staleEnglish = referenceKeyPaths.filter((keyPath) => {
       if (
         !shouldCheckForStaleEnglish(keyPath) ||
@@ -227,7 +310,11 @@ function validateTranslations(): void {
 
     const missingIsError = STRICT_MISSING_MODE && missing.length > 0;
     const hasValidationError =
-      extra.length > 0 || missingIsError || staleEnglish.length > 0;
+      extra.length > 0 ||
+      missingIsError ||
+      staleEnglish.length > 0 ||
+      placeholderIssues.length > 0 ||
+      pluralIssues.length > 0;
     if (hasValidationError) {
       hasErrors = true;
     }
@@ -240,6 +327,8 @@ function validateTranslations(): void {
       missing,
       extra,
       staleEnglish,
+      placeholders: placeholderIssues,
+      plurals: pluralIssues,
     };
   }
 
@@ -252,7 +341,9 @@ function validateTranslations(): void {
       !STRICT_MISSING_MODE &&
       result.missing.length > 0 &&
       result.extra.length === 0 &&
-      result.staleEnglish.length === 0;
+      result.staleEnglish.length === 0 &&
+      result.placeholders.length === 0 &&
+      result.plurals.length === 0;
 
     if (result.valid && !isWarningOnly) {
       console.log(
@@ -321,10 +412,23 @@ function validateTranslations(): void {
       }
     }
 
+    for (const [issues, label] of [
+      [result.placeholders, "Placeholders differ from English in"],
+      [result.plurals, "Plural forms missing for"],
+    ] as const) {
+      if (issues.length === 0) continue;
+      console.log(colorize(`  ${label} ${issues.length} keys:`, "yellow"));
+      issues.slice(0, 10).forEach((keyPath) => {
+        console.log(`    - ${keyPath.join(".")}`);
+      });
+    }
+
     if (
       result.missing.length > 0 ||
       result.extra.length > 0 ||
-      result.staleEnglish.length > 0
+      result.staleEnglish.length > 0 ||
+      result.placeholders.length > 0 ||
+      result.plurals.length > 0
     ) {
       console.log("");
     }

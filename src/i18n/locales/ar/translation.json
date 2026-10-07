@@ -1,6 +1,15 @@
 {
   "tray": {
-    "copyLastTranscript": "نسخ آخر نص تم تفريغه"
+    "settings": "الإعدادات…",
+    "checkUpdates": "البحث عن تحديثات…",
+    "copyLastTranscript": "نسخ آخر نص تم تفريغه",
+    "copyLastOriginal": "نسخ آخر نص قبل التنقيح",
+    "unloadModel": "إخلاء المحرّك من الذاكرة",
+    "quit": "إنهاء SilkScribe",
+    "cancel": "إلغاء التسجيل",
+    "meetingPause": "إيقاف الاجتماع مؤقتًا",
+    "meetingResume": "استئناف الاجتماع",
+    "meetingStop": "إيقاف الاجتماع وتفريغه نصيًا"
   },
   "sidebar": {
     "home": "الرئيسية",
@@ -16,88 +25,171 @@
   "onboarding": {
     "recommended": "موصى به",
     "download": "تنزيل",
+    "downloading": "جارٍ التنزيل…",
+    "customModelDescription": "محرّك مخصّص · غير مدعوم رسميًا",
     "modelCard": {
       "accuracy": "الدقة",
       "speed": "السرعة"
     },
     "models": {
       "small": {
-        "name": "Whisper Small"
+        "name": "Whisper Small",
+        "description": "سريع وخفيف"
       },
       "medium": {
-        "name": "Whisper Medium"
+        "name": "Whisper Medium",
+        "description": "أدق، وأبطأ قليلًا"
       },
       "turbo": {
-        "name": "Whisper Turbo"
+        "name": "Whisper Turbo",
+        "description": "سريع ودقيق — خيار متكامل"
       },
       "large": {
-        "name": "Whisper Large"
+        "name": "Whisper Large",
+        "description": "أدق إصدار من Whisper، لكنه بطيء"
       },
       "parakeet-tdt-0.6b-v2": {
-        "name": "Parakeet V2"
+        "name": "Parakeet V2",
+        "description": "الأفضل للإنجليزية"
       },
       "parakeet-tdt-0.6b-v3": {
-        "name": "Parakeet V3"
+        "name": "Parakeet V3",
+        "description": "سريع ودقيق · 25 لغة أوروبية"
       },
       "moonshine-base": {
-        "name": "Moonshine Base"
+        "name": "Moonshine Base",
+        "description": "سريع جدًا · الإنجليزية · يتعامل جيدًا مع اللكنات"
       },
       "moonshine-tiny-streaming-en": {
-        "name": "Moonshine V2 Tiny"
+        "name": "Moonshine V2 Tiny",
+        "description": "الأسرع · الإنجليزية"
       },
       "moonshine-small-streaming-en": {
-        "name": "Moonshine V2 Small"
+        "name": "Moonshine V2 Small",
+        "description": "سريع ومتوازن · الإنجليزية"
       },
       "moonshine-medium-streaming-en": {
-        "name": "Moonshine V2 Medium"
+        "name": "Moonshine V2 Medium",
+        "description": "أفضل جودة من Moonshine · الإنجليزية"
       },
       "breeze-asr": {
-        "name": "Breeze ASR"
+        "name": "Breeze ASR",
+        "description": "الماندرين التايوانية ممزوجة بالإنجليزية"
       },
       "sense-voice-int8": {
-        "name": "SenseVoice"
+        "name": "SenseVoice",
+        "description": "سريع جدًا · الصينية والإنجليزية واليابانية والكورية والكانتونية"
       }
     },
     "permissions": {
       "shared": {
+        "repairEyebrow": "نحتاج إلى موافقتك",
+        "openingPrompt": "جارٍ الفتح…",
+        "iEnabledIt": "فعّلته",
         "checkAgain": "تحقّق مرة أخرى",
         "continue": "متابعة",
         "repairAction": "فتح الإصلاح الموجَّه",
         "appName": "SilkScribe",
         "statuses": {
+          "checking": "جارٍ التحقق…",
+          "needed": "لم يُسمح بعد",
+          "error": "تعذّر التحقق",
+          "requesting": "بانتظار macOS…",
           "waiting_for_user": "بانتظارك",
           "granted": "مسموح"
         }
       },
       "microphone": {
+        "title": "دع SilkScribe يسمعك",
+        "description": "لا نستمع إلا أثناء الإملاء.",
+        "primaryAction": "السماح بالميكروفون",
+        "steps": {
+          "step1": "انقر «السماح بالميكروفون».",
+          "step2": "اختر «سماح» في نافذة macOS."
+        },
+        "manualHint": "لم تظهر النافذة؟ فعّله من إعدادات النظام ← الخصوصية والأمن ← الميكروفون.",
+        "privateNote": "صوتك لا يغادر هذا الـ Mac أبدًا.",
         "guide": {
           "windowLabel": "طلب macOS",
+          "title": "اختر «سماح»",
+          "body": "تظهر النافذة خارج هذه النافذة.",
           "promptTitle": "يرغب ”SilkScribe“ في الوصول إلى الميكروفون",
+          "promptBody": "يحوّل SilkScribe صوتك إلى نص على هذا الـ Mac. ولا يستمع إلا أثناء الإملاء أو التسجيل.",
           "deny": "عدم السماح",
           "allow": "السماح",
-          "allowed": "مسموح"
+          "allowed": "مسموح",
+          "previewAlt": "نافذة الميكروفون في macOS مع إبراز «سماح»"
+        },
+        "statusHelp": {
+          "checking": "لن يستغرق ذلك سوى ثانية.",
+          "needed": "انقر «السماح بالميكروفون» للمتابعة.",
+          "error": "حاول مرة أخرى، أو فعّله من إعدادات النظام.",
+          "requesting": "ابحث عن نافذة macOS.",
+          "waiting_for_user": "أكمل الخطوة في macOS ثم عُد إلى هنا.",
+          "granted": "كل شيء جاهز."
         }
       },
       "accessibility": {
+        "title": "دع SilkScribe يكتب عنك",
+        "description": "تتيح لنا تسهيلات الاستخدام لصق كلماتك عند المؤشر مباشرة.",
+        "primaryAction": "فتح إعدادات تسهيلات الاستخدام",
         "steps": {
-          "step2": "إذا نقلك macOS إلى إعدادات النظام، فأكمل من هناك."
+          "step1": "انقر «فتح إعدادات تسهيلات الاستخدام».",
+          "step2": "إذا نقلك macOS إلى إعدادات النظام، فأكمل من هناك.",
+          "step3": "عُد إلى هنا."
         },
+        "manualHint": "أو انتقل إلى إعدادات النظام ← الخصوصية والأمن ← تسهيلات الاستخدام.",
+        "privateNote": "لا نستخدم ذلك إلا للصق ما تمليه.",
         "guide": {
-          "windowLabel": "إعدادات النظام"
+          "windowLabel": "إعدادات النظام",
+          "title": "فعّل SilkScribe",
+          "body": "ابحث عن SilkScribe في القائمة وفعّله.",
+          "previewAlt": "إعدادات تسهيلات الاستخدام في macOS مع تفعيل SilkScribe"
+        },
+        "statusHelp": {
+          "checking": "لن يستغرق ذلك سوى ثانية.",
+          "needed": "انقر «فتح إعدادات تسهيلات الاستخدام» للمتابعة.",
+          "error": "حاول مرة أخرى، أو فعّله من إعدادات النظام.",
+          "requesting": "جارٍ فتح إعدادات النظام…",
+          "waiting_for_user": "فعّل SilkScribe ثم عُد إلى هنا. مفعّل بالفعل؟ أوقفه ثم فعّله من جديد.",
+          "granted": "كل شيء جاهز."
         }
       }
     },
     "setup": {
+      "title": "نجهّز محرّكك",
+      "description": "نُعدّ أفضل محرّك للغة {{language}}.",
       "defaultLanguage": "لغتك",
+      "engineTitle": "اخترناه لك",
+      "engineBody": "إنه الأنسب لهذا الـ Mac وللغة {{language}}.",
       "progressLabel": "التقدّم",
+      "sizeLabel": "الحجم",
       "speedLabel": "السرعة",
+      "etaLabel": "الوقت المتبقي",
       "speedValue": "{{speed}} MB/s",
+      "notAvailable": "—",
+      "preparingDetail": "جارٍ التجهيز…",
       "shortcutTitle": "الاختصار الخاص بك",
+      "shortcutBody": "اضغط مطوّلًا على {{shortcut}} وتحدّث ثم ارفع إصبعك.",
       "retry": "حاول مرة أخرى",
+      "ready": "جاهز للتجربة.",
       "states": {
+        "resolving": "نختار محرّكك",
         "downloading": "جارٍ التنزيل",
         "preparing": "جارٍ التحضير",
-        "ready": "جاهز"
+        "ready": "جاهز",
+        "error": "لم يكتمل"
+      },
+      "panelHelp": {
+        "resolving": "نبحث عن الأنسب لهذا الـ Mac.",
+        "downloading": "يحدث هذا مرة واحدة فقط.",
+        "preparing": "أوشكنا على الانتهاء.",
+        "error": "تحقق من اتصالك وحاول مرة أخرى."
+      },
+      "errors": {
+        "loadModels": "تعذّر تحميل قائمة المحرّكات",
+        "downloadModel": "تعذّر إكمال التنزيل",
+        "selectModel": "تعذّر تجهيز محرّكك"
       },
       "tipsBadge": "مفيد بينما تنتظر",
       "previousCard": "النصيحة السابقة",
@@ -153,30 +245,96 @@
     "progress": {
       "welcome": "مرحبًا",
       "microphone": "الميكروفون",
-      "setup": "الإعداد"
+      "accessibility": "تسهيلات الاستخدام",
+      "setup": "الإعداد",
+      "shortcut": "الاختصار",
+      "practice": "جرّبه"
     },
     "welcome": {
+      "title": "مرحبًا بك في SilkScribe",
+      "description": "تحدّث بدل الكتابة، في أي تطبيق. يستغرق الإعداد نحو دقيقة.",
       "plan": {
         "step1": {
-          "title": "اسمح بالميكروفون"
+          "title": "اسمح بالميكروفون",
+          "description": "حتى نتمكن من سماعك."
+        },
+        "step2": {
+          "title": "السماح بتسهيلات الاستخدام",
+          "description": "حتى نتمكن من الكتابة في تطبيقاتك."
         },
         "step3": {
-          "title": "جرّبه مرة واحدة"
+          "title": "جرّبه مرة واحدة",
+          "description": "تجربة سريعة وتنتهي."
+        },
+        "shortcut": {
+          "title": "اختيار اختصار",
+          "description": "اضغط مطوّلًا للتحدث، أو اضغط للبدء والإيقاف."
         }
-      }
+      },
+      "continue": "لنبدأ"
     },
     "practice": {
+      "title": "جرّبه",
+      "description": "انقر المربع، واضغط مطوّلًا على {{shortcut}}، وقل شيئًا.",
+      "shortcutFallback": "اختصارك",
+      "steps": {
+        "step1": {
+          "title": "انقر المربع"
+        },
+        "step2": {
+          "title": "اضغط مطوّلًا على {{shortcut}} وتحدّث",
+          "toggleTitle": "اضغط {{shortcut}} وتحدّث"
+        },
+        "step3": {
+          "title": "ارفع إصبعك",
+          "toggleTitle": "اضغطه مرة أخرى"
+        }
+      },
+      "tipTitle": "جرّب أن تقول",
+      "tipBody": "«لنرَ مدى جودة هذا.»",
+      "placeholder": "ستظهر كلماتك هنا",
+      "success": "إنه يعمل!",
+      "readyToFinish": "أنت جاهز.",
+      "readyToFinishTap": "أنت جاهز. انقر {{shortcut}} نقرة قصيرة لمواصلة الاستماع دون إمساك المفتاح.",
       "finish": "ابدأ باستخدام SilkScribe",
-      "skip": "تخطَّ هذا الآن"
+      "skip": "تخطَّ هذا الآن",
+      "finishing": "جارٍ الإنهاء…",
+      "finishFailed": "تعذّر إنهاء الإعداد. حاول مرة أخرى.",
+      "descriptionToggle": "انقر المربع، واضغط {{shortcut}}، وقل شيئًا، ثم اضغطه مرة أخرى."
+    },
+    "shared": {
+      "stepCounter": "الخطوة {{current}} من {{total}}"
+    },
+    "shortcut": {
+      "title": "اختر اختصارك",
+      "description": "ستستخدمه في أي تطبيق لبدء الإملاء.",
+      "modeTitle": "طريقة العمل",
+      "hold": {
+        "title": "اضغط مطوّلًا للتحدث",
+        "body": "اضغط مطوّلًا على الاختصار أثناء الكلام، ثم ارفع إصبعك."
+      },
+      "toggle": {
+        "title": "اضغط للبدء والإيقاف",
+        "body": "اضغط مرة للبدء، ومرة أخرى عند الانتهاء."
+      },
+      "cleanup": {
+        "label": "تنقيح نصي",
+        "description": "يصحّح علامات الترقيم وكلمات الحشو باستخدام Apple Intelligence على هذا الـ Mac."
+      },
+      "continue": "متابعة",
+      "cleanupFailed": "تعذّر تشغيل التنقيح بالذكاء الاصطناعي"
     }
   },
   "modelSelector": {
     "custom": "مخصص",
     "active": "نشط",
     "statusLabel": "حالة النموذج: {{status}}",
+    "switching": "جارٍ التبديل…",
     "noModelsAvailable": "لا توجد نماذج متاحة",
     "extracting": "...جاري استخراج {{modelName}}",
     "extractingMultiple": "...جاري استخراج {{count}} من النماذج",
+    "extractingGeneric": "جارٍ فك الضغط…",
+    "downloading": "جارٍ التنزيل · {{percentage}}٪",
     "downloadingMultiple": "جاري تنزيل {{count}} من النماذج...",
     "modelReady": "النموذج جاهز",
     "loading": "...جاري تحميل {{modelName}}",
@@ -189,6 +347,8 @@
     "downloadSpeed": "{{speed}} ميجابايت/ث",
     "cancel": "إلغاء",
     "cancelDownload": "إلغاء التنزيل",
+    "retryDownload": "حاول مرة أخرى",
+    "downloadErrorTitle": "لم يكتمل التنزيل",
     "downloadProgress": {
       "downloadedOf": "{{downloaded}} من {{total}}",
       "speed": "{{speed}}/ث",
@@ -199,18 +359,24 @@
       "unknownEta": "جارٍ حساب الوقت"
     },
     "capabilities": {
+      "languageSelection": "لغات كثيرة",
+      "singleLanguage": "لغة واحدة",
+      "multiLanguage": "متعدد اللغات",
+      "languageOnly": "{{language}} فقط",
+      "translation": "يترجم إلى الإنجليزية",
       "translate": "ترجمة"
     },
     "downloadErrors": {
       "preflightFailed": "تعذّر على SilkScribe التحقق من مساحة القرص قبل التنزيل: {{detail}}",
       "insufficientSpace": "يحتاج SilkScribe إلى {{required}} مساحة فارغة لتنزيل هذا النموذج. المتاح {{available}}.",
       "downloadFailed": "تعذّر على SilkScribe تنزيل النموذج: {{detail}}",
-      "extractionFailed": "تعذّر على SilkScribe استخراج النموذج: {{detail}}"
+      "extractionFailed": "تعذّر على SilkScribe استخراج النموذج: {{detail}}",
+      "unknown": "لم يكتمل التنزيل."
     }
   },
   "settings": {
     "modelSettings": {
-      "title": "إعدادات النموذج"
+      "title": "إعدادات {{model}}"
     },
     "general": {
       "eyebrow": "الإعداد اليومي",
@@ -225,13 +391,57 @@
         "appDescription": "اختر كيف ينبغي أن يبدو تطبيق SilkScribe نفسه."
       },
       "shortcut": {
+        "title": "اختصار الإملاء",
+        "loading": "جارٍ التحميل…",
+        "none": "لم يُضبط اختصار",
         "notFound": "الاختصار غير موجود",
+        "pressKeys": "اضغط اختصارًا…",
+        "reset": "إعادة الافتراضي",
+        "bindings": {
+          "transcribe": {
+            "name": "اختصار الإملاء",
+            "description": "يعمل في أي تطبيق."
+          },
+          "cancel": {
+            "name": "اختصار الإلغاء",
+            "description": "يوقف دون تفريغ نصي."
+          },
+          "transcribe_with_post_process": {
+            "name": "اختصار التنقيح بالذكاء الاصطناعي",
+            "description": "يُملي ويرتّب النص بالذكاء الاصطناعي."
+          },
+          "command": {
+            "name": "اختصار الأوامر",
+            "description": "حدّد نصًا وقل كيف تريد تغييره، أو قل ما تريد كتابته."
+          }
+        },
+        "errors": {
+          "restore": "تعذّرت استعادة اختصارك السابق",
+          "set": "تعذّر حفظ الاختصار: {{error}}",
+          "reset": "تعذّرت إعادة تعيين الاختصار"
+        },
         "success": {
           "saved": "تم حفظ الاختصار",
           "reset": "تمت إعادة تعيين الاختصار"
         }
       },
+      "language": {
+        "title": "لغة الكلام",
+        "description": "اختر لغتك لدقة أعلى، أو دعنا نكتشفها.",
+        "searchPlaceholder": "البحث عن لغة",
+        "noResults": "لا نتائج",
+        "auto": "اكتشاف تلقائي"
+      },
+      "pushToTalk": {
+        "label": "اضغط مطوّلًا للتحدث",
+        "description": "عند الإيقاف، اضغط مرة للبدء ومرة أخرى للإيقاف."
+      },
+      "tapToLock": {
+        "label": "انقر للتحدث دون إمساك",
+        "description": "تواصل النقرة القصيرة الاستماع حتى تضغط مرة أخرى."
+      },
       "theme": {
+        "title": "المظهر",
         "options": {
           "system": "النظام",
           "light": "فاتح",
@@ -239,9 +449,37 @@
         }
       }
     },
+    "models": {
+      "currentModel": "المحرّك الحالي",
+      "currentModelSettings": "إعدادات المحرّك",
+      "yourModels": "المثبّتة",
+      "availableModels": "محرّكات أخرى",
+      "noActiveModelTitle": "لا محرّك بعد",
+      "noActiveModelDescription": "نزّل محرّكًا من الأسفل لبدء الإملاء.",
+      "noExtraInstalled": "هذا محرّكك الوحيد.",
+      "deleteConfirm": "ستحتاج إلى تنزيله مرة أخرى لاستخدامه.",
+      "deleteActiveConfirm": "إنه محرّكك الحالي، لذا سيتوقف الإملاء حتى تختار محرّكًا آخر.",
+      "deleteTitle": "حذف {{modelName}}؟",
+      "filters": {
+        "allLanguages": "كل اللغات"
+      },
+      "noModelsMatch": "لا محرّكات مطابقة",
+      "deleteConfirmAction": "حذف"
+    },
     "sound": {
       "microphone": {
-        "title": "الميكروفون"
+        "title": "الميكروفون",
+        "placeholder": "اختر ميكروفونًا",
+        "loading": "جارٍ التحميل…"
+      },
+      "audioFeedback": {
+        "label": "المؤثرات الصوتية",
+        "description": "تشغيل صوت عند بدء الإملاء وانتهائه."
+      },
+      "outputDevice": {
+        "title": "تشغيل الأصوات عبر",
+        "placeholder": "اختر مخرجًا",
+        "loading": "جارٍ التحميل…"
       },
       "volume": {
         "title": "مستوى الصوت",
@@ -249,10 +487,10 @@
       },
       "soundTheme": {
         "options": {
+          "silk": "سلك",
           "marimba": "ماريمبا",
           "pop": "بوب",
-          "custom": "مخصص",
-          "silk": "سلك"
+          "custom": "مخصص"
         },
         "preview": "معاينة سِمة الصوت (تشغّل البداية ثم التوقف)",
         "title": "موضوع الصوت",
@@ -272,19 +510,33 @@
       "pageDescription": "يمكن لمعظم الأشخاص تركها كما هي. استخدمها عندما تحتاج إلى أن يتصرف SilkScribe بشكل مختلف على جهازك.",
       "groups": {
         "app": "التطبيق",
+        "output": "اللصق",
         "transcription": "التفريغ الصوتي",
         "history": "السجل",
-        "experimental": "تجريبي"
+        "support": "حل المشكلات",
+        "experimental": "تجريبي",
+        "runtime": "الأداء"
       },
       "groupDescriptions": {
-        "history": "إعدادات الاحتفاظ والتنظيف لعمليات التفريغ والتسجيلات."
+        "history": "إعدادات الاحتفاظ والتنظيف لعمليات التفريغ والتسجيلات.",
+        "experimental": "ما زالت قيد التطوير — قد تتغير أو تتعطل."
+      },
+      "experimentalToggle": {
+        "label": "ميزات تجريبية",
+        "description": "جرّب ميزات ما زلنا نعمل عليها."
+      },
+      "lazyStreamClose": {
+        "label": "إبقاء الميكروفون مفتوحًا لوهلة",
+        "description": "إملاء متتابع أسرع. قد يخفض جودة صوت البلوتوث."
       },
       "acceleration": {
         "whisper": {
-          "title": "تسريع Whisper"
+          "title": "تسريع Whisper",
+          "description": "يستخدم الخيار التلقائي وحدة GPU عند توفرها."
         },
         "ort": {
-          "title": "تسريع ONNX"
+          "title": "تسريع ONNX",
+          "description": "بعض الخيارات تجريبية."
         },
         "gpuDevice": {
           "auto": "تلقائي"
@@ -297,16 +549,55 @@
           "rocm": "ROCm"
         }
       },
+      "startHidden": {
+        "label": "البدء في الخلفية",
+        "description": "الفتح في شريط القائمة دون إظهار هذه النافذة."
+      },
+      "autostart": {
+        "label": "الفتح عند تسجيل الدخول"
+      },
+      "showTrayIcon": {
+        "label": "إظهار الأيقونة في شريط القائمة"
+      },
       "overlay": {
+        "title": "مؤشر التسجيل",
+        "description": "يظهر أثناء الإملاء.",
         "options": {
+          "none": "مخفي",
           "bottom": "أسفل",
           "top": "أعلى"
         }
       },
       "pasteMethod": {
+        "title": "طريقة اللصق",
+        "description": "اللصق يُدخل النص كله دفعة واحدة. الكتابة تُدخله حرفًا حرفًا.",
+        "options": {
+          "clipboard": "لصق ({{modifier}}+V)",
+          "clipboardCtrlShiftV": "لصق (Ctrl+Shift+V)",
+          "clipboardShiftInsert": "لصق (Shift+Insert)",
+          "direct": "الكتابة",
+          "none": "عدم اللصق (النسخ فقط)",
+          "externalScript": "نص برمجي مخصّص"
+        },
         "externalScriptPlaceholder": "/path/to/your/script.sh"
       },
+      "typingTool": {
+        "title": "أداة الكتابة",
+        "description": "يستخدمها خيار «الكتابة».",
+        "options": {
+          "auto": "تلقائي (موصى به)"
+        }
+      },
+      "clipboardHandling": {
+        "title": "بعد اللصق",
+        "options": {
+          "dontModify": "إعادة ما كان في الحافظة",
+          "copyToClipboard": "إبقاء النص في الحافظة"
+        }
+      },
       "autoSubmit": {
+        "title": "الضغط على مفتاح بعد اللصق",
+        "description": "مفيد لإرسال رسائل الدردشة.",
         "options": {
           "off": "إيقاف",
           "enter": "Enter",
@@ -316,42 +607,95 @@
         }
       },
       "translateToEnglish": {
-        "label": "الترجمة إلى الإنجليزية"
+        "label": "الترجمة إلى الإنجليزية",
+        "description": "تحدّث بأي لغة واحصل على نص بالإنجليزية."
       },
       "modelUnload": {
+        "title": "إخلاء المحرّك عند الخمول",
+        "description": "يحرّر الذاكرة. يبدأ إملاؤك التالي أبطأ قليلًا.",
         "options": {
           "never": "أبداً",
+          "immediately": "فورًا",
           "min2": "بعد دقيقتين",
           "min5": "بعد 5 دقائق",
           "min10": "بعد 10 دقائق",
           "min15": "بعد 15 دقيقة",
-          "hour1": "بعد ساعة واحدة"
+          "hour1": "بعد ساعة واحدة",
+          "sec5": "بعد 5 ثوانٍ (تصحيح الأخطاء)"
         }
       },
       "customWords": {
+        "title": "المفردات",
+        "description": "أسماء ومصطلحات نكتبها بطريقتك.",
+        "placeholder": "أضف كلمة أو اسمًا",
         "add": "إضافة",
-        "remove": "إزالة {{word}}"
+        "remove": "إزالة {{word}}",
+        "duplicate": "«{{word}}» موجودة في قائمتك بالفعل"
+      },
+      "overlayAppearance": {
+        "title": "مظهر المؤشر",
+        "options": {
+          "auto": "مثل التطبيق",
+          "light": "فاتح",
+          "dark": "داكن"
+        }
+      },
+      "liveText": {
+        "label": "نص مباشر أثناء الإملاء",
+        "description": "يعرض الكلمات أثناء كلامك، مع المحرّكات السريعة. قد يتأخر النص النهائي قليلًا."
       }
     },
     "postProcessing": {
+      "hotkey": {
+        "title": "الاختصار"
+      },
       "api": {
+        "title": "الاتصال",
         "provider": {
-          "title": "المزود"
+          "title": "المزود",
+          "description": "تعمل أي واجهة API متوافقة مع OpenAI.",
+          "custom": "مخصّص"
+        },
+        "appleIntelligence": {
+          "unavailable": "Apple Intelligence غير متاح على هذا الـ Mac. يتطلب شريحة Apple، وmacOS Tahoe 26 أو أحدث، وتفعيل Apple Intelligence."
         },
         "baseUrl": {
           "title": "URL الأساسي",
-          "placeholder": "https://api.openai.com/v1"
+          "description": "قابل للتعديل في «مخصّص» فقط.",
+          "placeholder": "https://api.openai.com/v1",
+          "managed": "يحدده المزوّد"
         },
         "apiKey": {
+          "title": "مفتاح API",
           "placeholder": "sk-..."
         },
         "model": {
           "title": "النموذج",
-          "placeholderNoOptions": "اكتب اسم النموذج"
+          "descriptionCustom": "اسم النموذج الذي تتوقعه نقطة الاتصال لديك.",
+          "placeholderWithOptions": "البحث عن نماذج",
+          "placeholderNoOptions": "اكتب اسم النموذج",
+          "refreshModels": "تحديث"
         }
       },
       "prompts": {
-        "cancel": "إلغاء"
+        "title": "الموجّهات",
+        "selectedPrompt": {
+          "title": "الموجّه"
+        },
+        "noPrompts": "لا موجّهات بعد",
+        "selectPrompt": "اختر موجّهًا",
+        "createNew": "موجّه جديد",
+        "promptLabel": "الاسم",
+        "promptLabelPlaceholder": "مثال: تصحيح القواعد",
+        "promptInstructions": "التعليمات",
+        "promptInstructionsPlaceholder": "صحّح القواعد وعلامات الترقيم في: ${output}",
+        "promptTip": "ضع <code>${output}</code> حيث يجب أن يظهر النص.",
+        "updatePrompt": "حفظ التغييرات",
+        "deletePrompt": "حذف الموجّه",
+        "createPrompt": "إنشاء الموجّه",
+        "cancel": "إلغاء",
+        "selectToEdit": "اختر موجّهًا لتعديله.",
+        "createFirst": "أنشئ موجّهًا لترتيب إملائك تلقائيًا."
       }
     },
     "history": {
@@ -395,22 +739,72 @@
       "retry": "إعادة المحاولة"
     },
     "debug": {
+      "logDirectory": {
+        "title": "مجلد السجلات"
+      },
+      "logLevel": {
+        "title": "مستوى السجل"
+      },
+      "updateChecks": {
+        "label": "البحث عن تحديثات تلقائيًا"
+      },
+      "wordCorrectionThreshold": {
+        "title": "مطابقة المفردات",
+        "description": "القيمة الأعلى تلتقط كلمات أكثر لكنها قد تبالغ في التصحيح."
+      },
+      "historyLimit": {
+        "title": "الاحتفاظ بما يصل إلى",
+        "entries": "إملاء"
+      },
       "recordingRetention": {
+        "title": "حذف صوت الإملاء",
+        "description": "يُحذف الصوت فقط. تبقى النصوص.",
         "never": "أبداً",
         "preserveLimit": "الاحتفاظ بآخر {{count}}",
         "days3": "بعد 3 أيام",
         "weeks2": "بعد أسبوعين",
-        "months3": "بعد 3 أشهر"
+        "months3": "بعد 3 أشهر",
+        "placeholder": "اختر…"
+      },
+      "alwaysOnMicrophone": {
+        "label": "ميكروفون دائم التشغيل",
+        "description": "يبدأ أسرع، لكن الميكروفون يبقى نشطًا."
+      },
+      "clamshellMicrophone": {
+        "title": "الميكروفون عند إغلاق الغطاء"
+      },
+      "postProcessingToggle": {
+        "label": "استخدام التنقيح بالذكاء الاصطناعي",
+        "description": "يصحّح علامات الترقيم وكلمات الحشو بنموذج لغوي قبل اللصق."
+      },
+      "muteWhileRecording": {
+        "label": "كتم الأصوات الأخرى",
+        "description": "يكتم التطبيقات الأخرى أثناء الإملاء، إلا أثناء الاجتماعات."
+      },
+      "appendTrailingSpace": {
+        "label": "إضافة مسافة بعد اللصق"
       },
       "keyboardImplementation": {
+        "title": "الواجهة الخلفية للاختصارات",
+        "bindingsReset": "لم تكن اختصاراتك متوافقة، فأعدنا تعيينها.",
         "backends": {
+          "tauri": "قياسي",
           "nativeKeys": "المفاتيح الأصلية"
-        }
+        },
+        "error": "تعذّر تبديل الواجهة الخلفية للاختصارات"
       },
       "paths": {
         "appData": "بيانات التطبيق:",
         "models": "النماذج:",
         "settings": "الإعدادات:"
+      },
+      "pasteDelay": {
+        "title": "تأخير اللصق",
+        "description": "الانتظار قبل اللصق، بالمللي ثانية. زِده إذا اقتُطع النص الملصوق."
+      },
+      "recordingBuffer": {
+        "title": "متابعة التسجيل بعد رفع الإصبع",
+        "description": "يلتقط نهاية كلمتك الأخيرة."
       }
     },
     "about": {
@@ -418,6 +812,110 @@
       "version": {
         "title": "الإصدار",
         "description": "الإصدار الحالي من SilkScribe"
+      },
+      "appDataDirectory": {
+        "title": "مجلد البيانات"
+      }
+    },
+    "aiCleanup": {
+      "title": "التنقيح بالذكاء الاصطناعي",
+      "everyDictation": {
+        "label": "تنقيح كل إملاء",
+        "description": "يحصل اختصارك الرئيسي على التنقيح أيضًا، لا الاختصار أدناه فقط."
+      },
+      "level": {
+        "title": "أسلوب التنقيح"
+      },
+      "levels": {
+        "light": "خفيف",
+        "standard": "قياسي",
+        "rewrite": "إعادة صياغة"
+      },
+      "levelHelp": {
+        "light": "علامات الترقيم والأحرف الكبيرة والأرقام فقط.",
+        "standard": "يزيل أيضًا كلمات الحشو والتأتأة.",
+        "rewrite": "يعيد الصياغة للوضوح والتنظيم.",
+        "custom": "يستخدم موجّهك الخاص."
+      },
+      "onDevice": "يعمل على هذا الـ Mac. لا تُرفع كلماتك.",
+      "cloud": "يُرسَل النص الذي تمليه إلى {{provider}} لتنقيحه.",
+      "prompts": "الموجّهات",
+      "nearbyText": {
+        "label": "استخدام النص المجاور",
+        "description": "يقرأ النص حول المؤشر لكتابة الأسماء والمصطلحات بشكل صحيح. يبقى على هذا الـ Mac، ولا تُقرأ حقول كلمات السر أبدًا.",
+        "descriptionCloud": "يقرأ النص حول المؤشر لكتابة الأسماء بشكل صحيح عندما يعمل التنقيح على هذا الـ Mac. لا تُقرأ حقول كلمات السر أبدًا."
+      },
+      "shareNearbyText": {
+        "label": "إرسال النص المجاور أيضًا إلى {{provider}}",
+        "description": "متوقف افتراضيًا: يبقى النص حول المؤشر على هذا الـ Mac."
+      }
+    },
+    "styles": {
+      "title": "الأساليب",
+      "enable": {
+        "label": "مطابقة التطبيق المستخدم",
+        "description": "يكتب التنقيح بأسلوب ودّي في الدردشة ورسمي في البريد، ويُبقي الشيفرة كما نطقتها."
+      },
+      "categories": {
+        "messaging": "الرسائل والدردشة",
+        "email": "البريد الإلكتروني",
+        "documents": "المستندات والملاحظات",
+        "code": "الشيفرة والطرفيات",
+        "ai_chat": "مساعدو الذكاء الاصطناعي",
+        "other": "كل ما عدا ذلك"
+      },
+      "tones": {
+        "casual": "ودّي",
+        "neutral": "محايد",
+        "formal": "رسمي"
+      },
+      "fixed": {
+        "code": "يُبقي الشيفرة والأوامر كما نطقتها",
+        "ai_chat": "يحوّل طلبك إلى موجّه واضح"
+      },
+      "apps": {
+        "title": "التطبيقات التي أمليت فيها",
+        "description": "انقل التطبيق إلى نوع آخر إذا عومل بطريقة خاطئة.",
+        "builtIn": "مدمج"
+      }
+    },
+    "dictionary": {
+      "title": "القاموس",
+      "remove": "إزالة {{phrase}}",
+      "replacements": {
+        "title": "الاستبدالات",
+        "description": "اكتب كلمة أو عبارة بطريقتك دائمًا.",
+        "said": "عندما أقول",
+        "saidExample": "مثال: انشالله",
+        "written": "اكتب",
+        "writtenExample": "مثال: إن شاء الله",
+        "add": "إضافة استبدال"
+      },
+      "snippets": {
+        "title": "المقتطفات",
+        "description": "قل عبارة قصيرة لإدراج نص أطول، مثل عنوانك.",
+        "trigger": "عبارة المقتطف",
+        "triggerExample": "مثال: عنواني",
+        "text": "نص المقتطف",
+        "textExample": "النص المراد إدراجه",
+        "add": "إضافة مقتطف"
+      },
+      "file": {
+        "title": "النسخ الاحتياطي أو النقل",
+        "description": "استورد قائمة كلمات أو ملف قاموس، أو صدّر قاموسك.",
+        "import": "استيراد…",
+        "export": "تصدير…",
+        "kind": "قاموس",
+        "defaultName": "قاموس SilkScribe.json",
+        "imported_zero": "لم تُضَف أي إدخالات",
+        "imported_one": "أُضيف إدخال واحد",
+        "imported_two": "أُضيف إدخالان",
+        "imported_few": "أُضيفت {{count}} إدخالات",
+        "imported_many": "أُضيف {{count}} إدخالًا",
+        "imported_other": "أُضيف {{count}} إدخال",
+        "exported": "صُدّر القاموس",
+        "importFailed": "تعذّر استيراد القاموس",
+        "exportFailed": "تعذّر تصدير القاموس"
       }
     }
   },
@@ -441,24 +939,116 @@
     }
   },
   "common": {
+    "loading": "جارٍ التحميل…",
     "versionLabel": "v{{version}}",
     "cancel": "إلغاء",
     "delete": "حذف",
     "open": "فتح",
     "default": "افتراضي",
+    "noOptionsFound": "لا نتائج",
+    "moreInformation": "مزيد من المعلومات",
     "errorBoundary": {
+      "description": "تعذّر تحميل هذه الشاشة. إعداداتك وتسجيلاتك في أمان.",
       "reload": "إعادة التحميل",
-      "openLogs": "فتح السجلات"
-    }
+      "openLogs": "فتح السجلات",
+      "title": "حدث خطأ ما"
+    },
+    "choose": "اختر…"
+  },
+  "errors": {
+    "loadDirectory": "تعذّر فتح هذا المجلد: {{error}}"
+  },
+  "appLanguage": {
+    "title": "لغة التطبيق"
   },
   "overlay": {
+    "listening": "نستمع",
     "transcribing": "جارٍ النسخ",
+    "processing": "ننقّح",
     "success": "تم",
-    "cancelled": "أُلغي"
+    "failed": "لم ينجح",
+    "cancelled": "أُلغي",
+    "empty": "لم نلتقط شيئًا",
+    "detail": {
+      "cancelled": "لم يُلصق شيء",
+      "empty": "لم يُكتشف كلام",
+      "pasteCopied": "نُسخ بدلًا من ذلك — الصقه بنفسك",
+      "pasteFailed": "تعذّر اللصق أو النسخ",
+      "cleanupSkipped": "لُصق دون تنقيح",
+      "transcriptionFailed": "لم يكتمل التفريغ النصي",
+      "recordingFailed": "تعذّر بدء التسجيل",
+      "commandNeedsSetup": "اضبط التنقيح بالذكاء الاصطناعي أولًا",
+      "commandFailed": "لم يتغير شيء",
+      "commandTimedOut": "انتهت المهلة، لم يتغير شيء",
+      "commandTooLong": "حدّد نصًا أقل",
+      "commandPassword": "ليس في حقول كلمات السر",
+      "commandNotText": "حدّد بعض النص"
+    },
+    "style": {
+      "casual": "ودّي",
+      "neutral": "محايد",
+      "formal": "رسمي",
+      "code": "شيفرة",
+      "ai_chat": "موجّه ذكاء اصطناعي"
+    },
+    "nearbyText": "النص المجاور",
+    "command": {
+      "listening": "بانتظار أمر",
+      "tag": "أمر",
+      "editing": "نعدّل",
+      "writing": "نكتب"
+    },
+    "handsFree": {
+      "listening": "نستمع دون إمساك المفتاح. اضغط الاختصار مرة أخرى للإنهاء، أو Esc للإلغاء.",
+      "tag": "دون إمساك"
+    }
+  },
+  "meetingOrb": {
+    "orbLabel": "تسجيل اجتماع، {{state}}",
+    "pinHint": "انقر لإبقائه مفتوحًا. اسحب لتحريكه.",
+    "cardLabel": "نص الاجتماع المباشر",
+    "transcriptLabel": "النص حتى الآن",
+    "untitled": "اجتماع بلا عنوان",
+    "recording": "يسجّل",
+    "paused": "متوقف مؤقتًا",
+    "finishing": "جارٍ الإنهاء…",
+    "needsAttention": "يحتاج إلى انتباه",
+    "microphone": "ميكروفونك",
+    "computerAudio": "صوت الكمبيوتر",
+    "micGated": "يُستبعد ميكروفونك من الاجتماع أثناء الإملاء",
+    "you": "أنت",
+    "others": "الآخرون",
+    "listening": "نستمع…",
+    "listeningBody": "تظهر الكلمات هنا أثناء حديث الناس.",
+    "unavailableTitle": "لا نص مباشر",
+    "unavailableBody": "نزّل محرّك إملاء لترى الكلمات أثناء الحديث. التسجيل يعمل على أي حال.",
+    "catchingUp": "نلحق بالحديث…",
+    "jumpToLatest": "الانتقال إلى الأحدث",
+    "pause": "إيقاف مؤقت",
+    "resume": "استئناف",
+    "stop": "إيقاف وتفريغ نصي",
+    "open": "فتح الملاحظات",
+    "letPeopleKnow": "إبلاغ الحاضرين",
+    "prompt": {
+      "title": "تدوين ملاحظات لمكالمة {{app}} هذه؟",
+      "titleEvent": "تدوين ملاحظات لـ «{{title}}»؟",
+      "body": "يسجّل SilkScribe ميكروفونك و{{app}} على هذا الـ Mac. لا يُرفع أي شيء.",
+      "bodyEvent": "يسجّل SilkScribe ميكروفونك وصوت الكمبيوتر على هذا الـ Mac. لا يُرفع أي شيء.",
+      "start": "بدء الملاحظات",
+      "notNow": "ليس الآن"
+    }
   },
   "feedback": {
     "pasteFailed": {
-      "copiedTitle": "تم النسخ إلى الحافظة"
+      "copiedTitle": "تم النسخ إلى الحافظة",
+      "copiedDescription": "تعذّر اللصق هنا، فأصبح جاهزًا لتلصقه بنفسك.",
+      "copyFailedTitle": "تعذّر اللصق أو النسخ",
+      "copyFailedDescription": "حاول مرة أخرى، أو ابحث عنه في مكتبتك."
+    },
+    "dictationOff": {
+      "title": "الإملاء متوقف",
+      "description": "اسمح بالوصول إلى الميكروفون وتسهيلات الاستخدام لاستخدام اختصارك.",
+      "action": "إصلاح"
     }
   },
   "home": {
@@ -527,51 +1117,110 @@
     "home": "الرئيسية",
     "library": "المكتبة",
     "settings": "الإعدادات",
+    "navigation": "الرئيسية",
     "recordMeeting": "تسجيل اجتماع",
     "importAudio": "استيراد الصوت",
     "localOnly": "كل شيء يبقى على هذا الجهاز",
+    "onDevice": "يعمل على جهازك",
+    "homeTitle": "جاهز متى كنت جاهزًا",
+    "homeDescription": "سجّل اجتماعًا، أو استورد صوتًا، أو أكمل من حيث توقفت.",
+    "libraryDescription": "كل إملاء واجتماع وملف — كلها قابلة للبحث.",
+    "meetingShort": "ميكروفونك وصوت الكمبيوتر",
+    "importShort": "حوّل الملفات الصوتية إلى نصوص",
     "dictation": "التدوين الصوتي",
+    "dictationHelp": "لم يُضبط بعد · أكمل الإعداد",
     "inProgress": "قيد التقدم",
+    "recent": "الأحدث",
+    "viewLibrary": "عرض الكل",
     "transcripts": "النصوص",
+    "searchLibrary": "البحث في النصوص",
     "clearSearch": "مسح البحث",
     "loading": "جاري تحميل نصوصك…",
+    "emptyTitle": "لا شيء هنا بعد",
+    "emptyDescription": "سجّل اجتماعًا أو أفلت ملفًا صوتيًا للبدء.",
+    "noResults": "لا نتائج",
     "trySearch": "جرب بحثًا أو فلترًا مختلفًا.",
     "loadMore": "إظهار المزيد",
     "back": "العودة",
     "title": "العنوان",
     "saved": "تم الحفظ",
     "saving": "جاري الحفظ…",
+    "saveFailed": "تعذّر حفظ التغييرات",
     "export": "تصدير",
+    "exported": "صُدّر",
     "delete": "حذف النص",
+    "deleteHelp": "تُحذف ملاحظاته وصوته أيضًا. يبقى ملفك الأصلي في مكانه.",
     "deleteAudio": "حذف الصوت",
+    "deleteAudioHelp": "ستحتفظ بالنص والملاحظات، لكن لن تتمكن من إعادة التشغيل.",
     "cancel": "إلغاء",
+    "retry": "حاول مرة أخرى",
+    "speed": "السرعة",
+    "documentViews": "طرق العرض",
     "transcript": "النص",
     "notes": "الملاحظات",
     "speakers": "المحاور",
+    "searchTranscript": "بحث",
+    "transcriptPending": "سيظهر نصك هنا عندما يجهز.",
     "speaker": "المحور",
+    "unknownSpeaker": "غير معروف",
     "segment": "جزء من النص في",
+    "restoreOriginal": "استعادة الأصل",
+    "speakerHelp": "تنطبق الأسماء على هذا التسجيل فقط.",
+    "noSpeakers": "لم يُعثر على متحدثين في هذا التسجيل.",
     "speakerName": "اسم المحور",
     "mergeSpeaker": "دمج في…",
+    "notesStale": "عدّلت النص. أعد الإنشاء لتضمين تغييراتك.",
+    "noNotes": "لا ملاحظات بعد.",
+    "regenerate": "إعادة الإنشاء",
     "summary": "ملخص",
     "decisions": "قرارات",
     "actions": "عناصر العمل",
     "action": "عنصر عمل",
+    "done": "تم",
     "owner": "المالك",
+    "due": "الموعد",
+    "audioFiles": "صوت",
     "cancelJob": "إلغاء {{title}}",
+    "transcriptionModel": "المحرّك",
+    "currentDictationModel": "مثل الإملاء",
     "language": "اللغة",
+    "autoLanguage": "اكتشاف تلقائي",
     "detectSpeakers": "تحديد المتحدثين",
+    "localNotes": "ملاحظات الذكاء الاصطناعي",
+    "noAutomaticNotes": "بلا ملاحظات",
+    "microphoneLevel": "مستوى الميكروفون",
     "systemLevel": "مستوى الصوت بالكمبيوتر",
     "resume": "استئناف",
     "pause": "إيقاف مؤقت",
+    "stopTranscribe": "إيقاف وتفريغ نصي",
+    "meetingHelp": "نسجّل الطرفين، ثم نفرّغ النص عند الإيقاف.",
+    "importHelp": "اختر الملفات وطريقة معالجتها. تابع عملك أثناء التفريغ.",
     "meetingTitle": "اجتماع غير مسمى",
     "microphone": "الميكروفون",
     "defaultMicrophone": "افتراضي النظام",
     "computerAudio": "تضمين صوت الكمبيوتر",
+    "systemPermission": "سيطلب macOS الوصول إلى تسجيل الشاشة وصوت النظام.",
+    "removeFile": "إزالة",
+    "chooseFiles": "اختيار ملفات…",
+    "processing": "المعالجة",
+    "setupNeeded": "بعض المحرّكات غير مُعدّة بعد. سجّل الآن وعالج لاحقًا.",
+    "modelSetup": "إعداد المحرّكات",
     "working": "جاري العمل…",
     "startRecording": "ابدأ التسجيل",
+    "startTranscription": "تفريغ نصي",
+    "modelsLanguage": "المحرّكات واللغة",
     "storage": "التخزين والخصوصية",
+    "localIntelligence": "المحرّكات",
+    "localModelsHelp": "نزّل ما تحتاجه فقط. كل شيء يعمل على هذا الـ Mac — المحرّكات الأكبر تحتاج إلى ذاكرة أكثر.",
+    "runtimeReady": "جاهز للعمل على هذا الـ Mac.",
+    "runtimeMissing": "لا يستطيع هذا الإصدار تشغيل هذه المحرّكات بعد. الإملاء يعمل على أي حال.",
+    "unpublished": "غير متاح بعد",
+    "downloading": "جارٍ التنزيل…",
     "installed": "تم التثبيت",
     "download": "تنزيل",
+    "dropAudio": "أفلت للتفريغ النصي",
+    "workspaceFirst": "تفريغ الملفات فقط",
+    "workspaceFirstHelp": "لا حاجة إلى الوصول إلى الميكروفون أو تسهيلات الاستخدام.",
     "source": {
       "dictation": "تحويل صوتي",
       "meeting": "اجتماع",
@@ -586,13 +1235,17 @@
     },
     "purpose": {
       "asr": "النسخ الآلي للنص",
+      "alignment": "توقيت الكلمات",
+      "speakers": "المتحدثون",
       "notes": "الملخصات والعناصر الإجراءية"
     },
     "stage": {
       "recording": "التسجيل",
       "paused": "موقوف",
       "queued": "في قائمة الانتظار",
+      "preparing": "جارٍ التجهيز",
       "transcribing": "النسخ الآلي للنص",
+      "diarizing": "جارٍ تمييز المتحدثين",
       "notes": "كتابة الملاحظات",
       "complete": "جاهز",
       "failed": "يحتاج إلى انتباه",
@@ -602,34 +1255,291 @@
     "audio": "الصوت",
     "appearance": "المظهر",
     "debug": "المطور",
+    "retentionHelp": "تبقى الاجتماعات والملفات المستوردة حتى تحذفها. تخص هذه الإعدادات صوت الإملاء فقط.",
+    "dictationRetention": "صوت الإملاء",
     "skipToContent": "الانتقال إلى المحتوى",
+    "memoryGuidance": "يحتاج إلى نحو {{gb}} غيغابايت من الذاكرة",
     "notesModel9": "Qwen3.5 · 9B",
     "notesModel27": "Qwen3.6 · 27B",
+    "draftConflict": "وجدنا مسودة غير محفوظة من إصدار أقدم.",
+    "recoverDraft": "استعادة المسودة",
+    "keepSaved": "الإبقاء على المحفوظ",
+    "transcriptReadyWarning": "النص جاهز · لم تكتمل بعض الخطوات",
+    "retryEnhancement": "حاول مرة أخرى",
+    "withoutEnhancements": "تخطي المتحدثين والملاحظات",
     "recordForLater": "التسجيل الآن، والنسخ لاحقاً",
+    "returnToSetup": "العودة إلى الإعداد",
+    "advancedDictationModels": "محرّكات إملاء أخرى",
     "activity": "النشاط",
     "close": "إغلاق",
+    "noActiveJobs": "لا شيء قيد المعالجة",
     "presetFast": "محضر سريع",
     "presetDetailed": "محضر مفصل",
     "presetNotes": "محضر + ملاحظات",
+    "processingDetails": "المحرّكات والخيارات",
+    "stopSave": "إيقاف وحفظ الصوت",
+    "finishEditing": "تم",
     "editTranscript": "تحرير المحضر",
     "followPlayback": "المتابعة مع التشغيل",
     "previous": "السابق",
     "next": "التالي",
+    "undoMerge": "التراجع عن الدمج",
+    "evidence": "من النص",
+    "playEvidence": "تشغيل",
+    "pauseDownload": "إيقاف مؤقت",
+    "removeModel": "إزالة المحرّك",
+    "removeModelHelp": "تبقى نصوصك. يمكنك تنزيله مجددًا في أي وقت.",
+    "storageUsage": "التخزين",
+    "audioStorage": "التسجيلات",
+    "modelStorage": "المحرّكات",
+    "freeStorage": "المساحة المتاحة",
+    "setupModels": "إعداد المحرّكات",
+    "skipEnhancement": "تخطٍّ",
     "generateNotes": "توليد ملاحظات",
     "addItem": "إضافة عنصر",
     "removeItem": "إزالة عنصر",
     "newSpeaker": "إضافة متحدث",
-    "speakerCount_one": "{{count}} متحدث",
-    "speakerCount_other": "{{count}} متحدثين",
+    "speakerSample": "تشغيل عيّنة",
+    "exportPreview": "تصدير",
+    "confirmExport": "اختر مكان الحفظ…",
+    "readiness": {
+      "download": "نزّل {{model}} لاستخدام هذا.",
+      "unpublished": "{{model}} غير متاح بعد.",
+      "unavailable": "{{model}} غير مضمّن في هذا الإصدار.",
+      "native_download": "نزّل {{model}} أو اختر محرّك إملاء آخر.",
+      "runtime": "ينقص هذا الإصدار مكوّنًا لازمًا لذلك.",
+      "fallback_download": "يحتاج الاكتشاف التلقائي إلى Whisper large-v3 لبعض اللغات. نزّله أو اختر لغة.",
+      "language": "لا يدعم هذا المحرّك تلك اللغة. اختر لغة أو محرّكًا آخر.",
+      "memory": "لا تكفي الذاكرة المتاحة لـ {{model}}. أغلق بعض التطبيقات أو اختر محرّك ملاحظات أصغر."
+    },
+    "newNotesReview": "ملاحظات جديدة",
+    "newNotesHelp": "ملاحظاتك الحالية أدناه. قارن قبل الاستبدال.",
+    "replaceNotes": "استبدال الملاحظات",
+    "keepCurrentNotes": "الإبقاء على الحالية",
+    "speakerCount_zero": "لا متحدثين",
+    "speakerCount_one": "متحدث واحد",
+    "speakerCount_two": "متحدثان",
+    "speakerCount_few": "{{count}} متحدثين",
+    "speakerCount_many": "{{count}} متحدثًا",
+    "speakerCount_other": "{{count}} متحدث",
+    "timing": {
+      "aligned": "طوابع زمنية لكل كلمة",
+      "aligned_or_segments": "طوابع زمنية لكل كلمة حيث يُدعم ذلك، وإلا فلكل جملة",
+      "segments": "طوابع زمنية لكل جملة"
+    },
+    "memoryAvailable": "نحو {{gb}} غيغابايت متاحة",
+    "memoryObserved": "استخدم هنا حتى {{gb}} غيغابايت. قد يحتاج الصوت الأطول إلى أكثر.",
+    "memoryUnmeasured": "لم يُقَس على هذا الـ Mac بعد",
+    "checkingFiles": "جارٍ فحص الملفات…",
+    "durationUnknown": "مدة غير معروفة",
+    "importProblems": "تعذّر استيراد بعض الملفات",
     "dismiss": "إغلاق",
+    "verifyModel": "التحقق من الملفات",
+    "modelVerified": "الملفات سليمة",
+    "modelDamaged": "الملفات تالفة · نزّلها مجددًا",
+    "finishingAudio": "جارٍ الإنهاء…",
+    "selectPage": "تحديد كل ما في هذه الصفحة",
     "clearSelection": "إلغاء التحديد",
     "selectedTurns": "المقاطع المحددة",
+    "assignSelectedSpeaker": "تعيين متحدث",
     "selectTurn": "اختر المحادثة عند {{time}}",
-    "unfinishedImports": "استيرادات غير مكتملة"
+    "exportOriginalText": "تصدير النص الأصلي",
+    "notesReviewed": "راجعت هذه الملاحظات مقابل النص",
+    "unfinishedImports": "استيرادات غير مكتملة",
+    "resumeImport": "استئناف الاستيراد",
+    "discardImport": "تجاهل",
+    "captureUnsupported": "تسجيل الاجتماعات متاح على الـ Mac فقط حاليًا. لا يزال بإمكانك استيراد الصوت.",
+    "microphoneReady": "سُمح بالميكروفون",
+    "microphonePermissionNeeded": "اسمح بالميكروفون لتسجيل صوتك.",
+    "allowMicrophone": "السماح بالميكروفون",
+    "computerAudioReady": "سُمح بصوت الكمبيوتر",
+    "computerPermissionNeeded": "اسمح بتسجيل الشاشة وصوت النظام لالتقاط صوت الكمبيوتر.",
+    "allowComputerAudio": "السماح بصوت الكمبيوتر",
+    "microphoneUnavailable": "هذا الميكروفون غير متاح. اختر غيره.",
+    "replaceOnlySection": "استبدال هذا القسم فقط",
+    "sectionReplacementHelp": "تبقى ملاحظاتك الأخرى كما هي.",
+    "deleteTitle": "حذف هذا النص؟",
+    "deleteAudioTitle": "حذف الصوت؟",
+    "matchCount_zero": "لا نتائج",
+    "matchCount_one": "نتيجة واحدة",
+    "matchCount_two": "نتيجتان",
+    "matchCount_few": "{{count}} نتائج",
+    "matchCount_many": "{{count}} نتيجة",
+    "matchCount_other": "{{count}} نتيجة",
+    "mergeTitle": "دمج المتحدثين؟",
+    "merge": "دمج",
+    "mergePreview_zero": "لا مداخلات لنقلها من {{from}} إلى {{to}}.",
+    "mergePreview_one": "نقل مداخلة واحدة من {{from}} إلى {{to}}. يمكنك التراجع عن ذلك.",
+    "mergePreview_two": "نقل مداخلتين من {{from}} إلى {{to}}. يمكنك التراجع عن ذلك.",
+    "mergePreview_few": "نقل {{count}} مداخلات من {{from}} إلى {{to}}. يمكنك التراجع عن ذلك.",
+    "mergePreview_many": "نقل {{count}} مداخلة من {{from}} إلى {{to}}. يمكنك التراجع عن ذلك.",
+    "mergePreview_other": "نقل {{count}} مداخلة من {{from}} إلى {{to}}. يمكنك التراجع عن ذلك.",
+    "remove": "إزالة",
+    "removeModelTitle": "إزالة {{name}}؟",
+    "activeCount_zero": "لا شيء قيد التنفيذ",
+    "activeCount_one": "واحد قيد التنفيذ",
+    "activeCount_two": "اثنان قيد التنفيذ",
+    "activeCount_few": "{{count}} قيد التنفيذ",
+    "activeCount_many": "{{count}} قيد التنفيذ",
+    "activeCount_other": "{{count}} قيد التنفيذ",
+    "errors": {
+      "addFiles": "تعذّرت إضافة هذه الملفات",
+      "loadDevices": "تعذّر تحميل الميكروفونات",
+      "startImport": "تعذّر بدء الاستيراد",
+      "controlRecording": "تعذّر تحديث التسجيل",
+      "openTranscript": "تعذّر فتح هذا النص",
+      "cancelJob": "تعذّر الإلغاء",
+      "removeEngine": "تعذّرت إزالة المحرّك",
+      "discardImport": "تعذّر تجاهل الاستيراد",
+      "requestAccess": "تعذّر طلب الوصول",
+      "removeFile": "تعذّرت إزالة الملف",
+      "installEngine": "تعذّر تنزيل المحرّك",
+      "verifyEngine": "تعذّر فحص الملفات",
+      "loadMore": "تعذّر تحميل المزيد من النصوص",
+      "loadLibrary": "تعذّر تحميل نصوصك",
+      "saveTranscript": "تعذّر حفظ التغييرات",
+      "exportTranscript": "تعذّر التصدير",
+      "updateNotes": "تعذّر تحديث الملاحظات",
+      "generateNotes": "تعذّر إنشاء الملاحظات",
+      "discardDraft": "تعذّر تجاهل المسودة",
+      "startProcessing": "تعذّر بدء المعالجة",
+      "deleteTranscript": "تعذّر الحذف",
+      "enableCleanup": "تعذّر تشغيل التنقيح بالذكاء الاصطناعي",
+      "copyOriginal": "تعذّر نسخ الأصل",
+      "loadNotes": "تعذّر تحميل ملاحظاتك",
+      "saveNotes": "تعذّر حفظ ملاحظاتك",
+      "copyMessage": "تعذّر نسخ الرسالة",
+      "copyText": "تعذّر نسخ النص",
+      "saveStyle": "تعذّر حفظ الأسلوب",
+      "startMeeting": "تعذّر بدء الاجتماع",
+      "addToDictionary": "تعذّرت الإضافة إلى قاموسك",
+      "connectCalendar": "تعذّر ربط تقويمك"
+    },
+    "liveTranscript": "نص مباشر",
+    "liveTranscriptNote": "يحل محله نص أدق عند انتهاء المعالجة.",
+    "cleanupCard": {
+      "title": "تنقيح كل إملاء",
+      "body": "صحّح علامات الترقيم وكلمات الحشو باستخدام Apple Intelligence. يعمل على هذا الـ Mac.",
+      "turnOn": "تشغيل",
+      "notNow": "ليس الآن"
+    },
+    "showOriginal": "إظهار الأصل",
+    "hideOriginal": "إخفاء الأصل",
+    "copyOriginal": "نسخ الأصل",
+    "copiedOriginal": "نُسخ الأصل",
+    "originalLabel": "النص قبل التنقيح بالذكاء الاصطناعي",
+    "yourNotes": "ملاحظاتك",
+    "yourNotesPlaceholder": "دوّن المهم أثناء حدوثه. ابدأ السطر بـ - لإنشاء قائمة.",
+    "consent": {
+      "reminder": "أخبر الحاضرين أنك تدوّن ملاحظات.",
+      "copy": "نسخ رسالة تنبيه",
+      "copied": "نُسخت الرسالة",
+      "message": "للعلم: أدوّن ملاحظات باستخدام SilkScribe. يعمل على جهاز Mac الخاص بي، ولا يُرفع أي شيء.",
+      "setting": "ذكّرني بإبلاغ الحاضرين",
+      "settingHint": "يعرض تذكيرًا عند بدء التسجيل."
+    },
+    "holdToTalk": "اضغط مطوّلًا للتحدث",
+    "holdOrTap": "اضغط مطوّلًا للتحدث، أو انقر للتحدث دون إمساك",
+    "pressToTalk": "اضغط للبدء والإيقاف",
+    "recentDictation": "إملاء حديث",
+    "wordsToday": "كلمات اليوم",
+    "streak": "الأيام المتتالية",
+    "streakDays_zero": "لا أيام",
+    "streakDays_one": "يوم واحد",
+    "streakDays_two": "يومان",
+    "streakDays_few": "{{count}} أيام",
+    "streakDays_many": "{{count}} يومًا",
+    "streakDays_other": "{{count}} يوم",
+    "copy": "نسخ",
+    "copied": "نُسخ",
+    "enhanceNotes": "تحسين الملاحظات",
+    "youWrote": "أنت كتبت هذا",
+    "callTitle": "مكالمة {{app}}",
+    "captureFrom": {
+      "label": "التقاط الصوت من",
+      "allApps": "كل التطبيقات"
+    },
+    "suggestNotes": {
+      "label": "اقتراح الملاحظات عند بدء مكالمة",
+      "hint": "يعرض اقتراحًا عندما يبدأ Zoom أو Teams أو FaceTime أو تطبيق مكالمات آخر باستخدام الميكروفون."
+    },
+    "dictionary": {
+      "add": "إضافة إلى القاموس",
+      "heard": "سُمعت كـ",
+      "heardHelp": "اتركه فارغًا لتعليم التهجئة فقط",
+      "write": "اكتبها كـ",
+      "writeHelp": "كيف يجب أن تظهر دائمًا",
+      "save": "إضافة",
+      "added": {
+        "word": "أُضيفت إلى مفرداتك",
+        "replacement": "أُضيفت كاستبدال"
+      }
+    },
+    "templates": {
+      "label": "قالب الملاحظات",
+      "names": {
+        "general": "عام",
+        "one_on_one": "اجتماع فردي",
+        "standup": "اجتماع يومي",
+        "customer_call": "مكالمة عميل",
+        "interview": "مقابلة",
+        "lecture": "محاضرة"
+      },
+      "sections": {
+        "updates": "المستجدات",
+        "feedback": "الملاحظات والتقييم",
+        "blockers": "العوائق",
+        "done": "ما أُنجز",
+        "next": "التالي",
+        "context": "سياق العميل",
+        "pain_points": "نقاط الألم",
+        "requests": "الطلبات",
+        "background": "الخلفية",
+        "strengths": "نقاط القوة",
+        "concerns": "المخاوف",
+        "concepts": "المفاهيم الأساسية",
+        "definitions": "التعريفات",
+        "questions": "الأسئلة"
+      }
+    },
+    "upcoming": {
+      "title": "القادمة",
+      "now": "الآن",
+      "tomorrow": "غدًا {{time}}",
+      "takeNotes": "تدوين ملاحظات"
+    },
+    "calendarCard": {
+      "title": "شاهد اجتماعاتك القادمة هنا",
+      "body": "اربط تقويمك لتسمية الملاحظات بأسماء الاجتماعات وتلقي تذكير عند بدئها. يبقى على هذا الـ Mac."
+    },
+    "calendar": {
+      "title": "التقويم",
+      "description": "يعرض الاجتماعات القادمة في الصفحة الرئيسية ويسمّي الملاحظات بأسمائها. يبقى تقويمك على هذا الـ Mac.",
+      "connect": "ربط التقويم",
+      "disconnect": "فصل التقويم",
+      "reminders": "ذكّرني عند بدء الاجتماعات",
+      "remindersHint": "يقترح تدوين الملاحظات قبل دقيقة",
+      "denied": "الوصول إلى التقويم متوقف. فعّله من إعدادات النظام ← الخصوصية والأمن ← التقويمات.",
+      "openSettings": "فتح إعدادات النظام"
+    },
+    "ask": {
+      "title": "اسأل اجتماعاتك",
+      "label": "اسأل عن اجتماعاتك",
+      "placeholder": "اسأل عن اجتماعاتك وملاحظاتك…",
+      "submit": "اسأل",
+      "thinking": "نقرأ اجتماعاتك… قد يستغرق السؤال الأول دقيقة ريثما يُحمَّل محرّك الملاحظات.",
+      "nothingFound": "لا شيء في مكتبتك يذكر ذلك.",
+      "checkSources": "تأتي الإجابات من نصوصك. تحقّق من المصادر قبل الاعتماد عليها.",
+      "yourNotes": "ملاحظاتك",
+      "openSource": "فتح {{source}}",
+      "shortcut": "⌘K"
+    }
   },
   "audioPlayer": {
     "play": "تشغيل",
     "pause": "إيقاف مؤقت",
-    "seek": "موقع التشغيل"
+    "seek": "موقع التشغيل",
+    "error": "تعذّر تشغيل هذا الصوت.",
+    "retry": "حاول مرة أخرى"
   }
 }

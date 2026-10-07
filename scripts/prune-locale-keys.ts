@@ -84,7 +84,18 @@ for (const lang of languages) {
   const data = JSON.parse(fs.readFileSync(filePath, "utf8")) as TranslationData;
   let removed = 0;
   for (const key of staleKeys) {
-    if (removeKeyPath(data, key.split("\u0000"))) removed += 1;
+    // A changed plural form makes the whole family stale, including forms
+    // English doesn't have (e.g. Russian `_few`).
+    const base = key.match(/^(.*)_(zero|one|two|few|many|other)$/)?.[1];
+    const family =
+      base === undefined
+        ? [key]
+        : ["zero", "one", "two", "few", "many", "other"].map(
+            (form) => `${base}_${form}`,
+          );
+    for (const member of family) {
+      if (removeKeyPath(data, member.split("\u0000"))) removed += 1;
+    }
   }
   // Keys that no longer exist in English at all are always extra, except
   // plural forms English doesn't use (e.g. `_few` in Russian).
