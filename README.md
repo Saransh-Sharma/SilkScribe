@@ -20,15 +20,18 @@ Speech recognition and AI notes run locally. There's no account, no meeting bot,
 
 **Dictation**
 
-1. **Hold** your shortcut (or press it once to start and again to stop)
+1. **Hold** your shortcut (or tap it to keep listening hands-free)
 2. **Speak** naturally — pauses, corrections and filler words are fine
-3. **Release** and the text is typed into the app you're using
+3. **Release** and the text goes into the app you're using; on macOS your clipboard is put back afterwards
+
+Optional AI cleanup tidies the text in the tone the app calls for, spelling names from the text around your cursor. Your dictionary keeps names, replacements and snippets the way you write them. On macOS, **command mode** rewrites selected text from a spoken instruction ("make this friendlier").
 
 **Meetings**
 
-1. **Record meeting** captures your mic and your computer's audio as separate tracks
-2. A **live transcript** labels lines as You or Others while the call runs
-3. When you stop, SilkScribe transcribes the full recording, identifies speakers, and writes notes with sources
+1. **Record meeting** captures your mic and your computer's audio (or just the call app) as separate tracks. When a call starts, or a meeting on your calendar begins, SilkScribe offers to take notes
+2. A **live transcript** labels lines as You or Others while the call runs, and you can type your own notes beside it
+3. When you stop, SilkScribe transcribes the full recording, identifies speakers, and writes notes with sources around yours, following a template (1:1, standup, customer call…)
+4. **Ask** (⌘K) any question across your meetings; answers cite the moment they came from
 
 Everything is processed locally:
 
@@ -67,7 +70,7 @@ SilkScribe is a Tauri application:
 
 - **Frontend**: React + TypeScript (Home, Library, meeting documents, settings, onboarding, the recording indicator and the meeting orb)
 - **Backend**: Rust for audio capture, shortcuts, inference and storage
-- **Native bridges (macOS)**: Swift for meeting capture (ScreenCaptureKit + AVAudioEngine) and Apple Intelligence
+- **Native bridges (macOS)**: Swift for meeting capture (ScreenCaptureKit + AVAudioEngine), Apple Intelligence, the text around the cursor (Accessibility) and the calendar (EventKit)
 - **Local AI runtime**: a bundled Python worker for meeting transcription, speaker detection and notes (Qwen3-ASR, pyannote, MLX)
 - **Core libraries**: `transcribe-rs` (Whisper, Parakeet, Moonshine, SenseVoice), `cpal` (audio I/O), Silero VAD, `rubato` (resampling), SQLite for the Library
 
@@ -235,10 +238,11 @@ The following are recommendations for running SilkScribe on your own machine. If
 
 ## Roadmap
 
-Current focus, in order:
+Next:
 
-- **Dictation**: clipboard-safe pasting, AI cleanup on every dictation (on-device by default where available), per-app styles, voice commands on selected text, a dictionary with replacements and snippets
-- **Meetings**: your own notes alongside the live transcript, Enhance to merge them with the transcript, note templates, call detection, calendar titles, and asking questions across meetings
+- **Live text while dictating**: experimental today; it ships if it doesn't slow down the final text (measured with `scripts/dictation-latency.ts`)
+- **Speaker detection on by default**, once its engine pack is published
+- **Translations**: native review of the 16 languages
 
 See [CHANGELOG.md](CHANGELOG.md) for what has shipped.
 

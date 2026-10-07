@@ -25,6 +25,14 @@ bun run format            # Prettier + cargo fmt
 bun run format:check      # Check formatting without changes
 ```
 
+**Fast Rust tests:** skip copying the bundled resources (gigabytes) with a config override:
+
+```bash
+cd src-tauri && TAURI_CONFIG='{"bundle":{"resources":[]}}' CMAKE_POLICY_VERSION_MINIMUM=3.5 cargo test --lib
+```
+
+This also regenerates `src/bindings.ts` (the `export_workspace_bindings` test).
+
 **Model Setup (Required for Development):**
 
 ```bash

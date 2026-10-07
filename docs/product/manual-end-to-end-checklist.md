@@ -81,8 +81,21 @@ Expected result: valid protocol output and a saved `.build/*-smoke-result.json`.
 - Delete only audio and verify transcript/notes remain. Delete a transcript and verify it is removed. Confirm existing saved dictations survive migration and retention behavior remains specific to dictation.
 - Review VoiceOver, keyboard-only navigation, 200% zoom, both themes, reduced motion and Arabic RTL. Have native speakers review translated copy.
 
+## 4b. This cycle's features (need a real Mac)
+
+The browser fixtures cover their UI; these behaviours depend on other apps, devices or macOS and haven't been checked by hand yet.
+
+- **Clipboard restore**: copy an image, dictate into Notes. The text lands, the image is back on the clipboard, and a clipboard manager (Raycast, Maccy) doesn't record the dictation.
+- **Per-app styles and nearby text**: the same sentence comes out casual in Messages and formal in Mail. In a password field nothing nearby is read.
+- **Command mode**: in TextEdit, Mail, Slack and VS Code, select text, hold ⌃⇧Space and say "make this shorter". It's replaced; nothing selected writes at the cursor. In Slack and VS Code (Electron) check the first command after launch too: the copy fallback runs if Accessibility hasn't woken yet, and the clipboard comes back.
+- **Tap for hands-free**: a quick tap keeps listening and shows "Hands-free"; the next press stops it. A slow first press (mic starting) is still a tap.
+- **Call detection**: join a Zoom or Teams call. Within about 10 seconds the orb offers to take notes; "Start notes" records just that app. Muting for a few seconds doesn't offer again.
+- **Calendar**: connect it. Upcoming meetings show without relaunching, a new meeting is named after the current event, and the orb offers notes about a minute before a meeting with attendees starts.
+- **Live text (experimental)**: measure with `scripts/dictation-latency.ts`, a day off and a day on with Parakeet V3. Keep it only if p95 `total_ms` grows by 300 ms or less.
+- **Ask**: time the first question after launch (the notes engine loads cold) and a follow-up. Check that each citation opens and plays the cited moment.
+
 ## 5. Release acceptance
 
 Record results against the exact app build, model hashes/revisions, worker fingerprints, hardware, OS and test corpus. Fix failed acceptance cases before release. Accuracy, factuality, memory bounds and clean-machine behavior must not be inferred from tiny smoke tests or signature success.
 
-Required before claiming the complete plan is finished: close remaining software items in the implementation status, integrate and verify the real Community-1 bundle, complete the hardware/offline/quality matrix, and verify distribution packaging. Optional product-scope expansions such as live captions, bots, calendar integration, video imports and hosted inference are not part of this checklist.
+Required before claiming the complete plan is finished: close remaining software items in the implementation status, integrate and verify the real Community-1 bundle, complete the hardware/offline/quality matrix, and verify distribution packaging. Optional product-scope expansions such as bots, video imports and hosted inference are not part of this checklist.

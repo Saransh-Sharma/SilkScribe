@@ -183,27 +183,27 @@ export const privacyCards: MarketingCard[] = [
 export const outputCards: MarketingCard[] = [
   {
     title: "Natural cleanup",
-    body: "Turns rough speech into readable sentences.",
+    body: "Turns rough speech into readable sentences, on your Mac with Apple Intelligence where available.",
   },
   {
-    title: "Smart punctuation",
-    body: "Adds punctuation and casing so the result feels written, not dumped.",
+    title: "Writes for the app",
+    body: "Casual in Slack, formal in Mail, exact in your code editor, and names spelled the way they appear around your cursor.",
   },
   {
-    title: "Custom vocabulary",
-    body: "Teach SilkScribe names, acronyms, product terms, and phrases you use often.",
+    title: "Your dictionary",
+    body: "Names, replacements and snippets, written your way every time.",
   },
   {
-    title: "Optional polish",
-    body: "Use supported Apple Intelligence post-processing where available for cleaner formatting and clarity.",
+    title: "Edit by voice",
+    body: "Select text and say how to change it: shorter, friendlier, in Spanish.",
   },
   {
-    title: "Recent history",
-    body: "Recover recent dictations when you need to reuse or restore something.",
+    title: "Hands-free",
+    body: "Tap the shortcut to keep talking without holding a key.",
   },
   {
-    title: "Flexible paste modes",
-    body: "Choose how SilkScribe inserts text into the active app.",
+    title: "Your clipboard, kept",
+    body: "SilkScribe pastes your words and puts back what you had copied.",
   },
 ];
 
@@ -435,6 +435,16 @@ export const privacySections: PrivacySection[] = [
       "Post-processing is optional and controlled in settings.",
       "Provider API keys and settings are configured by you.",
       "Provider handling is governed by the provider you choose.",
+    ],
+  },
+  {
+    title: "Context, commands and calendar",
+    body: "Some features read a little more from your Mac. Each one stays on your device unless you choose otherwise.",
+    items: [
+      "To spell names right, AI cleanup can read the text around your cursor through Accessibility. Password fields are never read. This text only goes to a cloud provider if you turn that on for it.",
+      "Command mode sends the text you selected, with your spoken instruction, to the AI cleanup provider you set up.",
+      "Connecting your calendar is optional. Events are read on your Mac to show upcoming meetings and name your notes; they're never changed or uploaded.",
+      "Call detection only checks which call apps are running and whether the microphone is in use. Nothing records until you say so.",
     ],
   },
   {
