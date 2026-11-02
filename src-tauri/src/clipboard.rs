@@ -26,10 +26,35 @@ enum EffectivePasteStrategy {
 }
 
 /// How long after the paste keys to put the old clipboard back. The target app
-/// reads the clipboard when it handles the keystroke, which slow apps (Electron,
-/// browsers) can take a few hundred milliseconds to do.
+/// reads the clipboard when it handles the keystroke, which a busy app (Electron
+/// under load, a browser) can take well over half a second to do. Restoring too
+/// early pastes the old clipboard instead of the dictation.
 #[cfg(target_os = "macos")]
-const RESTORE_DELAY: Duration = Duration::from_millis(400);
+const RESTORE_DELAY: Duration = Duration::from_millis(1000);
+
+/// Apps that forward the clipboard to another computer, which reads it at its
+/// own pace. Restoring under them races the remote paste, so the dictation is
+/// left on the clipboard instead.
+#[cfg(target_os = "macos")]
+const NO_RESTORE_APPS: [&str; 11] = [
+    "com.apple.ScreenSharing",
+    "com.p5sys.jump.mac.viewer",
+    "com.parallels.desktop.console",
+    "com.parallels.winapp",
+    "com.vmware.fusion",
+    "com.utmapp.UTM",
+    "com.citrix.receiver.icaviewer.mac",
+    "com.microsoft.rdc.macos",
+    "com.microsoft.rdc.mac",
+    "com.realvnc.vncviewer",
+    "com.teamviewer.TeamViewer",
+];
+
+/// Whether pasting into this app should leave the dictation on the clipboard.
+#[cfg(target_os = "macos")]
+fn skips_restore(bundle_id: &str) -> bool {
+    NO_RESTORE_APPS.contains(&bundle_id)
+}
 
 /// How long to wait for the frontmost app to answer a simulated copy.
 #[cfg(target_os = "macos")]
@@ -82,10 +107,21 @@ fn paste_and_restore(
     paste_method: &PasteMethod,
     paste_delay_ms: u64,
 ) -> Result<(), String> {
-    let saved = pasteboard::snapshot();
+    let target = crate::app_context::frontmost_app();
+    let saved = match target.as_ref() {
+        Some(app) if skips_restore(&app.bundle_id) => pasteboard::Snapshot::Skip,
+        _ => pasteboard::snapshot(),
+    };
     let written = pasteboard::write_transient_text(text);
     std::thread::sleep(Duration::from_millis(paste_delay_ms));
     send_paste_keys(enigo, paste_method)?;
+    if !saved.restorable() {
+        info!(
+            "Leaving the dictation on the clipboard ({})",
+            saved.reason()
+        );
+        return Ok(());
+    }
 
     // Restore off this (main) thread's critical path, back on the main thread.
     let app = app_handle.clone();
@@ -117,29 +153,69 @@ pub(crate) mod pasteboard {
         "org.nspasteboard.ConcealedType",
     ];
 
-    /// Each pasteboard item as its (type, data) pairs.
-    pub struct Snapshot(Vec<Vec<(String, Vec<u8>)>>);
+    /// Clipboards bigger than this aren't copied aside; the dictation stays.
+    const MAX_SNAPSHOT_BYTES: usize = 32 * 1024 * 1024;
+
+    /// What was on the clipboard before a paste.
+    pub enum Snapshot {
+        /// Each pasteboard item as its (type, data) pairs.
+        Items(Vec<Vec<(String, Vec<u8>)>>),
+        /// A password manager's (concealed or transient) item. Putting it back
+        /// would undo the manager clearing it, so it isn't kept.
+        Sensitive,
+        /// Larger than `MAX_SNAPSHOT_BYTES`.
+        TooLarge,
+        /// Not taken, e.g. for a remote-desktop app.
+        Skip,
+    }
+
+    impl Snapshot {
+        pub fn restorable(&self) -> bool {
+            matches!(self, Snapshot::Items(_))
+        }
+
+        pub fn reason(&self) -> &'static str {
+            match self {
+                Snapshot::Items(_) => "restorable",
+                Snapshot::Sensitive => "the clipboard held a concealed item",
+                Snapshot::TooLarge => "the clipboard was too large to keep",
+                Snapshot::Skip => "this app reads the clipboard remotely",
+            }
+        }
+    }
+
+    /// Whether an item's types mark it as something clipboard tools must not
+    /// keep, like a password.
+    pub(crate) fn is_sensitive<'a>(mut types: impl Iterator<Item = &'a str>) -> bool {
+        types.any(|kind| MARKERS.contains(&kind))
+    }
 
     pub fn snapshot() -> Snapshot {
         let pasteboard = NSPasteboard::generalPasteboard();
-        let items = pasteboard
-            .pasteboardItems()
-            .map(|items| {
-                items
-                    .iter()
-                    .map(|item| {
-                        item.types()
-                            .iter()
-                            .filter_map(|kind| {
-                                item.dataForType(&kind)
-                                    .map(|data| (kind.to_string(), data.to_vec()))
-                            })
-                            .collect()
-                    })
-                    .collect()
-            })
-            .unwrap_or_default();
-        Snapshot(items)
+        let Some(items) = pasteboard.pasteboardItems() else {
+            return Snapshot::Items(Vec::new());
+        };
+        let mut kept = Vec::new();
+        let mut total = 0usize;
+        for item in items.iter() {
+            let types: Vec<String> = item.types().iter().map(|kind| kind.to_string()).collect();
+            if is_sensitive(types.iter().map(String::as_str)) {
+                return Snapshot::Sensitive;
+            }
+            let mut pairs = Vec::new();
+            for kind in types {
+                let Some(data) = item.dataForType(&NSString::from_str(&kind)) else {
+                    continue;
+                };
+                total += data.len();
+                if total > MAX_SNAPSHOT_BYTES {
+                    return Snapshot::TooLarge;
+                }
+                pairs.push((kind, data.to_vec()));
+            }
+            kept.push(pairs);
+        }
+        Snapshot::Items(kept)
     }
 
     /// Replaces the clipboard with `text`. Returns the change count after the
@@ -177,13 +253,15 @@ pub(crate) mod pasteboard {
     /// Puts a snapshot back unless the clipboard changed since `written`.
     /// Returns whether it was restored.
     pub fn restore(snapshot: Snapshot, written: isize) -> bool {
+        let Snapshot::Items(saved) = snapshot else {
+            return false;
+        };
         let pasteboard = NSPasteboard::generalPasteboard();
         if pasteboard.changeCount() != written {
             return false;
         }
         pasteboard.clearContents();
-        let items: Vec<Retained<ProtocolObject<dyn NSPasteboardWriting>>> = snapshot
-            .0
+        let items: Vec<Retained<ProtocolObject<dyn NSPasteboardWriting>>> = saved
             .into_iter()
             .map(|types| {
                 let item = NSPasteboardItem::new();
@@ -916,6 +994,30 @@ fn paste_with(text: String, app_handle: AppHandle, as_dictation: bool) -> Result
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    #[cfg(target_os = "macos")]
+    fn password_manager_items_are_never_put_back() {
+        assert!(pasteboard::is_sensitive(
+            ["public.utf8-plain-text", "org.nspasteboard.ConcealedType"].into_iter()
+        ));
+        assert!(pasteboard::is_sensitive(
+            ["org.nspasteboard.TransientType"].into_iter()
+        ));
+        assert!(!pasteboard::is_sensitive(
+            ["public.png", "public.utf8-plain-text"].into_iter()
+        ));
+    }
+
+    #[test]
+    #[cfg(target_os = "macos")]
+    fn remote_desktop_apps_keep_the_dictation_on_the_clipboard() {
+        assert!(skips_restore("com.apple.ScreenSharing"));
+        assert!(skips_restore("com.microsoft.rdc.macos"));
+        assert!(!skips_restore("com.apple.Notes"));
+        // Long enough for a busy app to read the clipboard before it's restored.
+        assert!(RESTORE_DELAY >= Duration::from_millis(1000));
+    }
 
     #[test]
     #[cfg(target_os = "macos")]
