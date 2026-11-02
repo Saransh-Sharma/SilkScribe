@@ -1509,7 +1509,8 @@
       "yourNotes": "あなたのメモ",
       "openSource": "{{source}} を開く",
       "shortcut": "⌘K"
-    }
+    },
+    "openNotes": "メモを開く"
   },
   "audioPlayer": {
     "play": "再生",

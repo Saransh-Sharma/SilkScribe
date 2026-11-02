@@ -398,14 +398,35 @@ api.storage = async () => ({
   model_bytes: 0,
   free_bytes: 1e10,
 });
+let recordingId: string | null = null;
 api.status = async () => ({
-  document_id: null,
+  document_id: recordingId,
   paused: false,
   seconds: 0,
   microphone_level: 0,
   system_level: 0,
   error: null,
 });
+// Starting a meeting adds a recording document with no transcript yet.
+api.start = async (options) => {
+  recordingId = "live-meeting";
+  docs = [
+    {
+      ...docs[0],
+      id: recordingId,
+      title: options.title || "New meeting",
+      created_at: Math.floor(Date.now() / 1000),
+      stage: "recording",
+      segments: [],
+      speakers: [],
+      turns: [],
+      notes: null,
+      live_segments: [],
+    },
+    ...docs,
+  ];
+  return api.status();
+};
 api.inspectFiles = async (paths) =>
   paths.map((path) => ({ path, bytes: 1048576, duration: 90, error: null }));
 api.dictationReady = async () => dictation === "ready";

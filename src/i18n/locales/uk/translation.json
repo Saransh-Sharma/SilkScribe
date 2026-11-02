@@ -1526,7 +1526,8 @@
       "yourNotes": "Ваші нотатки",
       "openSource": "Відкрити {{source}}",
       "shortcut": "⌘K"
-    }
+    },
+    "openNotes": "Відкрити нотатки"
   },
   "audioPlayer": {
     "play": "Відтворити",

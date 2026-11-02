@@ -14,6 +14,9 @@ import { toastError } from "@/lib/utils/toastError";
  * (e.g. when a meeting stops), so a remount starts from what was typed rather
  * than from the last save that landed. */
 const latest = new Map<string, string>();
+// Documents whose notes have already taken focus once, so a remount (e.g. on
+// pause) doesn't pull focus back from wherever the person went.
+const focusedOnce = new Set<string>();
 
 const SAVE_DELAY_MS = 500;
 const LIST_ITEM = /^(\s*)([-*•]|\d+[.)])\s+/;
@@ -50,8 +53,11 @@ export function continueList(
 export function UserNotes({
   documentId,
   onContentChange,
+  autoFocus = false,
 }: {
   documentId: string;
+  /** Put the caret here once the notes load, e.g. when the meeting starts. */
+  autoFocus?: boolean;
   /** Told whether there's anything written, e.g. to offer "Enhance notes". */
   onContentChange?: (hasContent: boolean) => void;
 }) {
@@ -93,6 +99,15 @@ export function UserNotes({
       current = false;
     };
   }, [documentId, t]);
+
+  useEffect(() => {
+    if (!autoFocus || !loaded || focusedOnce.has(documentId)) return;
+    focusedOnce.add(documentId);
+    const el = textarea.current;
+    if (!el) return;
+    el.focus();
+    el.setSelectionRange(el.value.length, el.value.length);
+  }, [autoFocus, loaded, documentId]);
 
   const hasContent = text.trim() !== "";
   useEffect(() => {

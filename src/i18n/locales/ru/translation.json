@@ -1526,7 +1526,8 @@
       "yourNotes": "Ваши заметки",
       "openSource": "Открыть {{source}}",
       "shortcut": "⌘K"
-    }
+    },
+    "openNotes": "Открыть заметки"
   },
   "audioPlayer": {
     "play": "Воспроизвести",

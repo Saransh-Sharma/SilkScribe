@@ -1509,7 +1509,8 @@
       "yourNotes": "你的笔记",
       "openSource": "打开 {{source}}",
       "shortcut": "⌘K"
-    }
+    },
+    "openNotes": "打开笔记"
   },
   "audioPlayer": {
     "play": "播放",

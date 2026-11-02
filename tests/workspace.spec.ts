@@ -899,6 +899,25 @@ test("meeting setup can capture just the running call app", async ({
   await expect(page.getByText("Offer notes when a call starts")).toBeVisible();
 });
 
+test("a new meeting opens on your notes, and the bar can reopen them", async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  await page.getByRole("button", { name: "Record meeting" }).first().click();
+  await page.getByLabel("Title").fill("Design sync");
+  await page
+    .getByRole("button", { name: "Start recording", exact: true })
+    .click();
+  const notes = page.getByRole("textbox", { name: "Your notes" });
+  await expect(notes).toBeFocused();
+  await notes.pressSequentially("- Ship the new home");
+  await page.getByRole("button", { name: "Back" }).first().click();
+  await page.getByRole("button", { name: "Open notes", exact: true }).click();
+  await expect(notes).toHaveValue("- Ship the new home");
+  // It took focus once; reopening leaves focus where you put it.
+  await expect(notes).not.toBeFocused();
+});
+
 test("meeting setup offers a heads-up for the people on the call", async ({
   page,
 }) => {

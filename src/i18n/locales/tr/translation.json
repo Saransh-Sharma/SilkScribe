@@ -1514,7 +1514,8 @@
       "yourNotes": "Notların",
       "openSource": "{{source}} kaynağını aç",
       "shortcut": "⌘K"
-    }
+    },
+    "openNotes": "Notları aç"
   },
   "audioPlayer": {
     "play": "Oynat",

@@ -45,8 +45,11 @@ export function Transcript({
   onSetupModels,
   saveBarrier,
   openAt = null,
+  focusNotes = false,
 }: {
   document: Document;
+  /** Start in "Your notes", e.g. right after the meeting starts. */
+  focusNotes?: boolean;
   /** Seconds to start at, e.g. when a citation opened it. */
   openAt?: number | null;
   onBack: () => void;
@@ -917,7 +920,9 @@ export function Transcript({
                 doc.source === "meeting" ? "ws-live-layout" : undefined
               }
             >
-              {doc.source === "meeting" && <UserNotes documentId={doc.id} />}
+              {doc.source === "meeting" && (
+                <UserNotes documentId={doc.id} autoFocus={focusNotes} />
+              )}
               <LiveTranscript
                 documentId={doc.id}
                 stored={doc.live_segments}

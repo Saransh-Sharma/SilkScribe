@@ -1509,7 +1509,8 @@
       "yourNotes": "내 메모",
       "openSource": "{{source}} 열기",
       "shortcut": "⌘K"
-    }
+    },
+    "openNotes": "메모 열기"
   },
   "audioPlayer": {
     "play": "재생",

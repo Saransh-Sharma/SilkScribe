@@ -1538,7 +1538,8 @@
       "yourNotes": "ملاحظاتك",
       "openSource": "فتح {{source}}",
       "shortcut": "⌘K"
-    }
+    },
+    "openNotes": "فتح الملاحظات"
   },
   "audioPlayer": {
     "play": "تشغيل",

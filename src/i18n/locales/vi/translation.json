@@ -1509,7 +1509,8 @@
       "yourNotes": "Ghi chú của bạn",
       "openSource": "Mở {{source}}",
       "shortcut": "⌘K"
-    }
+    },
+    "openNotes": "Mở ghi chú"
   },
   "audioPlayer": {
     "play": "Phát",

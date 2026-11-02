@@ -1526,7 +1526,8 @@
       "yourNotes": "Vaše poznámky",
       "openSource": "Otevřít {{source}}",
       "shortcut": "⌘K"
-    }
+    },
+    "openNotes": "Otevřít poznámky"
   },
   "audioPlayer": {
     "play": "Přehrát",

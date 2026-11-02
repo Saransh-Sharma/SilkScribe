@@ -1514,7 +1514,8 @@
       "yourNotes": "Your notes",
       "openSource": "Open {{source}}",
       "shortcut": "⌘K"
-    }
+    },
+    "openNotes": "Open notes"
   },
   "audioPlayer": {
     "play": "Play",

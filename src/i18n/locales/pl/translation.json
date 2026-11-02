@@ -1526,7 +1526,8 @@
       "yourNotes": "Twoje notatki",
       "openSource": "Otwórz {{source}}",
       "shortcut": "⌘K"
-    }
+    },
+    "openNotes": "Otwórz notatki"
   },
   "audioPlayer": {
     "play": "Odtwarzaj",

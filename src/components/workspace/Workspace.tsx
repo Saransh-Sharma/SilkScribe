@@ -30,6 +30,7 @@ import {
   ShieldCheck,
   Sparkles,
   CalendarDays,
+  NotebookPen,
 } from "lucide-react";
 import { toast } from "sonner";
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
@@ -664,16 +665,23 @@ export default function Workspace({
     setWorking(true);
     try {
       if (create === "meeting") {
-        setRecording(
-          await api.start({
-            title,
-            microphone_id: device || null,
-            system_audio: system,
-            options,
-            target_bundle_id: system && targetApp ? targetApp : null,
-          }),
-        );
+        const started = await api.start({
+          title,
+          microphone_id: device || null,
+          system_audio: system,
+          options,
+          target_bundle_id: system && targetApp ? targetApp : null,
+        });
+        setRecording(started);
         setTitle("");
+        // Open the meeting on your notes, the way you'd start typing in one.
+        if (started.document_id) {
+          setCreate(null);
+          setFocusNotesFor(started.document_id);
+          await openDocument(started.document_id);
+          void refresh();
+          return;
+        }
       } else {
         setImportProgress({
           name: files[0]?.split(/[\\/]/).pop() ?? "",
@@ -717,6 +725,8 @@ export default function Workspace({
   };
   // Where to start in the transcript that opens, e.g. from a citation.
   const [openAt, setOpenAt] = useState<number | null>(null);
+  // The meeting just started from here, whose notes take focus once.
+  const [focusNotesFor, setFocusNotesFor] = useState<string | null>(null);
   const openDocument = async (id: string, at: number | null = null) => {
     if (saveBarrier.current && !(await saveBarrier.current())) return;
     try {
@@ -1040,6 +1050,15 @@ export default function Workspace({
             >
               {t("workspace.stopSave")}
             </button>
+            {selected?.id !== recording.document_id && (
+              <button
+                className="ws-text-button"
+                onClick={() => void openDocument(recording.document_id!)}
+              >
+                <NotebookPen size={15} />
+                {t("workspace.openNotes")}
+              </button>
+            )}
             {recording.error && <p role="alert">{recording.error}</p>}
             {consentReminder && recording.seconds < 60 && !recording.paused && (
               <p className="ws-consent">
@@ -1142,6 +1161,7 @@ export default function Workspace({
               key={`${selected.id}-${busy(selected.stage) ? selected.stage : "editable"}-${openAt ?? ""}`}
               document={selected}
               openAt={openAt}
+              focusNotes={focusNotesFor === selected.id}
               onBack={() => {
                 setSelected(null);
                 void refresh();

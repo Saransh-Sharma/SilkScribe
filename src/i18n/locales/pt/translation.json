@@ -1520,7 +1520,8 @@
       "yourNotes": "Suas anotações",
       "openSource": "Abrir {{source}}",
       "shortcut": "⌘K"
-    }
+    },
+    "openNotes": "Abrir anotações"
   },
   "audioPlayer": {
     "play": "Tocar",
