@@ -305,7 +305,9 @@
       "translate": "Traduire en anglais"
     },
     "downloadErrors": {
-      "unknown": "Le téléchargement n’a pas abouti."
+      "unknown": "Le téléchargement n’a pas abouti. Vérifiez votre connexion et réessayez.",
+      "space": "Espace insuffisant : {{required}} nécessaires, {{free}} disponibles. Libérez de l’espace et réessayez.",
+      "extraction": "Le téléchargement est terminé mais n’a pas pu être décompressé. Réessayez."
     }
   },
   "settings": {
@@ -1232,7 +1234,11 @@
       "saveStyle": "Impossible d’enregistrer le style",
       "startMeeting": "Impossible de lancer la réunion",
       "addToDictionary": "Impossible d’ajouter à votre dictionnaire",
-      "connectCalendar": "Impossible de connecter votre calendrier"
+      "connectCalendar": "Impossible de connecter votre calendrier",
+      "details": "Détails",
+      "runtimeCheck": "Les moteurs locaux n’ont pas pu démarrer. Vérifiez que SilkScribe est à jour, puis réessayez.",
+      "inspectFiles": "Certains fichiers n’ont pas pu être lus. Vérifiez qu’il s’agit de fichiers audio, puis réessayez.",
+      "disconnectCalendar": "Impossible de déconnecter votre calendrier"
     },
     "liveTranscript": "Transcription en direct",
     "liveTranscriptNote": "Une transcription plus précise la remplacera une fois le traitement terminé.",

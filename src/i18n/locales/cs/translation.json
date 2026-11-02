@@ -305,7 +305,9 @@
       "translate": "Přeložit do angličtiny"
     },
     "downloadErrors": {
-      "unknown": "Stahování se nedokončilo."
+      "unknown": "Stahování se nedokončilo. Zkontrolujte připojení a zkuste to znovu.",
+      "space": "Málo místa: je potřeba {{required}}, volno je {{free}}. Uvolněte místo a zkuste to znovu.",
+      "extraction": "Stahování skončilo, ale nepodařilo se ho rozbalit. Zkuste to znovu."
     }
   },
   "settings": {
@@ -1237,7 +1239,11 @@
       "saveStyle": "Styl se nepodařilo uložit",
       "startMeeting": "Schůzku se nepodařilo zahájit",
       "addToDictionary": "Do slovníku se nepodařilo přidat",
-      "connectCalendar": "Kalendář se nepodařilo připojit"
+      "connectCalendar": "Kalendář se nepodařilo připojit",
+      "details": "Podrobnosti",
+      "runtimeCheck": "Místní moduly se nepodařilo spustit. Ověřte, že máte aktuální SilkScribe, a zkuste to znovu.",
+      "inspectFiles": "Některé soubory se nepodařilo přečíst. Ověřte, že jde o zvukové soubory, a zkuste to znovu.",
+      "disconnectCalendar": "Kalendář se nepodařilo odpojit"
     },
     "liveTranscript": "Živý přepis",
     "liveTranscriptNote": "Po dokončení zpracování ho nahradí přesnější přepis.",

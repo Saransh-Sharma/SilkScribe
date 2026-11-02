@@ -305,7 +305,9 @@
       "translate": "Translate to English"
     },
     "downloadErrors": {
-      "unknown": "The download didn’t finish."
+      "unknown": "The download didn’t finish. Check your connection and try again.",
+      "space": "Not enough space: needs {{required}}, {{free}} free. Free up space and try again.",
+      "extraction": "The download finished but couldn’t be unpacked. Try again."
     }
   },
   "settings": {
@@ -1228,7 +1230,11 @@
       "saveStyle": "Couldn’t save the style",
       "startMeeting": "Couldn’t start the meeting",
       "addToDictionary": "Couldn’t add to your dictionary",
-      "connectCalendar": "Couldn’t connect your calendar"
+      "connectCalendar": "Couldn’t connect your calendar",
+      "details": "Details",
+      "runtimeCheck": "The local engines couldn’t start. Make sure SilkScribe is up to date, then try again.",
+      "inspectFiles": "Some files couldn’t be read. Check they’re audio files, then try again.",
+      "disconnectCalendar": "Couldn’t disconnect your calendar"
     },
     "liveTranscript": "Live transcript",
     "liveTranscriptNote": "A more accurate transcript replaces this once processing finishes.",

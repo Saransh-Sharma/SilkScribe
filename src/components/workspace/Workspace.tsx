@@ -54,7 +54,7 @@ import { Transcript } from "./Transcript";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { Preferences } from "./Preferences";
 import { SettingsGroup } from "../ui/SettingsGroup";
-import { WsMeter, WsSelect, WsToggle } from "./controls";
+import { WsErrorDetail, WsMeter, WsSelect, WsToggle } from "./controls";
 import { LANGUAGES } from "@/lib/constants/languages";
 import { useSettings } from "@/hooks/useSettings";
 import { cloudCleanupProvider } from "@/lib/utils/privacy";
@@ -1383,7 +1383,14 @@ export default function Workspace({
                   {inspecting && (
                     <p role="status">{t("workspace.checkingFiles")}</p>
                   )}
-                  {inspectionError && <p role="alert">{inspectionError}</p>}
+                  {inspectionError && (
+                    <div role="alert">
+                      <WsErrorDetail
+                        message={t("workspace.errors.inspectFiles")}
+                        detail={inspectionError}
+                      />
+                    </div>
+                  )}
                   {files.map((file, i) => (
                     <div key={`${file}-${i}`}>
                       <Upload size={16} />
@@ -1676,16 +1683,22 @@ export default function Workspace({
                             : "workspace.notesEnginesHelp",
                         )}
                       </p>
-                      <p className={`ws-alert ${runtime ? "ready" : ""}`}>
-                        {runtimeError ||
+                      <div className={`ws-alert ${runtime ? "ready" : ""}`}>
+                        {runtimeError ? (
+                          <WsErrorDetail
+                            message={t("workspace.errors.runtimeCheck")}
+                            detail={runtimeError}
+                          />
+                        ) : (
                           t(
                             runtime === null
                               ? "common.loading"
                               : runtime
                                 ? "workspace.runtimeReady"
                                 : "workspace.runtimeMissing",
-                          )}
-                      </p>
+                          )
+                        )}
+                      </div>
                       {packs
                         .filter((pack) =>
                           settingsPage === "models"

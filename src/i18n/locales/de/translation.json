@@ -305,7 +305,9 @@
       "translate": "Ins Englische übersetzen"
     },
     "downloadErrors": {
-      "unknown": "Der Download wurde nicht abgeschlossen."
+      "unknown": "Der Download wurde nicht abgeschlossen. Prüfe deine Verbindung und versuch es noch einmal.",
+      "space": "Nicht genug Platz: {{required}} nötig, {{free}} frei. Gib Speicher frei und versuch es noch einmal.",
+      "extraction": "Der Download ist fertig, ließ sich aber nicht entpacken. Versuch es noch einmal."
     }
   },
   "settings": {
@@ -1227,7 +1229,11 @@
       "saveStyle": "Stil konnte nicht gesichert werden",
       "startMeeting": "Meeting konnte nicht gestartet werden",
       "addToDictionary": "Konnte nicht zu deinem Wörterbuch hinzugefügt werden",
-      "connectCalendar": "Dein Kalender konnte nicht verbunden werden"
+      "connectCalendar": "Dein Kalender konnte nicht verbunden werden",
+      "details": "Details",
+      "runtimeCheck": "Die lokalen Engines konnten nicht starten. Stell sicher, dass SilkScribe aktuell ist, und versuch es noch einmal.",
+      "inspectFiles": "Einige Dateien konnten nicht gelesen werden. Prüfe, ob es Audiodateien sind, und versuch es noch einmal.",
+      "disconnectCalendar": "Kalender konnte nicht getrennt werden"
     },
     "liveTranscript": "Live-Transkript",
     "liveTranscriptNote": "Ein genaueres Transkript ersetzt dieses, sobald die Verarbeitung abgeschlossen ist.",

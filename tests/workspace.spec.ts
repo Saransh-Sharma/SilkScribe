@@ -634,6 +634,11 @@ test("model settings remain usable while runtime health fails", async ({
   await expect(
     page.getByRole("heading", { name: "Engines", exact: true }),
   ).toBeVisible();
+  // A plain explanation, with the technical detail one click away.
+  await expect(
+    page.getByText("The local engines couldn’t start.", { exact: false }),
+  ).toBeVisible();
+  await page.getByText("Details", { exact: true }).first().click();
   await expect(
     page.getByText("Speech runtime: dependency check failed", { exact: false }),
   ).toBeVisible();

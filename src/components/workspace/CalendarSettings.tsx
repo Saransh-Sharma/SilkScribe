@@ -50,7 +50,13 @@ export function CalendarSettings() {
           />
           <button
             className="ws-secondary"
-            onClick={async () => setStatus(await api.disconnectCalendar())}
+            onClick={async () => {
+              try {
+                setStatus(await api.disconnectCalendar());
+              } catch (error) {
+                toastError(t("workspace.errors.disconnectCalendar"), error);
+              }
+            }}
           >
             {t("workspace.calendar.disconnect")}
           </button>

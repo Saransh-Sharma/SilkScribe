@@ -305,7 +305,9 @@
       "translate": "Tłumacz na angielski"
     },
     "downloadErrors": {
-      "unknown": "Pobieranie nie zostało ukończone."
+      "unknown": "Pobieranie się nie zakończyło. Sprawdź połączenie i spróbuj ponownie.",
+      "space": "Za mało miejsca: potrzeba {{required}}, wolne {{free}}. Zwolnij miejsce i spróbuj ponownie.",
+      "extraction": "Pobieranie się zakończyło, ale nie udało się rozpakować. Spróbuj ponownie."
     }
   },
   "settings": {
@@ -1237,7 +1239,11 @@
       "saveStyle": "Nie udało się zapisać stylu",
       "startMeeting": "Nie udało się rozpocząć spotkania",
       "addToDictionary": "Nie udało się dodać do słownika",
-      "connectCalendar": "Nie udało się połączyć kalendarza"
+      "connectCalendar": "Nie udało się połączyć kalendarza",
+      "details": "Szczegóły",
+      "runtimeCheck": "Nie udało się uruchomić lokalnych silników. Upewnij się, że SilkScribe jest aktualny, i spróbuj ponownie.",
+      "inspectFiles": "Nie udało się odczytać niektórych plików. Sprawdź, czy to pliki audio, i spróbuj ponownie.",
+      "disconnectCalendar": "Nie udało się odłączyć kalendarza"
     },
     "liveTranscript": "Transkrypt na żywo",
     "liveTranscriptNote": "Po zakończeniu przetwarzania zastąpi go dokładniejszy transkrypt.",

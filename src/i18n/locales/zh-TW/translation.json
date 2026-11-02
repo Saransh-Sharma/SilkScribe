@@ -305,7 +305,9 @@
       "translate": "翻譯為英語"
     },
     "downloadErrors": {
-      "unknown": "下載未完成。"
+      "unknown": "下載未完成。請檢查網路連線後再試一次。",
+      "space": "空間不足：需要 {{required}}，可用 {{free}}。請釋出空間後再試一次。",
+      "extraction": "下載已完成，但無法解壓縮。請再試一次。"
     }
   },
   "settings": {
@@ -1223,7 +1225,11 @@
       "saveStyle": "無法儲存風格",
       "startMeeting": "無法開始會議",
       "addToDictionary": "無法加入你的字典",
-      "connectCalendar": "無法連接你的行事曆"
+      "connectCalendar": "無法連接你的行事曆",
+      "details": "詳細資訊",
+      "runtimeCheck": "無法啟動本機引擎。請確認 SilkScribe 已是最新版本，然後再試一次。",
+      "inspectFiles": "部分檔案無法讀取。請確認它們是音訊檔，然後再試一次。",
+      "disconnectCalendar": "無法中斷行事曆連線"
     },
     "liveTranscript": "即時逐字稿",
     "liveTranscriptNote": "處理完成後，會有更準確的逐字稿取代它。",

@@ -11,6 +11,8 @@ import { useTranslation } from "react-i18next";
 import type { ModelInfo } from "@/bindings";
 import { LANGUAGES } from "../../lib/constants/languages";
 import { formatModelSize } from "../../lib/utils/format";
+import { formatBytes } from "../../lib/utils/download";
+import { useModelStore } from "../../stores/modelStore";
 import {
   getTranslatedModelDescription,
   getTranslatedModelName,
@@ -170,6 +172,9 @@ const ModelCard: React.FC<ModelCardProps> = ({
   showRecommended = true,
 }) => {
   const { t } = useTranslation();
+  const downloadError = useModelStore(
+    (state) => state.downloadErrors[model.id],
+  );
   const isOnboardingLayout = layout === "onboarding";
   const isFeatured = variant === "featured";
   const isClickable =
@@ -553,7 +558,14 @@ const ModelCard: React.FC<ModelCardProps> = ({
       {status === "error" && onDownload ? (
         <div className="flex items-center justify-between gap-3 rounded-[var(--ss-radius-sm)] bg-ss-state-danger/8 px-3 py-2">
           <p className="text-xs text-ss-state-danger">
-            {t("modelSelector.downloadErrors.unknown")}
+            {downloadError?.code === "insufficient_space"
+              ? t("modelSelector.downloadErrors.space", {
+                  required: formatBytes(downloadError.requiredBytes ?? 0),
+                  free: formatBytes(downloadError.freeBytes ?? 0),
+                })
+              : downloadError?.code === "extraction_failed"
+                ? t("modelSelector.downloadErrors.extraction")
+                : t("modelSelector.downloadErrors.unknown")}
           </p>
           <Button
             variant="secondary"

@@ -305,7 +305,9 @@
       "translate": "英語に翻訳"
     },
     "downloadErrors": {
-      "unknown": "ダウンロードが完了しませんでした。"
+      "unknown": "ダウンロードが完了しませんでした。接続を確認してもう一度お試しください。",
+      "space": "空き容量が足りません。{{required}} 必要ですが、空きは {{free}} です。空き容量を増やしてもう一度お試しください。",
+      "extraction": "ダウンロードは完了しましたが、展開できませんでした。もう一度お試しください。"
     }
   },
   "settings": {
@@ -1223,7 +1225,11 @@
       "saveStyle": "スタイルを保存できませんでした",
       "startMeeting": "会議を開始できませんでした",
       "addToDictionary": "辞書に追加できませんでした",
-      "connectCalendar": "カレンダーに接続できませんでした"
+      "connectCalendar": "カレンダーに接続できませんでした",
+      "details": "詳細",
+      "runtimeCheck": "ローカルエンジンを起動できませんでした。SilkScribe が最新か確認してから、もう一度お試しください。",
+      "inspectFiles": "一部のファイルを読み込めませんでした。音声ファイルか確認してから、もう一度お試しください。",
+      "disconnectCalendar": "カレンダーの接続を解除できませんでした"
     },
     "liveTranscript": "ライブ文字起こし",
     "liveTranscriptNote": "処理が完了すると、より正確な文字起こしに置き換わります。",

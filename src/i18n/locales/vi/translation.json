@@ -305,7 +305,9 @@
       "translate": "Dịch sang tiếng Anh"
     },
     "downloadErrors": {
-      "unknown": "Tải xuống chưa xong."
+      "unknown": "Tải xuống chưa hoàn tất. Hãy kiểm tra kết nối rồi thử lại.",
+      "space": "Không đủ dung lượng: cần {{required}}, còn trống {{free}}. Hãy giải phóng dung lượng rồi thử lại.",
+      "extraction": "Đã tải xong nhưng không giải nén được. Hãy thử lại."
     }
   },
   "settings": {
@@ -1223,7 +1225,11 @@
       "saveStyle": "Không lưu được văn phong",
       "startMeeting": "Không bắt đầu cuộc họp được",
       "addToDictionary": "Không thêm được vào từ điển",
-      "connectCalendar": "Không kết nối được lịch của bạn"
+      "connectCalendar": "Không kết nối được lịch của bạn",
+      "details": "Chi tiết",
+      "runtimeCheck": "Không khởi động được các công cụ cục bộ. Hãy đảm bảo SilkScribe đã được cập nhật rồi thử lại.",
+      "inspectFiles": "Không đọc được một số tệp. Hãy kiểm tra đó là tệp âm thanh rồi thử lại.",
+      "disconnectCalendar": "Không thể ngắt kết nối lịch"
     },
     "liveTranscript": "Bản ghi trực tiếp",
     "liveTranscriptNote": "Một bản ghi chính xác hơn sẽ thay thế bản này khi xử lý xong.",

@@ -305,7 +305,9 @@
       "translate": "영어로 번역"
     },
     "downloadErrors": {
-      "unknown": "다운로드가 완료되지 않았습니다."
+      "unknown": "다운로드를 완료하지 못했습니다. 연결을 확인하고 다시 시도하세요.",
+      "space": "공간이 부족합니다. {{required}}이(가) 필요하지만 {{free}}만 남아 있습니다. 공간을 확보한 뒤 다시 시도하세요.",
+      "extraction": "다운로드는 끝났지만 압축을 풀지 못했습니다. 다시 시도하세요."
     }
   },
   "settings": {
@@ -1223,7 +1225,11 @@
       "saveStyle": "스타일을 저장하지 못했습니다",
       "startMeeting": "회의를 시작하지 못했습니다",
       "addToDictionary": "사전에 추가하지 못했습니다",
-      "connectCalendar": "캘린더를 연결하지 못했습니다"
+      "connectCalendar": "캘린더를 연결하지 못했습니다",
+      "details": "세부 정보",
+      "runtimeCheck": "로컬 엔진을 시작하지 못했습니다. SilkScribe가 최신 버전인지 확인한 뒤 다시 시도하세요.",
+      "inspectFiles": "일부 파일을 읽지 못했습니다. 오디오 파일인지 확인한 뒤 다시 시도하세요.",
+      "disconnectCalendar": "캘린더 연결을 해제하지 못했습니다"
     },
     "liveTranscript": "실시간 스크립트",
     "liveTranscriptNote": "처리가 끝나면 더 정확한 스크립트로 대체됩니다.",

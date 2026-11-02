@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Dropdown, type DropdownOption } from "@/components/ui/Dropdown";
 import { Switch } from "@/components/ui/Switch";
 
@@ -102,5 +103,23 @@ export const WsMeter: React.FC<WsMeterProps> = ({
     >
       <span className="ws-meter-fill" style={{ width: `${pct}%` }} />
     </div>
+  );
+};
+
+/** A plain-language failure with the technical detail tucked away, for when
+ * someone needs to report it. */
+export const WsErrorDetail: React.FC<{ message: string; detail: string }> = ({
+  message,
+  detail,
+}) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <span>{message}</span>
+      <details className="ws-error-detail">
+        <summary>{t("workspace.errors.details")}</summary>
+        <code dir="ltr">{detail}</code>
+      </details>
+    </>
   );
 };

@@ -305,7 +305,9 @@
       "translate": "Traduci in inglese"
     },
     "downloadErrors": {
-      "unknown": "Il download non è stato completato."
+      "unknown": "Il download non è stato completato. Controlla la connessione e riprova.",
+      "space": "Spazio insufficiente: servono {{required}}, liberi {{free}}. Libera spazio e riprova.",
+      "extraction": "Il download è finito ma non è stato possibile estrarlo. Riprova."
     }
   },
   "settings": {
@@ -1232,7 +1234,11 @@
       "saveStyle": "Impossibile salvare lo stile",
       "startMeeting": "Impossibile avviare la riunione",
       "addToDictionary": "Impossibile aggiungere al dizionario",
-      "connectCalendar": "Impossibile collegare il calendario"
+      "connectCalendar": "Impossibile collegare il calendario",
+      "details": "Dettagli",
+      "runtimeCheck": "Non è stato possibile avviare i motori locali. Verifica che SilkScribe sia aggiornato e riprova.",
+      "inspectFiles": "Non è stato possibile leggere alcuni file. Verifica che siano file audio e riprova.",
+      "disconnectCalendar": "Impossibile scollegare il calendario"
     },
     "liveTranscript": "Trascrizione in tempo reale",
     "liveTranscriptNote": "Al termine dell’elaborazione, una trascrizione più precisa sostituirà questa.",

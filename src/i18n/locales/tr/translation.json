@@ -305,7 +305,9 @@
       "translate": "İngilizce'ye çevir"
     },
     "downloadErrors": {
-      "unknown": "İndirme tamamlanmadı."
+      "unknown": "İndirme tamamlanmadı. Bağlantınızı kontrol edip yeniden deneyin.",
+      "space": "Yeterli alan yok: {{required}} gerekli, {{free}} boş. Yer açıp yeniden deneyin.",
+      "extraction": "İndirme bitti ama açılamadı. Yeniden deneyin."
     }
   },
   "settings": {
@@ -1227,7 +1229,11 @@
       "saveStyle": "Üslup kaydedilemedi",
       "startMeeting": "Toplantı başlatılamadı",
       "addToDictionary": "Sözlüğüne eklenemedi",
-      "connectCalendar": "Takvimin bağlanamadı"
+      "connectCalendar": "Takvimin bağlanamadı",
+      "details": "Ayrıntılar",
+      "runtimeCheck": "Yerel motorlar başlatılamadı. SilkScribe’ın güncel olduğundan emin olup yeniden deneyin.",
+      "inspectFiles": "Bazı dosyalar okunamadı. Ses dosyası olduklarını kontrol edip yeniden deneyin.",
+      "disconnectCalendar": "Takviminizin bağlantısı kesilemedi"
     },
     "liveTranscript": "Canlı transkript",
     "liveTranscriptNote": "İşleme bitince daha doğru bir transkript bunun yerini alır.",

@@ -305,7 +305,9 @@
       "translate": "翻译为英语"
     },
     "downloadErrors": {
-      "unknown": "下载未完成。"
+      "unknown": "下载未完成。请检查网络连接后重试。",
+      "space": "空间不足：需要 {{required}}，可用 {{free}}。请释放空间后重试。",
+      "extraction": "下载已完成，但无法解压。请重试。"
     }
   },
   "settings": {
@@ -1223,7 +1225,11 @@
       "saveStyle": "无法存储风格",
       "startMeeting": "无法开始会议",
       "addToDictionary": "无法添加到你的词典",
-      "connectCalendar": "无法连接你的日历"
+      "connectCalendar": "无法连接你的日历",
+      "details": "详细信息",
+      "runtimeCheck": "本地引擎无法启动。请确认 SilkScribe 已是最新版本，然后重试。",
+      "inspectFiles": "部分文件无法读取。请确认它们是音频文件，然后重试。",
+      "disconnectCalendar": "无法断开日历连接"
     },
     "liveTranscript": "实时转录",
     "liveTranscriptNote": "处理完成后，会有更准确的文字稿替换它。",
