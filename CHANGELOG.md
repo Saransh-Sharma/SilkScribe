@@ -22,9 +22,20 @@
 - **Consent heads-up**: a reminder to tell people when recording starts, and a message you can copy to let them know.
 - Home leads with dictation: words today, your streak and recent dictations. Onboarding has a step to pick your shortcut and mode.
 - Experimental **live text while dictating**, off by default.
+- **Preview languages**: languages a native speaker hasn't reviewed yet are listed only when Preview languages is on (Settings → General); otherwise the app uses English. Existing installs keep the language they use.
+- Starting a meeting opens it on **Your notes**, and the recording bar can always get back to them.
+- **Ask from anywhere**: Command-K (Ctrl+K) works from a transcript or Settings too; without a notes engine, Ask offers to get one.
+- CI checks every push: lint, the frontend build, unit, translation, worker, browser and Rust tests, clippy, and that Windows, Linux and the App Store build still compile.
 - `scripts/dictation-latency.ts` summarises dictation timing from the logs (p50/p95 per engine), split by whether live text was on.
 
 ### Changed
+
+- **Settings** has eight sections in a side list (General, Dictation, AI writing, Dictionary, Meetings & notes, Audio, Engines, Privacy & storage), each control in one place. The call prompt and consent reminder moved from meeting setup to Meetings & notes; the cancel shortcut and laptop mic moved out of the hidden Developer panel.
+- **Home** leads with what's in progress, what needs attention and what's coming up, then dictation; recent dictations are listed once.
+- **Meeting setup** is chosen by preset (the one in use shows as selected), with engine options collapsed and described by what they're for.
+- Writing or enhancing notes is the main action on a meeting's notes; the engine and template pickers have labels.
+- "Everything stays on this device" only shows when it's true: with a cloud AI cleanup provider, the app says which one.
+- Errors say what to do next: not enough disk space for an engine (with the sizes), engine and file checks, recording access, and Ask.
 
 - App copy rewritten to a style guide (`docs/copy-style-guide.md`); translations whose English changed now fall back to English until retranslated.
 - History keeps 500 dictations by default instead of 5.
@@ -36,6 +47,16 @@
 - Translations: the missing strings in all 16 languages are first drafts awaiting native review, and the translation check now also checks placeholders and each language's plural forms.
 
 ### Fixed
+
+- The clipboard came back 400 ms after pasting, so a busy app could paste the old clipboard instead of the dictation; it now waits a second, leaves password-manager items cleared, and doesn't restore in remote-desktop and VM apps.
+- In toggle and hands-free modes, a stop press still held down could turn the simulated copy or paste into another shortcut; both wait for the keys to lift, and command mode gives up rather than risk the selection.
+- Apple Intelligence requests that never answered kept a thread each; commands get free-form answers and a selection limit that fits the on-device model.
+- A question asked during meeting processing waited minutes and unloaded the dictation engine; Ask now says to wait, times out, and keeps dictation loaded.
+- Call detection offered notes for whichever call app was open first (an idle Slack during a Teams call); on macOS 14.2 and later it uses the app actually on the call.
+- Ask's index scanned the whole library on every save; updates are per document, and the library database uses write-ahead logging.
+- Background call and calendar checks no longer leak native memory, and calendar reads no longer run on the main thread.
+- "Finish setup" on Home now reaches the engine, shortcut and practice steps, not only permissions.
+- Keyboard and screen reader: collapsed settings sections are out of the tab order, the meeting orb works from the keyboard, focus moves into an opened transcript and the note evidence panel (Escape closes it), live transcripts no longer announce every caption, and small grey text meets WCAG AA contrast.
 
 - The AI cleanup shortcut did nothing until a prompt was picked by hand; the Clean up prompt is now selected by default, and the recording indicator says when cleanup didn't run.
 - Meeting jobs no longer ask for speaker detection while its engine isn't available.

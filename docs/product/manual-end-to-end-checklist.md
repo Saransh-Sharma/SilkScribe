@@ -94,6 +94,17 @@ The browser fixtures cover their UI; these behaviours depend on other apps, devi
 - **Live text (experimental)**: measure with `scripts/dictation-latency.ts`, a day off and a day on with Parakeet V3. Keep it only if p95 `total_ms` grows by 300 ms or less.
 - **Ask**: time the first question after launch (the notes engine loads cold) and a follow-up. Check that each citation opens and plays the cited moment.
 
+Added after the 3 November hardening pass:
+
+- **Clipboard restore timing**: in Slack or VS Code while it's busy (e.g. indexing), dictate. The dictation lands, not the previous clipboard.
+- **Password managers**: copy a password from 1Password or Bitwarden, then dictate. The password does not come back onto the clipboard afterwards.
+- **Remote desktop**: dictate into Screen Sharing or Microsoft Remote Desktop. The dictation pastes on the remote side and stays on the clipboard.
+- **Held keys**: in toggle mode, stop a command by pressing and holding the shortcut. It says "Release the keys first" and nothing is changed; a dictation stopped the same way still pastes.
+- **Call detection by app** (macOS 14.2+): with Slack open but idle, join a Teams or Zoom call. The prompt names the app on the call, and "Start notes" captures that app. Voice Memos recording does not prompt. With Always-on microphone on, the prompt still appears and goes away after the call.
+- **Ask while processing**: ask a question while a meeting transcribes. It says to ask again when processing is done; the next dictation doesn't reload its engine.
+- **Preview languages**: on a Mac set to Japanese, a fresh install shows English, and the tray is English. Turning on Preview languages (Settings → General) switches both to Japanese.
+- **Memory over time**: leave the app running a day with call detection and the calendar on; `leaks SilkScribe` shows no growth from the call watcher or calendar thread.
+
 ## 5. Release acceptance
 
 Record results against the exact app build, model hashes/revisions, worker fingerprints, hardware, OS and test corpus. Fix failed acceptance cases before release. Accuracy, factuality, memory bounds and clean-machine behavior must not be inferred from tiny smoke tests or signature success.
