@@ -416,8 +416,7 @@
         "loading": "読み込み中…"
       },
       "volume": {
-        "title": "音量",
-        "description": "音声フィードバックの音量を調整"
+        "title": "音量"
       },
       "soundTheme": {
         "options": {
@@ -530,7 +529,7 @@
         }
       },
       "autoSubmit": {
-        "title": "ペースト後にキーを押す",
+        "title": "ペースト後に送信",
         "description": "チャットメッセージの送信に便利です。",
         "options": {
           "off": "オフ",
@@ -722,7 +721,7 @@
       },
       "levels": {
         "light": "軽め",
-        "standard": "標準",
+        "standard": "クリーンアップ",
         "rewrite": "書き直し"
       },
       "levelHelp": {
@@ -740,7 +739,7 @@
         "descriptionCloud": "クリーンアップをこの Mac 上で実行するときは、カーソル周辺のテキストを読み取って名前を正しく表記します。パスワード欄は読み取りません。"
       },
       "shareNearbyText": {
-        "label": "周囲のテキストも {{provider}} に送信",
+        "label": "周囲のテキストを {{provider}} に送信",
         "description": "デフォルトではオフです。カーソル周辺のテキストはこの Mac から出ません。"
       }
     },
@@ -810,17 +809,17 @@
     }
   },
   "footer": {
-    "downloadingModel": "{{model}}をダウンロード中...",
-    "checkingUpdates": "アップデートを確認中...",
+    "downloadingModel": "{{model}}をダウンロード中…",
+    "checkingUpdates": "アップデートを確認中…",
     "updateAvailable": "アップデートあり: {{version}}",
     "updateAvailableShort": "アップデートあり",
     "upToDate": "最新です",
     "downloadUpdate": "アップデートをダウンロード",
     "restart": "再起動",
     "updateCheckingDisabled": "アップデート確認無効",
-    "downloading": "ダウンロード中... {{progress}}%",
-    "installing": "インストール中...",
-    "preparing": "準備中...",
+    "downloading": "ダウンロード中… {{progress}}%",
+    "installing": "インストール中…",
+    "preparing": "準備中…",
     "checkForUpdates": "アップデートを確認",
     "support": {
       "label": "サポート",
@@ -1266,7 +1265,7 @@
       "allApps": "すべてのアプリ"
     },
     "suggestNotes": {
-      "label": "通話開始時にメモを提案",
+      "label": "通話時にメモを提案",
       "hint": "Zoom、Teams、FaceTime などの通話アプリがマイクを使い始めると、確認を表示します。"
     },
     "dictionary": {
@@ -1323,7 +1322,7 @@
       "description": "今後の会議をホームに表示し、メモに会議名を付けます。カレンダーのデータはこの Mac から出ません。",
       "connect": "カレンダーを接続",
       "disconnect": "カレンダーの接続を解除",
-      "reminders": "会議の開始時に通知",
+      "reminders": "会議の前に通知",
       "remindersHint": "開始 1 分前にメモを取るか確認します",
       "denied": "カレンダーへのアクセスがオフになっています。「システム設定」→「プライバシーとセキュリティ」→「カレンダー」でオンにしてください。",
       "openSettings": "システム設定を開く"

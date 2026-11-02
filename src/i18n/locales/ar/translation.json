@@ -416,8 +416,7 @@
         "loading": "جارٍ التحميل…"
       },
       "volume": {
-        "title": "مستوى الصوت",
-        "description": "ضبط مستوى صوت تنبيهات الصوت"
+        "title": "مستوى الصوت"
       },
       "soundTheme": {
         "options": {
@@ -530,7 +529,7 @@
         }
       },
       "autoSubmit": {
-        "title": "الضغط على مفتاح بعد اللصق",
+        "title": "الإرسال بعد اللصق",
         "description": "مفيد لإرسال رسائل الدردشة.",
         "options": {
           "off": "إيقاف",
@@ -722,7 +721,7 @@
       },
       "levels": {
         "light": "خفيف",
-        "standard": "قياسي",
+        "standard": "تنقيح",
         "rewrite": "إعادة صياغة"
       },
       "levelHelp": {
@@ -740,7 +739,7 @@
         "descriptionCloud": "يقرأ النص حول المؤشر لكتابة الأسماء بشكل صحيح عندما يعمل التنقيح على هذا الـ Mac. لا تُقرأ حقول كلمات السر أبدًا."
       },
       "shareNearbyText": {
-        "label": "إرسال النص المجاور أيضًا إلى {{provider}}",
+        "label": "إرسال النص المجاور إلى {{provider}}",
         "description": "متوقف افتراضيًا: يبقى النص حول المؤشر على هذا الـ Mac."
       }
     },
@@ -815,17 +814,17 @@
     }
   },
   "footer": {
-    "downloadingModel": "...جاري تنزيل {{model}}",
-    "checkingUpdates": "...جاري التحقق من وجود تحديثات",
+    "downloadingModel": "جاري تنزيل {{model}}…",
+    "checkingUpdates": "جاري التحقق من وجود تحديثات…",
     "updateAvailable": "تحديث متاح: {{version}}",
     "updateAvailableShort": "تحديث متاح",
     "upToDate": "محدث",
     "downloadUpdate": "تنزيل التحديث",
     "restart": "إعادة تشغيل",
     "updateCheckingDisabled": "تم تعطيل التحقق من التحديث",
-    "downloading": "...جاري التنزيل {{progress}}%",
-    "installing": "...جاري التثبيت",
-    "preparing": "...جاري التحضير",
+    "downloading": "جاري التنزيل… {{progress}}%",
+    "installing": "جاري التثبيت…",
+    "preparing": "جاري التحضير…",
     "checkForUpdates": "التحقق من وجود تحديثات",
     "support": {
       "label": "الدعم",
@@ -1295,7 +1294,7 @@
       "allApps": "كل التطبيقات"
     },
     "suggestNotes": {
-      "label": "اقتراح الملاحظات عند بدء مكالمة",
+      "label": "اقتراح الملاحظات للمكالمات",
       "hint": "يعرض اقتراحًا عندما يبدأ Zoom أو Teams أو FaceTime أو تطبيق مكالمات آخر باستخدام الميكروفون."
     },
     "dictionary": {
@@ -1352,7 +1351,7 @@
       "description": "يعرض الاجتماعات القادمة في الصفحة الرئيسية ويسمّي الملاحظات بأسمائها. يبقى تقويمك على هذا الـ Mac.",
       "connect": "ربط التقويم",
       "disconnect": "فصل التقويم",
-      "reminders": "ذكّرني عند بدء الاجتماعات",
+      "reminders": "ذكّرني قبل الاجتماعات",
       "remindersHint": "يقترح تدوين الملاحظات قبل دقيقة",
       "denied": "الوصول إلى التقويم متوقف. فعّله من إعدادات النظام ← الخصوصية والأمن ← التقويمات.",
       "openSettings": "فتح إعدادات النظام"

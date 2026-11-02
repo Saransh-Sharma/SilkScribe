@@ -416,8 +416,7 @@
         "loading": "正在载入…"
       },
       "volume": {
-        "title": "音量",
-        "description": "调整音频反馈的音量"
+        "title": "音量"
       },
       "soundTheme": {
         "options": {
@@ -530,7 +529,7 @@
         }
       },
       "autoSubmit": {
-        "title": "粘贴后按一个键",
+        "title": "粘贴后发送",
         "description": "方便发送聊天消息。",
         "options": {
           "off": "关闭",
@@ -722,7 +721,7 @@
       },
       "levels": {
         "light": "轻度",
-        "standard": "标准",
+        "standard": "润色",
         "rewrite": "改写"
       },
       "levelHelp": {
@@ -740,7 +739,7 @@
         "descriptionCloud": "当润色在这台 Mac 上运行时，读取光标周围的文字以正确拼写名字。从不读取密码栏。"
       },
       "shareNearbyText": {
-        "label": "也将附近的文字发送给 {{provider}}",
+        "label": "将附近的文字发送给 {{provider}}",
         "description": "默认关闭：光标周围的文字保留在这台 Mac 上。"
       }
     },
@@ -810,17 +809,17 @@
     }
   },
   "footer": {
-    "downloadingModel": "正在下载 {{model}}...",
-    "checkingUpdates": "检查更新中...",
+    "downloadingModel": "正在下载 {{model}}…",
+    "checkingUpdates": "检查更新中…",
     "updateAvailable": "有可用更新: {{version}}",
     "updateAvailableShort": "有可用更新",
     "upToDate": "已是最新版本",
     "downloadUpdate": "下载更新",
     "restart": "重启",
     "updateCheckingDisabled": "更新检查已禁用",
-    "downloading": "下载中... {{progress}}%",
-    "installing": "安装中...",
-    "preparing": "准备中...",
+    "downloading": "下载中… {{progress}}%",
+    "installing": "安装中…",
+    "preparing": "准备中…",
     "checkForUpdates": "检查更新",
     "support": {
       "label": "支持",
@@ -1266,7 +1265,7 @@
       "allApps": "所有应用"
     },
     "suggestNotes": {
-      "label": "通话开始时提议记笔记",
+      "label": "通话时提议记笔记",
       "hint": "当 Zoom、Teams、FaceTime 或其他通话应用开始使用麦克风时显示提示。"
     },
     "dictionary": {
@@ -1323,7 +1322,7 @@
       "description": "在首页显示即将开始的会议，并用会议名称命名笔记。你的日历保留在这台 Mac 上。",
       "connect": "连接日历",
       "disconnect": "断开日历",
-      "reminders": "会议开始时提醒我",
+      "reminders": "会议开始前提醒我",
       "remindersHint": "提前一分钟提议记笔记",
       "denied": "日历访问已关闭。请在“系统设置”→“隐私与安全性”→“日历”中打开。",
       "openSettings": "打开“系统设置”"

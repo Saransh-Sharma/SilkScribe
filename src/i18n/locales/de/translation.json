@@ -416,8 +416,7 @@
         "loading": "Wird geladen…"
       },
       "volume": {
-        "title": "Lautstärke",
-        "description": "Lautstärke der Audio-Feedback-Töne anpassen"
+        "title": "Lautstärke"
       },
       "soundTheme": {
         "options": {
@@ -530,7 +529,7 @@
         }
       },
       "autoSubmit": {
-        "title": "Nach dem Einfügen eine Taste drücken",
+        "title": "Nach dem Einfügen absenden",
         "description": "Praktisch zum Senden von Chatnachrichten.",
         "options": {
           "off": "Aus",
@@ -722,7 +721,7 @@
       },
       "levels": {
         "light": "Leicht",
-        "standard": "Standard",
+        "standard": "Bereinigen",
         "rewrite": "Umschreiben"
       },
       "levelHelp": {
@@ -740,7 +739,7 @@
         "descriptionCloud": "Liest den Text um deinen Cursor, um Namen richtig zu schreiben, wenn die Bereinigung auf diesem Mac läuft. Passwortfelder werden nie gelesen."
       },
       "shareNearbyText": {
-        "label": "Umgebenden Text auch an {{provider}} senden",
+        "label": "Umgebenden Text an {{provider}} senden",
         "description": "Standardmäßig aus: Der Text um deinen Cursor bleibt auf diesem Mac."
       }
     },
@@ -811,17 +810,17 @@
     }
   },
   "footer": {
-    "downloadingModel": "Lade {{model}} herunter...",
-    "checkingUpdates": "Suche nach Updates...",
+    "downloadingModel": "Lade {{model}} herunter…",
+    "checkingUpdates": "Suche nach Updates…",
     "updateAvailable": "Update verfügbar: {{version}}",
     "updateAvailableShort": "Update verfügbar",
     "upToDate": "Aktuell",
     "downloadUpdate": "Update herunterladen",
     "restart": "Neustart",
     "updateCheckingDisabled": "Update-Prüfung deaktiviert",
-    "downloading": "Wird heruntergeladen... {{progress}}%",
-    "installing": "Wird installiert...",
-    "preparing": "Wird vorbereitet...",
+    "downloading": "Wird heruntergeladen… {{progress}}%",
+    "installing": "Wird installiert…",
+    "preparing": "Wird vorbereitet…",
     "checkForUpdates": "Nach Updates suchen",
     "support": {
       "label": "Support",
@@ -1271,7 +1270,7 @@
       "allApps": "Allen Apps"
     },
     "suggestNotes": {
-      "label": "Notizen anbieten, wenn ein Anruf beginnt",
+      "label": "Notizen für Anrufe anbieten",
       "hint": "Zeigt eine Abfrage, wenn Zoom, Teams, FaceTime oder eine andere Anruf-App das Mikrofon nutzt."
     },
     "dictionary": {
@@ -1328,7 +1327,7 @@
       "description": "Zeigt anstehende Meetings auf der Startseite und benennt Notizen danach. Dein Kalender bleibt auf diesem Mac.",
       "connect": "Kalender verbinden",
       "disconnect": "Kalender trennen",
-      "reminders": "Erinnern, wenn Meetings beginnen",
+      "reminders": "Vor Meetings erinnern",
       "remindersHint": "Bietet eine Minute vorher Notizen an",
       "denied": "Kalenderzugriff ist aus. Schalte ihn in Systemeinstellungen → Datenschutz & Sicherheit → Kalender ein.",
       "openSettings": "Systemeinstellungen öffnen"

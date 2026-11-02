@@ -416,8 +416,7 @@
         "loading": "Loading…"
       },
       "volume": {
-        "title": "Volume",
-        "description": "Adjust the volume of audio feedback sounds"
+        "title": "Volume"
       },
       "soundTheme": {
         "options": {
@@ -530,7 +529,7 @@
         }
       },
       "autoSubmit": {
-        "title": "Press a key after pasting",
+        "title": "Submit after pasting",
         "description": "Handy for sending chat messages.",
         "options": {
           "off": "Off",
@@ -686,7 +685,7 @@
         "description": "Silences other apps while you dictate, except during a meeting."
       },
       "appendTrailingSpace": {
-        "label": "Add a space after pasting"
+        "label": "Add space after pasting"
       },
       "keyboardImplementation": {
         "title": "Shortcut backend",
@@ -722,7 +721,7 @@
       },
       "levels": {
         "light": "Light",
-        "standard": "Standard",
+        "standard": "Clean up",
         "rewrite": "Rewrite"
       },
       "levelHelp": {
@@ -740,14 +739,14 @@
         "descriptionCloud": "Reads the text around your cursor to spell names right, when cleanup runs on this Mac. Password fields are never read."
       },
       "shareNearbyText": {
-        "label": "Also send nearby text to {{provider}}",
+        "label": "Send nearby text to {{provider}}",
         "description": "Off by default: the text around your cursor stays on this Mac."
       }
     },
     "styles": {
       "title": "Styles",
       "enable": {
-        "label": "Match the app you’re in",
+        "label": "Match the current app",
         "description": "AI cleanup writes casually in chat, formally in email, and keeps code as spoken."
       },
       "categories": {
@@ -811,17 +810,17 @@
     }
   },
   "footer": {
-    "downloadingModel": "Downloading {{model}}...",
-    "checkingUpdates": "Checking for updates...",
+    "downloadingModel": "Downloading {{model}}…",
+    "checkingUpdates": "Checking for updates…",
     "updateAvailable": "Update available: {{version}}",
     "updateAvailableShort": "Update available",
     "upToDate": "Up to date",
     "downloadUpdate": "Download Update",
     "restart": "Restart",
     "updateCheckingDisabled": "Update Checking Disabled",
-    "downloading": "Downloading... {{progress}}%",
-    "installing": "Installing...",
-    "preparing": "Preparing...",
+    "downloading": "Downloading… {{progress}}%",
+    "installing": "Installing…",
+    "preparing": "Preparing…",
     "checkForUpdates": "Check for updates",
     "support": {
       "label": "Support",
@@ -1251,7 +1250,7 @@
       "copy": "Copy a heads-up message",
       "copied": "Message copied",
       "message": "Heads up: I’m taking notes with SilkScribe. It runs on my Mac, and nothing is uploaded.",
-      "setting": "Remind me to tell people",
+      "setting": "Reminder to tell people",
       "settingHint": "Shows a reminder when recording starts."
     },
     "holdToTalk": "Hold to talk",
@@ -1272,7 +1271,7 @@
       "allApps": "All apps"
     },
     "suggestNotes": {
-      "label": "Offer notes when a call starts",
+      "label": "Offer notes for calls",
       "hint": "Shows a prompt when Zoom, Teams, FaceTime or another call app starts using the mic."
     },
     "dictionary": {
@@ -1329,7 +1328,7 @@
       "description": "Shows upcoming meetings on Home and names notes after them. Your calendar stays on this Mac.",
       "connect": "Connect calendar",
       "disconnect": "Disconnect calendar",
-      "reminders": "Remind me as meetings start",
+      "reminders": "Remind me before meetings",
       "remindersHint": "Offers to take notes a minute before",
       "denied": "Calendar access is off. Turn it on in System Settings → Privacy & Security → Calendars.",
       "openSettings": "Open System Settings"

@@ -416,8 +416,7 @@
         "loading": "正在載入…"
       },
       "volume": {
-        "title": "音量",
-        "description": "調整聲音回饋的音量"
+        "title": "音量"
       },
       "soundTheme": {
         "options": {
@@ -530,7 +529,7 @@
         }
       },
       "autoSubmit": {
-        "title": "貼上後按一個鍵",
+        "title": "貼上後傳送",
         "description": "方便傳送聊天訊息。",
         "options": {
           "off": "關閉",
@@ -722,7 +721,7 @@
       },
       "levels": {
         "light": "輕度",
-        "standard": "標準",
+        "standard": "潤飾",
         "rewrite": "改寫"
       },
       "levelHelp": {
@@ -740,7 +739,7 @@
         "descriptionCloud": "當潤飾在這台 Mac 上執行時，讀取游標周圍的文字以正確拼寫名字。絕不讀取密碼欄位。"
       },
       "shareNearbyText": {
-        "label": "也將附近的文字傳送給 {{provider}}",
+        "label": "將附近的文字傳送給 {{provider}}",
         "description": "預設關閉：游標周圍的文字保留在這台 Mac 上。"
       }
     },
@@ -810,17 +809,17 @@
     }
   },
   "footer": {
-    "downloadingModel": "正在下載 {{model}}...",
-    "checkingUpdates": "檢查更新中...",
+    "downloadingModel": "正在下載 {{model}}…",
+    "checkingUpdates": "檢查更新中…",
     "updateAvailable": "有可用更新: {{version}}",
     "updateAvailableShort": "有可用更新",
     "upToDate": "已是最新版本",
     "downloadUpdate": "下載更新",
     "restart": "重新啟動",
     "updateCheckingDisabled": "更新檢查已停用",
-    "downloading": "下載中... {{progress}}%",
-    "installing": "安裝中...",
-    "preparing": "準備中...",
+    "downloading": "下載中… {{progress}}%",
+    "installing": "安裝中…",
+    "preparing": "準備中…",
     "checkForUpdates": "檢查更新",
     "support": {
       "label": "支援",
@@ -1266,7 +1265,7 @@
       "allApps": "所有 App"
     },
     "suggestNotes": {
-      "label": "通話開始時提議做筆記",
+      "label": "通話時提議做筆記",
       "hint": "當 Zoom、Teams、FaceTime 或其他通話 App 開始使用麥克風時顯示提示。"
     },
     "dictionary": {
@@ -1323,7 +1322,7 @@
       "description": "在首頁顯示即將開始的會議，並用會議名稱命名筆記。你的行事曆保留在這台 Mac 上。",
       "connect": "連接行事曆",
       "disconnect": "中斷行事曆連接",
-      "reminders": "會議開始時提醒我",
+      "reminders": "會議開始前提醒我",
       "remindersHint": "提前一分鐘提議做筆記",
       "denied": "行事曆存取權已關閉。請在「系統設定」→「隱私權與安全性」→「行事曆」中開啟。",
       "openSettings": "打開「系統設定」"

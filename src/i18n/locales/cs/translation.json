@@ -416,8 +416,7 @@
         "loading": "Načítání…"
       },
       "volume": {
-        "title": "Hlasitost",
-        "description": "Upravte hlasitost zvukové odezvy"
+        "title": "Hlasitost"
       },
       "soundTheme": {
         "options": {
@@ -530,7 +529,7 @@
         }
       },
       "autoSubmit": {
-        "title": "Po vložení stisknout klávesu",
+        "title": "Po vložení odeslat",
         "description": "Hodí se k odesílání zpráv v chatu.",
         "options": {
           "off": "Vypnuto",
@@ -722,7 +721,7 @@
       },
       "levels": {
         "light": "Lehká",
-        "standard": "Standardní",
+        "standard": "Úprava",
         "rewrite": "Přeformulování"
       },
       "levelHelp": {
@@ -740,7 +739,7 @@
         "descriptionCloud": "Když úprava běží na tomto Macu, čte text kolem kurzoru, aby správně psal jména. Pole pro hesla se nikdy nečtou."
       },
       "shareNearbyText": {
-        "label": "Odesílat okolní text i službě {{provider}}",
+        "label": "Odesílat okolní text službě {{provider}}",
         "description": "Ve výchozím stavu vypnuto: text kolem kurzoru zůstává na tomto Macu."
       }
     },
@@ -813,17 +812,17 @@
     }
   },
   "footer": {
-    "downloadingModel": "Stahuji {{model}}...",
-    "checkingUpdates": "Kontroluji aktualizace...",
+    "downloadingModel": "Stahuji {{model}}…",
+    "checkingUpdates": "Kontroluji aktualizace…",
     "updateAvailable": "Dostupná aktualizace: {{version}}",
     "updateAvailableShort": "Dostupná aktualizace",
     "upToDate": "Vše aktuální",
     "downloadUpdate": "Stáhnout aktualizaci",
     "restart": "Restartovat",
     "updateCheckingDisabled": "Kontrola aktualizací vypnuta",
-    "downloading": "Stahování... {{progress}}%",
-    "installing": "Instalace...",
-    "preparing": "Příprava...",
+    "downloading": "Stahování… {{progress}}%",
+    "installing": "Instalace…",
+    "preparing": "Příprava…",
     "checkForUpdates": "Zkontrolovat aktualizace",
     "support": {
       "label": "Podpora",
@@ -1283,7 +1282,7 @@
       "allApps": "Všechny aplikace"
     },
     "suggestNotes": {
-      "label": "Nabízet poznámky při zahájení hovoru",
+      "label": "Nabízet poznámky u hovorů",
       "hint": "Zobrazí výzvu, když Zoom, Teams, FaceTime nebo jiná aplikace pro hovory začne používat mikrofon."
     },
     "dictionary": {
@@ -1340,7 +1339,7 @@
       "description": "Zobrazuje nadcházející schůzky na stránce Domů a pojmenovává podle nich poznámky. Váš kalendář zůstává na tomto Macu.",
       "connect": "Připojit kalendář",
       "disconnect": "Odpojit kalendář",
-      "reminders": "Připomínat začátek schůzek",
+      "reminders": "Připomínat před schůzkami",
       "remindersHint": "Minutu předem nabídne zapisování poznámek",
       "denied": "Přístup ke kalendáři je vypnutý. Zapněte ho v Nastavení systému → Soukromí a zabezpečení → Kalendáře.",
       "openSettings": "Otevřít Nastavení systému"

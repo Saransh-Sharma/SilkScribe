@@ -416,8 +416,7 @@
         "loading": "Cargando…"
       },
       "volume": {
-        "title": "Volumen",
-        "description": "Ajusta el volumen de los sonidos de retroalimentación de audio"
+        "title": "Volumen"
       },
       "soundTheme": {
         "options": {
@@ -530,7 +529,7 @@
         }
       },
       "autoSubmit": {
-        "title": "Pulsar una tecla después de pegar",
+        "title": "Enviar después de pegar",
         "description": "Útil para enviar mensajes de chat.",
         "options": {
           "off": "Desactivado",
@@ -722,7 +721,7 @@
       },
       "levels": {
         "light": "Ligera",
-        "standard": "Estándar",
+        "standard": "Limpieza",
         "rewrite": "Reescritura"
       },
       "levelHelp": {
@@ -740,7 +739,7 @@
         "descriptionCloud": "Lee el texto alrededor del cursor para escribir bien los nombres, cuando la limpieza se ejecuta en este Mac. Nunca se leen los campos de contraseña."
       },
       "shareNearbyText": {
-        "label": "Enviar también el texto cercano a {{provider}}",
+        "label": "Enviar el texto cercano a {{provider}}",
         "description": "Desactivado por defecto: el texto alrededor del cursor se queda en este Mac."
       }
     },
@@ -812,17 +811,17 @@
     }
   },
   "footer": {
-    "downloadingModel": "Descargando {{model}}...",
-    "checkingUpdates": "Buscando actualizaciones...",
+    "downloadingModel": "Descargando {{model}}…",
+    "checkingUpdates": "Buscando actualizaciones…",
     "updateAvailable": "Actualización disponible: {{version}}",
     "updateAvailableShort": "Actualización disponible",
     "upToDate": "Actualizado",
     "downloadUpdate": "Descargar Actualización",
     "restart": "Reiniciar",
     "updateCheckingDisabled": "Búsqueda de Actualizaciones Deshabilitada",
-    "downloading": "Descargando... {{progress}}%",
-    "installing": "Instalando...",
-    "preparing": "Preparando...",
+    "downloading": "Descargando… {{progress}}%",
+    "installing": "Instalando…",
+    "preparing": "Preparando…",
     "checkForUpdates": "Buscar actualizaciones",
     "support": {
       "label": "Soporte",
@@ -1277,7 +1276,7 @@
       "allApps": "Todas las apps"
     },
     "suggestNotes": {
-      "label": "Ofrecer notas al empezar una llamada",
+      "label": "Ofrecer notas en llamadas",
       "hint": "Muestra un aviso cuando Zoom, Teams, FaceTime u otra app de llamadas empieza a usar el micrófono."
     },
     "dictionary": {
@@ -1334,7 +1333,7 @@
       "description": "Muestra las próximas reuniones en Inicio y nombra las notas según ellas. Tu calendario se queda en este Mac.",
       "connect": "Conectar calendario",
       "disconnect": "Desconectar calendario",
-      "reminders": "Avisarme cuando empiecen las reuniones",
+      "reminders": "Avisarme antes de las reuniones",
       "remindersHint": "Ofrece tomar notas un minuto antes",
       "denied": "El acceso al calendario está desactivado. Actívalo en Ajustes del Sistema → Privacidad y seguridad → Calendarios.",
       "openSettings": "Abrir Ajustes del Sistema"

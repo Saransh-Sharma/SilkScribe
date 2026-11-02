@@ -416,8 +416,7 @@
         "loading": "불러오는 중…"
       },
       "volume": {
-        "title": "볼륨",
-        "description": "오디오 피드백 사운드의 볼륨 조절"
+        "title": "볼륨"
       },
       "soundTheme": {
         "options": {
@@ -530,7 +529,7 @@
         }
       },
       "autoSubmit": {
-        "title": "붙여넣은 후 키 누르기",
+        "title": "붙여넣은 후 보내기",
         "description": "채팅 메시지를 보낼 때 편리합니다.",
         "options": {
           "off": "끄기",
@@ -722,7 +721,7 @@
       },
       "levels": {
         "light": "가볍게",
-        "standard": "표준",
+        "standard": "정리",
         "rewrite": "다시 쓰기"
       },
       "levelHelp": {
@@ -740,7 +739,7 @@
         "descriptionCloud": "정리가 이 Mac에서 실행될 때 커서 주변의 텍스트를 읽어 이름을 정확하게 표기합니다. 암호 필드는 절대 읽지 않습니다."
       },
       "shareNearbyText": {
-        "label": "주변 텍스트도 {{provider}}(으)로 보내기",
+        "label": "주변 텍스트를 {{provider}}(으)로 보내기",
         "description": "기본적으로 꺼져 있으며, 커서 주변의 텍스트는 이 Mac에만 머무릅니다."
       }
     },
@@ -810,17 +809,17 @@
     }
   },
   "footer": {
-    "downloadingModel": "{{model}} 다운로드 중...",
-    "checkingUpdates": "업데이트 확인 중...",
+    "downloadingModel": "{{model}} 다운로드 중…",
+    "checkingUpdates": "업데이트 확인 중…",
     "updateAvailable": "업데이트 사용 가능: {{version}}",
     "updateAvailableShort": "업데이트 사용 가능",
     "upToDate": "최신 상태",
     "downloadUpdate": "업데이트 다운로드",
     "restart": "재시작",
     "updateCheckingDisabled": "업데이트 확인 비활성화됨",
-    "downloading": "다운로드 중... {{progress}}%",
-    "installing": "설치 중...",
-    "preparing": "준비 중...",
+    "downloading": "다운로드 중… {{progress}}%",
+    "installing": "설치 중…",
+    "preparing": "준비 중…",
     "checkForUpdates": "업데이트 확인",
     "support": {
       "label": "지원",
@@ -1266,7 +1265,7 @@
       "allApps": "모든 앱"
     },
     "suggestNotes": {
-      "label": "통화가 시작되면 메모 제안",
+      "label": "통화 시 메모 제안",
       "hint": "Zoom, Teams, FaceTime 등 통화 앱이 마이크를 사용하기 시작하면 안내를 표시합니다."
     },
     "dictionary": {
@@ -1323,7 +1322,7 @@
       "description": "홈에 예정된 회의를 표시하고 회의 이름으로 메모 제목을 붙입니다. 캘린더 정보는 이 Mac에만 머무릅니다.",
       "connect": "캘린더 연결",
       "disconnect": "캘린더 연결 해제",
-      "reminders": "회의가 시작될 때 알림",
+      "reminders": "회의 전에 알림",
       "remindersHint": "시작 1분 전에 메모를 제안합니다",
       "denied": "캘린더 접근이 꺼져 있습니다. 시스템 설정 → 개인정보 보호 및 보안 → 캘린더에서 켜세요.",
       "openSettings": "시스템 설정 열기"

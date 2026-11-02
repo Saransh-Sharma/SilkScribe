@@ -727,7 +727,7 @@ test("Meetings & notes settings connect and disconnect the calendar", async ({
     .click();
   await page.getByRole("button", { name: "Connect calendar" }).click();
   await expect(
-    page.getByRole("switch", { name: "Remind me as meetings start" }),
+    page.getByRole("switch", { name: "Remind me before meetings" }),
   ).toBeChecked();
   await page.getByRole("button", { name: "Disconnect calendar" }).click();
   await expect(
@@ -921,7 +921,7 @@ test("meeting setup can capture just the running call app", async ({
   const source = page.getByLabel("Capture audio from");
   await expect(source).toBeVisible();
   // The app-wide switch lives in Settings, not in every meeting's setup.
-  await expect(page.getByText("Offer notes when a call starts")).toBeHidden();
+  await expect(page.getByText("Offer notes for calls")).toBeHidden();
 });
 
 test("on-device claims give way when AI cleanup uses a cloud provider", async ({
@@ -972,8 +972,8 @@ test("meeting setup offers a heads-up for the people on the call", async ({
   await page
     .getByRole("tab", { name: "Meetings & notes", exact: true })
     .click();
-  await expect(page.getByText("Remind me to tell people")).toBeVisible();
-  await expect(page.getByText("Offer notes when a call starts")).toBeVisible();
+  await expect(page.getByText("Reminder to tell people")).toBeVisible();
+  await expect(page.getByText("Offer notes for calls")).toBeVisible();
 });
 
 test("keyboard users land in an opened transcript and its evidence", async ({
@@ -999,7 +999,7 @@ test("collapsed settings sections keep their controls out of reach", async ({
 }) => {
   await page.goto(`${fixture}?dictation=ready`);
   await page.getByRole("button", { name: "Settings", exact: true }).click();
-  const space = page.getByRole("switch", { name: "Add a space after pasting" });
+  const space = page.getByRole("switch", { name: "Add space after pasting" });
   await expect(space).toHaveCount(0);
   await page.getByRole("button", { name: "Transcription" }).click();
   await expect(space).toHaveCount(1);

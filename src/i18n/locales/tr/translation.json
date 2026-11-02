@@ -416,8 +416,7 @@
         "loading": "Yükleniyor…"
       },
       "volume": {
-        "title": "Ses Seviyesi",
-        "description": "Sesli geri bildirimlerin ses seviyesini ayarlayın"
+        "title": "Ses Seviyesi"
       },
       "soundTheme": {
         "options": {
@@ -530,7 +529,7 @@
         }
       },
       "autoSubmit": {
-        "title": "Yapıştırdıktan sonra bir tuşa bas",
+        "title": "Yapıştırdıktan sonra gönder",
         "description": "Sohbet mesajı göndermek için pratik.",
         "options": {
           "off": "Kapalı",
@@ -722,7 +721,7 @@
       },
       "levels": {
         "light": "Hafif",
-        "standard": "Standart",
+        "standard": "Düzenle",
         "rewrite": "Yeniden yaz"
       },
       "levelHelp": {
@@ -740,7 +739,7 @@
         "descriptionCloud": "Düzenleme bu Mac’te çalışırken, adları doğru yazmak için imlecinin çevresindeki metni okur. Parola alanları asla okunmaz."
       },
       "shareNearbyText": {
-        "label": "Yakındaki metni {{provider}} sağlayıcısına da gönder",
+        "label": "Yakındaki metni {{provider}} sağlayıcısına gönder",
         "description": "Varsayılan olarak kapalı: imlecinin çevresindeki metin bu Mac’te kalır."
       }
     },
@@ -811,17 +810,17 @@
     }
   },
   "footer": {
-    "downloadingModel": "{{model}} indiriliyor...",
-    "checkingUpdates": "Güncellemeler kontrol ediliyor...",
+    "downloadingModel": "{{model}} indiriliyor…",
+    "checkingUpdates": "Güncellemeler kontrol ediliyor…",
     "updateAvailable": "Güncelleme mevcut: {{version}}",
     "updateAvailableShort": "Güncelleme mevcut",
     "upToDate": "Güncel",
     "downloadUpdate": "Güncellemeyi İndir",
     "restart": "Yeniden Başlat",
     "updateCheckingDisabled": "Güncelleme Kontrolü Devre Dışı",
-    "downloading": "İndiriliyor... %{{progress}}",
-    "installing": "Yükleniyor...",
-    "preparing": "Hazırlanıyor...",
+    "downloading": "İndiriliyor… %{{progress}}",
+    "installing": "Yükleniyor…",
+    "preparing": "Hazırlanıyor…",
     "checkForUpdates": "Güncellemeleri kontrol et",
     "support": {
       "label": "Destek",
@@ -1271,7 +1270,7 @@
       "allApps": "Tüm uygulamalar"
     },
     "suggestNotes": {
-      "label": "Arama başlayınca not almayı öner",
+      "label": "Aramalarda not almayı öner",
       "hint": "Zoom, Teams, FaceTime ya da başka bir arama uygulaması mikrofonu kullanmaya başlayınca bir istem gösterir."
     },
     "dictionary": {
@@ -1328,7 +1327,7 @@
       "description": "Yaklaşan toplantıları Ana Sayfa’da gösterir ve notları onlara göre adlandırır. Takvimin bu Mac’te kalır.",
       "connect": "Takvimi bağla",
       "disconnect": "Takvim bağlantısını kes",
-      "reminders": "Toplantılar başlarken hatırlat",
+      "reminders": "Toplantılardan önce hatırlat",
       "remindersHint": "Bir dakika önce not almayı önerir",
       "denied": "Takvim erişimi kapalı. Sistem Ayarları → Gizlilik ve Güvenlik → Takvimler’den aç.",
       "openSettings": "Sistem Ayarları’nı aç"
