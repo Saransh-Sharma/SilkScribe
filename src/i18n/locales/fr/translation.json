@@ -877,7 +877,8 @@
         "title": "Apps dans lesquelles vous avez dicté",
         "description": "Classez une app dans une autre catégorie si elle est mal traitée.",
         "builtIn": "Par défaut"
-      }
+      },
+      "needsCleanup": "Activez le nettoyage par IA pour suivre le style de chaque app."
     },
     "dictionary": {
       "title": "Dictionnaire",
@@ -1211,8 +1212,6 @@
     "working": "Traitement en cours…",
     "startRecording": "Commencer l'enregistrement",
     "startTranscription": "Transcrire",
-    "modelsLanguage": "Moteurs et langue",
-    "storage": "Stockage et confidentialité",
     "localIntelligence": "Moteurs",
     "localModelsHelp": "Ne téléchargez que ce dont vous avez besoin. Tout s’exécute sur ce Mac — les gros moteurs demandent plus de mémoire.",
     "runtimeReady": "Prêt à fonctionner sur ce Mac.",
@@ -1272,7 +1271,6 @@
     "withoutEnhancements": "Passer les intervenants et les notes",
     "recordForLater": "Enregistrer maintenant, transcrire plus tard",
     "returnToSetup": "Retour à la configuration",
-    "advancedDictationModels": "Autres moteurs de dictée",
     "activity": "Activité",
     "close": "Fermer",
     "noActiveJobs": "Aucun traitement en cours",
@@ -1523,7 +1521,26 @@
       "shortcut": "⌘K"
     },
     "cleanupUses": "Le nettoyage par IA utilise {{provider}}",
-    "openNotes": "Ouvrir les notes"
+    "openNotes": "Ouvrir les notes",
+    "settingsTabs": {
+      "general": "Général",
+      "dictation": "Dictée",
+      "ai": "Écriture par IA",
+      "dictionary": "Dictionnaire",
+      "meetings": "Réunions et notes",
+      "audio": "Audio",
+      "models": "Moteurs",
+      "history": "Confidentialité et stockage"
+    },
+    "about": "À propos",
+    "version": "Version {{version}}",
+    "notesEnginesHelp": "Le moteur qui rédige vos notes et répond aux questions sur vos réunions.",
+    "privacy": {
+      "title": "Ce qui quitte cet appareil",
+      "local": "Les enregistrements, transcriptions, notes de réunion et votre dictionnaire restent sur cet appareil.",
+      "noCloud": "Les dictées restent aussi sur cet appareil.",
+      "cloud": "Les dictées sont envoyées à {{provider}} pour le nettoyage par IA. Modifiez cela dans Écriture par IA."
+    }
   },
   "audioPlayer": {
     "play": "Lecture",

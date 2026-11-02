@@ -877,7 +877,8 @@
         "title": "Dikte ettiğin uygulamalar",
         "description": "Bir uygulama yanlış ele alınıyorsa başka bir türe taşı.",
         "builtIn": "Yerleşik"
-      }
+      },
+      "needsCleanup": "Her uygulamanın üslubuna uymak için YZ düzenlemesini açın."
     },
     "dictionary": {
       "title": "Sözlük",
@@ -1210,8 +1211,6 @@
     "working": "İşleniyor…",
     "startRecording": "Kaydı başlat",
     "startTranscription": "Yazıya dök",
-    "modelsLanguage": "Motorlar ve dil",
-    "storage": "Depolama ve gizlilik",
     "localIntelligence": "Motorlar",
     "localModelsHelp": "Yalnızca gerekeni indir. Her şey bu Mac’te çalışır — büyük motorlar daha çok bellek ister.",
     "runtimeReady": "Bu Mac’te çalışmaya hazır.",
@@ -1271,7 +1270,6 @@
     "withoutEnhancements": "Konuşmacıları ve notları atla",
     "recordForLater": "Şimdi kaydet, daha sonra transkribe et",
     "returnToSetup": "Kuruluma dön",
-    "advancedDictationModels": "Diğer dikte motorları",
     "activity": "Aktivite",
     "close": "Kapat",
     "noActiveJobs": "İşlenen bir şey yok",
@@ -1517,7 +1515,26 @@
       "shortcut": "⌘K"
     },
     "cleanupUses": "YZ düzenlemesi {{provider}} kullanıyor",
-    "openNotes": "Notları aç"
+    "openNotes": "Notları aç",
+    "settingsTabs": {
+      "general": "Genel",
+      "dictation": "Dikte",
+      "ai": "YZ ile yazma",
+      "dictionary": "Sözlük",
+      "meetings": "Toplantılar ve notlar",
+      "audio": "Ses",
+      "models": "Motorlar",
+      "history": "Gizlilik ve depolama"
+    },
+    "about": "Hakkında",
+    "version": "Sürüm {{version}}",
+    "notesEnginesHelp": "Notlarınızı yazan ve toplantılarınızla ilgili soruları yanıtlayan motor.",
+    "privacy": {
+      "title": "Bu cihazdan ne çıkıyor",
+      "local": "Kayıtlar, transkriptler, toplantı notları ve sözlüğünüz bu cihazda kalır.",
+      "noCloud": "Dikteler de bu cihazda kalır.",
+      "cloud": "Dikteler YZ düzenlemesi için {{provider}} hizmetine gönderilir. Bunu YZ ile yazma bölümünden değiştirin."
+    }
   },
   "audioPlayer": {
     "play": "Oynat",

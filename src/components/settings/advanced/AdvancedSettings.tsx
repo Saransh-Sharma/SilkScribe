@@ -17,7 +17,6 @@ import { ExperimentalToggle } from "../ExperimentalToggle";
 import { useSettings } from "../../../hooks/useSettings";
 import { KeyboardImplementationSelector } from "../debug/KeyboardImplementationSelector";
 import { AppDataDirectory } from "../AppDataDirectory";
-import { UpdateChecksToggle } from "../UpdateChecksToggle";
 import { AccelerationSelector } from "../AccelerationSelector";
 import { LazyStreamClose } from "../LazyStreamClose";
 import { LogDirectory } from "../debug";
@@ -106,7 +105,6 @@ export const AdvancedSettings: React.FC<{
 
       {(!group || group === "support") && (
         <DisclosureSection title={t("settings.advanced.groups.support")}>
-          <UpdateChecksToggle descriptionMode="inline" grouped={true} />
           <AppDataDirectory descriptionMode="inline" grouped={true} />
           <LogDirectory descriptionMode="inline" grouped={true} />
         </DisclosureSection>

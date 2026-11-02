@@ -39,8 +39,16 @@ export const DictationStyles: React.FC = () => {
       .catch(() => {});
   }, [enabled]);
 
-  // Styles shape AI cleanup; without it there's nothing to adjust.
-  if (!(getSetting("post_process_enabled") ?? false)) return null;
+  // Styles shape AI cleanup; without it there's nothing to adjust yet, but
+  // say they exist rather than hide them.
+  if (!(getSetting("post_process_enabled") ?? false))
+    return (
+      <SettingsGroup title={t("settings.styles.title")}>
+        <p className="px-4 py-3 text-sm text-ss-text-secondary">
+          {t("settings.styles.needsCleanup")}
+        </p>
+      </SettingsGroup>
+    );
 
   const save = async (request: Promise<{ status: string; error?: string }>) => {
     try {

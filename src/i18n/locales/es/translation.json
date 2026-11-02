@@ -877,7 +877,8 @@
         "title": "Apps en las que has dictado",
         "description": "Mueve una app a otro tipo si no se trata como debe.",
         "builtIn": "Integrada"
-      }
+      },
+      "needsCleanup": "Activa la limpieza con IA para adaptarte al estilo de cada app."
     },
     "dictionary": {
       "title": "Diccionario",
@@ -1211,8 +1212,6 @@
     "working": "Trabajando…",
     "startRecording": "Iniciar grabación",
     "startTranscription": "Transcribir",
-    "modelsLanguage": "Motores e idioma",
-    "storage": "Almacenamiento y privacidad",
     "localIntelligence": "Motores",
     "localModelsHelp": "Descarga solo lo que necesites. Todo se ejecuta en este Mac: los motores más grandes necesitan más memoria.",
     "runtimeReady": "Listo para ejecutarse en este Mac.",
@@ -1272,7 +1271,6 @@
     "withoutEnhancements": "Omitir oradores y notas",
     "recordForLater": "Grabar ahora, transcribir después",
     "returnToSetup": "Volver a la configuración",
-    "advancedDictationModels": "Más motores de dictado",
     "activity": "Actividad",
     "close": "Cerrar",
     "noActiveJobs": "Nada en proceso",
@@ -1523,7 +1521,26 @@
       "shortcut": "⌘K"
     },
     "cleanupUses": "La limpieza con IA usa {{provider}}",
-    "openNotes": "Abrir notas"
+    "openNotes": "Abrir notas",
+    "settingsTabs": {
+      "general": "General",
+      "dictation": "Dictado",
+      "ai": "Escritura con IA",
+      "dictionary": "Diccionario",
+      "meetings": "Reuniones y notas",
+      "audio": "Audio",
+      "models": "Motores",
+      "history": "Privacidad y almacenamiento"
+    },
+    "about": "Acerca de",
+    "version": "Versión {{version}}",
+    "notesEnginesHelp": "El motor que escribe tus notas y responde preguntas sobre tus reuniones.",
+    "privacy": {
+      "title": "Qué sale de este dispositivo",
+      "local": "Las grabaciones, transcripciones, notas de reuniones y tu diccionario se quedan en este dispositivo.",
+      "noCloud": "Los dictados también se quedan en este dispositivo.",
+      "cloud": "Los dictados se envían a {{provider}} para la limpieza con IA. Cámbialo en Escritura con IA."
+    }
   },
   "audioPlayer": {
     "play": "Reproducir",

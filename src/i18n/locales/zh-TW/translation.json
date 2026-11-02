@@ -877,7 +877,8 @@
         "title": "你聽寫過的 App",
         "description": "如果某個 App 處理得不對，可以把它改成別的類型。",
         "builtIn": "內建"
-      }
+      },
+      "needsCleanup": "開啟 AI 潤飾後，會依各 App 的風格書寫。"
     },
     "dictionary": {
       "title": "字典",
@@ -1209,8 +1210,6 @@
     "working": "處理中…",
     "startRecording": "開始錄製",
     "startTranscription": "轉錄",
-    "modelsLanguage": "引擎與語言",
-    "storage": "儲存與隱私",
     "localIntelligence": "引擎",
     "localModelsHelp": "只下載你需要的。所有內容都在這台 Mac 上執行——較大的引擎需要更多記憶體。",
     "runtimeReady": "可在這台 Mac 上執行。",
@@ -1270,7 +1269,6 @@
     "withoutEnhancements": "略過講者和筆記",
     "recordForLater": "現在錄音，稍後轉錄",
     "returnToSetup": "回到設定",
-    "advancedDictationModels": "更多聽寫引擎",
     "activity": "活動",
     "close": "關閉",
     "noActiveJobs": "沒有正在處理的項目",
@@ -1512,7 +1510,26 @@
       "shortcut": "⌘K"
     },
     "cleanupUses": "AI 潤飾使用 {{provider}}",
-    "openNotes": "打開筆記"
+    "openNotes": "打開筆記",
+    "settingsTabs": {
+      "general": "一般",
+      "dictation": "聽寫",
+      "ai": "AI 寫作",
+      "dictionary": "詞典",
+      "meetings": "會議與筆記",
+      "audio": "音訊",
+      "models": "引擎",
+      "history": "隱私與儲存空間"
+    },
+    "about": "關於",
+    "version": "版本 {{version}}",
+    "notesEnginesHelp": "負責撰寫筆記並回答會議相關問題的引擎。",
+    "privacy": {
+      "title": "哪些內容會離開這部裝置",
+      "local": "錄音、轉錄稿、會議筆記和你的詞典都保留在這部裝置上。",
+      "noCloud": "聽寫內容也保留在這部裝置上。",
+      "cloud": "聽寫內容會傳送到 {{provider}} 進行 AI 潤飾。可在「AI 寫作」中變更。"
+    }
   },
   "audioPlayer": {
     "play": "播放",

@@ -877,7 +877,8 @@
         "title": "Apps, in die du diktiert hast",
         "description": "Ordne eine App einer anderen Art zu, wenn sie falsch behandelt wird.",
         "builtIn": "Standard"
-      }
+      },
+      "needsCleanup": "Schalte die KI-Bereinigung ein, damit sie sich an jede App anpasst."
     },
     "dictionary": {
       "title": "Wörterbuch",
@@ -1210,8 +1211,6 @@
     "working": "Bearbeitung…",
     "startRecording": "Aufnahme starten",
     "startTranscription": "Transkribieren",
-    "modelsLanguage": "Engines & Sprache",
-    "storage": "Speicher & Datenschutz",
     "localIntelligence": "Engines",
     "localModelsHelp": "Lade nur herunter, was du brauchst. Alles läuft auf diesem Mac – größere Engines brauchen mehr Arbeitsspeicher.",
     "runtimeReady": "Bereit zur Ausführung auf diesem Mac.",
@@ -1271,7 +1270,6 @@
     "withoutEnhancements": "Sprecher und Notizen überspringen",
     "recordForLater": "Jetzt aufnehmen, später transkribieren",
     "returnToSetup": "Zurück zur Einrichtung",
-    "advancedDictationModels": "Weitere Diktat-Engines",
     "activity": "Aktivität",
     "close": "Schließen",
     "noActiveJobs": "Nichts in Bearbeitung",
@@ -1517,7 +1515,26 @@
       "shortcut": "⌘K"
     },
     "cleanupUses": "KI-Bereinigung nutzt {{provider}}",
-    "openNotes": "Notizen öffnen"
+    "openNotes": "Notizen öffnen",
+    "settingsTabs": {
+      "general": "Allgemein",
+      "dictation": "Diktat",
+      "ai": "Schreiben mit KI",
+      "dictionary": "Wörterbuch",
+      "meetings": "Meetings & Notizen",
+      "audio": "Audio",
+      "models": "Engines",
+      "history": "Datenschutz & Speicher"
+    },
+    "about": "Über",
+    "version": "Version {{version}}",
+    "notesEnginesHelp": "Die Engine, die deine Notizen schreibt und Fragen zu deinen Meetings beantwortet.",
+    "privacy": {
+      "title": "Was dieses Gerät verlässt",
+      "local": "Aufnahmen, Transkripte, Meeting-Notizen und dein Wörterbuch bleiben auf diesem Gerät.",
+      "noCloud": "Diktate bleiben ebenfalls auf diesem Gerät.",
+      "cloud": "Diktate gehen zur KI-Bereinigung an {{provider}}. Ändere das unter „Schreiben mit KI“."
+    }
   },
   "audioPlayer": {
     "play": "Wiedergabe",

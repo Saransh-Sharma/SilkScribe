@@ -877,7 +877,8 @@
         "title": "Aplikace, do kterých jste diktovali",
         "description": "Pokud aplikace dostává nesprávný styl, přesuňte ji do jiné kategorie.",
         "builtIn": "Vestavěné"
-      }
+      },
+      "needsCleanup": "Zapněte úpravu pomocí AI, aby se psaní přizpůsobilo každé aplikaci."
     },
     "dictionary": {
       "title": "Slovník",
@@ -1212,8 +1213,6 @@
     "working": "Práce…",
     "startRecording": "Začít nahrávat",
     "startTranscription": "Přepsat",
-    "modelsLanguage": "Moduly a jazyk",
-    "storage": "Úložiště a soukromí",
     "localIntelligence": "Moduly",
     "localModelsHelp": "Stáhněte jen to, co potřebujete. Vše běží na tomto Macu — větší moduly potřebují víc paměti.",
     "runtimeReady": "Připraveno ke spuštění na tomto Macu.",
@@ -1273,7 +1272,6 @@
     "withoutEnhancements": "Přeskočit řečníky a poznámky",
     "recordForLater": "Nahrát nyní, přepsat později",
     "returnToSetup": "Zpět k nastavení",
-    "advancedDictationModels": "Další moduly pro diktování",
     "activity": "Aktivita",
     "close": "Zavřít",
     "noActiveJobs": "Nic se nezpracovává",
@@ -1529,7 +1527,26 @@
       "shortcut": "⌘K"
     },
     "cleanupUses": "Úprava pomocí AI používá {{provider}}",
-    "openNotes": "Otevřít poznámky"
+    "openNotes": "Otevřít poznámky",
+    "settingsTabs": {
+      "general": "Obecné",
+      "dictation": "Diktování",
+      "ai": "Psaní s AI",
+      "dictionary": "Slovník",
+      "meetings": "Schůzky a poznámky",
+      "audio": "Zvuk",
+      "models": "Modely",
+      "history": "Soukromí a úložiště"
+    },
+    "about": "O aplikaci",
+    "version": "Verze {{version}}",
+    "notesEnginesHelp": "Model, který píše vaše poznámky a odpovídá na otázky o schůzkách.",
+    "privacy": {
+      "title": "Co opouští toto zařízení",
+      "local": "Nahrávky, přepisy, poznámky ze schůzek a váš slovník zůstávají v tomto zařízení.",
+      "noCloud": "Diktáty zůstávají v tomto zařízení také.",
+      "cloud": "Diktáty se posílají do {{provider}} k úpravě pomocí AI. Změníte to v části Psaní s AI."
+    }
   },
   "audioPlayer": {
     "play": "Přehrát",

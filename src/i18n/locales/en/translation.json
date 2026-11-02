@@ -877,7 +877,8 @@
         "title": "Apps you’ve dictated into",
         "description": "Move an app to another kind if it’s treated the wrong way.",
         "builtIn": "Built-in"
-      }
+      },
+      "needsCleanup": "Turn on AI cleanup to match each app’s style."
     },
     "dictionary": {
       "title": "Dictionary",
@@ -1211,8 +1212,6 @@
     "working": "Working…",
     "startRecording": "Start recording",
     "startTranscription": "Transcribe",
-    "modelsLanguage": "Engines & language",
-    "storage": "Storage & privacy",
     "localIntelligence": "Engines",
     "localModelsHelp": "Download only what you need. Everything runs on this Mac — bigger engines need more memory.",
     "runtimeReady": "Ready to run on this Mac.",
@@ -1272,7 +1271,6 @@
     "withoutEnhancements": "Skip speakers and notes",
     "recordForLater": "Record now, transcribe later",
     "returnToSetup": "Back to setup",
-    "advancedDictationModels": "More dictation engines",
     "activity": "Activity",
     "close": "Close",
     "noActiveJobs": "Nothing processing",
@@ -1517,7 +1515,26 @@
       "openSource": "Open {{source}}",
       "shortcut": "⌘K"
     },
-    "openNotes": "Open notes"
+    "openNotes": "Open notes",
+    "settingsTabs": {
+      "general": "General",
+      "dictation": "Dictation",
+      "ai": "AI writing",
+      "dictionary": "Dictionary",
+      "meetings": "Meetings & notes",
+      "audio": "Audio",
+      "models": "Engines",
+      "history": "Privacy & storage"
+    },
+    "about": "About",
+    "version": "Version {{version}}",
+    "notesEnginesHelp": "The engine that writes your notes and answers questions about your meetings.",
+    "privacy": {
+      "title": "What leaves this device",
+      "local": "Recordings, transcripts, meeting notes and your dictionary stay on this device.",
+      "noCloud": "Dictations stay on this device too.",
+      "cloud": "Dictations go to {{provider}} for AI cleanup. Change this in AI writing."
+    }
   },
   "audioPlayer": {
     "play": "Play",

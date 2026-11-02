@@ -877,7 +877,8 @@
         "title": "Ứng dụng bạn đã đọc chính tả vào",
         "description": "Chuyển ứng dụng sang loại khác nếu nó bị xử lý sai.",
         "builtIn": "Mặc định"
-      }
+      },
+      "needsCleanup": "Bật chỉnh sửa bằng AI để viết hợp với từng ứng dụng."
     },
     "dictionary": {
       "title": "Từ điển",
@@ -1209,8 +1210,6 @@
     "working": "Đang xử lý…",
     "startRecording": "Bắt đầu ghi âm",
     "startTranscription": "Chép lời",
-    "modelsLanguage": "Công cụ & ngôn ngữ",
-    "storage": "Lưu trữ & quyền riêng tư",
     "localIntelligence": "Công cụ",
     "localModelsHelp": "Chỉ tải những gì bạn cần. Mọi thứ chạy trên máy Mac này — công cụ lớn cần nhiều bộ nhớ hơn.",
     "runtimeReady": "Sẵn sàng chạy trên máy Mac này.",
@@ -1270,7 +1269,6 @@
     "withoutEnhancements": "Bỏ qua người nói và ghi chú",
     "recordForLater": "Ghi âm ngay, chuyển văn bản sau",
     "returnToSetup": "Quay lại thiết lập",
-    "advancedDictationModels": "Công cụ đọc chính tả khác",
     "activity": "Hoạt động",
     "close": "Đóng",
     "noActiveJobs": "Không có gì đang xử lý",
@@ -1512,7 +1510,26 @@
       "shortcut": "⌘K"
     },
     "cleanupUses": "Chỉnh sửa bằng AI dùng {{provider}}",
-    "openNotes": "Mở ghi chú"
+    "openNotes": "Mở ghi chú",
+    "settingsTabs": {
+      "general": "Chung",
+      "dictation": "Đọc chính tả",
+      "ai": "Viết bằng AI",
+      "dictionary": "Từ điển",
+      "meetings": "Cuộc họp và ghi chú",
+      "audio": "Âm thanh",
+      "models": "Công cụ",
+      "history": "Quyền riêng tư và lưu trữ"
+    },
+    "about": "Giới thiệu",
+    "version": "Phiên bản {{version}}",
+    "notesEnginesHelp": "Công cụ viết ghi chú và trả lời câu hỏi về các cuộc họp của bạn.",
+    "privacy": {
+      "title": "Những gì rời khỏi thiết bị này",
+      "local": "Bản ghi âm, bản chép lời, ghi chú cuộc họp và từ điển của bạn ở lại trên thiết bị này.",
+      "noCloud": "Nội dung đọc chính tả cũng ở lại trên thiết bị này.",
+      "cloud": "Nội dung đọc chính tả được gửi đến {{provider}} để chỉnh sửa bằng AI. Thay đổi trong mục Viết bằng AI."
+    }
   },
   "audioPlayer": {
     "play": "Phát",

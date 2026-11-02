@@ -877,7 +877,8 @@
         "title": "口述したことのあるアプリ",
         "description": "扱いが正しくないアプリは、別の種類に移動してください。",
         "builtIn": "組み込み"
-      }
+      },
+      "needsCleanup": "AI クリーンアップをオンにすると、アプリごとの書き方に合わせます。"
     },
     "dictionary": {
       "title": "辞書",
@@ -1209,8 +1210,6 @@
     "working": "処理中…",
     "startRecording": "録画を開始",
     "startTranscription": "文字起こし",
-    "modelsLanguage": "エンジンと言語",
-    "storage": "ストレージとプライバシー",
     "localIntelligence": "エンジン",
     "localModelsHelp": "必要なものだけダウンロードしてください。すべてこの Mac 上で動作します — 大きなエンジンほど多くのメモリが必要です。",
     "runtimeReady": "この Mac で実行する準備ができています。",
@@ -1270,7 +1269,6 @@
     "withoutEnhancements": "話者とメモをスキップ",
     "recordForLater": "今すぐ録音し、後でトランスクリプト",
     "returnToSetup": "セットアップに戻る",
-    "advancedDictationModels": "その他の口述用エンジン",
     "activity": "アクティビティ",
     "close": "閉じる",
     "noActiveJobs": "処理中の項目はありません",
@@ -1512,7 +1510,26 @@
       "shortcut": "⌘K"
     },
     "cleanupUses": "AI クリーンアップに {{provider}} を使用中",
-    "openNotes": "メモを開く"
+    "openNotes": "メモを開く",
+    "settingsTabs": {
+      "general": "一般",
+      "dictation": "音声入力",
+      "ai": "AI ライティング",
+      "dictionary": "辞書",
+      "meetings": "ミーティングとメモ",
+      "audio": "オーディオ",
+      "models": "エンジン",
+      "history": "プライバシーとストレージ"
+    },
+    "about": "情報",
+    "version": "バージョン {{version}}",
+    "notesEnginesHelp": "メモを作成し、ミーティングに関する質問に答えるエンジンです。",
+    "privacy": {
+      "title": "このデバイスの外に送られるもの",
+      "local": "録音、文字起こし、ミーティングのメモ、辞書はこのデバイスに保存されます。",
+      "noCloud": "音声入力もこのデバイスに残ります。",
+      "cloud": "音声入力は AI クリーンアップのため {{provider}} に送信されます。AI ライティングで変更できます。"
+    }
   },
   "audioPlayer": {
     "play": "再生",

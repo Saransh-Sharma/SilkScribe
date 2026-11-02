@@ -374,11 +374,36 @@
   outline-offset: 2px;
 }
 .ws-filters,
+.ws-settings-layout {
+  display: grid;
+  grid-template-columns: minmax(150px, 190px) minmax(0, 1fr);
+  gap: var(--ss-space-6, 24px);
+  align-items: start;
+  margin-top: 16px;
+}
 .ws-settings-tabs {
   display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
-  margin: 16px 0 20px;
+  flex-direction: column;
+  gap: 2px;
+  position: sticky;
+  top: 16px;
+}
+.ws-settings-tabs button {
+  text-align: start;
+  font-size: 13px;
+  padding: 8px 12px;
+}
+.ws-settings-tabs button:focus-visible {
+  outline: 2px solid var(--ss-brand-secondary);
+  outline-offset: 1px;
+}
+.ws-settings-panel {
+  min-width: 0;
+}
+.ws-settings-toggles {
+  display: grid;
+  gap: 4px;
+  padding: 8px 12px;
 }
 .ws-filters button,
 .ws-settings-tabs button {
@@ -902,8 +927,18 @@
   .ws-segment {
     gap: 10px;
   }
+  .ws-settings-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
   .ws-settings-tabs {
+    flex-direction: row;
+    overflow-x: auto;
+    position: static;
     gap: 0;
+  }
+  .ws-settings-tabs button {
+    white-space: nowrap;
   }
   .ws-recording-bar {
     padding: 10px;

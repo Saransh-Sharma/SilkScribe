@@ -53,6 +53,7 @@ import {
 import { Transcript } from "./Transcript";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { Preferences } from "./Preferences";
+import { SettingsGroup } from "../ui/SettingsGroup";
 import { WsMeter, WsSelect, WsToggle } from "./controls";
 import { LANGUAGES } from "@/lib/constants/languages";
 import { useSettings } from "@/hooks/useSettings";
@@ -64,6 +65,19 @@ import { CalendarSettings } from "./CalendarSettings";
 import { AskPanel } from "./AskPanel";
 import "./workspace.css";
 import { toastError } from "@/lib/utils/toastError";
+
+/** Settings sections, in the order they're listed. */
+const SETTINGS_PAGES = [
+  { id: "general" },
+  { id: "dictation" },
+  { id: "ai" },
+  { id: "dictionary" },
+  { id: "meetings" },
+  { id: "audio" },
+  { id: "models" },
+  { id: "history" },
+] as const;
+type SettingsPageId = (typeof SETTINGS_PAGES)[number]["id"];
 
 export default function Workspace({
   renderSettings,
@@ -210,9 +224,7 @@ export default function Workspace({
     };
   }, [settings?.selected_model]);
   const [page, setPage] = useState("home");
-  const [settingsPage, setSettingsPage] = useState<
-    "general" | "audio" | "models" | "local" | "appearance" | "history"
-  >("general");
+  const [settingsPage, setSettingsPage] = useState<SettingsPageId>("dictation");
   const [documents, setDocuments] = useState<DocumentSummary[]>([]);
   const [attention, setAttention] = useState<DocumentSummary[]>([]);
   const [jobs, setJobs] = useState<DocumentSummary[]>([]);
@@ -344,7 +356,7 @@ export default function Workspace({
   const [runtime, setRuntime] = useState<boolean | null>(null);
   const [runtimeError, setRuntimeError] = useState("");
   useEffect(() => {
-    if (page !== "settings" || !["models", "local"].includes(settingsPage))
+    if (page !== "settings" || !["models", "meetings"].includes(settingsPage))
       return;
     let current = true;
     setRuntime(null);
@@ -1313,22 +1325,6 @@ export default function Workspace({
                       ]}
                     />
                   )}
-                  <WsToggle
-                    checked={settings?.suggest_meeting_notes ?? true}
-                    onChange={(value) =>
-                      void updateSetting("suggest_meeting_notes", value)
-                    }
-                    label={t("workspace.suggestNotes.label")}
-                    hint={t("workspace.suggestNotes.hint")}
-                  />
-                  <WsToggle
-                    checked={consentReminder}
-                    onChange={(value) =>
-                      void updateSetting("meeting_consent_reminder", value)
-                    }
-                    label={t("workspace.consent.setting")}
-                    hint={t("workspace.consent.settingHint")}
-                  />
                   <button
                     type="button"
                     className="ws-text-button"
@@ -1531,241 +1527,293 @@ export default function Workspace({
           ) : page === "settings" ? (
             <section>
               <h1>{t("workspace.settings")}</h1>
-              <div className="ws-settings-tabs">
-                {(
-                  [
-                    { id: "general", key: "dictation" },
-                    { id: "audio", key: "audio" },
-                    { id: "models", key: "modelsLanguage" },
-                    { id: "local", key: "localNotes" },
-                    { id: "appearance", key: "appearance" },
-                    { id: "history", key: "storage" },
-                  ] as const
-                ).map((item) => (
-                  <button
-                    key={item.id}
-                    className={settingsPage === item.id ? "is-active" : ""}
-                    onClick={() => setSettingsPage(item.id)}
-                  >
-                    {t(`workspace.${item.key}`)}
-                  </button>
-                ))}
-              </div>
-              {returnToSetup && (
-                <button
-                  className="ws-secondary"
-                  onClick={() => {
-                    setCreate(returnToSetup);
-                    setReturnToSetup(null);
-                    void loadPacks();
+              <div className="ws-settings-layout">
+                <nav
+                  className="ws-settings-tabs"
+                  role="tablist"
+                  aria-orientation="vertical"
+                  aria-label={t("workspace.settings")}
+                  onKeyDown={(event) => {
+                    // Arrow keys move between sections, as in any tab list.
+                    const ids = SETTINGS_PAGES.map((item) => item.id);
+                    const step =
+                      event.key === "ArrowDown" || event.key === "ArrowRight"
+                        ? 1
+                        : event.key === "ArrowUp" || event.key === "ArrowLeft"
+                          ? -1
+                          : 0;
+                    if (!step) return;
+                    event.preventDefault();
+                    const next =
+                      ids[
+                        (ids.indexOf(settingsPage) + step + ids.length) %
+                          ids.length
+                      ];
+                    setSettingsPage(next);
+                    document.getElementById(`settings-tab-${next}`)?.focus();
                   }}
                 >
-                  <ArrowLeft size={16} />
-                  {t("workspace.returnToSetup")}
-                </button>
-              )}
-              {settingsPage === "local" || settingsPage === "models" ? (
-                <div className="ws-models">
-                  <h2>{t("workspace.localIntelligence")}</h2>
-                  <p className="ws-description">
-                    {t("workspace.localModelsHelp")}
-                  </p>
-                  <p className={`ws-alert ${runtime ? "ready" : ""}`}>
-                    {runtimeError ||
-                      t(
-                        runtime === null
-                          ? "common.loading"
-                          : runtime
-                            ? "workspace.runtimeReady"
-                            : "workspace.runtimeMissing",
-                      )}
-                  </p>
-                  {packs
-                    .filter(
-                      (pack) =>
-                        settingsPage === "models" || pack.purpose === "notes",
-                    )
-                    .map((pack) => (
-                      <div className="ws-pack" key={pack.id}>
-                        <span className="ws-source-icon">
-                          <Cpu size={21} />
-                        </span>
-                        <div>
-                          <h3>{pack.name}</h3>
-                          <p>
-                            {t(`workspace.purpose.${pack.purpose}`)} ·{" "}
-                            {pack.artifacts.length
-                              ? `${(pack.artifacts.reduce((n, a) => n + a.bytes, 0) / 1e9).toFixed(1)} GB`
-                              : t("workspace.unpublished")}{" "}
-                            · {pack.license}
-                          </p>
-                          <p>
-                            {t("workspace.memoryGuidance", {
-                              gb: pack.minimum_memory_gb,
-                            })}
-                          </p>
-                          {download?.id === pack.id && (
-                            <WsMeter
-                              variant="progress"
-                              label={t("workspace.downloading")}
-                              value={
-                                download.total
-                                  ? download.downloaded / download.total
-                                  : 0
-                              }
-                            />
-                          )}
-                        </div>
-                        <button
-                          className="ws-secondary"
-                          disabled={
-                            (pack.installed &&
-                              verification[pack.id] !== false) ||
-                            !!download ||
-                            !!verifying ||
-                            !pack.artifacts.length
-                          }
-                          onClick={async () => {
-                            setDownload({
-                              id: pack.id,
-                              downloaded: 0,
-                              total: 1,
-                            });
-                            try {
-                              await api.install(pack.id);
-                              setVerification((current) => ({
-                                ...current,
-                                [pack.id]: true,
-                              }));
-                              await loadPacks();
-                            } catch (e) {
-                              toastError(
-                                t("workspace.errors.installEngine"),
-                                e,
-                              );
-                            } finally {
-                              setDownload(null);
-                            }
-                          }}
-                        >
-                          {pack.installed && verification[pack.id] !== false ? (
-                            <>
-                              <Check size={15} />
-                              {t("workspace.installed")}
-                            </>
-                          ) : (
-                            t(
-                              verification[pack.id] === false
-                                ? "modelSelector.retryDownload"
-                                : "workspace.download",
-                            )
-                          )}
-                        </button>
-                        {pack.installed && (
-                          <button
-                            className="ws-text-button"
-                            disabled={!!verifying || !!download}
-                            onClick={async () => {
-                              setVerifying(pack.id);
-                              try {
-                                const result = await api.verifyPack(pack.id);
-                                setVerification((current) => ({
-                                  ...current,
-                                  [pack.id]: result.valid,
-                                }));
-                              } catch (error) {
-                                toastError(
-                                  t("workspace.errors.verifyEngine"),
-                                  error,
-                                );
-                              } finally {
-                                setVerifying(null);
-                              }
-                            }}
-                          >
-                            {t(
-                              verifying === pack.id
-                                ? "workspace.working"
-                                : "workspace.verifyModel",
-                            )}
-                          </button>
-                        )}
-                        {verification[pack.id] !== undefined && (
-                          <span role="status">
-                            {t(
-                              verification[pack.id]
-                                ? "workspace.modelVerified"
-                                : "workspace.modelDamaged",
-                            )}
-                          </span>
-                        )}
-                        {pack.installed && (
-                          <button
-                            className="ws-text-button"
-                            onClick={() => setRemovePack(pack.id)}
-                          >
-                            {t("workspace.removeModel")}
-                          </button>
-                        )}
-                        {download?.id === pack.id && (
-                          <button
-                            className="ws-text-button"
-                            onClick={() => void api.cancelDownload()}
-                          >
-                            {t("workspace.pauseDownload")}
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  {settingsPage === "models" && (
-                    <AdvancedSettings group="runtime" />
+                  {SETTINGS_PAGES.map((item) => (
+                    <button
+                      key={item.id}
+                      id={`settings-tab-${item.id}`}
+                      role="tab"
+                      aria-selected={settingsPage === item.id}
+                      aria-controls="settings-panel"
+                      tabIndex={settingsPage === item.id ? 0 : -1}
+                      className={settingsPage === item.id ? "is-active" : ""}
+                      onClick={() => setSettingsPage(item.id)}
+                    >
+                      {t(`workspace.settingsTabs.${item.id}`)}
+                    </button>
+                  ))}
+                </nav>
+                <div
+                  id="settings-panel"
+                  role="tabpanel"
+                  aria-labelledby={`settings-tab-${settingsPage}`}
+                  className="ws-settings-panel"
+                >
+                  {returnToSetup && (
+                    <button
+                      className="ws-secondary"
+                      onClick={() => {
+                        setCreate(returnToSetup);
+                        setReturnToSetup(null);
+                        void loadPacks();
+                      }}
+                    >
+                      <ArrowLeft size={16} />
+                      {t("workspace.returnToSetup")}
+                    </button>
                   )}
-                  {settingsPage === "local" && <CalendarSettings />}
-                  {settingsPage === "models" && (
-                    <details>
-                      <summary>
-                        {t("workspace.advancedDictationModels")}
-                      </summary>
-                      {renderSettings("models")}
-                    </details>
+                  {settingsPage === "meetings" && (
+                    <SettingsGroup title={t("workspace.settingsTabs.meetings")}>
+                      <div className="ws-settings-toggles">
+                        <WsToggle
+                          checked={settings?.suggest_meeting_notes ?? true}
+                          onChange={(value) =>
+                            void updateSetting("suggest_meeting_notes", value)
+                          }
+                          label={t("workspace.suggestNotes.label")}
+                          hint={t("workspace.suggestNotes.hint")}
+                        />
+                        <WsToggle
+                          checked={consentReminder}
+                          onChange={(value) =>
+                            void updateSetting(
+                              "meeting_consent_reminder",
+                              value,
+                            )
+                          }
+                          label={t("workspace.consent.setting")}
+                          hint={t("workspace.consent.settingHint")}
+                        />
+                      </div>
+                    </SettingsGroup>
+                  )}
+                  {settingsPage === "meetings" || settingsPage === "models" ? (
+                    <div className="ws-models">
+                      <h2>
+                        {t(
+                          settingsPage === "models"
+                            ? "workspace.localIntelligence"
+                            : "workspace.localNotes",
+                        )}
+                      </h2>
+                      <p className="ws-description">
+                        {t(
+                          settingsPage === "models"
+                            ? "workspace.localModelsHelp"
+                            : "workspace.notesEnginesHelp",
+                        )}
+                      </p>
+                      <p className={`ws-alert ${runtime ? "ready" : ""}`}>
+                        {runtimeError ||
+                          t(
+                            runtime === null
+                              ? "common.loading"
+                              : runtime
+                                ? "workspace.runtimeReady"
+                                : "workspace.runtimeMissing",
+                          )}
+                      </p>
+                      {packs
+                        .filter((pack) =>
+                          settingsPage === "models"
+                            ? pack.purpose !== "notes"
+                            : pack.purpose === "notes",
+                        )
+                        .map((pack) => (
+                          <div className="ws-pack" key={pack.id}>
+                            <span className="ws-source-icon">
+                              <Cpu size={21} />
+                            </span>
+                            <div>
+                              <h3>{pack.name}</h3>
+                              <p>
+                                {t(`workspace.purpose.${pack.purpose}`)} ·{" "}
+                                {pack.artifacts.length
+                                  ? `${(pack.artifacts.reduce((n, a) => n + a.bytes, 0) / 1e9).toFixed(1)} GB`
+                                  : t("workspace.unpublished")}{" "}
+                                · {pack.license}
+                              </p>
+                              <p>
+                                {t("workspace.memoryGuidance", {
+                                  gb: pack.minimum_memory_gb,
+                                })}
+                              </p>
+                              {download?.id === pack.id && (
+                                <WsMeter
+                                  variant="progress"
+                                  label={t("workspace.downloading")}
+                                  value={
+                                    download.total
+                                      ? download.downloaded / download.total
+                                      : 0
+                                  }
+                                />
+                              )}
+                            </div>
+                            <button
+                              className="ws-secondary"
+                              disabled={
+                                (pack.installed &&
+                                  verification[pack.id] !== false) ||
+                                !!download ||
+                                !!verifying ||
+                                !pack.artifacts.length
+                              }
+                              onClick={async () => {
+                                setDownload({
+                                  id: pack.id,
+                                  downloaded: 0,
+                                  total: 1,
+                                });
+                                try {
+                                  await api.install(pack.id);
+                                  setVerification((current) => ({
+                                    ...current,
+                                    [pack.id]: true,
+                                  }));
+                                  await loadPacks();
+                                } catch (e) {
+                                  toastError(
+                                    t("workspace.errors.installEngine"),
+                                    e,
+                                  );
+                                } finally {
+                                  setDownload(null);
+                                }
+                              }}
+                            >
+                              {pack.installed &&
+                              verification[pack.id] !== false ? (
+                                <>
+                                  <Check size={15} />
+                                  {t("workspace.installed")}
+                                </>
+                              ) : (
+                                t(
+                                  verification[pack.id] === false
+                                    ? "modelSelector.retryDownload"
+                                    : "workspace.download",
+                                )
+                              )}
+                            </button>
+                            {pack.installed && (
+                              <button
+                                className="ws-text-button"
+                                disabled={!!verifying || !!download}
+                                onClick={async () => {
+                                  setVerifying(pack.id);
+                                  try {
+                                    const result = await api.verifyPack(
+                                      pack.id,
+                                    );
+                                    setVerification((current) => ({
+                                      ...current,
+                                      [pack.id]: result.valid,
+                                    }));
+                                  } catch (error) {
+                                    toastError(
+                                      t("workspace.errors.verifyEngine"),
+                                      error,
+                                    );
+                                  } finally {
+                                    setVerifying(null);
+                                  }
+                                }}
+                              >
+                                {t(
+                                  verifying === pack.id
+                                    ? "workspace.working"
+                                    : "workspace.verifyModel",
+                                )}
+                              </button>
+                            )}
+                            {verification[pack.id] !== undefined && (
+                              <span role="status">
+                                {t(
+                                  verification[pack.id]
+                                    ? "workspace.modelVerified"
+                                    : "workspace.modelDamaged",
+                                )}
+                              </span>
+                            )}
+                            {pack.installed && (
+                              <button
+                                className="ws-text-button"
+                                onClick={() => setRemovePack(pack.id)}
+                              >
+                                {t("workspace.removeModel")}
+                              </button>
+                            )}
+                            {download?.id === pack.id && (
+                              <button
+                                className="ws-text-button"
+                                onClick={() => void api.cancelDownload()}
+                              >
+                                {t("workspace.pauseDownload")}
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      {settingsPage === "models" && (
+                        <AdvancedSettings group="runtime" />
+                      )}
+                      {settingsPage === "meetings" && <CalendarSettings />}
+                    </div>
+                  ) : (
+                    <>
+                      {settingsPage === "history" && storage && (
+                        <div className="ws-storage">
+                          <h2>{t("workspace.storageUsage")}</h2>
+                          {[
+                            ["audioStorage", storage.audio_bytes],
+                            ["modelStorage", storage.model_bytes],
+                            ["freeStorage", storage.free_bytes],
+                          ].map(([label, bytes]) => (
+                            <p key={label}>
+                              {t(`workspace.${label}`)}{" "}
+                              <strong>
+                                {(Number(bytes) / 1e9).toFixed(1)} GB
+                              </strong>
+                            </p>
+                          ))}
+                        </div>
+                      )}
+                      <Preferences page={settingsPage} />
+                      {settingsPage === "history" && settings?.debug_mode && (
+                        <details>
+                          <summary>{t("workspace.debug")}</summary>
+                          {renderSettings("debug")}
+                        </details>
+                      )}
+                    </>
                   )}
                 </div>
-              ) : ["general", "audio", "appearance", "history"].includes(
-                  settingsPage,
-                ) ? (
-                <>
-                  {settingsPage === "history" && storage && (
-                    <div className="ws-storage">
-                      <h2>{t("workspace.storageUsage")}</h2>
-                      {[
-                        ["audioStorage", storage.audio_bytes],
-                        ["modelStorage", storage.model_bytes],
-                        ["freeStorage", storage.free_bytes],
-                      ].map(([label, bytes]) => (
-                        <p key={label}>
-                          {t(`workspace.${label}`)}{" "}
-                          <strong>{(Number(bytes) / 1e9).toFixed(1)} GB</strong>
-                        </p>
-                      ))}
-                    </div>
-                  )}
-                  <Preferences
-                    page={
-                      settingsPage as
-                        | "general"
-                        | "audio"
-                        | "appearance"
-                        | "history"
-                    }
-                  />
-                  {settingsPage === "history" && settings?.debug_mode && (
-                    <details>
-                      <summary>{t("workspace.debug")}</summary>
-                      {renderSettings("debug")}
-                    </details>
-                  )}
-                </>
-              ) : null}
+              </div>
             </section>
           ) : (
             <>
@@ -1878,7 +1926,7 @@ export default function Workspace({
                     className={`ws-dictation-strip${dictationReady ? "" : " is-attention"}`}
                     onClick={() => {
                       navigate("settings");
-                      setSettingsPage("general");
+                      setSettingsPage("dictation");
                       if (!dictationReady) onSetupDictation();
                     }}
                   >

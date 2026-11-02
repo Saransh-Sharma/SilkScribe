@@ -618,10 +618,10 @@ test("model settings remain usable while runtime health fails", async ({
   await page.goto(fixture + "?runtimeFailure=1");
   await page.getByRole("button", { name: "Settings", exact: true }).click();
   expect(errors).toEqual([]);
-  await page
-    .getByRole("button", { name: "Engines & language", exact: true })
-    .click();
-  await expect(page.getByRole("heading", { name: "Engines" })).toBeVisible();
+  await page.getByRole("tab", { name: "Engines", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Engines", exact: true }),
+  ).toBeVisible();
   await expect(
     page.getByText("Speech runtime: dependency check failed", { exact: false }),
   ).toBeVisible();
@@ -656,7 +656,7 @@ test("a tap can make dictation hands-free", async ({ page }) => {
   await expect(strip).toContainText("Hold to talk, or tap for hands-free");
 
   await page.getByRole("button", { name: "Settings", exact: true }).click();
-  await page.getByRole("button", { name: "Dictation", exact: true }).click();
+  await page.getByRole("tab", { name: "Dictation", exact: true }).click();
   const tap = page.getByRole("switch", { name: "Tap for hands-free" });
   await expect(tap).toBeChecked();
   await tap.focus();
@@ -705,12 +705,14 @@ test("a new meeting is named after the calendar meeting going on", async ({
   await expect(page.getByLabel("Title")).toHaveValue("Team standup");
 });
 
-test("AI notes settings connect and disconnect the calendar", async ({
+test("Meetings & notes settings connect and disconnect the calendar", async ({
   page,
 }) => {
   await page.goto(fixture);
   await page.getByRole("button", { name: "Settings", exact: true }).click();
-  await page.getByRole("button", { name: "AI notes", exact: true }).click();
+  await page
+    .getByRole("tab", { name: "Meetings & notes", exact: true })
+    .click();
   await page.getByRole("button", { name: "Connect calendar" }).click();
   await expect(
     page.getByRole("switch", { name: "Remind me as meetings start" }),
@@ -828,7 +830,7 @@ test("the dictionary keeps replacements, snippets and multi-word names", async (
 }) => {
   await page.goto(`${fixture}?dictation=ready`);
   await page.getByRole("button", { name: "Settings", exact: true }).click();
-  await page.getByRole("button", { name: "Dictation", exact: true }).click();
+  await page.getByRole("tab", { name: "Dictionary", exact: true }).click();
 
   await page.getByPlaceholder("Add a word or name").fill("Charge Bee");
   await page.getByRole("button", { name: "Add", exact: true }).click();
@@ -906,7 +908,8 @@ test("meeting setup can capture just the running call app", async ({
   await page.getByRole("button", { name: "Record meeting" }).first().click();
   const source = page.getByLabel("Capture audio from");
   await expect(source).toBeVisible();
-  await expect(page.getByText("Offer notes when a call starts")).toBeVisible();
+  // The app-wide switch lives in Settings, not in every meeting's setup.
+  await expect(page.getByText("Offer notes when a call starts")).toBeHidden();
 });
 
 test("on-device claims give way when AI cleanup uses a cloud provider", async ({
@@ -950,10 +953,15 @@ test("meeting setup offers a heads-up for the people on the call", async ({
 }) => {
   await page.goto(fixture);
   await page.getByRole("button", { name: "Record meeting" }).first().click();
-  await expect(page.getByText("Remind me to tell people")).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Copy a heads-up message" }),
   ).toBeVisible();
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
+  await page
+    .getByRole("tab", { name: "Meetings & notes", exact: true })
+    .click();
+  await expect(page.getByText("Remind me to tell people")).toBeVisible();
+  await expect(page.getByText("Offer notes when a call starts")).toBeVisible();
 });
 
 test("Home puts what needs you first and lists dictations once", async ({
@@ -1012,7 +1020,7 @@ test("Home surfaces recovery work and opens the filtered Library", async ({
 test("AI cleanup settings offer the command shortcut", async ({ page }) => {
   await page.goto(`${fixture}?dictation=ready&cleanup=1`);
   await page.getByRole("button", { name: "Settings", exact: true }).click();
-  await page.getByRole("button", { name: "Dictation", exact: true }).click();
+  await page.getByRole("tab", { name: "AI writing", exact: true }).click();
   await expect(
     page.getByText("Command shortcut", { exact: true }),
   ).toBeVisible();
@@ -1023,31 +1031,40 @@ test("AI cleanup settings offer the command shortcut", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("settings has six workflow groups with advanced controls kept in context", async ({
+test("settings has eight sections as tabs, with each control in one place", async ({
   page,
 }) => {
   await page.goto(fixture);
   await page.getByRole("button", { name: "Settings", exact: true }).click();
-  const groups = page.locator(".ws-settings-tabs button");
-  await expect(groups).toHaveCount(6);
-  await expect(groups).toHaveText([
+  const tabs = page.getByRole("tablist", { name: "Settings" }).getByRole("tab");
+  await expect(tabs).toHaveText([
+    "General",
     "Dictation",
+    "AI writing",
+    "Dictionary",
+    "Meetings & notes",
     "Audio",
-    "Engines & language",
-    "AI notes",
-    "Appearance",
-    "Storage & privacy",
+    "Engines",
+    "Privacy & storage",
   ]);
-  await page.getByRole("button", { name: "Appearance", exact: true }).click();
-  await expect(page.locator(".ws-settings-tabs button.is-active")).toHaveText(
-    "Appearance",
+  await expect(page.getByRole("tab", { name: "Dictation" })).toHaveAttribute(
+    "aria-selected",
+    "true",
   );
-  await page
-    .getByRole("button", { name: "Engines & language", exact: true })
-    .click();
-  await expect(
-    page.getByText("More dictation engines", { exact: true }),
-  ).toBeVisible();
+  // Arrow keys move between sections.
+  await page.getByRole("tab", { name: "Dictation" }).focus();
+  await page.keyboard.press("ArrowDown");
+  const ai = page.getByRole("tab", { name: "AI writing" });
+  await expect(ai).toBeFocused();
+  await expect(ai).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("tabpanel")).toBeVisible();
+  // Styles show even before AI cleanup is on.
+  await expect(page.getByText("Styles", { exact: true })).toBeVisible();
+  // The notes engine is only under Meetings & notes, not Engines too.
+  await page.getByRole("tab", { name: "Engines", exact: true }).click();
+  await expect(page.getByText("More dictation engines")).toHaveCount(0);
+  await page.getByRole("tab", { name: "Privacy & storage" }).click();
+  await expect(page.getByText("What leaves this device")).toBeVisible();
 });
 
 test("unreviewed languages stay hidden until preview languages is on", async ({
@@ -1055,7 +1072,7 @@ test("unreviewed languages stay hidden until preview languages is on", async ({
 }) => {
   await page.goto(fixture + "?dictation=ready");
   await page.getByRole("button", { name: "Settings", exact: true }).click();
-  await page.getByRole("button", { name: "Appearance", exact: true }).click();
+  await page.getByRole("tab", { name: "General", exact: true }).click();
   const language = page.getByRole("button", { name: "English (English)" });
   await language.click();
   await expect(page.getByRole("option")).toHaveText(["English (English)"]);

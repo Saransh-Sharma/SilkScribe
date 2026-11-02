@@ -877,7 +877,8 @@
         "title": "Apps em que você ditou",
         "description": "Mude um app de categoria se ele for tratado do jeito errado.",
         "builtIn": "Padrão"
-      }
+      },
+      "needsCleanup": "Ative a limpeza com IA para seguir o estilo de cada app."
     },
     "dictionary": {
       "title": "Dicionário",
@@ -1211,8 +1212,6 @@
     "working": "Trabalhando…",
     "startRecording": "Iniciar gravação",
     "startTranscription": "Transcrever",
-    "modelsLanguage": "Mecanismos e idioma",
-    "storage": "Armazenamento e privacidade",
     "localIntelligence": "Mecanismos",
     "localModelsHelp": "Baixe só o que precisar. Tudo roda neste Mac — mecanismos maiores precisam de mais memória.",
     "runtimeReady": "Pronto para rodar neste Mac.",
@@ -1272,7 +1271,6 @@
     "withoutEnhancements": "Pular falantes e anotações",
     "recordForLater": "Gravar agora, transcrever depois",
     "returnToSetup": "Voltar à configuração",
-    "advancedDictationModels": "Mais mecanismos de ditado",
     "activity": "Atividade",
     "close": "Fechar",
     "noActiveJobs": "Nada em processamento",
@@ -1523,7 +1521,26 @@
       "shortcut": "⌘K"
     },
     "cleanupUses": "A limpeza com IA usa {{provider}}",
-    "openNotes": "Abrir anotações"
+    "openNotes": "Abrir anotações",
+    "settingsTabs": {
+      "general": "Geral",
+      "dictation": "Ditado",
+      "ai": "Escrita com IA",
+      "dictionary": "Dicionário",
+      "meetings": "Reuniões e anotações",
+      "audio": "Áudio",
+      "models": "Motores",
+      "history": "Privacidade e armazenamento"
+    },
+    "about": "Sobre",
+    "version": "Versão {{version}}",
+    "notesEnginesHelp": "O motor que escreve suas anotações e responde perguntas sobre suas reuniões.",
+    "privacy": {
+      "title": "O que sai deste dispositivo",
+      "local": "Gravações, transcrições, anotações de reuniões e seu dicionário ficam neste dispositivo.",
+      "noCloud": "Os ditados também ficam neste dispositivo.",
+      "cloud": "Os ditados vão para {{provider}} para a limpeza com IA. Altere isso em Escrita com IA."
+    }
   },
   "audioPlayer": {
     "play": "Tocar",

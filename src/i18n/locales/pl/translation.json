@@ -877,7 +877,8 @@
         "title": "Aplikacje, w których dyktowano",
         "description": "Przenieś aplikację do innego rodzaju, jeśli jest źle traktowana.",
         "builtIn": "Wbudowane"
-      }
+      },
+      "needsCleanup": "Włącz korektę AI, aby dopasować styl do każdej aplikacji."
     },
     "dictionary": {
       "title": "Słownik",
@@ -1212,8 +1213,6 @@
     "working": "Praca…",
     "startRecording": "Rozpocznij nagrywanie",
     "startTranscription": "Transkrybuj",
-    "modelsLanguage": "Silniki i język",
-    "storage": "Przechowywanie i prywatność",
     "localIntelligence": "Silniki",
     "localModelsHelp": "Pobierz tylko to, czego potrzebujesz. Wszystko działa na tym Macu — większe silniki wymagają więcej pamięci.",
     "runtimeReady": "Gotowe do działania na tym Macu.",
@@ -1273,7 +1272,6 @@
     "withoutEnhancements": "Pomiń mówców i notatki",
     "recordForLater": "Nagraj teraz, transkrybuj później",
     "returnToSetup": "Wróć do konfiguracji",
-    "advancedDictationModels": "Więcej silników dyktowania",
     "activity": "Aktywność",
     "close": "Zamknij",
     "noActiveJobs": "Nic nie jest przetwarzane",
@@ -1529,7 +1527,26 @@
       "shortcut": "⌘K"
     },
     "cleanupUses": "Korekta AI korzysta z {{provider}}",
-    "openNotes": "Otwórz notatki"
+    "openNotes": "Otwórz notatki",
+    "settingsTabs": {
+      "general": "Ogólne",
+      "dictation": "Dyktowanie",
+      "ai": "Pisanie z AI",
+      "dictionary": "Słownik",
+      "meetings": "Spotkania i notatki",
+      "audio": "Dźwięk",
+      "models": "Silniki",
+      "history": "Prywatność i miejsce"
+    },
+    "about": "Informacje",
+    "version": "Wersja {{version}}",
+    "notesEnginesHelp": "Silnik, który pisze notatki i odpowiada na pytania o spotkania.",
+    "privacy": {
+      "title": "Co opuszcza to urządzenie",
+      "local": "Nagrania, transkrypcje, notatki ze spotkań i Twój słownik zostają na tym urządzeniu.",
+      "noCloud": "Dyktowane teksty też zostają na tym urządzeniu.",
+      "cloud": "Dyktowane teksty trafiają do {{provider}} do korekty AI. Zmienisz to w sekcji Pisanie z AI."
+    }
   },
   "audioPlayer": {
     "play": "Odtwarzaj",

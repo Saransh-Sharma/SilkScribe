@@ -877,7 +877,8 @@
         "title": "App in cui hai dettato",
         "description": "Sposta un’app in un’altra categoria se non viene trattata nel modo giusto.",
         "builtIn": "Predefinita"
-      }
+      },
+      "needsCleanup": "Attiva la pulizia con IA per adattarti allo stile di ogni app."
     },
     "dictionary": {
       "title": "Dizionario",
@@ -1211,8 +1212,6 @@
     "working": "Elaborazione…",
     "startRecording": "Inizia registrazione",
     "startTranscription": "Trascrivi",
-    "modelsLanguage": "Motori e lingua",
-    "storage": "Archiviazione e privacy",
     "localIntelligence": "Motori",
     "localModelsHelp": "Scarica solo ciò che ti serve. Tutto funziona su questo Mac: i motori più grandi richiedono più memoria.",
     "runtimeReady": "Pronto per l’uso su questo Mac.",
@@ -1272,7 +1271,6 @@
     "withoutEnhancements": "Salta oratori e note",
     "recordForLater": "Registra ora, trascrivi dopo",
     "returnToSetup": "Torna alla configurazione",
-    "advancedDictationModels": "Altri motori di dettatura",
     "activity": "Attività",
     "close": "Chiudi",
     "noActiveJobs": "Nessuna elaborazione in corso",
@@ -1523,7 +1521,26 @@
       "shortcut": "⌘K"
     },
     "cleanupUses": "La pulizia con IA usa {{provider}}",
-    "openNotes": "Apri note"
+    "openNotes": "Apri note",
+    "settingsTabs": {
+      "general": "Generali",
+      "dictation": "Dettatura",
+      "ai": "Scrittura con IA",
+      "dictionary": "Dizionario",
+      "meetings": "Riunioni e note",
+      "audio": "Audio",
+      "models": "Motori",
+      "history": "Privacy e spazio"
+    },
+    "about": "Info",
+    "version": "Versione {{version}}",
+    "notesEnginesHelp": "Il motore che scrive le tue note e risponde alle domande sulle tue riunioni.",
+    "privacy": {
+      "title": "Cosa lascia questo dispositivo",
+      "local": "Registrazioni, trascrizioni, note delle riunioni e il tuo dizionario restano su questo dispositivo.",
+      "noCloud": "Anche le dettature restano su questo dispositivo.",
+      "cloud": "Le dettature vanno a {{provider}} per la pulizia con IA. Puoi cambiarlo in Scrittura con IA."
+    }
   },
   "audioPlayer": {
     "play": "Riproduci",
