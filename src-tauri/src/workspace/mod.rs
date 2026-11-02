@@ -43,7 +43,8 @@ pub struct Workspace {
     pub download_cancelled: AtomicBool,
     pub importing: AtomicBool,
     pub import_cancelled: AtomicBool,
-    /// Asking a question runs its own worker beside any processing job.
+    /// A question's worker, kept apart from the processing job's so stopping
+    /// one doesn't stop the other. Questions wait for processing to finish.
     pub ask_child: Arc<Mutex<Option<Child>>>,
     pub ask_cancelled: AtomicBool,
 }
@@ -960,11 +961,17 @@ fn assemble_passages(
     passages
 }
 
+/// Why a question can't be answered right now.
+pub const ASK_BUSY: &str = "A meeting is being processed. Ask again when it's done.";
+
 impl Workspace {
     /// Answers a question from the meetings and notes in the Library, citing
     /// where each part of the answer comes from. An empty answer means nothing
     /// in the Library mentions it.
     pub fn ask(&self, app: &tauri::AppHandle, question: &str) -> Result<AskAnswer> {
+        // A cancel from before this question mustn't stop it, and one during
+        // the search must.
+        self.ask_cancelled.store(false, Ordering::SeqCst);
         let question = question.trim();
         if question.is_empty() {
             bail!("Ask a question first.");
@@ -972,16 +979,10 @@ impl Workspace {
         if question.chars().count() > 500 {
             bail!("Keep the question under 500 characters.");
         }
-        // Two notes models at once would be too much for most Macs.
-        let writing_notes = self
-            .active
-            .lock()
-            .unwrap()
-            .clone()
-            .and_then(|id| self.store.get(&id).ok())
-            .is_some_and(|doc| doc.stage == Stage::Notes);
-        if writing_notes {
-            bail!("Notes are being written. Ask again when they're done.");
+        // Processing holds the background engines, so a question would wait
+        // behind it for minutes. Say so now instead.
+        if self.active.lock().unwrap().is_some() {
+            bail!("{ASK_BUSY}");
         }
         let hits = self.store.search_passages(question, 40)?;
         let mut documents = std::collections::HashMap::new();
@@ -1005,7 +1006,6 @@ impl Workspace {
             .context(
                 "Download a notes engine in Settings → AI notes to ask about your meetings.",
             )?;
-        self.ask_cancelled.store(false, Ordering::SeqCst);
         let request = serde_json::json!({
             "protocol": 1,
             "task": "ask",

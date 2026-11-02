@@ -99,6 +99,34 @@ pub fn binary(app: &tauri::AppHandle, notes: bool) -> Result<std::path::PathBuf>
     }
     Ok(path)
 }
+/// Memory below which any worker frees the dictation engine first.
+const LOW_MEMORY: u64 = 2 * 1024 * 1024 * 1024;
+/// Free memory a question needs to leave the dictation engine loaded: room for
+/// the 9B notes model with some to spare.
+const ASK_HEADROOM: u64 = 10 * 1024 * 1024 * 1024;
+
+/// Whether to unload the dictation engine before running a worker task.
+fn should_evict(task: Option<&str>, uses_notes_model: bool, available: u64) -> bool {
+    if available < LOW_MEMORY {
+        return true;
+    }
+    match task {
+        Some("ask") => available < ASK_HEADROOM,
+        _ => uses_notes_model,
+    }
+}
+
+/// How long a task may run before it's stopped. Processing a long meeting
+/// legitimately takes as long as it takes.
+fn time_limit(task: Option<&str>) -> Option<Duration> {
+    match task {
+        Some("health") => Some(Duration::from_secs(240)),
+        // Loading the model cold and answering fits well inside this.
+        Some("ask") => Some(Duration::from_secs(180)),
+        _ => None,
+    }
+}
+
 pub fn run(
     app: &tauri::AppHandle,
     request: Value,
@@ -122,8 +150,13 @@ pub fn run(
         .map(std::path::Path::new);
     // Workers run out of process and don't block dictation. Only free the
     // dictation engine's memory for a large notes model or when memory is tight.
-    const LOW_MEMORY: u64 = 2 * 1024 * 1024 * 1024;
-    let evict = note_model.is_some() || super::memory::available() < LOW_MEMORY;
+    // A question is answered while someone may be about to dictate, so it keeps
+    // the dictation engine loaded unless the Mac is short of room for both.
+    let evict = should_evict(
+        request["task"].as_str(),
+        note_model.is_some(),
+        super::memory::available(),
+    );
     let manager = app.state::<Arc<crate::managers::transcription::TranscriptionManager>>();
     let _job = manager.external_job(cancelled, evict)?;
     if cancelled.load(std::sync::atomic::Ordering::Relaxed) {
@@ -174,9 +207,11 @@ pub fn run(
     let status = loop {
         let mut slot = child_slot.lock().unwrap();
         let child = slot.as_mut().context("Worker disappeared")?;
-        if request["task"] == "health" && started.elapsed() > Duration::from_secs(240) {
-            timed_out = true;
-            let _ = child.kill();
+        if let Some(limit) = time_limit(request["task"].as_str()) {
+            if started.elapsed() > limit {
+                timed_out = true;
+                let _ = child.kill();
+            }
         }
         if cancelled.load(std::sync::atomic::Ordering::Relaxed) {
             let _ = child.kill();
@@ -193,6 +228,9 @@ pub fn run(
         .map_err(|_| anyhow::anyhow!("Worker output reader failed"))??;
     let _ = errors.join();
     if timed_out {
+        if request["task"] == "ask" {
+            bail!("Answering took too long. Try a narrower question.");
+        }
         bail!("Local runtime dependency check timed out");
     }
     if cancelled.load(std::sync::atomic::Ordering::Relaxed) {
@@ -217,6 +255,18 @@ pub fn run(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn questions_keep_the_dictation_engine_when_there_is_room() {
+        const GB: u64 = 1024 * 1024 * 1024;
+        assert!(!should_evict(Some("ask"), true, 24 * GB));
+        assert!(should_evict(Some("ask"), true, 8 * GB));
+        assert!(should_evict(Some("notes"), true, 24 * GB));
+        assert!(!should_evict(Some("transcribe"), false, 24 * GB));
+        assert!(should_evict(Some("transcribe"), false, GB));
+        assert_eq!(time_limit(Some("ask")), Some(Duration::from_secs(180)));
+        assert_eq!(time_limit(Some("notes")), None);
+    }
     #[test]
     fn waiting_health_check_can_cancel_without_acquiring_the_lock() {
         let mutex = Arc::new(Mutex::new(()));
