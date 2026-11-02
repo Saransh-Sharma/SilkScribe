@@ -11,17 +11,6 @@
     "meetingResume": "Meeting fortsetzen",
     "meetingStop": "Meeting beenden und transkribieren"
   },
-  "sidebar": {
-    "home": "Startseite",
-    "general": "Allgemein",
-    "models": "Modelle",
-    "advanced": "Erweitert",
-    "postProcessing": "Nachbearbeitung",
-    "history": "Verlauf",
-    "debug": "Debug",
-    "preferences": "Einstellungen",
-    "developer": "Entwickler"
-  },
   "onboarding": {
     "recommended": "Empfohlen",
     "download": "Herunterladen",
@@ -88,7 +77,6 @@
         "iEnabledIt": "Ich habe es eingeschaltet",
         "checkAgain": "Erneut prüfen",
         "continue": "Weiter",
-        "repairAction": "Geführte Reparatur öffnen",
         "appName": "SilkScribe",
         "statuses": {
           "checking": "Wird geprüft…",
@@ -190,56 +178,6 @@
         "loadModels": "Liste der Engines konnte nicht geladen werden",
         "downloadModel": "Download konnte nicht abgeschlossen werden",
         "selectModel": "Deine Engine konnte nicht vorbereitet werden"
-      },
-      "tipsBadge": "Hilfreich, während du wartest",
-      "previousCard": "Vorheriger Tipp",
-      "nextCard": "Nächster Tipp",
-      "goToCard": "Zu Tipp {{index}} wechseln",
-      "tips": {
-        "cards": {
-          "shortcutHabit": {
-            "title": "Ein Tastenkürzel, eine schnelle Gewohnheit",
-            "description": "SilkScribe folgt einem sehr einfachen Rhythmus: halten, sprechen, loslassen.",
-            "point1": "Halte {{shortcut}} gedrückt, während du sprichst.",
-            "point2": "Lass los, wenn du fertig bist.",
-            "point3": "SilkScribe macht daraus sofort Text."
-          },
-          "focusField": {
-            "title": "Fokussiere immer das Ziel für deinen Text",
-            "description": "SilkScribe sendet das Ergebnis in das Feld, das aktiv ist, wenn die Transkription abgeschlossen wird.",
-            "point1": "Klicke in das Textfeld, das du verwenden willst, bevor du sprichst.",
-            "point2": "Lass dieses Feld fokussiert, bis die Transkription abgeschlossen ist.",
-            "point3": "Während des Onboardings gibt es genau dafür ein Übungsfeld."
-          },
-          "shortBursts": {
-            "title": "Kurze Abschnitte fühlen sich am schnellsten an",
-            "description": "Neue Nutzer bekommen meist die saubersten ersten Ergebnisse, wenn jede Aufnahme kurz bleibt.",
-            "point1": "Versuche ein oder zwei Sätze auf einmal.",
-            "point2": "Pausiere natürlich zwischen Gedanken.",
-            "point3": "Du kannst direkt danach sofort erneut aufnehmen."
-          },
-          "quietSpace": {
-            "title": "Eine ruhigere Umgebung macht den ersten Erfolg leichter",
-            "description": "SilkScribe funktioniert am besten, wenn sich deine Stimme klar vom Raum abhebt.",
-            "point1": "Nutze, wenn möglich, das Mikrofon, das du normalerweise bevorzugst.",
-            "point2": "Halte Lüfter, Lautsprecher oder Hintergrundgespräche so leise wie möglich.",
-            "point3": "Sprich in gleichmäßigem, normalem Tempo."
-          },
-          "privacy": {
-            "title": "Deine Einrichtung bleibt beim Wesentlichen",
-            "description": "Dieses Onboarding vermeidet zusätzliche Konfiguration, damit du schneller zu einer funktionierenden ersten Transkription kommst.",
-            "point1": "Berechtigungen kommen zuerst, weil sie entscheidend für die App sind.",
-            "point2": "Die Sprach-Engine wird automatisch im Hintergrund ausgewählt.",
-            "point3": "Feinabstimmungen kannst du später vornehmen, sobald der Grundablauf funktioniert."
-          },
-          "firstWin": {
-            "title": "Der nächste Bildschirm ist keine Fake-Demo",
-            "description": "Du probierst gleich eine echte Push-to-Talk-Transkription in der App aus.",
-            "point1": "Lass das Übungsfeld fokussiert.",
-            "point2": "Verwende dein normales Tastenkürzel genauso, wie du es später nutzen wirst.",
-            "point3": "Wenn Text im Feld erscheint, ist SilkScribe einsatzbereit."
-          }
-        }
       }
     },
     "progress": {
@@ -367,10 +305,6 @@
       "translate": "Ins Englische übersetzen"
     },
     "downloadErrors": {
-      "preflightFailed": "SilkScribe konnte vor dem Download den Speicherplatz nicht prüfen: {{detail}}",
-      "insufficientSpace": "SilkScribe benötigt {{required}} freien Speicher, um dieses Modell herunterzuladen. Verfügbar sind {{available}}.",
-      "downloadFailed": "SilkScribe konnte das Modell nicht herunterladen: {{detail}}",
-      "extractionFailed": "SilkScribe konnte das Modell nicht entpacken: {{detail}}",
       "unknown": "Der Download wurde nicht abgeschlossen."
     }
   },
@@ -699,44 +633,14 @@
       }
     },
     "history": {
-      "eyebrow": "Transkript-Archiv",
-      "pageTitle": "Deine letzten Transkripte ansehen",
-      "pageDescription": "Durchsuche, was SilkScribe erfasst hat, spiele Audio erneut ab und sichere alles, was du behalten möchtest.",
-      "openFolder": "Aufnahmeordner öffnen",
-      "exportMarkdown": "Als Markdown exportieren",
-      "exportJson": "Als JSON exportieren",
-      "exportTitle": "Verlauf exportieren",
-      "exportEmpty": "Es gibt keinen Verlauf zum Exportieren.",
-      "exportSuccess": "Verlauf exportiert",
-      "exportError": "SilkScribe konnte den Verlauf nicht exportieren.",
-      "empty": "Noch keine Transkriptionen. Starte eine Aufnahme, um deinen Verlauf aufzubauen!",
-      "emptyDescription": "Deine gesicherten Transkripte und Aufnahmen erscheinen hier nach deinem ersten Diktat.",
-      "emptyFiltered": "Keine passenden Transkripte.",
-      "emptyFilteredDescription": "Versuche eine andere Suche oder wechsle zurück zu Alle.",
-      "searchPlaceholder": "Verlauf durchsuchen",
-      "filters": {
-        "all": "Alle",
-        "saved": "Gesichert",
-        "failed": "Fehlgeschlagen"
-      },
       "copyToClipboard": "Transkription in Zwischenablage kopieren",
       "copyAsMarkdown": "Transkription als Markdown kopieren",
       "copySuccess": "In die Zwischenablage kopiert",
-      "copyError": "SilkScribe konnte dieses Transkript nicht kopieren.",
       "save": "Transkription speichern",
       "unsave": "Aus Gespeicherten entfernen",
       "delete": "Eintrag löschen",
-      "deleteError": "Eintrag konnte nicht gelöscht werden. Bitte versuche es erneut.",
-      "deleteQueued": "Eintrag gelöscht",
-      "deleteUndoDescription": "Du kannst dies einige Sekunden lang rückgängig machen.",
-      "undoDelete": "Rückgängig",
-      "loadError": "Verlauf konnte gerade nicht geladen werden. Bitte erneut versuchen.",
-      "loadMore": "Mehr laden",
-      "loadingMore": "Weitere werden geladen...",
       "retryableEmpty": "Transkription fehlgeschlagen. Die Aufnahme kann erneut versucht werden.",
-      "retryTranscription": "Transkription wiederholen",
-      "retryTranscriptionError": "Wiederholung der Transkription fehlgeschlagen. Bitte erneut versuchen.",
-      "retry": "Erneut versuchen"
+      "retryTranscription": "Transkription wiederholen"
     },
     "debug": {
       "logDirectory": {
@@ -793,11 +697,6 @@
         },
         "error": "Backend für Tastenkürzel konnte nicht gewechselt werden"
       },
-      "paths": {
-        "appData": "App-Daten:",
-        "models": "Modelle:",
-        "settings": "Einstellungen:"
-      },
       "pasteDelay": {
         "title": "Einfügeverzögerung",
         "description": "Wartezeit vor dem Einfügen in ms. Erhöhe sie, wenn Text abgeschnitten wird."
@@ -808,11 +707,6 @@
       }
     },
     "about": {
-      "title": "Info",
-      "version": {
-        "title": "Version",
-        "description": "Aktuelle Version von SilkScribe"
-      },
       "appDataDirectory": {
         "title": "Datenordner"
       }
@@ -937,7 +831,6 @@
   },
   "common": {
     "loading": "Wird geladen…",
-    "versionLabel": "v{{version}}",
     "cancel": "Abbrechen",
     "delete": "Löschen",
     "open": "Öffnen",
@@ -1052,68 +945,6 @@
       "title": "Diktat ist aus",
       "description": "Erlaube Mikrofon und Bedienungshilfen, um dein Tastenkürzel zu nutzen.",
       "action": "Beheben"
-    }
-  },
-  "home": {
-    "title": "Willkommen zurück",
-    "subtitle": "Deine letzten Diktate und dein Wiedergabeverlauf.",
-    "welcome": {
-      "eyebrow": "Start",
-      "title": "Willkommen zurück.",
-      "firstRunTitle": "Willkommen bei SilkScribe.",
-      "readyDescription": "Alles sieht bereit aus. Halte dein Tastenkürzel gedrückt, sprich natürlich, und SilkScribe platziert den Text genau dort, wo du ihn brauchst.",
-      "setupDescription": "Erledige die Grundlagen einmal, danach hält sich SilkScribe zurück und ist bereit, wann immer du schnell diktieren möchtest.",
-      "primaryReady": "Aufnahme-Setup prüfen",
-      "primarySetup": "Einrichtung abschließen"
-    },
-    "readiness": {
-      "shortcut": {
-        "label": "Kurzbefehl",
-        "missingValue": "Aufnahme-Kurzbefehl festlegen",
-        "action": "Bearbeiten"
-      },
-      "microphone": {
-        "label": "Mikrofon",
-        "action": "Ändern"
-      },
-      "model": {
-        "label": "Modell",
-        "missingValue": "Sprachmodell wählen",
-        "action": "Verwalten"
-      },
-      "permissions": {
-        "label": "Berechtigungen",
-        "ready": "Bereit, in deine Apps zu schreiben",
-        "needsAttention": "Erfordert Aufmerksamkeit, bevor das Diktat vollständig ist",
-        "action": "Prüfen"
-      }
-    },
-    "firstUse": {
-      "title": "Dein erstes Transkript erscheint hier.",
-      "description": "Klicke in ein Textfeld, halte dein Tastenkürzel gedrückt, sprich einen Satz und lass wieder los. SilkScribe speichert das Ergebnis hier, damit du es später ansehen kannst.",
-      "generalAction": "Grundlagen prüfen",
-      "modelsAction": "Modell wählen"
-    },
-    "activityTitle": "Letzte Aktivität",
-    "loadMore": "Mehr laden",
-    "loadingMore": "Weitere werden geladen...",
-    "stats": {
-      "streak": "Aktuelle Serie",
-      "words": "Transkribierte Wörter",
-      "wpm": "Ø Wörter/Min."
-    },
-    "empty": {
-      "title": "Noch keine Transkriptionen.",
-      "description": "Sobald du etwas aufnimmst, bewahrt SilkScribe Transkript und Audio hier automatisch auf."
-    },
-    "error": {
-      "title": "Dein Dashboard konnte nicht geladen werden.",
-      "description": "Versuche es erneut, um deine letzte Aktivität zu aktualisieren.",
-      "retry": "Erneut versuchen"
-    },
-    "days": {
-      "today": "Heute",
-      "yesterday": "Gestern"
     }
   },
   "workspace": {

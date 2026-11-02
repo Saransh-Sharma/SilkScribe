@@ -11,17 +11,6 @@
     "meetingResume": "Resume Meeting",
     "meetingStop": "Stop and Transcribe Meeting"
   },
-  "sidebar": {
-    "home": "Home",
-    "general": "General",
-    "models": "Models",
-    "advanced": "Advanced",
-    "postProcessing": "Post Process",
-    "history": "History",
-    "debug": "Debug",
-    "preferences": "Preferences",
-    "developer": "Developer"
-  },
   "onboarding": {
     "recommended": "Recommended",
     "download": "Download",
@@ -88,7 +77,6 @@
         "iEnabledIt": "I’ve turned it on",
         "checkAgain": "Check again",
         "continue": "Continue",
-        "repairAction": "Open guided repair",
         "appName": "SilkScribe",
         "statuses": {
           "checking": "Checking…",
@@ -190,56 +178,6 @@
         "loadModels": "Couldn’t load the list of engines",
         "downloadModel": "Couldn’t finish the download",
         "selectModel": "Couldn’t get your engine ready"
-      },
-      "tipsBadge": "Helpful while you wait",
-      "previousCard": "Previous tip",
-      "nextCard": "Next tip",
-      "goToCard": "Go to tip {{index}}",
-      "tips": {
-        "cards": {
-          "shortcutHabit": {
-            "title": "Hold, speak, release",
-            "description": "That is the whole rhythm.",
-            "point1": "Hold {{shortcut}} while you speak.",
-            "point2": "Release when you are done.",
-            "point3": "SilkScribe turns it into text."
-          },
-          "focusField": {
-            "title": "Focus where text should go",
-            "description": "SilkScribe inserts text at the active cursor.",
-            "point1": "Click the field first.",
-            "point2": "Keep it focused while transcribing.",
-            "point3": "Use the practice box next."
-          },
-          "shortBursts": {
-            "title": "Short dictations work best",
-            "description": "Start with one or two sentences.",
-            "point1": "Say one idea.",
-            "point2": "Release the shortcut.",
-            "point3": "Start again when you need more."
-          },
-          "quietSpace": {
-            "title": "A quiet room helps",
-            "description": "Clear speech gives cleaner text.",
-            "point1": "Use your preferred microphone.",
-            "point2": "Lower nearby noise if you can.",
-            "point3": "Speak normally."
-          },
-          "privacy": {
-            "title": "Setup stays simple",
-            "description": "SilkScribe handles the defaults.",
-            "point1": "Allow the permissions.",
-            "point2": "Let the local engine prepare.",
-            "point3": "Tune settings later."
-          },
-          "firstWin": {
-            "title": "The test is real",
-            "description": "The next screen uses the actual shortcut.",
-            "point1": "Keep the box focused.",
-            "point2": "Use your shortcut.",
-            "point3": "If text appears, SilkScribe is ready."
-          }
-        }
       }
     },
     "progress": {
@@ -367,10 +305,6 @@
       "translate": "Translate to English"
     },
     "downloadErrors": {
-      "preflightFailed": "SilkScribe couldn't check disk space before downloading: {{detail}}",
-      "insufficientSpace": "SilkScribe needs {{required}} free to download this model. {{available}} is available.",
-      "downloadFailed": "SilkScribe couldn't download the model: {{detail}}",
-      "extractionFailed": "SilkScribe couldn't extract the model: {{detail}}",
       "unknown": "The download didn’t finish."
     }
   },
@@ -699,44 +633,14 @@
       }
     },
     "history": {
-      "eyebrow": "Transcript archive",
-      "pageTitle": "Review your recent transcripts",
-      "pageDescription": "Browse what SilkScribe captured, replay audio, and save anything you want to keep close.",
-      "openFolder": "Open Recordings Folder",
-      "exportMarkdown": "Export Markdown",
-      "exportJson": "Export JSON",
-      "exportTitle": "Export history",
-      "exportEmpty": "There is no history to export.",
-      "exportSuccess": "History exported",
-      "exportError": "SilkScribe could not export history.",
-      "empty": "No transcriptions yet. Start recording to build your history!",
-      "emptyDescription": "Your saved transcripts and recordings will appear here after your first dictation.",
-      "emptyFiltered": "No matching transcripts.",
-      "emptyFilteredDescription": "Try a different search or switch back to All.",
-      "searchPlaceholder": "Search history",
-      "filters": {
-        "all": "All",
-        "saved": "Saved",
-        "failed": "Failed"
-      },
       "copyToClipboard": "Copy transcription to clipboard",
       "copyAsMarkdown": "Copy transcription as Markdown",
       "copySuccess": "Copied to clipboard",
-      "copyError": "SilkScribe could not copy this transcript.",
       "save": "Save transcription",
       "unsave": "Remove from saved",
       "delete": "Delete entry",
-      "deleteError": "Failed to delete entry. Please try again.",
-      "deleteQueued": "Entry deleted",
-      "deleteUndoDescription": "You can undo this for a few seconds.",
-      "undoDelete": "Undo",
-      "loadError": "Unable to load history right now. Please try again.",
-      "loadMore": "Load more",
-      "loadingMore": "Loading more...",
       "retryableEmpty": "Transcription failed. The recording is available to retry.",
-      "retryTranscription": "Retry transcription",
-      "retryTranscriptionError": "Failed to retry transcription. Please try again.",
-      "retry": "Retry"
+      "retryTranscription": "Retry transcription"
     },
     "debug": {
       "logDirectory": {
@@ -793,11 +697,6 @@
         },
         "error": "Couldn’t switch shortcut backend"
       },
-      "paths": {
-        "appData": "App Data:",
-        "models": "Models:",
-        "settings": "Settings:"
-      },
       "pasteDelay": {
         "title": "Paste delay",
         "description": "Wait before pasting, in ms. Raise it if pastes get cut off."
@@ -808,11 +707,6 @@
       }
     },
     "about": {
-      "title": "About",
-      "version": {
-        "title": "Version",
-        "description": "Current version of SilkScribe"
-      },
       "appDataDirectory": {
         "title": "Data folder"
       }
@@ -937,7 +831,6 @@
   },
   "common": {
     "loading": "Loading…",
-    "versionLabel": "v{{version}}",
     "cancel": "Cancel",
     "delete": "Delete",
     "open": "Open",
@@ -1052,68 +945,6 @@
       "title": "Dictation is off",
       "description": "Allow Microphone and Accessibility access to use your shortcut.",
       "action": "Fix this"
-    }
-  },
-  "home": {
-    "title": "Welcome back",
-    "subtitle": "Your recent dictation activity and listening history.",
-    "welcome": {
-      "eyebrow": "Home",
-      "title": "Welcome back.",
-      "firstRunTitle": "Welcome to SilkScribe.",
-      "readyDescription": "Everything looks ready. Hold your shortcut, speak naturally, and SilkScribe will place the text where you need it.",
-      "setupDescription": "Finish the essentials once, then SilkScribe stays out of your way and is ready whenever you need quick dictation.",
-      "primaryReady": "Review recording setup",
-      "primarySetup": "Finish setup"
-    },
-    "readiness": {
-      "shortcut": {
-        "label": "Shortcut",
-        "missingValue": "Set your recording shortcut",
-        "action": "Edit"
-      },
-      "microphone": {
-        "label": "Microphone",
-        "action": "Change"
-      },
-      "model": {
-        "label": "Model",
-        "missingValue": "Choose a speech model",
-        "action": "Manage"
-      },
-      "permissions": {
-        "label": "Permissions",
-        "ready": "Ready to type into your apps",
-        "needsAttention": "Needs attention before dictation is complete",
-        "action": "Review"
-      }
-    },
-    "firstUse": {
-      "title": "Your first transcript will show up here.",
-      "description": "Click into a text field, hold your shortcut, speak a sentence, then release. SilkScribe will save the result here so you can revisit it later.",
-      "generalAction": "Check basics",
-      "modelsAction": "Pick a model"
-    },
-    "activityTitle": "Recent activity",
-    "loadMore": "Load more",
-    "loadingMore": "Loading more...",
-    "stats": {
-      "streak": "Current streak",
-      "words": "Words transcribed",
-      "wpm": "Average WPM"
-    },
-    "empty": {
-      "title": "No recent transcriptions yet.",
-      "description": "Once you record something, SilkScribe will keep the transcript and audio here automatically."
-    },
-    "error": {
-      "title": "Couldn't load your dashboard.",
-      "description": "Try again to refresh your recent activity.",
-      "retry": "Retry"
-    },
-    "days": {
-      "today": "Today",
-      "yesterday": "Yesterday"
     }
   },
   "workspace": {

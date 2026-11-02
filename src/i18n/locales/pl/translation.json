@@ -11,17 +11,6 @@
     "meetingResume": "Wznów spotkanie",
     "meetingStop": "Zatrzymaj i transkrybuj spotkanie"
   },
-  "sidebar": {
-    "home": "Strona główna",
-    "general": "Ogólne",
-    "models": "Modele",
-    "advanced": "Zaawansowane",
-    "postProcessing": "Postproces",
-    "history": "Historia",
-    "debug": "Debugowanie",
-    "preferences": "Preferencje",
-    "developer": "Deweloper"
-  },
   "onboarding": {
     "recommended": "Polecane",
     "download": "Pobierz",
@@ -88,7 +77,6 @@
         "iEnabledIt": "Gotowe, włączone",
         "checkAgain": "Sprawdź ponownie",
         "continue": "Dalej",
-        "repairAction": "Otwórz przewodnik naprawy",
         "appName": "SilkScribe",
         "statuses": {
           "checking": "Sprawdzanie…",
@@ -190,56 +178,6 @@
         "loadModels": "Nie udało się wczytać listy silników",
         "downloadModel": "Nie udało się dokończyć pobierania",
         "selectModel": "Nie udało się przygotować silnika"
-      },
-      "tipsBadge": "Przydatne podczas oczekiwania",
-      "previousCard": "Poprzednia wskazówka",
-      "nextCard": "Następna wskazówka",
-      "goToCard": "Przejdź do wskazówki {{index}}",
-      "tips": {
-        "cards": {
-          "shortcutHabit": {
-            "title": "Jeden skrót, jeden szybki nawyk",
-            "description": "SilkScribe opiera się na bardzo prostym rytmie: przytrzymaj, mów, puść.",
-            "point1": "Przytrzymaj {{shortcut}}, gdy mówisz.",
-            "point2": "Puść, gdy skończysz.",
-            "point3": "SilkScribe od razu zamieni ten krótki fragment w tekst."
-          },
-          "focusField": {
-            "title": "Zawsze ustaw fokus tam, gdzie ma trafić tekst",
-            "description": "SilkScribe wysyła wynik do pola, które jest aktywne po zakończeniu transkrypcji.",
-            "point1": "Kliknij pole tekstowe, którego chcesz użyć, zanim zaczniesz mówić.",
-            "point2": "Utrzymuj fokus na tym polu do końca transkrypcji.",
-            "point3": "Podczas onboardingu udostępniamy do tego specjalne pole testowe."
-          },
-          "shortBursts": {
-            "title": "Krótkie fragmenty wydają się najszybsze",
-            "description": "Nowi użytkownicy zwykle uzyskują najczystsze pierwsze wyniki, gdy każda wypowiedź jest krótka.",
-            "point1": "Spróbuj mówić po jednym lub dwóch zdaniach.",
-            "point2": "Rób naturalne pauzy między myślami.",
-            "point3": "Możesz od razu nagrać kolejny krótki fragment."
-          },
-          "quietSpace": {
-            "title": "Cichsze otoczenie ułatwia pierwszy sukces",
-            "description": "SilkScribe działa najlepiej, gdy Twój głos wyraźnie wyróżnia się na tle otoczenia.",
-            "point1": "Jeśli możesz, użyj mikrofonu, który zwykle preferujesz.",
-            "point2": "Utrzymuj wentylatory, głośniki i rozmowy w tle tak cicho, jak to możliwe.",
-            "point3": "Mów równym, naturalnym tempem."
-          },
-          "privacy": {
-            "title": "Konfiguracja skupia się na tym, co najważniejsze",
-            "description": "Ten onboarding unika dodatkowej konfiguracji, aby szybciej doprowadzić Cię do pierwszej działającej transkrypcji.",
-            "point1": "Uprawnienia są najpierw, bo są kluczowe dla poprawnego działania aplikacji.",
-            "point2": "Silnik mowy jest wybierany automatycznie w tle.",
-            "point3": "Ustawienia dopracujesz później, gdy podstawowy przepływ już zadziała."
-          },
-          "firstWin": {
-            "title": "Następny ekran nie jest udawaną demonstracją",
-            "description": "Za chwilę wypróbujesz prawdziwą transkrypcję push-to-talk w aplikacji.",
-            "point1": "Utrzymuj fokus na polu testowym.",
-            "point2": "Użyj swojego normalnego skrótu dokładnie tak, jak będziesz go używać później.",
-            "point3": "Jeśli tekst pojawi się w polu, SilkScribe jest gotowy do prawdziwej pracy."
-          }
-        }
       }
     },
     "progress": {
@@ -367,10 +305,6 @@
       "translate": "Tłumacz na angielski"
     },
     "downloadErrors": {
-      "preflightFailed": "SilkScribe nie mógł sprawdzić miejsca na dysku przed pobraniem: {{detail}}",
-      "insufficientSpace": "SilkScribe potrzebuje {{required}} wolnego miejsca, aby pobrać ten model. Dostępne jest {{available}}.",
-      "downloadFailed": "SilkScribe nie mógł pobrać modelu: {{detail}}",
-      "extractionFailed": "SilkScribe nie mógł rozpakować modelu: {{detail}}",
       "unknown": "Pobieranie nie zostało ukończone."
     }
   },
@@ -699,44 +633,14 @@
       }
     },
     "history": {
-      "eyebrow": "Archiwum transkrypcji",
-      "pageTitle": "Przejrzyj swoje niedawne transkrypcje",
-      "pageDescription": "Przeglądaj to, co uchwycił SilkScribe, odtwarzaj dźwięk i zapisuj wszystko, co chcesz mieć pod ręką.",
-      "openFolder": "Otwórz folder nagrań",
-      "exportMarkdown": "Eksportuj Markdown",
-      "exportJson": "Eksportuj JSON",
-      "exportTitle": "Eksportuj historię",
-      "exportEmpty": "Brak historii do wyeksportowania.",
-      "exportSuccess": "Wyeksportowano historię",
-      "exportError": "SilkScribe nie mógł wyeksportować historii.",
-      "empty": "Brak transkrypcji. Rozpocznij nagrywanie, aby zbudować historię!",
-      "emptyDescription": "Twoje zapisane transkrypcje i nagrania pojawią się tutaj po pierwszym dyktowaniu.",
-      "emptyFiltered": "Brak pasujących transkrypcji.",
-      "emptyFilteredDescription": "Spróbuj innego wyszukiwania lub wróć do Wszystkie.",
-      "searchPlaceholder": "Szukaj w historii",
-      "filters": {
-        "all": "Wszystkie",
-        "saved": "Zapisane",
-        "failed": "Nieudane"
-      },
       "copyToClipboard": "Kopiuj transkrypcję do schowka",
       "copyAsMarkdown": "Kopiuj transkrypcję jako Markdown",
       "copySuccess": "Skopiowano do schowka",
-      "copyError": "SilkScribe nie mógł skopiować tej transkrypcji.",
       "save": "Zapisz transkrypcję",
       "unsave": "Usuń z zapisanych",
       "delete": "Usuń wpis",
-      "deleteError": "Nie udało się usunąć wpisu. Spróbuj ponownie.",
-      "deleteQueued": "Usunięto wpis",
-      "deleteUndoDescription": "Możesz to cofnąć przez kilka sekund.",
-      "undoDelete": "Cofnij",
-      "loadError": "Nie można teraz załadować historii. Spróbuj ponownie.",
-      "loadMore": "Załaduj więcej",
-      "loadingMore": "Ładowanie...",
       "retryableEmpty": "Transkrypcja nie powiodła się. Nagranie jest dostępne do ponowienia.",
-      "retryTranscription": "Ponów transkrypcję",
-      "retryTranscriptionError": "Nie udało się ponowić transkrypcji. Spróbuj ponownie.",
-      "retry": "Ponów"
+      "retryTranscription": "Ponów transkrypcję"
     },
     "debug": {
       "logDirectory": {
@@ -793,11 +697,6 @@
         },
         "error": "Nie udało się zmienić obsługi skrótów"
       },
-      "paths": {
-        "appData": "Dane aplikacji:",
-        "models": "Modele:",
-        "settings": "Ustawienia:"
-      },
       "pasteDelay": {
         "title": "Opóźnienie wklejania",
         "description": "Czas oczekiwania przed wklejeniem w ms. Zwiększ go, jeśli wklejany tekst jest ucinany."
@@ -808,11 +707,6 @@
       }
     },
     "about": {
-      "title": "O programie",
-      "version": {
-        "title": "Wersja",
-        "description": "Aktualna wersja SilkScribe"
-      },
       "appDataDirectory": {
         "title": "Folder danych"
       }
@@ -939,7 +833,6 @@
   },
   "common": {
     "loading": "Wczytywanie…",
-    "versionLabel": "v{{version}}",
     "cancel": "Anuluj",
     "delete": "Usuń",
     "open": "Otwórz",
@@ -1054,68 +947,6 @@
       "title": "Dyktowanie jest wyłączone",
       "description": "Zezwól na dostęp do Mikrofonu i Dostępności, aby używać skrótu.",
       "action": "Napraw"
-    }
-  },
-  "home": {
-    "title": "Witaj ponownie",
-    "subtitle": "Twoja niedawna aktywność dyktowania i historia odtwarzania.",
-    "welcome": {
-      "eyebrow": "Start",
-      "title": "Witaj ponownie.",
-      "firstRunTitle": "Witaj w SilkScribe.",
-      "readyDescription": "Wygląda na to, że wszystko gotowe. Przytrzymaj skrót, mów naturalnie, a SilkScribe umieści tekst tam, gdzie go potrzebujesz.",
-      "setupDescription": "Ustaw podstawy raz, a potem SilkScribe nie będzie przeszkadzać i będzie gotowy, gdy tylko potrzebujesz szybkiego dyktowania.",
-      "primaryReady": "Przejrzyj konfigurację nagrywania",
-      "primarySetup": "Zakończ konfigurację"
-    },
-    "readiness": {
-      "shortcut": {
-        "label": "Skrót",
-        "missingValue": "Ustaw swój skrót nagrywania",
-        "action": "Edytuj"
-      },
-      "microphone": {
-        "label": "Mikrofon",
-        "action": "Zmień"
-      },
-      "model": {
-        "label": "Model",
-        "missingValue": "Wybierz model mowy",
-        "action": "Zarządzaj"
-      },
-      "permissions": {
-        "label": "Uprawnienia",
-        "ready": "Gotowe do wpisywania tekstu w Twoich aplikacjach",
-        "needsAttention": "Wymaga uwagi, zanim dyktowanie będzie kompletne",
-        "action": "Przejrzyj"
-      }
-    },
-    "firstUse": {
-      "title": "Twoja pierwsza transkrypcja pojawi się tutaj.",
-      "description": "Kliknij w pole tekstowe, przytrzymaj swój skrót, wypowiedz zdanie i puść. SilkScribe zapisze wynik tutaj, abyś mógł do niego wrócić później.",
-      "generalAction": "Sprawdź podstawy",
-      "modelsAction": "Wybierz model"
-    },
-    "activityTitle": "Niedawna aktywność",
-    "loadMore": "Załaduj więcej",
-    "loadingMore": "Ładowanie...",
-    "stats": {
-      "streak": "Bieżąca seria",
-      "words": "Przepisane słowa",
-      "wpm": "Średnie słowa/min"
-    },
-    "empty": {
-      "title": "Brak jeszcze niedawnych transkrypcji.",
-      "description": "Gdy tylko coś nagrasz, SilkScribe automatycznie zachowa tu transkrypcję i dźwięk."
-    },
-    "error": {
-      "title": "Nie udało się załadować pulpitu.",
-      "description": "Spróbuj ponownie, aby odświeżyć niedawną aktywność.",
-      "retry": "Ponów"
-    },
-    "days": {
-      "today": "Dziś",
-      "yesterday": "Wczoraj"
     }
   },
   "workspace": {

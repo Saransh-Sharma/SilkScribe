@@ -11,17 +11,6 @@
     "meetingResume": "Toplantıyı Sürdür",
     "meetingStop": "Toplantıyı Durdur ve Yazıya Dök"
   },
-  "sidebar": {
-    "home": "Ana Sayfa",
-    "general": "Genel",
-    "models": "Modeller",
-    "advanced": "Gelişmiş",
-    "postProcessing": "Son İşlem",
-    "history": "Geçmiş",
-    "debug": "Hata Ayıklama",
-    "preferences": "Tercihler",
-    "developer": "Geliştirici"
-  },
   "onboarding": {
     "recommended": "Önerilen",
     "download": "İndir",
@@ -88,7 +77,6 @@
         "iEnabledIt": "Açtım",
         "checkAgain": "Tekrar kontrol et",
         "continue": "Devam et",
-        "repairAction": "Rehberli onarımı aç",
         "appName": "SilkScribe",
         "statuses": {
           "checking": "Denetleniyor…",
@@ -190,56 +178,6 @@
         "loadModels": "Motor listesi yüklenemedi",
         "downloadModel": "İndirme tamamlanamadı",
         "selectModel": "Motorun hazırlanamadı"
-      },
-      "tipsBadge": "Beklerken işine yarayacak",
-      "previousCard": "Önceki ipucu",
-      "nextCard": "Sonraki ipucu",
-      "goToCard": "{{index}} numaralı ipucuna git",
-      "tips": {
-        "cards": {
-          "shortcutHabit": {
-            "title": "Bir kısayol, hızlı bir alışkanlık",
-            "description": "SilkScribe çok basit bir ritim üzerine kurulu: basılı tut, konuş, bırak.",
-            "point1": "Konuşurken {{shortcut}} tuşunu basılı tut.",
-            "point2": "İşin bitince bırak.",
-            "point3": "SilkScribe bu kısa kaydı hemen metne çevirir."
-          },
-          "focusField": {
-            "title": "Metnin gideceği yeri her zaman odakta tut",
-            "description": "SilkScribe sonucu, yazıya dökme bittiğinde etkin olan alana gönderir.",
-            "point1": "Konuşmaya başlamadan önce istediğin metin kutusuna tıkla.",
-            "point2": "Yazıya dökme bitene kadar o alan odakta kalsın.",
-            "point3": "Onboarding sırasında bunun için özel bir deneme kutusu sunuyoruz."
-          },
-          "shortBursts": {
-            "title": "Kısa bölümler daha hızlı hissettirir",
-            "description": "Yeni kullanıcılar genelde her kaydı kısa tuttuklarında en temiz ilk sonuçları alır.",
-            "point1": "Bir seferde bir veya iki cümle dene.",
-            "point2": "Fikirler arasında doğal duraklamalar ver.",
-            "point3": "İstersen hemen ardından bir kısa kayıt daha yapabilirsin."
-          },
-          "quietSpace": {
-            "title": "Daha sessiz bir ortam ilk başarıyı kolaylaştırır",
-            "description": "SilkScribe en iyi, sesin etraftaki ortamdan net biçimde ayrıştığında çalışır.",
-            "point1": "Varsa normalde tercih ettiğin mikrofonu kullan.",
-            "point2": "Fanları, hoparlörleri veya arka plan konuşmalarını mümkün olduğunca azalt.",
-            "point3": "Sabit ve doğal bir tempoda konuş."
-          },
-          "privacy": {
-            "title": "Kurulumun temel şeylere odaklanır",
-            "description": "Bu onboarding, çalışan ilk yazıya dökmeye daha hızlı ulaşman için ekstra yapılandırmadan kaçınır.",
-            "point1": "İzinler önce gelir çünkü uygulamanın çalışması için kritiktir.",
-            "point2": "Konuşma motoru arka planda otomatik olarak seçilir.",
-            "point3": "Temel akış çalıştıktan sonra ayarları daha sonra ince ayar yapabilirsin."
-          },
-          "firstWin": {
-            "title": "Sonraki ekran sahte bir demo değil",
-            "description": "Gerçek uygulamanın içinde gerçek bir bas-konuş yazıya dökme deneyeceksin.",
-            "point1": "Deneme kutusunu odakta tut.",
-            "point2": "Normal kısayolunu daha sonra kullanacağın şekilde aynen kullan.",
-            "point3": "Kutuda metin görünürse SilkScribe gerçek kullanım için hazırdır."
-          }
-        }
       }
     },
     "progress": {
@@ -367,10 +305,6 @@
       "translate": "İngilizce'ye çevir"
     },
     "downloadErrors": {
-      "preflightFailed": "SilkScribe indirmeden önce disk alanını kontrol edemedi: {{detail}}",
-      "insufficientSpace": "SilkScribe bu modeli indirmek için {{required}} boş alana ihtiyaç duyuyor. Kullanılabilir alan {{available}}.",
-      "downloadFailed": "SilkScribe modeli indiremedi: {{detail}}",
-      "extractionFailed": "SilkScribe modeli çıkaramadı: {{detail}}",
       "unknown": "İndirme tamamlanmadı."
     }
   },
@@ -699,44 +633,14 @@
       }
     },
     "history": {
-      "eyebrow": "Transkripsiyon arşivi",
-      "pageTitle": "Son transkripsiyonlarını gözden geçir",
-      "pageDescription": "SilkScribe'ın yakaladıklarına göz at, sesi yeniden çal ve yakında tutmak istediğin her şeyi kaydet.",
-      "openFolder": "Kayıtlar Klasörünü Aç",
-      "exportMarkdown": "Markdown olarak dışa aktar",
-      "exportJson": "JSON olarak dışa aktar",
-      "exportTitle": "Geçmişi dışa aktar",
-      "exportEmpty": "Dışa aktarılacak geçmiş yok.",
-      "exportSuccess": "Geçmiş dışa aktarıldı",
-      "exportError": "SilkScribe geçmişi dışa aktaramadı.",
-      "empty": "Henüz transkripsiyon yok. Geçmişinizi oluşturmak için kayda başlayın!",
-      "emptyDescription": "Kaydettiğin transkripsiyonlar ve kayıtlar ilk diktenden sonra burada görünecek.",
-      "emptyFiltered": "Eşleşen transkripsiyon yok.",
-      "emptyFilteredDescription": "Farklı bir arama dene ya da Tümü'ne geri dön.",
-      "searchPlaceholder": "Geçmişte ara",
-      "filters": {
-        "all": "Tümü",
-        "saved": "Kaydedilenler",
-        "failed": "Başarısız"
-      },
       "copyToClipboard": "Transkripsiyonu panoya kopyala",
       "copyAsMarkdown": "Transkripsiyonu Markdown olarak kopyala",
       "copySuccess": "Panoya kopyalandı",
-      "copyError": "SilkScribe bu transkripsiyonu kopyalayamadı.",
       "save": "Transkripsiyonu kaydet",
       "unsave": "Kaydedilenlerden kaldır",
       "delete": "Kaydı sil",
-      "deleteError": "Kayıt silinemedi. Lütfen tekrar deneyin.",
-      "deleteQueued": "Kayıt silindi",
-      "deleteUndoDescription": "Birkaç saniye boyunca geri alabilirsin.",
-      "undoDelete": "Geri al",
-      "loadError": "Geçmiş şu anda yüklenemedi. Lütfen tekrar deneyin.",
-      "loadMore": "Daha fazla yükle",
-      "loadingMore": "Yükleniyor...",
       "retryableEmpty": "Transkripsiyon başarısız. Kayıt yeniden denenebilir.",
-      "retryTranscription": "Transkripsiyonu yeniden dene",
-      "retryTranscriptionError": "Transkripsiyon yeniden denemesi başarısız. Lütfen tekrar deneyin.",
-      "retry": "Yeniden dene"
+      "retryTranscription": "Transkripsiyonu yeniden dene"
     },
     "debug": {
       "logDirectory": {
@@ -793,11 +697,6 @@
         },
         "error": "Kısayol altyapısı değiştirilemedi"
       },
-      "paths": {
-        "appData": "Uygulama Verileri:",
-        "models": "Modeller:",
-        "settings": "Ayarlar:"
-      },
       "pasteDelay": {
         "title": "Yapıştırma gecikmesi",
         "description": "Yapıştırmadan önce bekleme süresi (ms). Yapıştırılan metin kesiliyorsa artır."
@@ -808,11 +707,6 @@
       }
     },
     "about": {
-      "title": "Hakkında",
-      "version": {
-        "title": "Sürüm",
-        "description": "SilkScribe'nin mevcut sürümü"
-      },
       "appDataDirectory": {
         "title": "Veri klasörü"
       }
@@ -937,7 +831,6 @@
   },
   "common": {
     "loading": "Yükleniyor…",
-    "versionLabel": "v{{version}}",
     "cancel": "İptal",
     "delete": "Sil",
     "open": "Aç",
@@ -1052,68 +945,6 @@
       "title": "Dikte kapalı",
       "description": "Kısayolunu kullanmak için Mikrofon ve Erişilebilirlik erişimine izin ver.",
       "action": "Düzelt"
-    }
-  },
-  "home": {
-    "title": "Tekrar hoş geldin",
-    "subtitle": "Son dikte etkinliğin ve dinleme geçmişin.",
-    "welcome": {
-      "eyebrow": "Ana sayfa",
-      "title": "Tekrar hoş geldin.",
-      "firstRunTitle": "SilkScribe'a hoş geldin.",
-      "readyDescription": "Her şey hazır görünüyor. Kısayolunu basılı tut, doğal konuş; SilkScribe metni ihtiyaç duyduğun yere yerleştirir.",
-      "setupDescription": "Temelleri bir kez tamamla; sonra SilkScribe yolundan çekilir ve hızlı dikte gerektiğinde her zaman hazırdır.",
-      "primaryReady": "Kayıt kurulumunu gözden geçir",
-      "primarySetup": "Kurulumu tamamla"
-    },
-    "readiness": {
-      "shortcut": {
-        "label": "Kısayol",
-        "missingValue": "Kayıt kısayolunu ayarla",
-        "action": "Düzenle"
-      },
-      "microphone": {
-        "label": "Mikrofon",
-        "action": "Değiştir"
-      },
-      "model": {
-        "label": "Model",
-        "missingValue": "Bir konuşma modeli seç",
-        "action": "Yönet"
-      },
-      "permissions": {
-        "label": "İzinler",
-        "ready": "Uygulamalarına metin yazmaya hazır",
-        "needsAttention": "Dikte tamamlanmadan önce ilgilenilmesi gerekiyor",
-        "action": "Gözden geçir"
-      }
-    },
-    "firstUse": {
-      "title": "İlk transkripsiyonun burada görünecek.",
-      "description": "Bir metin alanına tıkla, kısayolunu basılı tut, bir cümle söyle ve bırak. SilkScribe sonucu burada kaydeder, böylece daha sonra tekrar bakabilirsin.",
-      "generalAction": "Temelleri kontrol et",
-      "modelsAction": "Model seç"
-    },
-    "activityTitle": "Son etkinlik",
-    "loadMore": "Daha fazla yükle",
-    "loadingMore": "Yükleniyor...",
-    "stats": {
-      "streak": "Mevcut seri",
-      "words": "Yazıya dökülen sözcük",
-      "wpm": "Ortalama DKS"
-    },
-    "empty": {
-      "title": "Henüz son transkripsiyon yok.",
-      "description": "Bir şey kaydettiğinde SilkScribe transkripsiyonu ve sesi burada otomatik olarak saklar."
-    },
-    "error": {
-      "title": "Panonuz yüklenemedi.",
-      "description": "Son etkinliğini yenilemek için tekrar dene.",
-      "retry": "Yeniden dene"
-    },
-    "days": {
-      "today": "Bugün",
-      "yesterday": "Dün"
     }
   },
   "workspace": {

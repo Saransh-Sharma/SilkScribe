@@ -11,17 +11,6 @@
     "meetingResume": "Tiếp tục cuộc họp",
     "meetingStop": "Dừng và chép lời cuộc họp"
   },
-  "sidebar": {
-    "home": "Trang chủ",
-    "general": "Chung",
-    "models": "Mô hình",
-    "advanced": "Nâng cao",
-    "postProcessing": "Xử lý sau",
-    "history": "Lịch sử",
-    "debug": "Gỡ lỗi",
-    "preferences": "Tùy chọn",
-    "developer": "Nhà phát triển"
-  },
   "onboarding": {
     "recommended": "Đề xuất",
     "download": "Tải xuống",
@@ -88,7 +77,6 @@
         "iEnabledIt": "Tôi đã bật",
         "checkAgain": "Kiểm tra lại",
         "continue": "Tiếp tục",
-        "repairAction": "Mở sửa chữa có hướng dẫn",
         "appName": "SilkScribe",
         "statuses": {
           "checking": "Đang kiểm tra…",
@@ -190,56 +178,6 @@
         "loadModels": "Không tải được danh sách công cụ",
         "downloadModel": "Không hoàn tất được việc tải xuống",
         "selectModel": "Không chuẩn bị được công cụ của bạn"
-      },
-      "tipsBadge": "Hữu ích trong lúc chờ",
-      "previousCard": "Mẹo trước",
-      "nextCard": "Mẹo tiếp theo",
-      "goToCard": "Đến mẹo {{index}}",
-      "tips": {
-        "cards": {
-          "shortcutHabit": {
-            "title": "One shortcut, one quick habit",
-            "description": "SilkScribe is built around a very simple rhythm: hold, speak, release.",
-            "point1": "Giữ {{shortcut}} trong khi nói.",
-            "point2": "Release it when you are done talking.",
-            "point3": "SilkScribe turns that short burst into text right away."
-          },
-          "focusField": {
-            "title": "Always focus the place you want text to go",
-            "description": "SilkScribe sends the result into the field that is active when transcription finishes.",
-            "point1": "Click into the text box you want before you start talking.",
-            "point2": "Keep that field focused until the transcription finishes.",
-            "point3": "During onboarding, we provide a practice box for this exact reason."
-          },
-          "shortBursts": {
-            "title": "Short bursts feel fastest",
-            "description": "New users usually get the cleanest first results when they keep each recording brief.",
-            "point1": "Try one or two sentences at a time.",
-            "point2": "Pause naturally between ideas.",
-            "point3": "You can always record another burst immediately after."
-          },
-          "quietSpace": {
-            "title": "A quieter space makes the first win easier",
-            "description": "SilkScribe works best when your voice stands out clearly from the room around you.",
-            "point1": "Use the microphone you normally prefer if you have one.",
-            "point2": "Keep fans, speakers, or background chatter as low as you can.",
-            "point3": "Speak at a steady, normal pace."
-          },
-          "privacy": {
-            "title": "Your setup stays on the essentials",
-            "description": "This onboarding avoids extra configuration so you can get to a working first transcription faster.",
-            "point1": "Permissions come first because they are critical to the app working correctly.",
-            "point2": "The speech engine is chosen automatically in the background.",
-            "point3": "You can fine-tune settings later after you have the core workflow working."
-          },
-          "firstWin": {
-            "title": "The next screen is not a fake demo",
-            "description": "You are about to try a real push-to-talk transcription inside the actual app.",
-            "point1": "Keep the practice box focused.",
-            "point2": "Use your normal shortcut exactly the way you will use it later.",
-            "point3": "If text appears in the box, SilkScribe is ready for real work."
-          }
-        }
       }
     },
     "progress": {
@@ -367,10 +305,6 @@
       "translate": "Dịch sang tiếng Anh"
     },
     "downloadErrors": {
-      "preflightFailed": "SilkScribe không thể kiểm tra dung lượng ổ đĩa trước khi tải xuống: {{detail}}",
-      "insufficientSpace": "SilkScribe cần {{required}} dung lượng trống để tải mô hình này. Hiện có {{available}}.",
-      "downloadFailed": "SilkScribe không thể tải mô hình xuống: {{detail}}",
-      "extractionFailed": "SilkScribe không thể giải nén mô hình: {{detail}}",
       "unknown": "Tải xuống chưa xong."
     }
   },
@@ -699,44 +633,14 @@
       }
     },
     "history": {
-      "eyebrow": "Kho lưu bản phiên âm",
-      "pageTitle": "Xem lại các bản phiên âm gần đây của bạn",
-      "pageDescription": "Duyệt những gì SilkScribe đã ghi lại, phát lại âm thanh và lưu bất cứ thứ gì bạn muốn giữ bên mình.",
-      "openFolder": "Mở thư mục ghi âm",
-      "exportMarkdown": "Xuất Markdown",
-      "exportJson": "Xuất JSON",
-      "exportTitle": "Xuất lịch sử",
-      "exportEmpty": "Không có lịch sử để xuất.",
-      "exportSuccess": "Đã xuất lịch sử",
-      "exportError": "SilkScribe không thể xuất lịch sử.",
-      "empty": "Chưa có bản ghi nào. Bắt đầu ghi âm để xây dựng lịch sử của bạn!",
-      "emptyDescription": "Các bản phiên âm và bản ghi đã lưu của bạn sẽ hiện ở đây sau lần đọc chính tả đầu tiên.",
-      "emptyFiltered": "Không có bản phiên âm phù hợp.",
-      "emptyFilteredDescription": "Thử tìm kiếm khác hoặc quay lại Tất cả.",
-      "searchPlaceholder": "Tìm trong lịch sử",
-      "filters": {
-        "all": "Tất cả",
-        "saved": "Đã lưu",
-        "failed": "Thất bại"
-      },
       "copyToClipboard": "Sao chép bản ghi vào clipboard",
       "copyAsMarkdown": "Sao chép bản phiên âm dưới dạng Markdown",
       "copySuccess": "Đã sao chép vào bảng nhớ tạm",
-      "copyError": "SilkScribe không thể sao chép bản phiên âm này.",
       "save": "Lưu bản ghi",
       "unsave": "Xóa khỏi đã lưu",
       "delete": "Xóa mục",
-      "deleteError": "Không thể xóa mục. Vui lòng thử lại.",
-      "deleteQueued": "Đã xóa mục",
-      "deleteUndoDescription": "Bạn có thể hoàn tác trong vài giây.",
-      "undoDelete": "Hoàn tác",
-      "loadError": "Không thể tải lịch sử lúc này. Vui lòng thử lại.",
-      "loadMore": "Tải thêm",
-      "loadingMore": "Đang tải...",
       "retryableEmpty": "Phiên âm thất bại. Bản ghi có thể thử lại.",
-      "retryTranscription": "Thử lại phiên âm",
-      "retryTranscriptionError": "Thử lại phiên âm thất bại. Vui lòng thử lại.",
-      "retry": "Thử lại"
+      "retryTranscription": "Thử lại phiên âm"
     },
     "debug": {
       "logDirectory": {
@@ -793,11 +697,6 @@
         },
         "error": "Không chuyển được cơ chế phím tắt"
       },
-      "paths": {
-        "appData": "Dữ liệu ứng dụng:",
-        "models": "Mô hình:",
-        "settings": "Cài đặt:"
-      },
       "pasteDelay": {
         "title": "Độ trễ khi dán",
         "description": "Thời gian chờ trước khi dán, tính bằng ms. Tăng lên nếu văn bản bị cắt."
@@ -808,11 +707,6 @@
       }
     },
     "about": {
-      "title": "Giới thiệu",
-      "version": {
-        "title": "Phiên bản",
-        "description": "Phiên bản hiện tại của SilkScribe"
-      },
       "appDataDirectory": {
         "title": "Thư mục dữ liệu"
       }
@@ -936,7 +830,6 @@
   },
   "common": {
     "loading": "Đang tải…",
-    "versionLabel": "v{{version}}",
     "cancel": "Hủy",
     "delete": "Xóa",
     "open": "Mở",
@@ -1051,68 +944,6 @@
       "title": "Đọc chính tả đang tắt",
       "description": "Cho phép quyền Micrô và Trợ năng để dùng phím tắt.",
       "action": "Khắc phục"
-    }
-  },
-  "home": {
-    "title": "Chào mừng trở lại",
-    "subtitle": "Hoạt động đọc chính tả gần đây và lịch sử phát lại của bạn.",
-    "welcome": {
-      "eyebrow": "Trang chủ",
-      "title": "Chào mừng trở lại.",
-      "firstRunTitle": "Chào mừng đến với SilkScribe.",
-      "readyDescription": "Mọi thứ có vẻ đã sẵn sàng. Giữ phím tắt, nói tự nhiên, và SilkScribe sẽ đặt văn bản vào nơi bạn cần.",
-      "setupDescription": "Hoàn tất những điều cơ bản một lần, sau đó SilkScribe sẽ không làm phiền và luôn sẵn sàng mỗi khi bạn cần đọc chính tả nhanh.",
-      "primaryReady": "Xem lại thiết lập ghi âm",
-      "primarySetup": "Hoàn tất thiết lập"
-    },
-    "readiness": {
-      "shortcut": {
-        "label": "Phím tắt",
-        "missingValue": "Đặt phím tắt ghi âm của bạn",
-        "action": "Chỉnh sửa"
-      },
-      "microphone": {
-        "label": "Micrô",
-        "action": "Thay đổi"
-      },
-      "model": {
-        "label": "Mô hình",
-        "missingValue": "Chọn một mô hình giọng nói",
-        "action": "Quản lý"
-      },
-      "permissions": {
-        "label": "Quyền",
-        "ready": "Sẵn sàng gõ vào các ứng dụng của bạn",
-        "needsAttention": "Cần xử lý trước khi việc đọc chính tả hoàn tất",
-        "action": "Xem lại"
-      }
-    },
-    "firstUse": {
-      "title": "Bản phiên âm đầu tiên của bạn sẽ hiện ở đây.",
-      "description": "Nhấp vào một ô văn bản, giữ phím tắt của bạn, nói một câu rồi thả ra. SilkScribe sẽ lưu kết quả tại đây để bạn xem lại sau.",
-      "generalAction": "Kiểm tra cơ bản",
-      "modelsAction": "Chọn một mô hình"
-    },
-    "activityTitle": "Hoạt động gần đây",
-    "loadMore": "Tải thêm",
-    "loadingMore": "Đang tải...",
-    "stats": {
-      "streak": "Chuỗi hiện tại",
-      "words": "Số từ đã phiên âm",
-      "wpm": "Số từ/phút trung bình"
-    },
-    "empty": {
-      "title": "Chưa có bản phiên âm gần đây.",
-      "description": "Ngay khi bạn ghi âm điều gì đó, SilkScribe sẽ tự động lưu bản phiên âm và âm thanh tại đây."
-    },
-    "error": {
-      "title": "Không thể tải bảng điều khiển của bạn.",
-      "description": "Hãy thử lại để làm mới hoạt động gần đây của bạn.",
-      "retry": "Thử lại"
-    },
-    "days": {
-      "today": "Hôm nay",
-      "yesterday": "Hôm qua"
     }
   },
   "workspace": {

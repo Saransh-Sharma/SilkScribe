@@ -10,7 +10,6 @@ export { ToggleSwitch } from "./ToggleSwitch";
 export { Switch } from "./Switch";
 export { SettingContainer } from "./SettingContainer";
 export { SettingsGroup } from "./SettingsGroup";
-export { TextDisplay } from "./TextDisplay";
 export { Textarea } from "./Textarea";
 export { Tooltip } from "./Tooltip";
 export { AppPage } from "./AppPage";

@@ -11,17 +11,6 @@
     "meetingResume": "회의 재개",
     "meetingStop": "회의 중지 및 텍스트 변환"
   },
-  "sidebar": {
-    "home": "홈",
-    "general": "일반",
-    "models": "모델",
-    "advanced": "고급",
-    "postProcessing": "후처리",
-    "history": "히스토리",
-    "debug": "디버그",
-    "preferences": "환경설정",
-    "developer": "개발자"
-  },
   "onboarding": {
     "recommended": "추천",
     "download": "다운로드",
@@ -88,7 +77,6 @@
         "iEnabledIt": "켰습니다",
         "checkAgain": "다시 확인",
         "continue": "계속",
-        "repairAction": "단계별 복구 열기",
         "appName": "SilkScribe",
         "statuses": {
           "checking": "확인 중…",
@@ -190,56 +178,6 @@
         "loadModels": "엔진 목록을 불러오지 못했습니다",
         "downloadModel": "다운로드를 완료하지 못했습니다",
         "selectModel": "엔진을 준비하지 못했습니다"
-      },
-      "tipsBadge": "기다리는 동안 도움이 되는 팁",
-      "previousCard": "이전 팁",
-      "nextCard": "다음 팁",
-      "goToCard": "팁 {{index}}로 이동",
-      "tips": {
-        "cards": {
-          "shortcutHabit": {
-            "title": "하나의 단축키, 하나의 빠른 습관",
-            "description": "SilkScribe는 누르고, 말하고, 놓는 아주 단순한 리듬으로 동작합니다.",
-            "point1": "말하는 동안 {{shortcut}}을(를) 누른 채 유지하세요.",
-            "point2": "말이 끝나면 놓으세요.",
-            "point3": "SilkScribe가 그 짧은 발화를 바로 텍스트로 바꿉니다."
-          },
-          "focusField": {
-            "title": "텍스트가 들어갈 곳에 항상 포커스를 두세요",
-            "description": "SilkScribe는 받아쓰기가 끝나는 순간 활성화된 입력란에 결과를 넣습니다.",
-            "point1": "말하기 전에 원하는 입력란을 클릭하세요.",
-            "point2": "받아쓰기가 끝날 때까지 그 입력란에 포커스를 유지하세요.",
-            "point3": "온보딩 중에는 이를 위해 연습 상자를 제공합니다."
-          },
-          "shortBursts": {
-            "title": "짧게 말할수록 더 빠르게 느껴집니다",
-            "description": "새 사용자는 각 녹음을 짧게 유지할 때 가장 깔끔한 첫 결과를 얻는 경우가 많습니다.",
-            "point1": "한 번에 한두 문장씩 말해 보세요.",
-            "point2": "생각 사이에 자연스럽게 멈추세요.",
-            "point3": "필요하면 바로 다음 짧은 녹음을 이어서 할 수 있습니다."
-          },
-          "quietSpace": {
-            "title": "조용한 공간일수록 첫 성공이 더 쉽습니다",
-            "description": "SilkScribe는 주변보다 목소리가 분명하게 들릴 때 가장 잘 동작합니다.",
-            "point1": "가능하다면 평소 선호하는 마이크를 사용하세요.",
-            "point2": "선풍기, 스피커, 주변 대화 소리를 최대한 줄이세요.",
-            "point3": "일정하고 자연스러운 속도로 말하세요."
-          },
-          "privacy": {
-            "title": "설정은 핵심만 다룹니다",
-            "description": "이 온보딩은 불필요한 설정을 줄여 첫 번째 실사용 가능한 받아쓰기에 더 빨리 도달하도록 돕습니다.",
-            "point1": "권한은 앱이 제대로 작동하는 데 필수이므로 가장 먼저 처리합니다.",
-            "point2": "음성 엔진은 백그라운드에서 자동으로 선택됩니다.",
-            "point3": "기본 흐름이 동작한 뒤 나중에 세부 설정을 조정할 수 있습니다."
-          },
-          "firstWin": {
-            "title": "다음 화면은 가짜 데모가 아닙니다",
-            "description": "이제 실제 앱 안에서 진짜 push-to-talk 받아쓰기를 시도하게 됩니다.",
-            "point1": "연습 상자에 포커스를 유지하세요.",
-            "point2": "나중에 사용할 그대로 평소 단축키를 사용하세요.",
-            "point3": "상자에 텍스트가 나타나면 SilkScribe는 실제 사용 준비가 된 것입니다."
-          }
-        }
       }
     },
     "progress": {
@@ -367,10 +305,6 @@
       "translate": "영어로 번역"
     },
     "downloadErrors": {
-      "preflightFailed": "SilkScribe가 다운로드 전에 디스크 공간을 확인하지 못했습니다: {{detail}}",
-      "insufficientSpace": "이 모델을 다운로드하려면 {{required}}의 여유 공간이 필요합니다. 사용 가능 공간은 {{available}}입니다.",
-      "downloadFailed": "SilkScribe가 모델을 다운로드하지 못했습니다: {{detail}}",
-      "extractionFailed": "SilkScribe가 모델을 추출하지 못했습니다: {{detail}}",
       "unknown": "다운로드가 완료되지 않았습니다."
     }
   },
@@ -699,44 +633,14 @@
       }
     },
     "history": {
-      "eyebrow": "받아쓰기 보관함",
-      "pageTitle": "최근 받아쓰기 다시 보기",
-      "pageDescription": "SilkScribe가 기록한 내용을 살펴보고 오디오를 재생하며 가까이 두고 싶은 것을 저장하세요.",
-      "openFolder": "녹음 폴더 열기",
-      "exportMarkdown": "Markdown 내보내기",
-      "exportJson": "JSON 내보내기",
-      "exportTitle": "기록 내보내기",
-      "exportEmpty": "내보낼 기록이 없습니다.",
-      "exportSuccess": "기록을 내보냈습니다",
-      "exportError": "SilkScribe가 기록을 내보내지 못했습니다.",
-      "empty": "아직 변환된 내용이 없습니다. 녹음을 시작하여 히스토리를 만드세요!",
-      "emptyDescription": "저장한 받아쓰기와 녹음은 첫 받아쓰기 후 여기에 표시됩니다.",
-      "emptyFiltered": "일치하는 받아쓰기가 없습니다.",
-      "emptyFilteredDescription": "다른 검색을 시도하거나 전체로 돌아가세요.",
-      "searchPlaceholder": "기록 검색",
-      "filters": {
-        "all": "전체",
-        "saved": "저장됨",
-        "failed": "실패"
-      },
       "copyToClipboard": "녹음 내용을 클립보드에 복사",
       "copyAsMarkdown": "받아쓰기를 Markdown으로 복사",
       "copySuccess": "클립보드에 복사됨",
-      "copyError": "SilkScribe가 이 받아쓰기를 복사하지 못했습니다.",
       "save": "변환된 텍스트 저장",
       "unsave": "저장에서 제거",
       "delete": "항목 삭제",
-      "deleteError": "항목 삭제에 실패했습니다. 다시 시도해주세요.",
-      "deleteQueued": "항목이 삭제됨",
-      "deleteUndoDescription": "몇 초 동안 실행을 취소할 수 있습니다.",
-      "undoDelete": "실행 취소",
-      "loadError": "지금은 기록을 불러올 수 없습니다. 다시 시도해 주세요.",
-      "loadMore": "더 불러오기",
-      "loadingMore": "불러오는 중...",
       "retryableEmpty": "전사에 실패했습니다. 녹음을 다시 시도할 수 있습니다.",
-      "retryTranscription": "전사 다시 시도",
-      "retryTranscriptionError": "전사 다시 시도에 실패했습니다. 다시 시도해 주세요.",
-      "retry": "다시 시도"
+      "retryTranscription": "전사 다시 시도"
     },
     "debug": {
       "logDirectory": {
@@ -793,11 +697,6 @@
         },
         "error": "단축키 백엔드를 전환하지 못했습니다"
       },
-      "paths": {
-        "appData": "앱 데이터:",
-        "models": "모델:",
-        "settings": "설정:"
-      },
       "pasteDelay": {
         "title": "붙여넣기 지연",
         "description": "붙여넣기 전 대기 시간(ms)입니다. 붙여넣은 내용이 잘리면 늘리세요."
@@ -808,11 +707,6 @@
       }
     },
     "about": {
-      "title": "정보",
-      "version": {
-        "title": "버전",
-        "description": "SilkScribe의 현재 버전"
-      },
       "appDataDirectory": {
         "title": "데이터 폴더"
       }
@@ -936,7 +830,6 @@
   },
   "common": {
     "loading": "불러오는 중…",
-    "versionLabel": "v{{version}}",
     "cancel": "취소",
     "delete": "삭제",
     "open": "열기",
@@ -1051,68 +944,6 @@
       "title": "받아쓰기가 꺼져 있음",
       "description": "단축키를 사용하려면 마이크 및 손쉬운 사용 접근을 허용하세요.",
       "action": "해결하기"
-    }
-  },
-  "home": {
-    "title": "다시 오신 것을 환영합니다",
-    "subtitle": "최근 받아쓰기 활동과 재생 기록입니다.",
-    "welcome": {
-      "eyebrow": "홈",
-      "title": "다시 오신 것을 환영합니다.",
-      "firstRunTitle": "SilkScribe에 오신 것을 환영합니다.",
-      "readyDescription": "모든 준비가 된 것 같습니다. 단축키를 누른 채 자연스럽게 말하면 SilkScribe가 필요한 곳에 텍스트를 넣어 줍니다.",
-      "setupDescription": "기본 설정을 한 번만 끝내면, SilkScribe는 방해하지 않고 빠른 받아쓰기가 필요할 때 언제든 준비되어 있습니다.",
-      "primaryReady": "녹음 설정 검토",
-      "primarySetup": "설정 완료"
-    },
-    "readiness": {
-      "shortcut": {
-        "label": "단축키",
-        "missingValue": "녹음 단축키를 설정하세요",
-        "action": "편집"
-      },
-      "microphone": {
-        "label": "마이크",
-        "action": "변경"
-      },
-      "model": {
-        "label": "모델",
-        "missingValue": "음성 모델을 선택하세요",
-        "action": "관리"
-      },
-      "permissions": {
-        "label": "권한",
-        "ready": "앱에 입력할 준비가 되었습니다",
-        "needsAttention": "받아쓰기를 완료하려면 조치가 필요합니다",
-        "action": "검토"
-      }
-    },
-    "firstUse": {
-      "title": "첫 받아쓰기가 여기에 표시됩니다.",
-      "description": "텍스트 필드를 클릭하고 단축키를 누른 채 한 문장을 말한 뒤 놓으세요. SilkScribe가 결과를 여기에 저장하여 나중에 다시 볼 수 있습니다.",
-      "generalAction": "기본 사항 확인",
-      "modelsAction": "모델 선택"
-    },
-    "activityTitle": "최근 활동",
-    "loadMore": "더 불러오기",
-    "loadingMore": "불러오는 중...",
-    "stats": {
-      "streak": "현재 연속 기록",
-      "words": "받아쓴 단어 수",
-      "wpm": "평균 WPM"
-    },
-    "empty": {
-      "title": "아직 최근 받아쓰기가 없습니다.",
-      "description": "무언가를 녹음하면 SilkScribe가 받아쓰기와 오디오를 여기에 자동으로 보관합니다."
-    },
-    "error": {
-      "title": "대시보드를 불러오지 못했습니다.",
-      "description": "다시 시도하여 최근 활동을 새로고침하세요.",
-      "retry": "다시 시도"
-    },
-    "days": {
-      "today": "오늘",
-      "yesterday": "어제"
     }
   },
   "workspace": {

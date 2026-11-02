@@ -11,17 +11,6 @@
     "meetingResume": "Pokračovat ve schůzce",
     "meetingStop": "Zastavit a přepsat schůzku"
   },
-  "sidebar": {
-    "home": "Domů",
-    "general": "Obecné",
-    "models": "Modely",
-    "advanced": "Pokročilé",
-    "postProcessing": "Následné zpracování",
-    "history": "Historie",
-    "debug": "Ladění",
-    "preferences": "Předvolby",
-    "developer": "Vývojář"
-  },
   "onboarding": {
     "recommended": "Doporučeno",
     "download": "Stáhnout",
@@ -88,7 +77,6 @@
         "iEnabledIt": "Mám zapnuto",
         "checkAgain": "Zkontrolovat znovu",
         "continue": "Pokračovat",
-        "repairAction": "Otevřít průvodce opravou",
         "appName": "SilkScribe",
         "statuses": {
           "checking": "Kontrola…",
@@ -190,56 +178,6 @@
         "loadModels": "Seznam modulů se nepodařilo načíst",
         "downloadModel": "Stahování se nepodařilo dokončit",
         "selectModel": "Modul se nepodařilo připravit"
-      },
-      "tipsBadge": "Užitečné během čekání",
-      "previousCard": "Předchozí tip",
-      "nextCard": "Další tip",
-      "goToCard": "Přejít na tip {{index}}",
-      "tips": {
-        "cards": {
-          "shortcutHabit": {
-            "title": "One shortcut, one quick habit",
-            "description": "SilkScribe is built around a very simple rhythm: hold, speak, release.",
-            "point1": "Při mluvení držte {{shortcut}}.",
-            "point2": "Release it when you are done talking.",
-            "point3": "SilkScribe turns that short burst into text right away."
-          },
-          "focusField": {
-            "title": "Always focus the place you want text to go",
-            "description": "SilkScribe sends the result into the field that is active when transcription finishes.",
-            "point1": "Click into the text box you want before you start talking.",
-            "point2": "Keep that field focused until the transcription finishes.",
-            "point3": "During onboarding, we provide a practice box for this exact reason."
-          },
-          "shortBursts": {
-            "title": "Short bursts feel fastest",
-            "description": "New users usually get the cleanest first results when they keep each recording brief.",
-            "point1": "Try one or two sentences at a time.",
-            "point2": "Pause naturally between ideas.",
-            "point3": "You can always record another burst immediately after."
-          },
-          "quietSpace": {
-            "title": "A quieter space makes the first win easier",
-            "description": "SilkScribe works best when your voice stands out clearly from the room around you.",
-            "point1": "Use the microphone you normally prefer if you have one.",
-            "point2": "Keep fans, speakers, or background chatter as low as you can.",
-            "point3": "Speak at a steady, normal pace."
-          },
-          "privacy": {
-            "title": "Your setup stays on the essentials",
-            "description": "This onboarding avoids extra configuration so you can get to a working first transcription faster.",
-            "point1": "Permissions come first because they are critical to the app working correctly.",
-            "point2": "The speech engine is chosen automatically in the background.",
-            "point3": "You can fine-tune settings later after you have the core workflow working."
-          },
-          "firstWin": {
-            "title": "The next screen is not a fake demo",
-            "description": "You are about to try a real push-to-talk transcription inside the actual app.",
-            "point1": "Keep the practice box focused.",
-            "point2": "Use your normal shortcut exactly the way you will use it later.",
-            "point3": "If text appears in the box, SilkScribe is ready for real work."
-          }
-        }
       }
     },
     "progress": {
@@ -367,10 +305,6 @@
       "translate": "Přeložit do angličtiny"
     },
     "downloadErrors": {
-      "preflightFailed": "SilkScribe nemohl před stažením zkontrolovat místo na disku: {{detail}}",
-      "insufficientSpace": "SilkScribe potřebuje pro stažení tohoto modelu {{required}} volného místa. K dispozici je {{available}}.",
-      "downloadFailed": "SilkScribe nemohl stáhnout model: {{detail}}",
-      "extractionFailed": "SilkScribe nemohl model rozbalit: {{detail}}",
       "unknown": "Stahování se nedokončilo."
     }
   },
@@ -699,44 +633,14 @@
       }
     },
     "history": {
-      "eyebrow": "Archiv přepisů",
-      "pageTitle": "Prohlédněte si své nedávné přepisy",
-      "pageDescription": "Procházejte, co SilkScribe zachytil, přehrávejte zvuk a uložte vše, co si chcete nechat po ruce.",
-      "openFolder": "Otevřít složku nahrávek",
-      "exportMarkdown": "Exportovat Markdown",
-      "exportJson": "Exportovat JSON",
-      "exportTitle": "Exportovat historii",
-      "exportEmpty": "Není žádná historie k exportu.",
-      "exportSuccess": "Historie exportována",
-      "exportError": "SilkScribe nedokázal exportovat historii.",
-      "empty": "Zatím žádné přepisy. Začněte nahrávat a vytvořte si historii!",
-      "emptyDescription": "Vaše uložené přepisy a nahrávky se zde objeví po prvním diktování.",
-      "emptyFiltered": "Žádné odpovídající přepisy.",
-      "emptyFilteredDescription": "Zkuste jiné hledání nebo se vraťte na Vše.",
-      "searchPlaceholder": "Hledat v historii",
-      "filters": {
-        "all": "Vše",
-        "saved": "Uložené",
-        "failed": "Neúspěšné"
-      },
       "copyToClipboard": "Kopírovat přepis do schránky",
       "copyAsMarkdown": "Kopírovat přepis jako Markdown",
       "copySuccess": "Zkopírováno do schránky",
-      "copyError": "SilkScribe nedokázal tento přepis zkopírovat.",
       "save": "Uložit přepis",
       "unsave": "Odebrat z uložených",
       "delete": "Smazat záznam",
-      "deleteError": "Nepodařilo se smazat záznam. Zkuste to prosím znovu.",
-      "deleteQueued": "Záznam smazán",
-      "deleteUndoDescription": "Můžete to několik sekund vrátit zpět.",
-      "undoDelete": "Zpět",
-      "loadError": "Historii se nyní nepodařilo načíst. Zkuste to znovu.",
-      "loadMore": "Načíst další",
-      "loadingMore": "Načítání dalších...",
       "retryableEmpty": "Přepis se nezdařil. Nahrávka je k dispozici pro opakování.",
-      "retryTranscription": "Opakovat přepis",
-      "retryTranscriptionError": "Opakování přepisu se nezdařilo. Zkuste to znovu.",
-      "retry": "Opakovat"
+      "retryTranscription": "Opakovat přepis"
     },
     "debug": {
       "logDirectory": {
@@ -793,11 +697,6 @@
         },
         "error": "Obsluhu zkratek se nepodařilo přepnout"
       },
-      "paths": {
-        "appData": "Data aplikace:",
-        "models": "Modely:",
-        "settings": "Nastavení:"
-      },
       "pasteDelay": {
         "title": "Zpoždění vložení",
         "description": "Prodleva před vložením v ms. Zvyšte ji, pokud se vložený text usekává."
@@ -808,11 +707,6 @@
       }
     },
     "about": {
-      "title": "O aplikaci",
-      "version": {
-        "title": "Verze",
-        "description": "Aktuální verze SilkScribe"
-      },
       "appDataDirectory": {
         "title": "Složka s daty"
       }
@@ -939,7 +833,6 @@
   },
   "common": {
     "loading": "Načítání…",
-    "versionLabel": "v{{version}}",
     "cancel": "Zrušit",
     "delete": "Smazat",
     "open": "Otevřít",
@@ -1054,68 +947,6 @@
       "title": "Diktování je vypnuté",
       "description": "Chcete-li používat zkratku, povolte přístup k Mikrofonu a Zpřístupnění.",
       "action": "Opravit"
-    }
-  },
-  "home": {
-    "title": "Vítejte zpět",
-    "subtitle": "Vaše nedávná aktivita diktování a historie přehrávání.",
-    "welcome": {
-      "eyebrow": "Domů",
-      "title": "Vítejte zpět.",
-      "firstRunTitle": "Vítejte v SilkScribe.",
-      "readyDescription": "Vypadá to, že je vše připraveno. Podržte svou zkratku, mluvte přirozeně a SilkScribe umístí text tam, kam potřebujete.",
-      "setupDescription": "Základy nastavte jednou a poté vám SilkScribe nepřekáží a je připraven, kdykoli potřebujete rychlé diktování.",
-      "primaryReady": "Zkontrolovat nastavení nahrávání",
-      "primarySetup": "Dokončit nastavení"
-    },
-    "readiness": {
-      "shortcut": {
-        "label": "Zkratka",
-        "missingValue": "Nastavte svou zkratku nahrávání",
-        "action": "Upravit"
-      },
-      "microphone": {
-        "label": "Mikrofon",
-        "action": "Změnit"
-      },
-      "model": {
-        "label": "Model",
-        "missingValue": "Vyberte model řeči",
-        "action": "Spravovat"
-      },
-      "permissions": {
-        "label": "Oprávnění",
-        "ready": "Připraveno psát do vašich aplikací",
-        "needsAttention": "Vyžaduje pozornost, než bude diktování úplné",
-        "action": "Zkontrolovat"
-      }
-    },
-    "firstUse": {
-      "title": "Váš první přepis se zobrazí zde.",
-      "description": "Klikněte do textového pole, podržte svou zkratku, řekněte větu a pusťte. SilkScribe zde uloží výsledek, abyste se k němu mohli později vrátit.",
-      "generalAction": "Zkontrolovat základy",
-      "modelsAction": "Vybrat model"
-    },
-    "activityTitle": "Nedávná aktivita",
-    "loadMore": "Načíst další",
-    "loadingMore": "Načítání dalších...",
-    "stats": {
-      "streak": "Aktuální série",
-      "words": "Přepsaná slova",
-      "wpm": "Průměr slov/min"
-    },
-    "empty": {
-      "title": "Zatím žádné nedávné přepisy.",
-      "description": "Jakmile něco nahrajete, SilkScribe zde automaticky uchová přepis i zvuk."
-    },
-    "error": {
-      "title": "Nepodařilo se načíst váš přehled.",
-      "description": "Zkuste to znovu a obnovte svou nedávnou aktivitu.",
-      "retry": "Zkusit znovu"
-    },
-    "days": {
-      "today": "Dnes",
-      "yesterday": "Včera"
     }
   },
   "workspace": {

@@ -11,17 +11,6 @@
     "meetingResume": "会議を再開",
     "meetingStop": "会議を停止して文字起こし"
   },
-  "sidebar": {
-    "home": "ホーム",
-    "general": "一般",
-    "models": "モデル",
-    "advanced": "詳細設定",
-    "postProcessing": "後処理",
-    "history": "履歴",
-    "debug": "デバッグ",
-    "preferences": "環境設定",
-    "developer": "開発者"
-  },
   "onboarding": {
     "recommended": "おすすめ",
     "download": "ダウンロード",
@@ -88,7 +77,6 @@
         "iEnabledIt": "オンにしました",
         "checkAgain": "もう一度確認",
         "continue": "続ける",
-        "repairAction": "ガイド付き修復を開く",
         "appName": "SilkScribe",
         "statuses": {
           "checking": "確認中…",
@@ -190,56 +178,6 @@
         "loadModels": "エンジンの一覧を読み込めませんでした",
         "downloadModel": "ダウンロードを完了できませんでした",
         "selectModel": "エンジンを準備できませんでした"
-      },
-      "tipsBadge": "待っている間のヒント",
-      "previousCard": "前のヒント",
-      "nextCard": "次のヒント",
-      "goToCard": "ヒント {{index}} に移動",
-      "tips": {
-        "cards": {
-          "shortcutHabit": {
-            "title": "ショートカットは 1 つ、流れも 1 つ",
-            "description": "SilkScribe は「押す、話す、離す」というとてもシンプルな流れで使います。",
-            "point1": "話している間は {{shortcut}} を押したままにします。",
-            "point2": "話し終えたら離します。",
-            "point3": "SilkScribe がその短い発話をすぐにテキストに変えます。"
-          },
-          "focusField": {
-            "title": "テキストを入れたい場所に常にフォーカスを合わせる",
-            "description": "SilkScribe は文字起こし完了時にアクティブな入力欄へ結果を送ります。",
-            "point1": "話し始める前に、使いたい入力欄をクリックします。",
-            "point2": "文字起こしが終わるまでその欄からフォーカスを外さないでください。",
-            "point3": "オンボーディングではそのための練習欄を用意しています。"
-          },
-          "shortBursts": {
-            "title": "短い発話のほうが速く感じます",
-            "description": "最初の結果をきれいに得るには、各録音を短く保つのが一般的です。",
-            "point1": "1 回につき 1〜2 文を目安にしてください。",
-            "point2": "考えの区切りで自然に間を空けます。",
-            "point3": "必要ならすぐ次の短い発話を録音できます。"
-          },
-          "quietSpace": {
-            "title": "静かな場所のほうが最初の成功が簡単です",
-            "description": "SilkScribe は周囲の音より声がはっきりしていると最もよく動作します。",
-            "point1": "可能なら普段使い慣れたマイクを使ってください。",
-            "point2": "ファン、スピーカー、周囲の話し声はできるだけ小さくします。",
-            "point3": "落ち着いた自然な速さで話してください。"
-          },
-          "privacy": {
-            "title": "セットアップは必要最小限です",
-            "description": "このオンボーディングでは余計な設定を避け、最初の実用的な文字起こしに早く到達できるようにしています。",
-            "point1": "アクセス許可はアプリの動作に不可欠なので最初に行います。",
-            "point2": "音声エンジンはバックグラウンドで自動的に選ばれます。",
-            "point3": "基本の流れが動いたあとで設定を微調整できます。"
-          },
-          "firstWin": {
-            "title": "次の画面はダミーデモではありません",
-            "description": "次に試すのはアプリ内の本物のプッシュトゥトーク文字起こしです。",
-            "point1": "練習欄にフォーカスを保ってください。",
-            "point2": "普段使う予定のショートカットをそのまま使ってください。",
-            "point3": "欄にテキストが表示されたら SilkScribe は実運用の準備ができています。"
-          }
-        }
       }
     },
     "progress": {
@@ -367,10 +305,6 @@
       "translate": "英語に翻訳"
     },
     "downloadErrors": {
-      "preflightFailed": "SilkScribe はダウンロード前にディスク空き容量を確認できませんでした: {{detail}}",
-      "insufficientSpace": "このモデルのダウンロードには {{required}} の空き容量が必要です。使用可能: {{available}}。",
-      "downloadFailed": "SilkScribe はモデルをダウンロードできませんでした: {{detail}}",
-      "extractionFailed": "SilkScribe はモデルを展開できませんでした: {{detail}}",
       "unknown": "ダウンロードが完了しませんでした。"
     }
   },
@@ -699,44 +633,14 @@
       }
     },
     "history": {
-      "eyebrow": "文字起こしアーカイブ",
-      "pageTitle": "最近の文字起こしを見返す",
-      "pageDescription": "SilkScribe が取り込んだ内容を見て、音声を再生し、手元に残したいものを保存できます。",
-      "openFolder": "録音フォルダを開く",
-      "exportMarkdown": "Markdown をエクスポート",
-      "exportJson": "JSON をエクスポート",
-      "exportTitle": "履歴をエクスポート",
-      "exportEmpty": "エクスポートする履歴がありません。",
-      "exportSuccess": "履歴をエクスポートしました",
-      "exportError": "SilkScribe は履歴をエクスポートできませんでした。",
-      "empty": "まだ文字起こしがありません。録音を開始して履歴を作成しましょう！",
-      "emptyDescription": "保存した文字起こしと録音は、最初の口述のあとここに表示されます。",
-      "emptyFiltered": "一致する文字起こしはありません。",
-      "emptyFilteredDescription": "別の検索を試すか、「すべて」に戻してください。",
-      "searchPlaceholder": "履歴を検索",
-      "filters": {
-        "all": "すべて",
-        "saved": "保存済み",
-        "failed": "失敗"
-      },
       "copyToClipboard": "文字起こしをクリップボードにコピー",
       "copyAsMarkdown": "文字起こしを Markdown でコピー",
       "copySuccess": "クリップボードにコピーしました",
-      "copyError": "SilkScribe はこの文字起こしをコピーできませんでした。",
       "save": "文字起こしを保存",
       "unsave": "保存から削除",
       "delete": "エントリーを削除",
-      "deleteError": "エントリーの削除に失敗しました。もう一度お試しください。",
-      "deleteQueued": "エントリを削除しました",
-      "deleteUndoDescription": "数秒間は元に戻せます。",
-      "undoDelete": "元に戻す",
-      "loadError": "履歴を読み込めませんでした。もう一度お試しください。",
-      "loadMore": "さらに読み込む",
-      "loadingMore": "読み込み中...",
       "retryableEmpty": "文字起こしに失敗しました。録音は再試行できます。",
-      "retryTranscription": "文字起こしを再試行",
-      "retryTranscriptionError": "文字起こしの再試行に失敗しました。もう一度お試しください。",
-      "retry": "再試行"
+      "retryTranscription": "文字起こしを再試行"
     },
     "debug": {
       "logDirectory": {
@@ -793,11 +697,6 @@
         },
         "error": "ショートカットのバックエンドを切り替えられませんでした"
       },
-      "paths": {
-        "appData": "アプリデータ:",
-        "models": "モデル:",
-        "settings": "設定:"
-      },
       "pasteDelay": {
         "title": "ペーストの遅延",
         "description": "ペーストまでの待ち時間（ミリ秒）です。ペーストが途中で切れる場合は値を上げてください。"
@@ -808,11 +707,6 @@
       }
     },
     "about": {
-      "title": "概要",
-      "version": {
-        "title": "バージョン",
-        "description": "SilkScribeの現在のバージョン"
-      },
       "appDataDirectory": {
         "title": "データフォルダ"
       }
@@ -936,7 +830,6 @@
   },
   "common": {
     "loading": "読み込み中…",
-    "versionLabel": "v{{version}}",
     "cancel": "キャンセル",
     "delete": "削除",
     "open": "開く",
@@ -1051,68 +944,6 @@
       "title": "口述はオフです",
       "description": "ショートカットを使うには、マイクとアクセシビリティへのアクセスを許可してください。",
       "action": "修正する"
-    }
-  },
-  "home": {
-    "title": "おかえりなさい",
-    "subtitle": "最近の口述アクティビティと再生履歴。",
-    "welcome": {
-      "eyebrow": "ホーム",
-      "title": "おかえりなさい。",
-      "firstRunTitle": "SilkScribe へようこそ。",
-      "readyDescription": "準備は整っているようです。ショートカットを押しながら自然に話すと、SilkScribe が必要な場所にテキストを配置します。",
-      "setupDescription": "最初に基本を済ませておけば、あとは SilkScribe は邪魔をせず、すばやい口述が必要なときにいつでも使えます。",
-      "primaryReady": "録音設定を確認",
-      "primarySetup": "セットアップを完了"
-    },
-    "readiness": {
-      "shortcut": {
-        "label": "ショートカット",
-        "missingValue": "録音用ショートカットを設定",
-        "action": "編集"
-      },
-      "microphone": {
-        "label": "マイク",
-        "action": "変更"
-      },
-      "model": {
-        "label": "モデル",
-        "missingValue": "音声モデルを選択",
-        "action": "管理"
-      },
-      "permissions": {
-        "label": "権限",
-        "ready": "アプリに入力する準備ができています",
-        "needsAttention": "口述を完了するには対応が必要です",
-        "action": "確認"
-      }
-    },
-    "firstUse": {
-      "title": "最初の文字起こしはここに表示されます。",
-      "description": "テキスト欄をクリックし、ショートカットを押しながら一文を話して離します。SilkScribe が結果をここに保存するので、あとで見返せます。",
-      "generalAction": "基本を確認",
-      "modelsAction": "モデルを選ぶ"
-    },
-    "activityTitle": "最近のアクティビティ",
-    "loadMore": "さらに読み込む",
-    "loadingMore": "読み込み中...",
-    "stats": {
-      "streak": "現在の連続記録",
-      "words": "文字起こしした語数",
-      "wpm": "平均 WPM"
-    },
-    "empty": {
-      "title": "まだ最近の文字起こしはありません。",
-      "description": "何かを録音すると、SilkScribe が文字起こしと音声をここに自動で保存します。"
-    },
-    "error": {
-      "title": "ダッシュボードを読み込めませんでした。",
-      "description": "もう一度試して最近のアクティビティを更新してください。",
-      "retry": "再試行"
-    },
-    "days": {
-      "today": "今日",
-      "yesterday": "昨日"
     }
   },
   "workspace": {
