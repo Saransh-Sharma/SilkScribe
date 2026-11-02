@@ -954,7 +954,12 @@
     "loadDirectory": "このフォルダを開けませんでした: {{error}}"
   },
   "appLanguage": {
-    "title": "アプリの言語"
+    "title": "アプリの言語",
+    "previewOption": "{{nativeName}} ({{name}}) · プレビュー",
+    "preview": {
+      "label": "プレビュー中の言語",
+      "description": "ネイティブスピーカーがまだ確認していない翻訳を表示します。不自然な表現があるかもしれません。"
+    }
   },
   "overlay": {
     "listening": "聞き取り中",

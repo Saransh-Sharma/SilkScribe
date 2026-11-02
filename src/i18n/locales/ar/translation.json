@@ -959,7 +959,12 @@
     "loadDirectory": "تعذّر فتح هذا المجلد: {{error}}"
   },
   "appLanguage": {
-    "title": "لغة التطبيق"
+    "title": "لغة التطبيق",
+    "previewOption": "{{nativeName}} ({{name}}) · معاينة",
+    "preview": {
+      "label": "لغات المعاينة",
+      "description": "اعرض ترجمات لم يراجعها متحدث أصلي بعد. قد تبدو بعض العبارات غير دقيقة."
+    }
   },
   "overlay": {
     "listening": "نستمع",

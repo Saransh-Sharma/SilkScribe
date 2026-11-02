@@ -954,7 +954,12 @@
     "loadDirectory": "無法打開此檔案夾：{{error}}"
   },
   "appLanguage": {
-    "title": "App 語言"
+    "title": "App 語言",
+    "previewOption": "{{nativeName}}（{{name}}）· 預覽",
+    "preview": {
+      "label": "預覽語言",
+      "description": "顯示尚未經母語人士審閱的翻譯，部分用語可能不夠準確。"
+    }
   },
   "overlay": {
     "listening": "正在聆聽",

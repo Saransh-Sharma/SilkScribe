@@ -956,7 +956,12 @@
     "loadDirectory": "Impossibile aprire questa cartella: {{error}}"
   },
   "appLanguage": {
-    "title": "Lingua dell’app"
+    "title": "Lingua dell’app",
+    "previewOption": "{{nativeName}} ({{name}}) · Anteprima",
+    "preview": {
+      "label": "Lingue in anteprima",
+      "description": "Mostra traduzioni non ancora riviste da un madrelingua. Alcune frasi potrebbero non suonare bene."
+    }
   },
   "overlay": {
     "listening": "In ascolto",

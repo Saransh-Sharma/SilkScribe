@@ -955,7 +955,12 @@
     "loadDirectory": "Bu klasör açılamadı: {{error}}"
   },
   "appLanguage": {
-    "title": "Uygulama dili"
+    "title": "Uygulama dili",
+    "previewOption": "{{nativeName}} ({{name}}) · Önizleme",
+    "preview": {
+      "label": "Önizlemedeki diller",
+      "description": "Henüz anadili konuşan biri tarafından gözden geçirilmemiş çevirileri gösterir. Bazı ifadeler tuhaf olabilir."
+    }
   },
   "overlay": {
     "listening": "Dinleniyor",

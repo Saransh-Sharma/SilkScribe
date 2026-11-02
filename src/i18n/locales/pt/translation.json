@@ -956,7 +956,12 @@
     "loadDirectory": "Não foi possível abrir esta pasta: {{error}}"
   },
   "appLanguage": {
-    "title": "Idioma do app"
+    "title": "Idioma do app",
+    "previewOption": "{{nativeName}} ({{name}}) · Prévia",
+    "preview": {
+      "label": "Idiomas em prévia",
+      "description": "Mostra traduções que um falante nativo ainda não revisou. Algumas frases podem soar estranhas."
+    }
   },
   "overlay": {
     "listening": "Ouvindo",

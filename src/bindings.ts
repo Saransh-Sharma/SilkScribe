@@ -415,6 +415,14 @@ async changeAppLanguageSetting(language: string) : Promise<Result<null, string>>
     else return { status: "error", error: e  as any };
 }
 },
+async changePreviewLanguagesSetting(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_preview_languages_setting", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async changeThemeSetting(theme: string) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("change_theme_setting", { theme }) };
@@ -1524,7 +1532,12 @@ nearby_text_context?: boolean;
 /**
  * Also send that text to a cloud cleanup provider (off: on-device only).
  */
-share_context_with_cloud?: boolean; mute_while_recording?: boolean; append_trailing_space?: boolean; app_language?: string; experimental_enabled?: boolean; lazy_stream_close?: boolean; keyboard_implementation?: KeyboardImplementation; theme?: ThemePreference; show_tray_icon?: boolean; paste_delay_ms?: number; typing_tool?: TypingTool; external_script_path: string | null; custom_filler_words?: string[] | null; whisper_accelerator?: WhisperAcceleratorSetting; ort_accelerator?: OrtAcceleratorSetting; whisper_gpu_device?: number; extra_recording_buffer_ms?: number; 
+share_context_with_cloud?: boolean; mute_while_recording?: boolean; append_trailing_space?: boolean; app_language?: string; 
+/**
+ * Show languages whose translation a native speaker hasn't reviewed yet.
+ * Off means the app uses English in place of an unreviewed language.
+ */
+preview_languages?: boolean; experimental_enabled?: boolean; lazy_stream_close?: boolean; keyboard_implementation?: KeyboardImplementation; theme?: ThemePreference; show_tray_icon?: boolean; paste_delay_ms?: number; typing_tool?: TypingTool; external_script_path: string | null; custom_filler_words?: string[] | null; whisper_accelerator?: WhisperAcceleratorSetting; ort_accelerator?: OrtAcceleratorSetting; whisper_gpu_device?: number; extra_recording_buffer_ms?: number; 
 /**
  * Where the meeting orb sits on the right screen edge, as a fraction of the
  * usable height from the top (its centre).

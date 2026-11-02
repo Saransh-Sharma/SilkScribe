@@ -957,7 +957,12 @@
     "loadDirectory": "Nie udało się otworzyć tego folderu: {{error}}"
   },
   "appLanguage": {
-    "title": "Język aplikacji"
+    "title": "Język aplikacji",
+    "previewOption": "{{nativeName}} ({{name}}) · Podgląd",
+    "preview": {
+      "label": "Języki w podglądzie",
+      "description": "Pokazuje tłumaczenia, których nie sprawdził jeszcze native speaker. Niektóre sformułowania mogą brzmieć dziwnie."
+    }
   },
   "overlay": {
     "listening": "Słucham",

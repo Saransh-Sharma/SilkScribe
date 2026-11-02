@@ -1,3 +1,18 @@
+import reviewedLanguages from "./reviewed-languages.json";
+
+/**
+ * Locales a native speaker has reviewed. Others are "preview" languages,
+ * shown only when the user turns preview languages on. Add a code to
+ * reviewed-languages.json once its review is done (the Rust side reads the
+ * same file for the tray).
+ */
+export const REVIEWED_LANGUAGES: readonly string[] = reviewedLanguages;
+
+export const isReviewedLanguage = (code: string): boolean =>
+  REVIEWED_LANGUAGES.some(
+    (reviewed) => reviewed.toLowerCase() === code.toLowerCase(),
+  );
+
 /**
  * Language metadata for supported locales.
  *

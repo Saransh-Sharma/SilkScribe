@@ -954,7 +954,12 @@
     "loadDirectory": "Không mở được thư mục này: {{error}}"
   },
   "appLanguage": {
-    "title": "Ngôn ngữ ứng dụng"
+    "title": "Ngôn ngữ ứng dụng",
+    "previewOption": "{{nativeName}} ({{name}}) · Xem trước",
+    "preview": {
+      "label": "Ngôn ngữ xem trước",
+      "description": "Hiện các bản dịch chưa được người bản ngữ kiểm tra. Một số cách diễn đạt có thể chưa chuẩn."
+    }
   },
   "overlay": {
     "listening": "Đang nghe",

@@ -974,6 +974,28 @@ test("settings has six workflow groups with advanced controls kept in context", 
   ).toBeVisible();
 });
 
+test("unreviewed languages stay hidden until preview languages is on", async ({
+  page,
+}) => {
+  await page.goto(fixture + "?dictation=ready");
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
+  await page.getByRole("button", { name: "Appearance", exact: true }).click();
+  const language = page.getByRole("button", { name: "English (English)" });
+  await language.click();
+  await expect(page.getByRole("option")).toHaveText(["English (English)"]);
+  await page.keyboard.press("Escape");
+
+  const preview = page.getByRole("switch", { name: "Preview languages" });
+  await preview.focus();
+  await page.keyboard.press("Space");
+  await expect(preview).toBeChecked();
+  await language.click();
+  await expect(
+    page.getByRole("option", { name: "日本語 (Japanese) · Preview" }),
+  ).toBeVisible();
+  await expect(page.getByRole("option")).toHaveCount(17);
+});
+
 test("a template's own sections show in the notes", async ({ page }) => {
   await page.goto(fixture + "?template");
   await page.getByText("Product design review", { exact: true }).click();

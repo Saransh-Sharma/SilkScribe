@@ -956,7 +956,12 @@
     "loadDirectory": "Impossible d’ouvrir ce dossier : {{error}}"
   },
   "appLanguage": {
-    "title": "Langue de l’app"
+    "title": "Langue de l’app",
+    "previewOption": "{{nativeName}} ({{name}}) · Aperçu",
+    "preview": {
+      "label": "Langues en aperçu",
+      "description": "Affiche des traductions pas encore relues par un locuteur natif. Certaines formulations peuvent sonner faux."
+    }
   },
   "overlay": {
     "listening": "Écoute",

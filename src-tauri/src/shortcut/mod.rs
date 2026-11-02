@@ -1276,6 +1276,16 @@ pub fn change_app_language_setting(app: AppHandle, language: String) -> Result<(
 
 #[tauri::command]
 #[specta::specta]
+pub fn change_preview_languages_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.preview_languages = enabled;
+    settings::write_settings(&app, settings);
+    tray::refresh_tray(&app);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
 pub fn change_theme_setting(app: AppHandle, theme: String) -> Result<(), String> {
     let parsed = match theme.as_str() {
         "system" => ThemePreference::System,

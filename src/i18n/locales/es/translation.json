@@ -956,7 +956,12 @@
     "loadDirectory": "No se pudo abrir esta carpeta: {{error}}"
   },
   "appLanguage": {
-    "title": "Idioma de la app"
+    "title": "Idioma de la app",
+    "previewOption": "{{nativeName}} ({{name}}) · Vista previa",
+    "preview": {
+      "label": "Idiomas en vista previa",
+      "description": "Muestra traducciones que aún no ha revisado un hablante nativo. Puede que alguna frase no suene bien."
+    }
   },
   "overlay": {
     "listening": "Escuchando",

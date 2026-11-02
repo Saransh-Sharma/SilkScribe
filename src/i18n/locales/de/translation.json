@@ -955,7 +955,12 @@
     "loadDirectory": "Dieser Ordner konnte nicht geöffnet werden: {{error}}"
   },
   "appLanguage": {
-    "title": "App-Sprache"
+    "title": "App-Sprache",
+    "previewOption": "{{nativeName}} ({{name}}) · Vorschau",
+    "preview": {
+      "label": "Sprachen in der Vorschau",
+      "description": "Zeigt Übersetzungen, die noch kein Muttersprachler geprüft hat. Manche Formulierungen passen vielleicht nicht."
+    }
   },
   "overlay": {
     "listening": "Hört zu",

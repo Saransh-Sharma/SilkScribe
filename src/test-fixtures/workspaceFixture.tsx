@@ -235,6 +235,9 @@ if (dictation) {
       push_to_talk: true,
       // ?tapToLock: a quick tap goes hands-free.
       tap_to_lock: params.has("tapToLock"),
+      app_language: "en",
+      // ?previewLanguages lists translations that haven't been reviewed.
+      preview_languages: params.has("previewLanguages"),
       selected_model: "parakeet-tdt-0.6b-v3",
       external_script_path: null,
     } as AppSettings,
@@ -504,6 +507,11 @@ commands.updateCustomWords = async () => ({ status: "ok", data: null });
 commands.updateReplacements = async () => ({ status: "ok", data: null });
 commands.updateSnippets = async () => ({ status: "ok", data: null });
 commands.changeTapToLockSetting = async () => ({ status: "ok", data: null });
+commands.changePreviewLanguagesSetting = async () => ({
+  status: "ok",
+  data: null,
+});
+commands.changeAppLanguageSetting = async () => ({ status: "ok", data: null });
 commands.changePttSetting = async () => ({ status: "ok", data: null });
 api.dismissCleanupSuggestion = async () => null;
 // User notes persist across reloads, like the real store.

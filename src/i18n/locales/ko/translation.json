@@ -954,7 +954,12 @@
     "loadDirectory": "이 폴더를 열지 못했습니다: {{error}}"
   },
   "appLanguage": {
-    "title": "앱 언어"
+    "title": "앱 언어",
+    "previewOption": "{{nativeName}} ({{name}}) · 미리 보기",
+    "preview": {
+      "label": "미리 보기 언어",
+      "description": "원어민이 아직 검토하지 않은 번역을 표시합니다. 일부 표현이 어색할 수 있습니다."
+    }
   },
   "overlay": {
     "listening": "듣는 중",

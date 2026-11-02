@@ -162,7 +162,7 @@ fn menu_items(dictation: &TrayIconState, meeting: Option<bool>) -> Vec<&'static 
 
 fn build_menu(app: &AppHandle, view: &TrayView) -> tauri::Result<Menu<tauri::Wry>> {
     let settings = settings::get_settings(app);
-    let strings = get_tray_translations(Some(settings.app_language.clone()));
+    let strings = get_tray_translations(Some(settings::effective_app_language(&settings)));
 
     // Platform-specific accelerators
     #[cfg(target_os = "macos")]

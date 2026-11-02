@@ -954,7 +954,12 @@
     "loadDirectory": "无法打开此文件夹：{{error}}"
   },
   "appLanguage": {
-    "title": "应用语言"
+    "title": "应用语言",
+    "previewOption": "{{nativeName}}（{{name}}）· 预览",
+    "preview": {
+      "label": "预览语言",
+      "description": "显示尚未经母语者审校的翻译，部分措辞可能不够准确。"
+    }
   },
   "overlay": {
     "listening": "正在听",

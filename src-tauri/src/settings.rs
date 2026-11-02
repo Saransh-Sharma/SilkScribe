@@ -482,6 +482,10 @@ pub struct AppSettings {
     pub append_trailing_space: bool,
     #[serde(default = "default_app_language")]
     pub app_language: String,
+    /// Show languages whose translation a native speaker hasn't reviewed yet.
+    /// Off means the app uses English in place of an unreviewed language.
+    #[serde(default)]
+    pub preview_languages: bool,
     #[serde(default)]
     pub experimental_enabled: bool,
     #[serde(default)]
@@ -522,7 +526,36 @@ pub struct AppSettings {
 /// 1: raised the default history limit from 5 to `default_history_limit()`.
 /// 2: outside macOS, "paste and keep my clipboard" (which typed the text) is
 ///    now spelled out as "type it out".
-const CURRENT_SETTINGS_VERSION: u32 = 3;
+/// 3: tap-to-lock stays off for existing installs.
+/// 4: existing installs already showing an unreviewed language keep it.
+const CURRENT_SETTINGS_VERSION: u32 = 4;
+
+/// Languages whose translation a native speaker has reviewed. Shared with the
+/// frontend so both sides agree on what "preview" means.
+static REVIEWED_LANGUAGES: once_cell::sync::Lazy<Vec<String>> = once_cell::sync::Lazy::new(|| {
+    serde_json::from_str(include_str!("../../src/i18n/reviewed-languages.json"))
+        .unwrap_or_else(|_| vec!["en".to_string()])
+});
+
+/// Whether `language` (a locale such as "en-US" or "zh-TW") has a reviewed
+/// translation. Matches the full code first, then the language alone.
+pub fn is_reviewed_language(language: &str) -> bool {
+    let normalized = language.replace('_', "-").to_lowercase();
+    let base = normalized.split('-').next().unwrap_or("");
+    REVIEWED_LANGUAGES
+        .iter()
+        .any(|code| code.to_lowercase() == normalized || code.to_lowercase() == base)
+}
+
+/// The language the app should show: the chosen one when it's reviewed or
+/// preview languages are on, otherwise English.
+pub fn effective_app_language(settings: &AppSettings) -> String {
+    if settings.preview_languages || is_reviewed_language(&settings.app_language) {
+        settings.app_language.clone()
+    } else {
+        "en".to_string()
+    }
+}
 
 fn default_tap_to_lock() -> bool {
     true
@@ -946,6 +979,16 @@ fn apply_settings_migrations(
         updated = true;
     }
 
+    if settings.settings_version < 4 {
+        // Unreviewed translations are now hidden by default. Someone already
+        // using one keeps it rather than finding the app in English.
+        if !is_reviewed_language(&settings.app_language) {
+            settings.preview_languages = true;
+        }
+        settings.settings_version = 4;
+        updated = true;
+    }
+
     let normalized_paste_method = normalize_paste_method_for_platform(settings.paste_method);
     if settings.paste_method != normalized_paste_method {
         settings.paste_method = normalized_paste_method;
@@ -1075,6 +1118,7 @@ pub fn get_default_settings() -> AppSettings {
         mute_while_recording: false,
         append_trailing_space: false,
         app_language: default_app_language(),
+        preview_languages: false,
         experimental_enabled: false,
         lazy_stream_close: false,
         keyboard_implementation: KeyboardImplementation::default(),
@@ -1367,6 +1411,40 @@ mod tests {
         let mut fresh = get_default_settings();
         assert!(!apply_settings_migrations(&mut fresh, None) || fresh.tap_to_lock);
         assert!(fresh.tap_to_lock);
+    }
+
+    #[test]
+    fn unreviewed_languages_fall_back_to_english_unless_previewed() {
+        assert!(is_reviewed_language("en"));
+        assert!(is_reviewed_language("en-GB"));
+        assert!(is_reviewed_language("en_US"));
+        assert!(!is_reviewed_language("ja"));
+
+        let mut settings = get_default_settings();
+        settings.app_language = "ja".into();
+        assert_eq!(effective_app_language(&settings), "en");
+        settings.preview_languages = true;
+        assert_eq!(effective_app_language(&settings), "ja");
+    }
+
+    #[test]
+    fn existing_installs_keep_an_unreviewed_language() {
+        let mut existing = legacy_settings(500);
+        existing.app_language = "de".into();
+        apply_settings_migrations(&mut existing, None);
+        assert!(existing.preview_languages);
+        assert_eq!(effective_app_language(&existing), "de");
+
+        let mut english = legacy_settings(500);
+        english.app_language = "en-US".into();
+        apply_settings_migrations(&mut english, None);
+        assert!(!english.preview_languages);
+
+        // New installs don't preview, whatever the system language.
+        let mut fresh = get_default_settings();
+        fresh.app_language = "de".into();
+        apply_settings_migrations(&mut fresh, None);
+        assert!(!fresh.preview_languages);
     }
 
     #[test]

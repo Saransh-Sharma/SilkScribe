@@ -955,7 +955,12 @@
     "loadDirectory": "Couldn’t open this folder: {{error}}"
   },
   "appLanguage": {
-    "title": "App language"
+    "title": "App language",
+    "previewOption": "{{nativeName}} ({{name}}) · Preview",
+    "preview": {
+      "label": "Preview languages",
+      "description": "Show translations a native speaker hasn't checked yet. Some wording may be off."
+    }
   },
   "overlay": {
     "listening": "Listening",

@@ -957,7 +957,12 @@
     "loadDirectory": "Tuto složku se nepodařilo otevřít: {{error}}"
   },
   "appLanguage": {
-    "title": "Jazyk aplikace"
+    "title": "Jazyk aplikace",
+    "previewOption": "{{nativeName}} ({{name}}) · Náhled",
+    "preview": {
+      "label": "Jazyky v náhledu",
+      "description": "Zobrazí překlady, které zatím nezkontroloval rodilý mluvčí. Některé formulace nemusí sedět."
+    }
   },
   "overlay": {
     "listening": "Poslouchám",
