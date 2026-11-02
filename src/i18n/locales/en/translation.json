@@ -1534,7 +1534,8 @@
       "local": "Recordings, transcripts, meeting notes and your dictionary stay on this device.",
       "noCloud": "Dictations stay on this device too.",
       "cloud": "Dictations go to {{provider}} for AI cleanup. Change this in AI writing."
-    }
+    },
+    "notesEngine": "Engine"
   },
   "audioPlayer": {
     "play": "Play",

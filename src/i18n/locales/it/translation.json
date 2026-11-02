@@ -1540,7 +1540,8 @@
       "local": "Registrazioni, trascrizioni, note delle riunioni e il tuo dizionario restano su questo dispositivo.",
       "noCloud": "Anche le dettature restano su questo dispositivo.",
       "cloud": "Le dettature vanno a {{provider}} per la pulizia con IA. Puoi cambiarlo in Scrittura con IA."
-    }
+    },
+    "notesEngine": "Motore"
   },
   "audioPlayer": {
     "play": "Riproduci",

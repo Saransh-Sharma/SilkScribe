@@ -1540,7 +1540,8 @@
       "local": "Gravações, transcrições, anotações de reuniões e seu dicionário ficam neste dispositivo.",
       "noCloud": "Os ditados também ficam neste dispositivo.",
       "cloud": "Os ditados vão para {{provider}} para a limpeza com IA. Altere isso em Escrita com IA."
-    }
+    },
+    "notesEngine": "Motor"
   },
   "audioPlayer": {
     "play": "Tocar",

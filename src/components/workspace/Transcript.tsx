@@ -8,6 +8,7 @@ import {
   Search,
   Bookmark,
   RotateCcw,
+  Sparkles,
   Trash2,
   Users,
   FileText,
@@ -1386,42 +1387,64 @@ export function Transcript({
               <p className="ws-empty-copy">{t("workspace.noNotes")}</p>
             )}
             {!locked && doc.segments.length > 0 && (
-              <div className="ws-actions">
-                <Dropdown
-                  ariaLabel={t("workspace.notes")}
-                  selectedValue={notesModel}
-                  options={[
-                    { value: "qwen3.5-9b", label: t("workspace.notesModel9") },
-                    {
-                      value: "qwen3.6-27b",
-                      label: t("workspace.notesModel27"),
-                    },
-                  ]}
-                  onSelect={setNotesModel}
-                />
-                <Dropdown
-                  ariaLabel={t("workspace.templates.label")}
-                  selectedValue={notesTemplate}
-                  options={NOTE_TEMPLATES.map((id) => ({
-                    value: id,
-                    label: t(`workspace.templates.names.${id}`),
-                  }))}
-                  onSelect={(value) => setNotesTemplate(value as NoteTemplate)}
-                />
-                <button
-                  className="ws-secondary"
-                  disabled={!!doc.notes_candidate}
-                  onClick={() => void generateNotes()}
-                >
-                  <RotateCcw size={15} />
-                  {t(
-                    hasUserNotes
-                      ? "workspace.enhanceNotes"
-                      : doc.notes
-                        ? "workspace.regenerate"
-                        : "workspace.generateNotes",
-                  )}
-                </button>
+              <div className="ws-actions ws-notes-actions">
+                {/* Writing or enhancing notes is the main thing to do here;
+                    regenerating notes you already have is secondary. */}
+                {(() => {
+                  const writes = hasUserNotes || !doc.notes;
+                  return (
+                    <button
+                      className={writes ? "ws-primary" : "ws-secondary"}
+                      disabled={!!doc.notes_candidate}
+                      onClick={() => void generateNotes()}
+                    >
+                      {writes ? (
+                        <Sparkles size={15} />
+                      ) : (
+                        <RotateCcw size={15} />
+                      )}
+                      {t(
+                        hasUserNotes
+                          ? "workspace.enhanceNotes"
+                          : doc.notes
+                            ? "workspace.regenerate"
+                            : "workspace.generateNotes",
+                      )}
+                    </button>
+                  );
+                })()}
+                <label className="ws-inline-field">
+                  <span>{t("workspace.notesEngine")}</span>
+                  <Dropdown
+                    ariaLabel={t("workspace.notesEngine")}
+                    selectedValue={notesModel}
+                    options={[
+                      {
+                        value: "qwen3.5-9b",
+                        label: t("workspace.notesModel9"),
+                      },
+                      {
+                        value: "qwen3.6-27b",
+                        label: t("workspace.notesModel27"),
+                      },
+                    ]}
+                    onSelect={setNotesModel}
+                  />
+                </label>
+                <label className="ws-inline-field">
+                  <span>{t("workspace.templates.label")}</span>
+                  <Dropdown
+                    ariaLabel={t("workspace.templates.label")}
+                    selectedValue={notesTemplate}
+                    options={NOTE_TEMPLATES.map((id) => ({
+                      value: id,
+                      label: t(`workspace.templates.names.${id}`),
+                    }))}
+                    onSelect={(value) =>
+                      setNotesTemplate(value as NoteTemplate)
+                    }
+                  />
+                </label>
               </div>
             )}
             {doc.notes && (

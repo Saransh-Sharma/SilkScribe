@@ -1535,18 +1535,19 @@
       "dictionary": "Slovník",
       "meetings": "Schůzky a poznámky",
       "audio": "Zvuk",
-      "models": "Modely",
+      "models": "Moduly",
       "history": "Soukromí a úložiště"
     },
     "about": "O aplikaci",
     "version": "Verze {{version}}",
-    "notesEnginesHelp": "Model, který píše vaše poznámky a odpovídá na otázky o schůzkách.",
+    "notesEnginesHelp": "Modul, který píše vaše poznámky a odpovídá na otázky o schůzkách.",
     "privacy": {
       "title": "Co opouští toto zařízení",
       "local": "Nahrávky, přepisy, poznámky ze schůzek a váš slovník zůstávají v tomto zařízení.",
       "noCloud": "Diktáty zůstávají v tomto zařízení také.",
       "cloud": "Diktáty se posílají do {{provider}} k úpravě pomocí AI. Změníte to v části Psaní s AI."
-    }
+    },
+    "notesEngine": "Modul"
   },
   "audioPlayer": {
     "play": "Přehrát",

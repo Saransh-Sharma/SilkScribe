@@ -1534,7 +1534,8 @@
       "local": "Aufnahmen, Transkripte, Meeting-Notizen und dein Wörterbuch bleiben auf diesem Gerät.",
       "noCloud": "Diktate bleiben ebenfalls auf diesem Gerät.",
       "cloud": "Diktate gehen zur KI-Bereinigung an {{provider}}. Ändere das unter „Schreiben mit KI“."
-    }
+    },
+    "notesEngine": "Engine"
   },
   "audioPlayer": {
     "play": "Wiedergabe",

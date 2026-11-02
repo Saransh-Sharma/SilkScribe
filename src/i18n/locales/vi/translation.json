@@ -1529,7 +1529,8 @@
       "local": "Bản ghi âm, bản chép lời, ghi chú cuộc họp và từ điển của bạn ở lại trên thiết bị này.",
       "noCloud": "Nội dung đọc chính tả cũng ở lại trên thiết bị này.",
       "cloud": "Nội dung đọc chính tả được gửi đến {{provider}} để chỉnh sửa bằng AI. Thay đổi trong mục Viết bằng AI."
-    }
+    },
+    "notesEngine": "Công cụ"
   },
   "audioPlayer": {
     "play": "Phát",

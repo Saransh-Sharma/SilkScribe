@@ -1529,7 +1529,8 @@
       "local": "录音、转写稿、会议笔记和你的词典都保留在此设备上。",
       "noCloud": "听写内容也保留在此设备上。",
       "cloud": "听写内容会发送到 {{provider}} 进行 AI 润色。可在“AI 写作”中更改。"
-    }
+    },
+    "notesEngine": "引擎"
   },
   "audioPlayer": {
     "play": "播放",

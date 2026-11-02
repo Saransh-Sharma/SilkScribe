@@ -1540,7 +1540,8 @@
       "local": "Las grabaciones, transcripciones, notas de reuniones y tu diccionario se quedan en este dispositivo.",
       "noCloud": "Los dictados también se quedan en este dispositivo.",
       "cloud": "Los dictados se envían a {{provider}} para la limpieza con IA. Cámbialo en Escritura con IA."
-    }
+    },
+    "notesEngine": "Motor"
   },
   "audioPlayer": {
     "play": "Reproducir",

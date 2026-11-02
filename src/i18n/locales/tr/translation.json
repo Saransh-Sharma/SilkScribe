@@ -1534,7 +1534,8 @@
       "local": "Kayıtlar, transkriptler, toplantı notları ve sözlüğünüz bu cihazda kalır.",
       "noCloud": "Dikteler de bu cihazda kalır.",
       "cloud": "Dikteler YZ düzenlemesi için {{provider}} hizmetine gönderilir. Bunu YZ ile yazma bölümünden değiştirin."
-    }
+    },
+    "notesEngine": "Motor"
   },
   "audioPlayer": {
     "play": "Oynat",

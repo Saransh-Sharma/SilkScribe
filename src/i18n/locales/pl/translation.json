@@ -1546,7 +1546,8 @@
       "local": "Nagrania, transkrypcje, notatki ze spotkań i Twój słownik zostają na tym urządzeniu.",
       "noCloud": "Dyktowane teksty też zostają na tym urządzeniu.",
       "cloud": "Dyktowane teksty trafiają do {{provider}} do korekty AI. Zmienisz to w sekcji Pisanie z AI."
-    }
+    },
+    "notesEngine": "Silnik"
   },
   "audioPlayer": {
     "play": "Odtwarzaj",
