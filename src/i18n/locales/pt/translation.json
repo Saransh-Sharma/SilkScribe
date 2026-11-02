@@ -1238,7 +1238,8 @@
       "details": "Detalhes",
       "runtimeCheck": "Não foi possível iniciar os motores locais. Verifique se o SilkScribe está atualizado e tente de novo.",
       "inspectFiles": "Não foi possível ler alguns arquivos. Verifique se são arquivos de áudio e tente de novo.",
-      "disconnectCalendar": "Não foi possível desconectar sua agenda"
+      "disconnectCalendar": "Não foi possível desconectar sua agenda",
+      "captureCheck": "Não foi possível verificar o acesso à gravação. Tente de novo ou reinicie o SilkScribe."
     },
     "liveTranscript": "Transcrição ao vivo",
     "liveTranscriptNote": "Uma transcrição mais precisa substitui esta quando o processamento terminar.",

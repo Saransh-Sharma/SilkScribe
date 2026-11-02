@@ -1229,7 +1229,8 @@
       "details": "詳細",
       "runtimeCheck": "ローカルエンジンを起動できませんでした。SilkScribe が最新か確認してから、もう一度お試しください。",
       "inspectFiles": "一部のファイルを読み込めませんでした。音声ファイルか確認してから、もう一度お試しください。",
-      "disconnectCalendar": "カレンダーの接続を解除できませんでした"
+      "disconnectCalendar": "カレンダーの接続を解除できませんでした",
+      "captureCheck": "録音へのアクセスを確認できませんでした。もう一度試すか、SilkScribe を再起動してください。"
     },
     "liveTranscript": "ライブ文字起こし",
     "liveTranscriptNote": "処理が完了すると、より正確な文字起こしに置き換わります。",

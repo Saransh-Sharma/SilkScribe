@@ -1229,7 +1229,8 @@
       "details": "詳細資訊",
       "runtimeCheck": "無法啟動本機引擎。請確認 SilkScribe 已是最新版本，然後再試一次。",
       "inspectFiles": "部分檔案無法讀取。請確認它們是音訊檔，然後再試一次。",
-      "disconnectCalendar": "無法中斷行事曆連線"
+      "disconnectCalendar": "無法中斷行事曆連線",
+      "captureCheck": "無法檢查錄音權限。請再試一次，或重新啟動 SilkScribe。"
     },
     "liveTranscript": "即時逐字稿",
     "liveTranscriptNote": "處理完成後，會有更準確的逐字稿取代它。",

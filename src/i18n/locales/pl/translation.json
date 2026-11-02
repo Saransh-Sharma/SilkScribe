@@ -1243,7 +1243,8 @@
       "details": "Szczegóły",
       "runtimeCheck": "Nie udało się uruchomić lokalnych silników. Upewnij się, że SilkScribe jest aktualny, i spróbuj ponownie.",
       "inspectFiles": "Nie udało się odczytać niektórych plików. Sprawdź, czy to pliki audio, i spróbuj ponownie.",
-      "disconnectCalendar": "Nie udało się odłączyć kalendarza"
+      "disconnectCalendar": "Nie udało się odłączyć kalendarza",
+      "captureCheck": "Nie udało się sprawdzić dostępu do nagrywania. Spróbuj ponownie lub uruchom ponownie SilkScribe."
     },
     "liveTranscript": "Transkrypt na żywo",
     "liveTranscriptNote": "Po zakończeniu przetwarzania zastąpi go dokładniejszy transkrypt.",

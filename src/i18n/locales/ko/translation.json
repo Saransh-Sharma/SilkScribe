@@ -1229,7 +1229,8 @@
       "details": "세부 정보",
       "runtimeCheck": "로컬 엔진을 시작하지 못했습니다. SilkScribe가 최신 버전인지 확인한 뒤 다시 시도하세요.",
       "inspectFiles": "일부 파일을 읽지 못했습니다. 오디오 파일인지 확인한 뒤 다시 시도하세요.",
-      "disconnectCalendar": "캘린더 연결을 해제하지 못했습니다"
+      "disconnectCalendar": "캘린더 연결을 해제하지 못했습니다",
+      "captureCheck": "녹음 권한을 확인하지 못했습니다. 다시 시도하거나 SilkScribe를 다시 시작하세요."
     },
     "liveTranscript": "실시간 스크립트",
     "liveTranscriptNote": "처리가 끝나면 더 정확한 스크립트로 대체됩니다.",

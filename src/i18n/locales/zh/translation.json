@@ -1229,7 +1229,8 @@
       "details": "详细信息",
       "runtimeCheck": "本地引擎无法启动。请确认 SilkScribe 已是最新版本，然后重试。",
       "inspectFiles": "部分文件无法读取。请确认它们是音频文件，然后重试。",
-      "disconnectCalendar": "无法断开日历连接"
+      "disconnectCalendar": "无法断开日历连接",
+      "captureCheck": "无法检查录音权限。请重试，或重新启动 SilkScribe。"
     },
     "liveTranscript": "实时转录",
     "liveTranscriptNote": "处理完成后，会有更准确的文字稿替换它。",

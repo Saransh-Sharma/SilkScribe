@@ -1234,7 +1234,8 @@
       "details": "Details",
       "runtimeCheck": "The local engines couldn’t start. Make sure SilkScribe is up to date, then try again.",
       "inspectFiles": "Some files couldn’t be read. Check they’re audio files, then try again.",
-      "disconnectCalendar": "Couldn’t disconnect your calendar"
+      "disconnectCalendar": "Couldn’t disconnect your calendar",
+      "captureCheck": "Couldn’t check recording access. Try again, or restart SilkScribe."
     },
     "liveTranscript": "Live transcript",
     "liveTranscriptNote": "A more accurate transcript replaces this once processing finishes.",

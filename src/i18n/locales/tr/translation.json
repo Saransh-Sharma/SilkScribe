@@ -1233,7 +1233,8 @@
       "details": "Ayrıntılar",
       "runtimeCheck": "Yerel motorlar başlatılamadı. SilkScribe’ın güncel olduğundan emin olup yeniden deneyin.",
       "inspectFiles": "Bazı dosyalar okunamadı. Ses dosyası olduklarını kontrol edip yeniden deneyin.",
-      "disconnectCalendar": "Takviminizin bağlantısı kesilemedi"
+      "disconnectCalendar": "Takviminizin bağlantısı kesilemedi",
+      "captureCheck": "Kayıt erişimi kontrol edilemedi. Yeniden deneyin veya SilkScribe’ı yeniden başlatın."
     },
     "liveTranscript": "Canlı transkript",
     "liveTranscriptNote": "İşleme bitince daha doğru bir transkript bunun yerini alır.",

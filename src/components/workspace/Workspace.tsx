@@ -1262,7 +1262,14 @@ export default function Workspace({
               {create === "meeting" ? (
                 <div className="ws-form-grid">
                   <div className="ws-capture-preflight" role="status">
-                    {captureCheckError && <p>{captureCheckError}</p>}
+                    {captureCheckError && (
+                      <div role="alert">
+                        <WsErrorDetail
+                          message={t("workspace.errors.captureCheck")}
+                          detail={captureCheckError}
+                        />
+                      </div>
+                    )}
                     {captureReadiness && !captureReadiness.supported && (
                       <p>{t("workspace.captureUnsupported")}</p>
                     )}

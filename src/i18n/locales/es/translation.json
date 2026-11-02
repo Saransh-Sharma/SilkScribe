@@ -1238,7 +1238,8 @@
       "details": "Detalles",
       "runtimeCheck": "Los motores locales no pudieron iniciarse. Asegúrate de que SilkScribe esté actualizado e inténtalo de nuevo.",
       "inspectFiles": "No se pudieron leer algunos archivos. Comprueba que sean de audio e inténtalo de nuevo.",
-      "disconnectCalendar": "No se pudo desconectar tu calendario"
+      "disconnectCalendar": "No se pudo desconectar tu calendario",
+      "captureCheck": "No se pudo comprobar el acceso a la grabación. Inténtalo de nuevo o reinicia SilkScribe."
     },
     "liveTranscript": "Transcripción en directo",
     "liveTranscriptNote": "Una transcripción más precisa sustituirá a esta cuando termine el procesamiento.",

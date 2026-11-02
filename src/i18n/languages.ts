@@ -4,7 +4,9 @@ import reviewedLanguages from "./reviewed-languages.json";
  * Locales a native speaker has reviewed. Others are "preview" languages,
  * shown only when the user turns preview languages on. Add a code to
  * reviewed-languages.json once its review is done (the Rust side reads the
- * same file for the tray).
+ * same file for the tray). The tray matches by language alone, so listing
+ * "zh" also shows the tray in Chinese for a "zh-TW" choice; the app itself
+ * matches codes exactly and still treats "zh-TW" as a preview.
  */
 export const REVIEWED_LANGUAGES: readonly string[] = reviewedLanguages;
 

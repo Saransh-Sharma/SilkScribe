@@ -1253,7 +1253,8 @@
       "details": "التفاصيل",
       "runtimeCheck": "تعذّر تشغيل المحركات المحلية. تأكّد من أن SilkScribe محدّث ثم حاول مرة أخرى.",
       "inspectFiles": "تعذّرت قراءة بعض الملفات. تأكّد من أنها ملفات صوتية ثم حاول مرة أخرى.",
-      "disconnectCalendar": "تعذّر فصل التقويم"
+      "disconnectCalendar": "تعذّر فصل التقويم",
+      "captureCheck": "تعذّر التحقق من إذن التسجيل. حاول مرة أخرى أو أعد تشغيل SilkScribe."
     },
     "liveTranscript": "نص مباشر",
     "liveTranscriptNote": "يحل محله نص أدق عند انتهاء المعالجة.",

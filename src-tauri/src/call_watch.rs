@@ -156,7 +156,12 @@ fn check(app: &AppHandle, watch: &mut Watch) {
         let timed_out = watch
             .prompted_at
             .is_some_and(|at| at.elapsed() >= PROMPT_TIMEOUT);
-        let mic = crate::workspace::capture::microphone_in_use();
+        // Where macOS says who's using the mic, SilkScribe's own stream
+        // doesn't keep the prompt up after the call ends.
+        let mic = match crate::workspace::capture::input_apps() {
+            Some(users) => Some(!users.is_empty()),
+            None => crate::workspace::capture::microphone_in_use(),
+        };
         if meeting || timed_out || mic == Some(false) {
             crate::meeting_orb::dismiss_prompt(app);
         }

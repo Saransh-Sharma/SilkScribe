@@ -1233,7 +1233,8 @@
       "details": "Details",
       "runtimeCheck": "Die lokalen Engines konnten nicht starten. Stell sicher, dass SilkScribe aktuell ist, und versuch es noch einmal.",
       "inspectFiles": "Einige Dateien konnten nicht gelesen werden. Prüfe, ob es Audiodateien sind, und versuch es noch einmal.",
-      "disconnectCalendar": "Kalender konnte nicht getrennt werden"
+      "disconnectCalendar": "Kalender konnte nicht getrennt werden",
+      "captureCheck": "Aufnahmezugriff konnte nicht geprüft werden. Versuch es noch einmal oder starte SilkScribe neu."
     },
     "liveTranscript": "Live-Transkript",
     "liveTranscriptNote": "Ein genaueres Transkript ersetzt dieses, sobald die Verarbeitung abgeschlossen ist.",

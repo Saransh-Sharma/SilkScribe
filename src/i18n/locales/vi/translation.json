@@ -1229,7 +1229,8 @@
       "details": "Chi tiết",
       "runtimeCheck": "Không khởi động được các công cụ cục bộ. Hãy đảm bảo SilkScribe đã được cập nhật rồi thử lại.",
       "inspectFiles": "Không đọc được một số tệp. Hãy kiểm tra đó là tệp âm thanh rồi thử lại.",
-      "disconnectCalendar": "Không thể ngắt kết nối lịch"
+      "disconnectCalendar": "Không thể ngắt kết nối lịch",
+      "captureCheck": "Không kiểm tra được quyền ghi âm. Hãy thử lại hoặc khởi động lại SilkScribe."
     },
     "liveTranscript": "Bản ghi trực tiếp",
     "liveTranscriptNote": "Một bản ghi chính xác hơn sẽ thay thế bản này khi xử lý xong.",

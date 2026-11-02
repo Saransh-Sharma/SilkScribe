@@ -1238,7 +1238,8 @@
       "details": "Détails",
       "runtimeCheck": "Les moteurs locaux n’ont pas pu démarrer. Vérifiez que SilkScribe est à jour, puis réessayez.",
       "inspectFiles": "Certains fichiers n’ont pas pu être lus. Vérifiez qu’il s’agit de fichiers audio, puis réessayez.",
-      "disconnectCalendar": "Impossible de déconnecter votre calendrier"
+      "disconnectCalendar": "Impossible de déconnecter votre calendrier",
+      "captureCheck": "Impossible de vérifier l’accès à l’enregistrement. Réessayez ou redémarrez SilkScribe."
     },
     "liveTranscript": "Transcription en direct",
     "liveTranscriptNote": "Une transcription plus précise la remplacera une fois le traitement terminé.",

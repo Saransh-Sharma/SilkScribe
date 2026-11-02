@@ -1243,7 +1243,8 @@
       "details": "Podrobnosti",
       "runtimeCheck": "Místní moduly se nepodařilo spustit. Ověřte, že máte aktuální SilkScribe, a zkuste to znovu.",
       "inspectFiles": "Některé soubory se nepodařilo přečíst. Ověřte, že jde o zvukové soubory, a zkuste to znovu.",
-      "disconnectCalendar": "Kalendář se nepodařilo odpojit"
+      "disconnectCalendar": "Kalendář se nepodařilo odpojit",
+      "captureCheck": "Nepodařilo se ověřit přístup k nahrávání. Zkuste to znovu nebo restartujte SilkScribe."
     },
     "liveTranscript": "Živý přepis",
     "liveTranscriptNote": "Po dokončení zpracování ho nahradí přesnější přepis.",
