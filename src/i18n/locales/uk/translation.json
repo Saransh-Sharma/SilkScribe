@@ -1527,6 +1527,7 @@
       "openSource": "Відкрити {{source}}",
       "shortcut": "⌘K"
     },
+    "cleanupUses": "ШІ-очищення через {{provider}}",
     "openNotes": "Відкрити нотатки"
   },
   "audioPlayer": {

@@ -1510,6 +1510,7 @@
       "openSource": "打開 {{source}}",
       "shortcut": "⌘K"
     },
+    "cleanupUses": "AI 潤飾使用 {{provider}}",
     "openNotes": "打開筆記"
   },
   "audioPlayer": {

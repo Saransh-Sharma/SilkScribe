@@ -1539,6 +1539,7 @@
       "openSource": "فتح {{source}}",
       "shortcut": "⌘K"
     },
+    "cleanupUses": "التنقيح بالذكاء الاصطناعي يستخدم {{provider}}",
     "openNotes": "فتح الملاحظات"
   },
   "audioPlayer": {

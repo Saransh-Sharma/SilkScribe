@@ -1527,6 +1527,7 @@
       "openSource": "Открыть {{source}}",
       "shortcut": "⌘K"
     },
+    "cleanupUses": "ИИ-правка через {{provider}}",
     "openNotes": "Открыть заметки"
   },
   "audioPlayer": {

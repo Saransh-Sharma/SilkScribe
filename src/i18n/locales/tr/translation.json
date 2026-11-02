@@ -1515,6 +1515,7 @@
       "openSource": "{{source}} kaynağını aç",
       "shortcut": "⌘K"
     },
+    "cleanupUses": "YZ düzenlemesi {{provider}} kullanıyor",
     "openNotes": "Notları aç"
   },
   "audioPlayer": {

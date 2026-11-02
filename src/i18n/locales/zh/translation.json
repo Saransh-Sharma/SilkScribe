@@ -1510,6 +1510,7 @@
       "openSource": "打开 {{source}}",
       "shortcut": "⌘K"
     },
+    "cleanupUses": "AI 润色使用 {{provider}}",
     "openNotes": "打开笔记"
   },
   "audioPlayer": {

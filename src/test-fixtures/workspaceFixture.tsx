@@ -242,6 +242,23 @@ if (dictation) {
       external_script_path: null,
     } as AppSettings,
   });
+  // ?cloudCleanup sends AI cleanup to a cloud provider.
+  if (params.has("cloudCleanup"))
+    useSettingsStore.setState((state) => ({
+      settings: {
+        ...state.settings!,
+        post_process_enabled: true,
+        post_process_provider_id: "openai",
+        post_process_providers: [
+          {
+            id: "openai",
+            label: "OpenAI",
+            base_url: "https://api.openai.com/v1",
+          },
+        ],
+        post_process_prompts: [],
+      },
+    }));
   // ?cleanup turns AI cleanup on, with the Mac's command shortcut.
   if (params.has("cleanup"))
     useSettingsStore.setState((state) => ({

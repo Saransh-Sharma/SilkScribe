@@ -1527,6 +1527,7 @@
       "openSource": "Otevřít {{source}}",
       "shortcut": "⌘K"
     },
+    "cleanupUses": "Úprava pomocí AI používá {{provider}}",
     "openNotes": "Otevřít poznámky"
   },
   "audioPlayer": {

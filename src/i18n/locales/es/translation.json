@@ -1521,6 +1521,7 @@
       "openSource": "Abrir {{source}}",
       "shortcut": "⌘K"
     },
+    "cleanupUses": "La limpieza con IA usa {{provider}}",
     "openNotes": "Abrir notas"
   },
   "audioPlayer": {

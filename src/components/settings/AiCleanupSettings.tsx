@@ -14,6 +14,7 @@ import {
   PostProcessingSettingsApi,
   PostProcessingSettingsPrompts,
 } from "./post-processing/PostProcessingSettings";
+import { isOnDeviceProvider } from "@/lib/utils/privacy";
 
 /** Built-in cleanup prompts, lightest first, and their translation keys. */
 const LEVELS = [
@@ -21,8 +22,6 @@ const LEVELS = [
   ["default_improve_transcriptions", "standard"],
   ["builtin_rewrite", "rewrite"],
 ] as const;
-
-const LOCAL_URL = /^(https?:\/\/)?(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/i;
 
 /** AI cleanup, as one section of the Dictation settings. */
 export const AiCleanupSettings: React.FC = () => {
@@ -51,9 +50,7 @@ export const AiCleanupSettings: React.FC = () => {
   const provider = (getSetting("post_process_providers") ?? []).find(
     (candidate) => candidate.id === providerId,
   );
-  const onDevice =
-    providerId === "apple_intelligence" ||
-    (providerId === "custom" && LOCAL_URL.test(provider?.base_url ?? ""));
+  const onDevice = isOnDeviceProvider(providerId, provider?.base_url);
 
   return (
     <SettingsGroup title={t("settings.aiCleanup.title")}>

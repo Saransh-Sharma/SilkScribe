@@ -1510,6 +1510,7 @@
       "openSource": "Mở {{source}}",
       "shortcut": "⌘K"
     },
+    "cleanupUses": "Chỉnh sửa bằng AI dùng {{provider}}",
     "openNotes": "Mở ghi chú"
   },
   "audioPlayer": {

@@ -1515,6 +1515,7 @@
       "openSource": "{{source}} öffnen",
       "shortcut": "⌘K"
     },
+    "cleanupUses": "KI-Bereinigung nutzt {{provider}}",
     "openNotes": "Notizen öffnen"
   },
   "audioPlayer": {

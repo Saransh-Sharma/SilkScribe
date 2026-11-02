@@ -36,6 +36,8 @@ import { drafts } from "./drafts";
 import { AudioPlayer } from "../ui/AudioPlayer";
 import { LiveTranscript } from "./LiveTranscript";
 import { UserNotes } from "./UserNotes";
+import { useSettingsStore } from "@/stores/settingsStore";
+import { cloudCleanupProvider } from "@/lib/utils/privacy";
 import { toastError } from "@/lib/utils/toastError";
 
 export function Transcript({
@@ -58,6 +60,9 @@ export function Transcript({
   saveBarrier: React.MutableRefObject<(() => Promise<boolean>) | null>;
 }) {
   const { t } = useTranslation();
+  const cloudProvider = cloudCleanupProvider(
+    useSettingsStore((state) => state.settings),
+  );
   const recovered = useRef(drafts.read(initial.id));
   const canRestore =
     !!recovered.current &&
@@ -561,7 +566,10 @@ export function Transcript({
       <p className="ws-meta">
         {t(`workspace.source.${doc.source}`)} ·{" "}
         {new Date(doc.created_at * 1000).toLocaleDateString()} ·{" "}
-        {duration(doc.duration)} · {t("workspace.localOnly")}
+        {duration(doc.duration)}
+        {/* A dictation may have been cleaned up by a cloud provider. */}
+        {(doc.source !== "dictation" || !cloudProvider) &&
+          ` · ${t("workspace.localOnly")}`}
       </p>
       {doc.source === "dictation" && (
         <div className="ws-original">

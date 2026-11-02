@@ -899,6 +899,23 @@ test("meeting setup can capture just the running call app", async ({
   await expect(page.getByText("Offer notes when a call starts")).toBeVisible();
 });
 
+test("on-device claims give way when AI cleanup uses a cloud provider", async ({
+  page,
+}) => {
+  await page.goto(fixture + "?dictation=ready");
+  await expect(page.getByText("Everything stays on this device")).toBeVisible();
+  await expect(page.getByText("Runs on your device")).toBeVisible();
+
+  await page.goto(fixture + "?dictation=ready&cloudCleanup");
+  await expect(page.getByText("AI cleanup uses OpenAI")).toBeVisible();
+  await expect(page.getByText("Runs on your device")).toBeHidden();
+  // Meetings and their notes still run locally.
+  await page.getByText("Product design review", { exact: true }).click();
+  await expect(page.locator(".ws-meta")).toContainText(
+    "Everything stays on this device",
+  );
+});
+
 test("a new meeting opens on your notes, and the bar can reopen them", async ({
   page,
 }) => {

@@ -1123,6 +1123,7 @@
     "importAudio": "Import audio",
     "localOnly": "Everything stays on this device",
     "onDevice": "Runs on your device",
+    "cleanupUses": "AI cleanup uses {{provider}}",
     "homeTitle": "Ready when you are",
     "homeDescription": "Record a meeting, import audio, or pick up where you left off.",
     "libraryDescription": "Every dictation, meeting, and file — all searchable.",

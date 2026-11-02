@@ -31,6 +31,7 @@ import {
   Sparkles,
   CalendarDays,
   NotebookPen,
+  Cloud,
 } from "lucide-react";
 import { toast } from "sonner";
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
@@ -55,6 +56,7 @@ import { Preferences } from "./Preferences";
 import { WsMeter, WsSelect, WsToggle } from "./controls";
 import { LANGUAGES } from "@/lib/constants/languages";
 import { useSettings } from "@/hooks/useSettings";
+import { cloudCleanupProvider } from "@/lib/utils/privacy";
 import { useOsType } from "@/hooks/useOsType";
 import { formatKeyCombination } from "@/lib/utils/keyboard";
 import { readSetup, writeSetup, readWorkflowOptions } from "./setupStorage";
@@ -72,6 +74,9 @@ export default function Workspace({
 }) {
   const { t } = useTranslation();
   const { settings, refreshSettings, updateSetting } = useSettings();
+  // Dictation text goes to this cloud provider, if any; claims of staying on
+  // this device are only shown when they're true.
+  const cloudProvider = cloudCleanupProvider(settings);
   const consentReminder = settings?.meeting_consent_reminder ?? true;
   const copyConsentMessage = () =>
     writeText(t("workspace.consent.message"))
@@ -922,8 +927,10 @@ export default function Workspace({
             </button>
           )}
           <p>
-            <ShieldCheck size={15} />
-            {t("workspace.localOnly")}
+            {cloudProvider ? <Cloud size={15} /> : <ShieldCheck size={15} />}
+            {cloudProvider
+              ? t("workspace.cleanupUses", { provider: cloudProvider })
+              : t("workspace.localOnly")}
           </p>
           {/* Checks at launch and handles the tray's "Check for Updates…". */}
           <UpdateChecker className="ws-update-checker" />
@@ -1777,10 +1784,12 @@ export default function Workspace({
                     )}
                   </p>
                 </div>
-                <span className="ws-local-badge">
-                  <ShieldCheck size={15} />
-                  {t("workspace.onDevice")}
-                </span>
+                {!cloudProvider && (
+                  <span className="ws-local-badge">
+                    <ShieldCheck size={15} />
+                    {t("workspace.onDevice")}
+                  </span>
+                )}
               </header>
               {documents.length > 0 && (
                 <AskPanel

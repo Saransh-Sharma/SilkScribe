@@ -1527,6 +1527,7 @@
       "openSource": "Otwórz {{source}}",
       "shortcut": "⌘K"
     },
+    "cleanupUses": "Korekta AI korzysta z {{provider}}",
     "openNotes": "Otwórz notatki"
   },
   "audioPlayer": {

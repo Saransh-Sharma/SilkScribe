@@ -1510,6 +1510,7 @@
       "openSource": "{{source}} 열기",
       "shortcut": "⌘K"
     },
+    "cleanupUses": "AI 정리에 {{provider}} 사용 중",
     "openNotes": "메모 열기"
   },
   "audioPlayer": {
