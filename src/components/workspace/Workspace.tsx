@@ -842,10 +842,13 @@ export default function Workspace({
         value={options.model}
         onChange={(model) => setOptions({ ...options, model })}
         options={[
-          { value: "qwen3-asr", label: "Qwen3 ASR · 1.7B" },
-          { value: "large", label: "Whisper large-v3" },
-          { value: "turbo", label: "Whisper large-v3-turbo" },
-          { value: "parakeet-tdt-0.6b-v3", label: "Parakeet TDT v3" },
+          { value: "qwen3-asr", label: t("workspace.meetingEngines.accurate") },
+          { value: "large", label: t("workspace.meetingEngines.large") },
+          { value: "turbo", label: t("workspace.meetingEngines.balanced") },
+          {
+            value: "parakeet-tdt-0.6b-v3",
+            label: t("workspace.meetingEngines.fastest"),
+          },
           { value: "native", label: t("workspace.currentDictationModel") },
         ]}
       />
@@ -876,7 +879,7 @@ export default function Workspace({
         checked={options.speakers}
         onChange={(speakers) => setOptions({ ...options, speakers })}
         label={t("workspace.detectSpeakers")}
-        hint="pyannote Community-1"
+        hint={t("workspace.speakersHint")}
       />
       <WsSelect
         label={t("workspace.localNotes")}
@@ -886,8 +889,8 @@ export default function Workspace({
         }
         options={[
           { value: "", label: t("workspace.noAutomaticNotes") },
-          { value: "qwen3.5-9b", label: "Qwen3.5 · 9B" },
-          { value: "qwen3.6-27b", label: "Qwen3.6 · 27B" },
+          { value: "qwen3.5-9b", label: t("workspace.notesModel9") },
+          { value: "qwen3.6-27b", label: t("workspace.notesModel27") },
         ]}
       />
       {options.notes_model && (
@@ -1444,7 +1447,7 @@ export default function Workspace({
                   {t("workspace.presetNotes")}
                 </button>
               </div>
-              <details className="ws-processing-details" open>
+              <details className="ws-processing-details">
                 <summary>{t("workspace.processingDetails")}</summary>
                 {modelOptions}
               </details>

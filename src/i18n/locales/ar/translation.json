@@ -1264,8 +1264,8 @@
     "dictationRetention": "صوت الإملاء",
     "skipToContent": "الانتقال إلى المحتوى",
     "memoryGuidance": "يحتاج إلى نحو {{gb}} غيغابايت من الذاكرة",
-    "notesModel9": "Qwen3.5 · 9B",
-    "notesModel27": "Qwen3.6 · 27B",
+    "notesModel9": "قياسي · 9B",
+    "notesModel27": "معمّق · 27B، يحتاج ذاكرة أكبر",
     "draftConflict": "وجدنا مسودة غير محفوظة من إصدار أقدم.",
     "recoverDraft": "استعادة المسودة",
     "keepSaved": "الإبقاء على المحفوظ",
@@ -1559,7 +1559,14 @@
       "noCloud": "تبقى الإملاءات على هذا الجهاز أيضًا.",
       "cloud": "تُرسل الإملاءات إلى {{provider}} للتنقيح بالذكاء الاصطناعي. غيّر ذلك من الكتابة بالذكاء الاصطناعي."
     },
-    "notesEngine": "المحرك"
+    "notesEngine": "المحرك",
+    "meetingEngines": {
+      "accurate": "الأدق · Qwen3 ASR",
+      "large": "دقيق وأبطأ · Whisper large",
+      "balanced": "متوازن · Whisper turbo",
+      "fastest": "الأسرع · Parakeet"
+    },
+    "speakersHint": "يميّز بين الأصوات على هذا الجهاز"
   },
   "audioPlayer": {
     "play": "تشغيل",

@@ -1262,8 +1262,8 @@
     "dictationRetention": "Аудіо диктувань",
     "skipToContent": "Перейти до вмісту",
     "memoryGuidance": "Потрібно близько {{gb}} ГБ пам’яті",
-    "notesModel9": "Qwen3.5 · 9B",
-    "notesModel27": "Qwen3.6 · 27B",
+    "notesModel9": "Стандартний · 9B",
+    "notesModel27": "Ретельний · 27B, потребує більше пам’яті",
     "draftConflict": "Ми знайшли незбережену чернетку з попередньої версії.",
     "recoverDraft": "Відновити чернетку",
     "keepSaved": "Залишити збережене",
@@ -1547,7 +1547,14 @@
       "noCloud": "Диктування теж залишається на цьому пристрої.",
       "cloud": "Диктування надсилається до {{provider}} для ШІ-очищення. Це можна змінити в розділі «Письмо з ШІ»."
     },
-    "notesEngine": "Рушій"
+    "notesEngine": "Рушій",
+    "meetingEngines": {
+      "accurate": "Найточніший · Qwen3 ASR",
+      "large": "Точний, повільніший · Whisper large",
+      "balanced": "Збалансований · Whisper turbo",
+      "fastest": "Найшвидший · Parakeet"
+    },
+    "speakersHint": "Розрізняє голоси на цьому пристрої"
   },
   "audioPlayer": {
     "play": "Відтворити",

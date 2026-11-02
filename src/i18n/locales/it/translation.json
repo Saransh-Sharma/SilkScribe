@@ -1261,8 +1261,8 @@
     "dictationRetention": "Audio delle dettature",
     "skipToContent": "Vai al contenuto",
     "memoryGuidance": "Richiede circa {{gb}} GB di memoria",
-    "notesModel9": "Qwen3.5 · 9B",
-    "notesModel27": "Qwen3.6 · 27B",
+    "notesModel9": "Standard · 9B",
+    "notesModel27": "Approfondito · 27B, richiede più memoria",
     "draftConflict": "Abbiamo trovato una bozza non salvata di una versione precedente.",
     "recoverDraft": "Recupera bozza",
     "keepSaved": "Mantieni versione salvata",
@@ -1541,7 +1541,14 @@
       "noCloud": "Anche le dettature restano su questo dispositivo.",
       "cloud": "Le dettature vanno a {{provider}} per la pulizia con IA. Puoi cambiarlo in Scrittura con IA."
     },
-    "notesEngine": "Motore"
+    "notesEngine": "Motore",
+    "meetingEngines": {
+      "accurate": "Il più preciso · Qwen3 ASR",
+      "large": "Preciso, più lento · Whisper large",
+      "balanced": "Bilanciato · Whisper turbo",
+      "fastest": "Il più veloce · Parakeet"
+    },
+    "speakersHint": "Distingue le voci su questo dispositivo"
   },
   "audioPlayer": {
     "play": "Riproduci",

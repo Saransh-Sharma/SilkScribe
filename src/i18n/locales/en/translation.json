@@ -1261,8 +1261,8 @@
     "dictationRetention": "Dictation audio",
     "skipToContent": "Skip to content",
     "memoryGuidance": "Needs about {{gb}} GB of memory",
-    "notesModel9": "Qwen3.5 · 9B",
-    "notesModel27": "Qwen3.6 · 27B",
+    "notesModel9": "Standard · 9B",
+    "notesModel27": "Thorough · 27B, needs more memory",
     "draftConflict": "We found an unsaved draft from an older version.",
     "recoverDraft": "Recover draft",
     "keepSaved": "Keep saved",
@@ -1535,7 +1535,14 @@
       "noCloud": "Dictations stay on this device too.",
       "cloud": "Dictations go to {{provider}} for AI cleanup. Change this in AI writing."
     },
-    "notesEngine": "Engine"
+    "notesEngine": "Engine",
+    "meetingEngines": {
+      "accurate": "Most accurate · Qwen3 ASR",
+      "large": "Accurate, slower · Whisper large",
+      "balanced": "Balanced · Whisper turbo",
+      "fastest": "Fastest · Parakeet"
+    },
+    "speakersHint": "Tells voices apart, on this device"
   },
   "audioPlayer": {
     "play": "Play",

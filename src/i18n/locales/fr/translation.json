@@ -1261,8 +1261,8 @@
     "dictationRetention": "Audio des dictées",
     "skipToContent": "Aller au contenu",
     "memoryGuidance": "Nécessite environ {{gb}} Go de mémoire",
-    "notesModel9": "Qwen3.5 · 9B",
-    "notesModel27": "Qwen3.6 · 27B",
+    "notesModel9": "Standard · 9B",
+    "notesModel27": "Approfondi · 27B, demande plus de mémoire",
     "draftConflict": "Nous avons trouvé un brouillon non enregistré d’une version plus ancienne.",
     "recoverDraft": "Récupérer le brouillon",
     "keepSaved": "Garder la version enregistrée",
@@ -1541,7 +1541,14 @@
       "noCloud": "Les dictées restent aussi sur cet appareil.",
       "cloud": "Les dictées sont envoyées à {{provider}} pour le nettoyage par IA. Modifiez cela dans Écriture par IA."
     },
-    "notesEngine": "Moteur"
+    "notesEngine": "Moteur",
+    "meetingEngines": {
+      "accurate": "Le plus précis · Qwen3 ASR",
+      "large": "Précis, plus lent · Whisper large",
+      "balanced": "Équilibré · Whisper turbo",
+      "fastest": "Le plus rapide · Parakeet"
+    },
+    "speakersHint": "Distingue les voix sur cet appareil"
   },
   "audioPlayer": {
     "play": "Lecture",

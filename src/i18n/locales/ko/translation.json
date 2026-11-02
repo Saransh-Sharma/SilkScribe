@@ -1259,8 +1259,8 @@
     "dictationRetention": "받아쓰기 오디오",
     "skipToContent": "내용으로 이동",
     "memoryGuidance": "약 {{gb}}GB의 메모리 필요",
-    "notesModel9": "Qwen3.5 · 9B",
-    "notesModel27": "Qwen3.6 · 27B",
+    "notesModel9": "표준 · 9B",
+    "notesModel27": "정밀 · 27B, 더 많은 메모리 필요",
     "draftConflict": "이전 버전에서 저장되지 않은 초안을 찾았습니다.",
     "recoverDraft": "초안 복구",
     "keepSaved": "저장된 버전 유지",
@@ -1530,7 +1530,14 @@
       "noCloud": "받아쓰기도 이 기기에 남습니다.",
       "cloud": "받아쓰기는 AI 정리를 위해 {{provider}}(으)로 전송됩니다. AI 글쓰기에서 변경할 수 있습니다."
     },
-    "notesEngine": "엔진"
+    "notesEngine": "엔진",
+    "meetingEngines": {
+      "accurate": "가장 정확 · Qwen3 ASR",
+      "large": "정확, 느림 · Whisper large",
+      "balanced": "균형 · Whisper turbo",
+      "fastest": "가장 빠름 · Parakeet"
+    },
+    "speakersHint": "이 기기에서 목소리를 구분합니다"
   },
   "audioPlayer": {
     "play": "재생",

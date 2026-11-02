@@ -1259,8 +1259,8 @@
     "dictationRetention": "Âm thanh đọc chính tả",
     "skipToContent": "Bỏ qua đến nội dung",
     "memoryGuidance": "Cần khoảng {{gb}} GB bộ nhớ",
-    "notesModel9": "Qwen3.5 · 9B",
-    "notesModel27": "Qwen3.6 · 27B",
+    "notesModel9": "Tiêu chuẩn · 9B",
+    "notesModel27": "Kỹ lưỡng · 27B, cần nhiều bộ nhớ hơn",
     "draftConflict": "Chúng tôi tìm thấy một bản nháp chưa lưu từ phiên bản cũ hơn.",
     "recoverDraft": "Khôi phục bản nháp",
     "keepSaved": "Giữ bản đã lưu",
@@ -1530,7 +1530,14 @@
       "noCloud": "Nội dung đọc chính tả cũng ở lại trên thiết bị này.",
       "cloud": "Nội dung đọc chính tả được gửi đến {{provider}} để chỉnh sửa bằng AI. Thay đổi trong mục Viết bằng AI."
     },
-    "notesEngine": "Công cụ"
+    "notesEngine": "Công cụ",
+    "meetingEngines": {
+      "accurate": "Chính xác nhất · Qwen3 ASR",
+      "large": "Chính xác, chậm hơn · Whisper large",
+      "balanced": "Cân bằng · Whisper turbo",
+      "fastest": "Nhanh nhất · Parakeet"
+    },
+    "speakersHint": "Phân biệt giọng nói ngay trên thiết bị này"
   },
   "audioPlayer": {
     "play": "Phát",

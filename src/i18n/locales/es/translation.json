@@ -1261,8 +1261,8 @@
     "dictationRetention": "Audio de dictados",
     "skipToContent": "Saltar al contenido",
     "memoryGuidance": "Necesita unos {{gb}} GB de memoria",
-    "notesModel9": "Qwen3.5 · 9B",
-    "notesModel27": "Qwen3.6 · 27B",
+    "notesModel9": "Estándar · 9B",
+    "notesModel27": "Minucioso · 27B, necesita más memoria",
     "draftConflict": "Hemos encontrado un borrador sin guardar de una versión anterior.",
     "recoverDraft": "Recuperar borrador",
     "keepSaved": "Conservar lo guardado",
@@ -1541,7 +1541,14 @@
       "noCloud": "Los dictados también se quedan en este dispositivo.",
       "cloud": "Los dictados se envían a {{provider}} para la limpieza con IA. Cámbialo en Escritura con IA."
     },
-    "notesEngine": "Motor"
+    "notesEngine": "Motor",
+    "meetingEngines": {
+      "accurate": "El más preciso · Qwen3 ASR",
+      "large": "Preciso, más lento · Whisper large",
+      "balanced": "Equilibrado · Whisper turbo",
+      "fastest": "El más rápido · Parakeet"
+    },
+    "speakersHint": "Distingue voces en este dispositivo"
   },
   "audioPlayer": {
     "play": "Reproducir",

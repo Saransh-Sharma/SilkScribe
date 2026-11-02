@@ -1259,8 +1259,8 @@
     "dictationRetention": "口述の音声",
     "skipToContent": "コンテンツへ移動",
     "memoryGuidance": "約 {{gb}} GB のメモリが必要",
-    "notesModel9": "Qwen3.5 · 9B",
-    "notesModel27": "Qwen3.6 · 27B",
+    "notesModel9": "標準 · 9B",
+    "notesModel27": "詳細 · 27B（より多くのメモリが必要）",
     "draftConflict": "以前のバージョンの未保存の下書きが見つかりました。",
     "recoverDraft": "下書きを復元",
     "keepSaved": "保存済みの内容を残す",
@@ -1530,7 +1530,14 @@
       "noCloud": "音声入力もこのデバイスに残ります。",
       "cloud": "音声入力は AI クリーンアップのため {{provider}} に送信されます。AI ライティングで変更できます。"
     },
-    "notesEngine": "エンジン"
+    "notesEngine": "エンジン",
+    "meetingEngines": {
+      "accurate": "最も正確 · Qwen3 ASR",
+      "large": "正確・低速 · Whisper large",
+      "balanced": "バランス · Whisper turbo",
+      "fastest": "最速 · Parakeet"
+    },
+    "speakersHint": "このデバイス上で声を聞き分けます"
   },
   "audioPlayer": {
     "play": "再生",

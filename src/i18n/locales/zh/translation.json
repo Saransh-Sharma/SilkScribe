@@ -1259,8 +1259,8 @@
     "dictationRetention": "听写音频",
     "skipToContent": "跳转到内容",
     "memoryGuidance": "需要约 {{gb}} GB 内存",
-    "notesModel9": "Qwen3.5 · 9B",
-    "notesModel27": "Qwen3.6 · 27B",
+    "notesModel9": "标准 · 9B",
+    "notesModel27": "深入 · 27B，需要更多内存",
     "draftConflict": "我们找到一份来自旧版本的未存储草稿。",
     "recoverDraft": "恢复草稿",
     "keepSaved": "保留已存储的版本",
@@ -1530,7 +1530,14 @@
       "noCloud": "听写内容也保留在此设备上。",
       "cloud": "听写内容会发送到 {{provider}} 进行 AI 润色。可在“AI 写作”中更改。"
     },
-    "notesEngine": "引擎"
+    "notesEngine": "引擎",
+    "meetingEngines": {
+      "accurate": "最准确 · Qwen3 ASR",
+      "large": "准确、较慢 · Whisper large",
+      "balanced": "均衡 · Whisper turbo",
+      "fastest": "最快 · Parakeet"
+    },
+    "speakersHint": "在此设备上区分不同说话人"
   },
   "audioPlayer": {
     "play": "播放",

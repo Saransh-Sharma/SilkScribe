@@ -1,6 +1,15 @@
 import arabic from "../src/i18n/locales/ar/translation.json" with { type: "json" };
 import { test, expect } from "@playwright/test";
 const fixture = "/playwright/workspace-fixture.html";
+
+/** Opens the meeting or import form's engine options, collapsed by default. */
+const showEngineOptions = async (page: import("@playwright/test").Page) => {
+  const details = page.locator("details.ws-processing-details");
+  if (
+    !(await details.evaluate((element) => (element as HTMLDetailsElement).open))
+  )
+    await details.locator("summary").click();
+};
 test("workspace shows creation paths and a unified searchable library", async ({
   page,
 }) => {
@@ -332,6 +341,7 @@ test("meeting and import setup survive reload with independent defaults", async 
   await page
     .getByRole("button", { name: "Fast transcript", exact: true })
     .click();
+  await showEngineOptions(page);
   await expect(
     page.getByRole("button", { name: "Engine", exact: true }),
   ).toContainText("Same as dictation");
@@ -340,6 +350,7 @@ test("meeting and import setup survive reload with independent defaults", async 
     .first()
     .click();
   await expect(page.getByText("pending.wav", { exact: false })).toBeVisible();
+  await showEngineOptions(page);
   await expect(
     page.getByRole("button", { name: "Engine", exact: true }),
   ).toContainText("Qwen3");
@@ -350,6 +361,7 @@ test("meeting and import setup survive reload with independent defaults", async 
   await expect(
     page.getByRole("textbox", { name: "Title", exact: true }),
   ).toHaveValue("Monday planning");
+  await showEngineOptions(page);
   await expect(
     page.getByRole("button", { name: "Engine", exact: true }),
   ).toContainText("Same as dictation");
@@ -1163,6 +1175,7 @@ test("meeting setup asks which template the notes follow", async ({ page }) => {
   // Only notes have a template.
   await expect(page.getByLabel("Notes template")).toHaveCount(0);
   await page.getByRole("button", { name: "Transcript + notes" }).click();
+  await showEngineOptions(page);
   await expect(page.getByLabel("Notes template")).toBeVisible();
 });
 

@@ -1262,8 +1262,8 @@
     "dictationRetention": "Аудио диктовок",
     "skipToContent": "Перейти к содержимому",
     "memoryGuidance": "Нужно около {{gb}} ГБ памяти",
-    "notesModel9": "Qwen3.5 · 9B",
-    "notesModel27": "Qwen3.6 · 27B",
+    "notesModel9": "Стандартный · 9B",
+    "notesModel27": "Подробный · 27B, нужно больше памяти",
     "draftConflict": "Мы нашли несохранённый черновик из более старой версии.",
     "recoverDraft": "Восстановить черновик",
     "keepSaved": "Оставить сохранённое",
@@ -1547,7 +1547,14 @@
       "noCloud": "Диктовка тоже остаётся на этом устройстве.",
       "cloud": "Диктовка отправляется в {{provider}} для ИИ-правки. Это можно изменить в разделе «Письмо с ИИ»."
     },
-    "notesEngine": "Движок"
+    "notesEngine": "Движок",
+    "meetingEngines": {
+      "accurate": "Самый точный · Qwen3 ASR",
+      "large": "Точный, медленнее · Whisper large",
+      "balanced": "Сбалансированный · Whisper turbo",
+      "fastest": "Самый быстрый · Parakeet"
+    },
+    "speakersHint": "Различает голоса на этом устройстве"
   },
   "audioPlayer": {
     "play": "Воспроизвести",

@@ -1260,8 +1260,8 @@
     "dictationRetention": "Dikte sesleri",
     "skipToContent": "İçeriğe git",
     "memoryGuidance": "Yaklaşık {{gb}} GB bellek gerekir",
-    "notesModel9": "Qwen3.5 · 9B",
-    "notesModel27": "Qwen3.6 · 27B",
+    "notesModel9": "Standart · 9B",
+    "notesModel27": "Kapsamlı · 27B, daha fazla bellek gerekir",
     "draftConflict": "Eski bir sürümden kaydedilmemiş bir taslak bulduk.",
     "recoverDraft": "Taslağı kurtar",
     "keepSaved": "Kaydedileni koru",
@@ -1535,7 +1535,14 @@
       "noCloud": "Dikteler de bu cihazda kalır.",
       "cloud": "Dikteler YZ düzenlemesi için {{provider}} hizmetine gönderilir. Bunu YZ ile yazma bölümünden değiştirin."
     },
-    "notesEngine": "Motor"
+    "notesEngine": "Motor",
+    "meetingEngines": {
+      "accurate": "En doğru · Qwen3 ASR",
+      "large": "Doğru, daha yavaş · Whisper large",
+      "balanced": "Dengeli · Whisper turbo",
+      "fastest": "En hızlı · Parakeet"
+    },
+    "speakersHint": "Sesleri bu cihazda ayırt eder"
   },
   "audioPlayer": {
     "play": "Oynat",

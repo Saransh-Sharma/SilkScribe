@@ -1262,8 +1262,8 @@
     "dictationRetention": "Zvuk diktátů",
     "skipToContent": "Přejít na obsah",
     "memoryGuidance": "Vyžaduje asi {{gb}} GB paměti",
-    "notesModel9": "Qwen3.5 · 9B",
-    "notesModel27": "Qwen3.6 · 27B",
+    "notesModel9": "Standardní · 9B",
+    "notesModel27": "Důkladný · 27B, potřebuje víc paměti",
     "draftConflict": "Našli jsme neuložený koncept ze starší verze.",
     "recoverDraft": "Obnovit koncept",
     "keepSaved": "Ponechat uloženou verzi",
@@ -1547,7 +1547,14 @@
       "noCloud": "Diktáty zůstávají v tomto zařízení také.",
       "cloud": "Diktáty se posílají do {{provider}} k úpravě pomocí AI. Změníte to v části Psaní s AI."
     },
-    "notesEngine": "Modul"
+    "notesEngine": "Modul",
+    "meetingEngines": {
+      "accurate": "Nejpřesnější · Qwen3 ASR",
+      "large": "Přesný, pomalejší · Whisper large",
+      "balanced": "Vyvážený · Whisper turbo",
+      "fastest": "Nejrychlejší · Parakeet"
+    },
+    "speakersHint": "Rozliší hlasy přímo v tomto zařízení"
   },
   "audioPlayer": {
     "play": "Přehrát",
