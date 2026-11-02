@@ -964,6 +964,35 @@ test("meeting setup offers a heads-up for the people on the call", async ({
   await expect(page.getByText("Offer notes when a call starts")).toBeVisible();
 });
 
+test("keyboard users land in an opened transcript and its evidence", async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  await page.getByText("Product design review", { exact: true }).click();
+  await expect(
+    page.getByRole("article", { name: "Product design review" }),
+  ).toBeFocused();
+  await page.getByRole("tab", { name: "Notes", exact: true }).click();
+  await page.getByRole("button", { name: "0:02", exact: true }).click();
+  const evidence = page.getByRole("complementary", {
+    name: "From the transcript",
+  });
+  await expect(evidence).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(evidence).toBeHidden();
+});
+
+test("collapsed settings sections keep their controls out of reach", async ({
+  page,
+}) => {
+  await page.goto(`${fixture}?dictation=ready`);
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
+  const space = page.getByRole("switch", { name: "Add a space after pasting" });
+  await expect(space).toHaveCount(0);
+  await page.getByRole("button", { name: "Transcription" }).click();
+  await expect(space).toHaveCount(1);
+});
+
 test("Home puts what needs you first and lists dictations once", async ({
   page,
 }) => {

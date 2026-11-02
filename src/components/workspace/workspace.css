@@ -1448,3 +1448,9 @@
   font-weight: 600;
   color: var(--ss-brand-primary);
 }
+
+.ws-presets button[aria-pressed="true"] {
+  border-color: var(--ss-brand-secondary);
+  color: var(--ss-text-primary);
+  box-shadow: inset 0 0 0 1px var(--ss-brand-secondary);
+}

@@ -86,7 +86,8 @@
 
   --ss-text-primary: var(--ss-neutral-ink);
   --ss-text-secondary: var(--ss-neutral-umber);
-  --ss-text-tertiary: #7b716c;
+  /* 4.8:1 on cream and 5.2:1 on ivory, so small labels pass WCAG AA. */
+  --ss-text-tertiary: #6f6561;
   --ss-text-inverse: #fffaf5;
   --ss-text-disabled: #aba19c;
 

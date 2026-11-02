@@ -509,7 +509,6 @@ const MeetingOrb: React.FC<{ preview?: MeetingOrbPreview }> = ({ preview }) => {
                 ref={listRef}
                 onScroll={handleScroll}
                 aria-label={t("meetingOrb.transcriptLabel")}
-                aria-live="polite"
               >
                 {segments.map((segment, index) => {
                   const speakerChanged =
@@ -613,6 +612,18 @@ const MeetingOrb: React.FC<{ preview?: MeetingOrbPreview }> = ({ preview }) => {
         onPointerUp={handlePointerUp}
         onPointerCancel={() => {
           dragRef.current = null;
+        }}
+        onClick={(event) => {
+          // Enter or Space (a click with no pointer) does what a tap does.
+          if (event.detail !== 0 || preview) return;
+          if (modeRef.current === "collapsed") {
+            setPinned(true);
+            void expand();
+          } else {
+            pinnedRef.current = !pinnedRef.current;
+            setPinned(pinnedRef.current);
+            reconcile();
+          }
         }}
       >
         <span className="orb-ring" aria-hidden="true" />

@@ -295,6 +295,17 @@ export default function Workspace({
   const options = workflowOptions[workflow];
   const setOptions = (next: JobOptions) =>
     setWorkflowOptions((previous) => ({ ...previous, [workflow]: next }));
+  // Which preset the current options match, so it can show as chosen.
+  const activePreset =
+    options.model === "native" && !options.speakers && !options.notes_model
+      ? "fast"
+      : options.model === "qwen3-asr" &&
+          !options.speakers &&
+          !options.notes_model
+        ? "detailed"
+        : options.model === "qwen3-asr" && options.notes_model === "qwen3.5-9b"
+          ? "notes"
+          : null;
   useEffect(() => {
     writeSetup("workflow-options", workflowOptions);
   }, [workflowOptions]);
@@ -748,10 +759,13 @@ export default function Workspace({
   const [openAt, setOpenAt] = useState<number | null>(null);
   // The meeting just started from here, whose notes take focus once.
   const [focusNotesFor, setFocusNotesFor] = useState<string | null>(null);
+  // Bumped on every open, so the transcript takes focus once per open.
+  const [openToken, setOpenToken] = useState(0);
   const openDocument = async (id: string, at: number | null = null) => {
     if (saveBarrier.current && !(await saveBarrier.current())) return;
     try {
       setOpenAt(at);
+      setOpenToken((token) => token + 1);
       setSelected(await api.get(id));
       setCreate(null);
     } catch (e) {
@@ -1185,6 +1199,7 @@ export default function Workspace({
               document={selected}
               openAt={openAt}
               focusNotes={focusNotesFor === selected.id}
+              openToken={openToken}
               onBack={() => {
                 setSelected(null);
                 void refresh();
@@ -1389,6 +1404,7 @@ export default function Workspace({
               <div className="ws-presets">
                 <button
                   className="ws-secondary"
+                  aria-pressed={activePreset === "fast"}
                   onClick={() =>
                     setOptions({
                       ...options,
@@ -1402,6 +1418,7 @@ export default function Workspace({
                 </button>
                 <button
                   className="ws-secondary"
+                  aria-pressed={activePreset === "detailed"}
                   onClick={() =>
                     setOptions({
                       ...options,
@@ -1415,6 +1432,7 @@ export default function Workspace({
                 </button>
                 <button
                   className="ws-secondary"
+                  aria-pressed={activePreset === "notes"}
                   onClick={() =>
                     setOptions({
                       ...options,

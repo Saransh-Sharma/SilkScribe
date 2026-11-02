@@ -40,6 +40,9 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { cloudCleanupProvider } from "@/lib/utils/privacy";
 import { toastError } from "@/lib/utils/toastError";
 
+/** The open that last moved focus into a transcript. */
+let focusedOpen = 0;
+
 export function Transcript({
   document: initial,
   onBack,
@@ -48,8 +51,12 @@ export function Transcript({
   saveBarrier,
   openAt = null,
   focusNotes = false,
+  openToken = 0,
 }: {
   document: Document;
+  /** Changes each time a document is opened, so focus moves into it once
+   * per open rather than on every remount (stage changes remount). */
+  openToken?: number;
   /** Start in "Your notes", e.g. right after the meeting starts. */
   focusNotes?: boolean;
   /** Seconds to start at, e.g. when a citation opened it. */
@@ -60,6 +67,13 @@ export function Transcript({
   saveBarrier: React.MutableRefObject<(() => Promise<boolean>) | null>;
 }) {
   const { t } = useTranslation();
+  const root = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (focusNotes || !openToken || focusedOpen === openToken) return;
+    focusedOpen = openToken;
+    root.current?.focus({ preventScroll: true });
+  }, [focusNotes, openToken]);
+  const evidencePanel = useRef<HTMLElement>(null);
   const cloudProvider = cloudCleanupProvider(
     useSettingsStore((state) => state.settings),
   );
@@ -106,6 +120,12 @@ export function Transcript({
   const [segmentPage, setSegmentPage] = useState(0);
   const [matchIndex, setMatchIndex] = useState(-1);
   const [evidence, setEvidence] = useState<NoteEvidence | null>(null);
+  // The evidence panel opens beside the notes; take focus there so it can be
+  // read and closed (Escape) from the keyboard.
+  const evidenceShown = evidence !== null;
+  useEffect(() => {
+    if (evidenceShown) evidencePanel.current?.focus({ preventScroll: true });
+  }, [evidenceShown]);
   const showEvidence = (
     id: string,
     snapshots: NoteEvidence[] = [],
@@ -467,7 +487,12 @@ export function Transcript({
     }
   };
   return (
-    <article className="ws-transcript">
+    <article
+      className="ws-transcript"
+      ref={root}
+      tabIndex={-1}
+      aria-label={initial.title || t("workspace.title")}
+    >
       {conflict && (
         <div className="ws-alert" role="alert">
           <p>{t("workspace.draftConflict")}</p>
@@ -1553,7 +1578,15 @@ export function Transcript({
         </section>
       )}
       {evidence && (
-        <aside className="ws-evidence" aria-label={t("workspace.evidence")}>
+        <aside
+          className="ws-evidence"
+          aria-label={t("workspace.evidence")}
+          ref={evidencePanel}
+          tabIndex={-1}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") setEvidence(null);
+          }}
+        >
           <h2>{t("workspace.evidence")}</h2>
           <p dir="auto">{evidence.text}</p>
           {doc.segments.find((s) => s.id === evidence.segment_id)?.text !==

@@ -76,7 +76,9 @@ export function LiveTranscript({
         <strong>{t("workspace.liveTranscript")}</strong>{" "}
         {t("workspace.liveTranscriptNote")}
       </p>
-      <ol aria-live={live ? "polite" : undefined}>
+      {/* Not a live region: announcing every caption as it arrives drowns
+          out everything else. The list is there to read. */}
+      <ol>
         {segments.map((segment, index) => (
           <li key={segment.id} data-source={segment.source}>
             {(index === 0 || segments[index - 1].source !== segment.source) && (
