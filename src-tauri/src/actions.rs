@@ -101,6 +101,7 @@ fn target_style_code(target: &crate::app_context::DictationTarget) -> &'static s
 
 /// One line per dictation for `scripts/dictation-latency.ts`. Each time is
 /// measured from releasing the shortcut.
+#[allow(clippy::too_many_arguments)]
 fn log_dictation_timing(
     engine: &str,
     partials: bool,

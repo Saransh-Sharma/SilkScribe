@@ -246,9 +246,7 @@ impl Workspace {
                             last_progress = std::time::Instant::now();
                         }
                     });
-                if let Err(error) = copied {
-                    return Err(error);
-                }
+                copied?;
                 if let Err(error) = std::fs::rename(&temporary, &dest) {
                     return Err(error.into());
                 }

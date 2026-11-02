@@ -231,7 +231,7 @@ impl AudioRecorder {
         let worker = match Self::wait_for_worker_init(init_rx, worker) {
             Ok(worker) => worker,
             Err(error) => {
-                return Err(Box::new(Error::new(std::io::ErrorKind::Other, error)));
+                return Err(Box::new(Error::other(error)));
             }
         };
 

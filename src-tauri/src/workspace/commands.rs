@@ -426,19 +426,19 @@ pub async fn workspace_remove_pack(app: AppHandle, id: String) -> Result<(), Str
         .map_err(|e| e.to_string())?
 }
 fn remove_pack(app: &AppHandle, id: String) -> Result<(), String> {
-    let workspace = ws(&app);
+    let workspace = ws(app);
     let _guard = workspace.lock.lock().unwrap();
     if workspace.active.lock().unwrap().is_some() || workspace.installing.load(Ordering::SeqCst) {
         return Err("Stop processing and downloads before removing an engine.".into());
     }
-    if !packs::catalog(&app)
+    if !packs::catalog(app)
         .map_err(|e| e.to_string())?
         .iter()
         .any(|p| p.id == id)
     {
         return Err("Unknown engine.".into());
     }
-    let root = crate::portable::app_data_dir(&app)
+    let root = crate::portable::app_data_dir(app)
         .map_err(|e| e.to_string())?
         .join("local-models");
     for name in [
@@ -451,7 +451,7 @@ fn remove_pack(app: &AppHandle, id: String) -> Result<(), String> {
             std::fs::remove_dir_all(path).map_err(|e| e.to_string())?;
         }
     }
-    workspace.emit(&app);
+    workspace.emit(app);
     Ok(())
 }
 #[derive(serde::Serialize, specta::Type)]

@@ -356,7 +356,7 @@ pub fn create_recording_overlay(app_handle: &AppHandle) {
             .build()
         {
             Ok(panel) => {
-                let _ = panel.hide();
+                panel.hide();
                 // Purely decorative surface — never intercept the pointer.
                 if let Some(window) = app_handle.get_webview_window("recording_overlay") {
                     let _ = window.set_ignore_cursor_events(true);
