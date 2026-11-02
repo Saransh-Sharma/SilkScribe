@@ -54,7 +54,8 @@ public func isAppleIntelligenceAvailable() -> Int32 {
 public func processTextWithSystemPrompt(
     _ systemPrompt: UnsafePointer<CChar>,
     _ userContent: UnsafePointer<CChar>,
-    maxTokens: Int32
+    maxTokens: Int32,
+    guided: Int32
 ) -> UnsafeMutablePointer<AppleLLMResponse> {
     let swiftSystemPrompt = String(cString: systemPrompt)
     let swiftUserContent = String(cString: userContent)
@@ -86,7 +87,7 @@ public func processTextWithSystemPrompt(
     }
     let box = ResultBox()
 
-    Task.detached(priority: .userInitiated) {
+    let task = Task.detached(priority: .userInitiated) {
         defer { semaphore.signal() }
         do {
             let session = LanguageModelSession(
@@ -95,15 +96,21 @@ public func processTextWithSystemPrompt(
             )
             var output: String
 
-            do {
-                let structured = try await session.respond(
-                    to: swiftUserContent,
-                    generating: CleanedTranscript.self
-                )
-                output = structured.content.cleanedText
-            } catch {
-                let fallbackGeneration = try await session.respond(to: swiftUserContent)
-                output = fallbackGeneration.content
+            if guided != 0 {
+                do {
+                    let structured = try await session.respond(
+                        to: swiftUserContent,
+                        generating: CleanedTranscript.self
+                    )
+                    output = structured.content.cleanedText
+                } catch {
+                    let fallbackGeneration = try await session.respond(to: swiftUserContent)
+                    output = fallbackGeneration.content
+                }
+            } else {
+                // Free-form: an instruction like "make this a list" shouldn't
+                // be squeezed through the "cleaned transcript" schema.
+                output = try await session.respond(to: swiftUserContent).content
             }
 
             if tokenLimit > 0 {
@@ -115,7 +122,13 @@ public func processTextWithSystemPrompt(
         }
     }
 
-    semaphore.wait()
+    // Give up a little after the caller does, so a model that never answers
+    // doesn't hold this thread forever.
+    if semaphore.wait(timeout: .now() + .seconds(35)) == .timedOut {
+        task.cancel()
+        responsePtr.pointee.error_message = duplicateCString("Apple Intelligence took too long.")
+        return responsePtr
+    }
 
     // Write to responsePtr on the calling thread after task completes
     if let response = box.response {

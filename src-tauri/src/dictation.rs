@@ -224,6 +224,7 @@ async fn apple_intelligence_complete(
     model: &str,
     system_prompt: String,
     user_content: String,
+    guided: bool,
 ) -> Result<String, CleanupError> {
     #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
     {
@@ -240,6 +241,7 @@ async fn apple_intelligence_complete(
                 &system_prompt,
                 &user_content,
                 token_limit,
+                guided,
             )
         })
         .await;
@@ -305,7 +307,7 @@ async fn post_process_transcription(
 
         // Apple Intelligence uses native Swift APIs.
         if provider.id == APPLE_INTELLIGENCE_PROVIDER_ID {
-            return apple_intelligence_complete(&model, system_prompt, user_content).await;
+            return apple_intelligence_complete(&model, system_prompt, user_content, true).await;
         }
 
         // Define JSON schema for transcription output
@@ -427,6 +429,19 @@ pub(crate) enum CommandOutcome {
     NotConfigured,
     Failed,
     TimedOut,
+    /// The selection is more than the provider can take in one go.
+    TooLong,
+}
+
+/// The most selected text Apple Intelligence gets for a command. Its on-device
+/// model has a 4,096-token window shared by the prompt, the selection and the
+/// rewrite, so a longer selection would fail partway.
+pub(crate) const APPLE_INTELLIGENCE_SELECTION_LIMIT: usize = 4_000;
+
+/// Whether `selection` is too long for this provider.
+pub(crate) fn selection_too_long(provider_id: &str, selection: Option<&str>) -> bool {
+    provider_id == APPLE_INTELLIGENCE_PROVIDER_ID
+        && selection.is_some_and(|text| text.chars().count() > APPLE_INTELLIGENCE_SELECTION_LIMIT)
 }
 
 /// The system prompt and user message for a command. With a selection the
@@ -489,11 +504,16 @@ pub(crate) async fn run_command(
     selection: Option<&str>,
     guidance: Option<&str>,
 ) -> CommandOutcome {
+    if let Ok((provider, _, _)) = llm_target(settings) {
+        if selection_too_long(&provider.id, selection) {
+            return CommandOutcome::TooLong;
+        }
+    }
     let (system, user) = command_prompt(instruction, selection, guidance);
     run_command_with(CLEANUP_TIMEOUT, selection, || async move {
         let (provider, model, api_key) = llm_target(settings)?;
         if provider.id == APPLE_INTELLIGENCE_PROVIDER_ID {
-            return apple_intelligence_complete(&model, system, user).await;
+            return apple_intelligence_complete(&model, system, user, false).await;
         }
         match crate::llm_client::send_chat_completion_with_schema(
             &provider,
@@ -595,6 +615,22 @@ fn maybe_convert_chinese_variant(settings: &AppSettings, transcription: &str) ->
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn apple_intelligence_turns_down_long_selections() {
+        let long = "word ".repeat(1_000);
+        assert!(selection_too_long(
+            APPLE_INTELLIGENCE_PROVIDER_ID,
+            Some(&long)
+        ));
+        assert!(!selection_too_long(
+            APPLE_INTELLIGENCE_PROVIDER_ID,
+            Some("make this shorter")
+        ));
+        assert!(!selection_too_long(APPLE_INTELLIGENCE_PROVIDER_ID, None));
+        // Cloud models take far more.
+        assert!(!selection_too_long("openai", Some(&long)));
+    }
     use crate::settings::get_default_settings;
 
     fn finish(requested: bool, result: Result<String, CleanupError>, delay: Duration) -> Finished {

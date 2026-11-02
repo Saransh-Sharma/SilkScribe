@@ -699,6 +699,7 @@ impl ShortcutAction for CommandAction {
                     CommandOutcome::NotConfigured => "not configured",
                     CommandOutcome::Failed => "failed",
                     CommandOutcome::TimedOut => "timed out",
+                    CommandOutcome::TooLong => "too long",
                 }
             );
             let text = match outcome {
@@ -713,6 +714,10 @@ impl ShortcutAction for CommandAction {
                 }
                 CommandOutcome::TimedOut => {
                     finish_with_error(&ah, "commandTimedOut");
+                    return;
+                }
+                CommandOutcome::TooLong => {
+                    finish_with_error(&ah, "commandTooLong");
                     return;
                 }
             };
