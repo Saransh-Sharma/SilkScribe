@@ -8,6 +8,15 @@ pub struct Store {
     path: PathBuf,
     pub media: PathBuf,
 }
+
+/// The passage index's schema; bump it to rebuild the index on next launch.
+/// 2: rowids encode the document and segment (see `create_passage_index`).
+const PASSAGE_SCHEMA: i64 = 2;
+/// Low rowid bits that number a document's passages: up to about a million
+/// segments each.
+const PASSAGE_SLOT_BITS: u32 = 20;
+/// The slot for the notes a person typed, the last one.
+const NOTES_SLOT: u32 = (1 << PASSAGE_SLOT_BITS) - 1;
 impl Store {
     pub fn new(root: &Path) -> Result<Self> {
         let media = root.join("workspace-audio");
@@ -28,6 +37,17 @@ impl Store {
             path: root.join("history.db"),
             media,
         };
+        // Write-ahead logging lets the Library read while a job writes, instead
+        // of waiting out the busy timeout. It's a property of the file, kept
+        // from here on.
+        match store
+            .conn()?
+            .pragma_update_and_check(None, "journal_mode", "WAL", |row| row.get::<_, String>(0))
+        {
+            Ok(mode) if mode.eq_ignore_ascii_case("wal") => {}
+            Ok(mode) => log::warn!("The library database stays in {mode} journal mode"),
+            Err(error) => log::warn!("Couldn't turn on write-ahead logging: {error}"),
+        }
         store.conn()?.execute_batch("CREATE TABLE IF NOT EXISTS workspace_documents (
             id TEXT PRIMARY KEY, created_at INTEGER NOT NULL, history_id INTEGER UNIQUE, body TEXT NOT NULL);
             CREATE INDEX IF NOT EXISTS workspace_created ON workspace_documents(created_at DESC);")?;
@@ -65,7 +85,11 @@ impl Store {
             tx.execute_batch("INSERT INTO workspace_search(rowid,title,transcript) SELECT rowid,json_extract(body,'$.title'),coalesce((SELECT group_concat(json_extract(value,'$.text'),char(10)) FROM json_each(body,'$.segments')),'') FROM workspace_documents;")?;
         }
         tx.commit()?;
-        store.create_passage_index()?;
+        // Ask can live without its index; the rest of the app can't live with
+        // a launch that fails every time, so a failed rebuild is only logged.
+        if let Err(error) = store.create_passage_index() {
+            log::error!("Couldn't build the passage index for Ask: {error:#}");
+        }
         store.recover_import_registrations()?;
         for mut doc in store.processing_documents()? {
             if doc.stage.active() || matches!(doc.stage, Stage::Recording | Stage::Paused) {
@@ -80,44 +104,103 @@ impl Store {
         Ok(store)
     }
     /// A word index over every transcript segment and the notes people typed,
-    /// for asking questions across meetings. Kept current by triggers and
-    /// built once for existing libraries.
+    /// for asking questions across meetings. Kept current by triggers.
+    ///
+    /// Each passage's rowid encodes where it came from: the document's rowid
+    /// shifted left by `PASSAGE_SLOT_BITS`, plus the segment's index, with the
+    /// last slot for typed notes. A document's passages are then one rowid
+    /// range, so updating or deleting them is an index lookup rather than a
+    /// scan of the whole library.
     fn create_passage_index(&self) -> Result<()> {
+        use rusqlite::OptionalExtension;
         let mut conn = self.conn()?;
         let tx = conn.transaction()?;
-        let exists: bool = tx.query_row(
-            "SELECT EXISTS(SELECT 1 FROM sqlite_master WHERE name='workspace_passages')",
-            [],
-            |r| r.get(0),
+        tx.execute_batch(
+            "CREATE TABLE IF NOT EXISTS workspace_meta (key TEXT PRIMARY KEY, value INTEGER NOT NULL);",
         )?;
-        const SEGMENTS: &str = "SELECT new.id, json_extract(value,'$.id'), json_extract(value,'$.start'), json_extract(new.body,'$.title'), json_extract(value,'$.text') FROM json_each(new.body,'$.segments')";
-        const NOTES: &str = "VALUES(new.document_id, 'user-notes', NULL, (SELECT json_extract(body,'$.title') FROM workspace_documents WHERE id=new.document_id), new.body)";
-        tx.execute_batch(&format!("CREATE VIRTUAL TABLE IF NOT EXISTS workspace_passages USING fts5(document_id UNINDEXED, segment_id UNINDEXED, start UNINDEXED, title, text, tokenize='unicode61 remove_diacritics 2');
-            CREATE TRIGGER IF NOT EXISTS workspace_passages_insert AFTER INSERT ON workspace_documents BEGIN
-              INSERT INTO workspace_passages(document_id,segment_id,start,title,text) {SEGMENTS}; END;
-            CREATE TRIGGER IF NOT EXISTS workspace_passages_delete AFTER DELETE ON workspace_documents BEGIN
-              DELETE FROM workspace_passages WHERE document_id=old.id; END;
-            CREATE TRIGGER IF NOT EXISTS workspace_passages_update AFTER UPDATE OF body ON workspace_documents
-              WHEN json_extract(old.body,'$.title') IS NOT json_extract(new.body,'$.title') OR json_extract(old.body,'$.segments') IS NOT json_extract(new.body,'$.segments') BEGIN
-              DELETE FROM workspace_passages WHERE document_id=old.id AND segment_id<>'user-notes';
-              INSERT INTO workspace_passages(document_id,segment_id,start,title,text) {SEGMENTS};
-              UPDATE workspace_passages SET title=json_extract(new.body,'$.title') WHERE document_id=new.id AND segment_id='user-notes'; END;
-            CREATE TRIGGER IF NOT EXISTS workspace_passages_notes_insert AFTER INSERT ON workspace_user_notes BEGIN
-              DELETE FROM workspace_passages WHERE document_id=new.document_id AND segment_id='user-notes';
-              INSERT INTO workspace_passages(document_id,segment_id,start,title,text) {NOTES}; END;
-            CREATE TRIGGER IF NOT EXISTS workspace_passages_notes_update AFTER UPDATE OF body ON workspace_user_notes BEGIN
-              DELETE FROM workspace_passages WHERE document_id=old.document_id AND segment_id='user-notes';
-              INSERT INTO workspace_passages(document_id,segment_id,start,title,text) {NOTES}; END;
-            CREATE TRIGGER IF NOT EXISTS workspace_passages_notes_delete AFTER DELETE ON workspace_user_notes BEGIN
-              DELETE FROM workspace_passages WHERE document_id=old.document_id AND segment_id='user-notes'; END;"))?;
-        if !exists {
-            tx.execute_batch("INSERT INTO workspace_passages(document_id,segment_id,start,title,text)
-                SELECT d.id, json_extract(s.value,'$.id'), json_extract(s.value,'$.start'), json_extract(d.body,'$.title'), json_extract(s.value,'$.text')
-                FROM workspace_documents d, json_each(d.body,'$.segments') s;
-              INSERT INTO workspace_passages(document_id,segment_id,start,title,text)
-                SELECT n.document_id, 'user-notes', NULL, json_extract(d.body,'$.title'), n.body
-                FROM workspace_user_notes n JOIN workspace_documents d ON d.id=n.document_id;")?;
+        let version: i64 = tx
+            .query_row(
+                "SELECT value FROM workspace_meta WHERE key='passages'",
+                [],
+                |r| r.get(0),
+            )
+            .optional()?
+            .unwrap_or(0);
+        if version >= PASSAGE_SCHEMA {
+            return Ok(());
         }
+        let base = |row: &str| format!("({row}.rowid << {PASSAGE_SLOT_BITS})");
+        let notes_slot = |row: &str| format!("({} + {NOTES_SLOT})", base(row));
+        let segments = |doc: &str, value: &str| {
+            format!(
+                "SELECT {} + CAST({value}.key AS INTEGER), {doc}.id, json_extract({value}.value,'$.id'), json_extract({value}.value,'$.start'), json_extract({doc}.body,'$.title'), json_extract({value}.value,'$.text') FROM json_each({doc}.body,'$.segments') {value} WHERE CAST({value}.key AS INTEGER) < {NOTES_SLOT}",
+                base(doc)
+            )
+        };
+        let notes = |row: &str| {
+            format!(
+                "SELECT {}, {row}.document_id, 'user-notes', NULL, json_extract(d.body,'$.title'), {row}.body FROM workspace_documents d WHERE d.id={row}.document_id",
+                notes_slot("d")
+            )
+        };
+        let range = |row: &str, last: u32| {
+            format!("rowid BETWEEN {} AND {} + {last}", base(row), base(row))
+        };
+        let notes_rowid = |row: &str| {
+            format!(
+                "rowid=(SELECT {} FROM workspace_documents d WHERE d.id={row}.document_id)",
+                notes_slot("d")
+            )
+        };
+        const COLUMNS: &str = "rowid,document_id,segment_id,start,title,text";
+        tx.execute_batch(&format!(
+            "DROP TRIGGER IF EXISTS workspace_passages_insert;
+            DROP TRIGGER IF EXISTS workspace_passages_delete;
+            DROP TRIGGER IF EXISTS workspace_passages_update;
+            DROP TRIGGER IF EXISTS workspace_passages_notes_insert;
+            DROP TRIGGER IF EXISTS workspace_passages_notes_update;
+            DROP TRIGGER IF EXISTS workspace_passages_notes_delete;
+            DROP TABLE IF EXISTS workspace_passages;
+            CREATE VIRTUAL TABLE workspace_passages USING fts5(document_id UNINDEXED, segment_id UNINDEXED, start UNINDEXED, title, text, tokenize='unicode61 remove_diacritics 2');
+            CREATE TRIGGER workspace_passages_insert AFTER INSERT ON workspace_documents BEGIN
+              INSERT INTO workspace_passages({COLUMNS}) {seg_new}; END;
+            CREATE TRIGGER workspace_passages_delete AFTER DELETE ON workspace_documents BEGIN
+              DELETE FROM workspace_passages WHERE {all_old}; END;
+            CREATE TRIGGER workspace_passages_update AFTER UPDATE OF body ON workspace_documents
+              WHEN json_extract(old.body,'$.title') IS NOT json_extract(new.body,'$.title') OR json_extract(old.body,'$.segments') IS NOT json_extract(new.body,'$.segments') BEGIN
+              DELETE FROM workspace_passages WHERE {segments_old};
+              INSERT INTO workspace_passages({COLUMNS}) {seg_new};
+              UPDATE workspace_passages SET title=json_extract(new.body,'$.title') WHERE rowid={notes_new}; END;
+            CREATE TRIGGER workspace_passages_notes_insert AFTER INSERT ON workspace_user_notes BEGIN
+              DELETE FROM workspace_passages WHERE {notes_of_new};
+              INSERT INTO workspace_passages({COLUMNS}) {notes_new_row}; END;
+            CREATE TRIGGER workspace_passages_notes_update AFTER UPDATE OF body ON workspace_user_notes BEGIN
+              DELETE FROM workspace_passages WHERE {notes_of_old};
+              INSERT INTO workspace_passages({COLUMNS}) {notes_new_row}; END;
+            CREATE TRIGGER workspace_passages_notes_delete AFTER DELETE ON workspace_user_notes BEGIN
+              DELETE FROM workspace_passages WHERE {notes_of_old}; END;
+            INSERT INTO workspace_passages({COLUMNS}) {seg_all};
+            INSERT INTO workspace_passages({COLUMNS}) {notes_all};
+            INSERT INTO workspace_meta(key,value) VALUES('passages',{PASSAGE_SCHEMA})
+              ON CONFLICT(key) DO UPDATE SET value=excluded.value;",
+            seg_new = segments("new", "s"),
+            all_old = range("old", NOTES_SLOT),
+            segments_old = range("old", NOTES_SLOT - 1),
+            notes_new = notes_slot("new"),
+            notes_of_new = notes_rowid("new"),
+            notes_of_old = notes_rowid("old"),
+            notes_new_row = notes("new"),
+            seg_all = segments("d", "s").replacen(
+                "FROM json_each(d.body,'$.segments') s",
+                "FROM workspace_documents d, json_each(d.body,'$.segments') s",
+                1
+            ),
+            notes_all = notes("n").replacen(
+                "FROM workspace_documents d WHERE d.id=n.document_id",
+                "FROM workspace_user_notes n JOIN workspace_documents d ON d.id=n.document_id",
+                1
+            ),
+        ))?;
         tx.commit()?;
         Ok(())
     }
@@ -983,6 +1066,63 @@ mod tests {
         assert_eq!(store.search_passages("monday launch", 10).unwrap().len(), 1);
         store.delete(&doc.id).unwrap();
         assert!(store.search_passages("monday", 10).unwrap().is_empty());
+    }
+
+    #[test]
+    fn deleting_one_document_leaves_the_others_passages() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::new(dir.path()).unwrap();
+        let mut first = document();
+        first.segments[0].text = "Budget review for the roadmap".into();
+        store.put(&first).unwrap();
+        let mut second = document();
+        second.id = "second".into();
+        second.segments[0].text = "Budget planning for hiring".into();
+        store.put(&second).unwrap();
+        store
+            .save_user_notes(&second.id, "- budget owner: Sam")
+            .unwrap();
+        assert_eq!(store.search_passages("budget", 10).unwrap().len(), 3);
+
+        store.delete(&first.id).unwrap();
+        let left = store.search_passages("budget", 10).unwrap();
+        assert_eq!(left.len(), 2);
+        assert!(left.iter().all(|hit| hit.document_id == "second"));
+        // Deleting typed notes takes only their passage.
+        store.save_user_notes(&second.id, "").unwrap();
+        store
+            .conn()
+            .unwrap()
+            .execute(
+                "DELETE FROM workspace_user_notes WHERE document_id='second'",
+                [],
+            )
+            .unwrap();
+        assert_eq!(store.search_passages("budget", 10).unwrap().len(), 1);
+    }
+
+    #[test]
+    fn an_old_passage_index_is_rebuilt_once_with_the_library_in_it() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::new(dir.path()).unwrap();
+        let mut doc = document();
+        doc.segments[0].text = "Quarterly launch checklist".into();
+        store.put(&doc).unwrap();
+        // Stand in for the first version: no schema record, a stale index.
+        let conn = store.conn().unwrap();
+        conn.execute_batch("DELETE FROM workspace_meta; DELETE FROM workspace_passages;")
+            .unwrap();
+        assert!(store.search_passages("launch", 10).unwrap().is_empty());
+        drop(conn);
+
+        let store = Store::new(dir.path()).unwrap();
+        assert_eq!(store.search_passages("launch", 10).unwrap().len(), 1);
+        let journal: String = store
+            .conn()
+            .unwrap()
+            .query_row("PRAGMA journal_mode", [], |r| r.get(0))
+            .unwrap();
+        assert_eq!(journal.to_lowercase(), "wal");
     }
 
     #[test]
