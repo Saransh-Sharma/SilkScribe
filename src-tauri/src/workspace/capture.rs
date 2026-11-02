@@ -17,6 +17,7 @@ unsafe extern "C" {
     fn ss_capture_free(json: *mut std::ffi::c_char);
     fn ss_capture_set_mic_gate(gated: bool);
     fn ss_input_running_somewhere() -> i32;
+    fn ss_input_apps() -> *mut std::ffi::c_char;
     fn ss_capture_read_live(
         source: i32,
         out: *mut f32,
@@ -63,6 +64,28 @@ pub fn microphone_in_use() -> Option<bool> {
             0 => Some(false),
             _ => None,
         }
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        None
+    }
+}
+/// The bundle identifiers of other apps using audio input now, or `None` where
+/// macOS can't say (before 14.2, or off macOS).
+pub fn input_apps() -> Option<Vec<String>> {
+    #[cfg(target_os = "macos")]
+    {
+        let raw = unsafe { ss_input_apps() };
+        if raw.is_null() {
+            return None;
+        }
+        let text = unsafe { std::ffi::CStr::from_ptr(raw) }
+            .to_string_lossy()
+            .into_owned();
+        unsafe { ss_capture_free(raw) };
+        serde_json::from_str::<Option<Vec<String>>>(&text)
+            .ok()
+            .flatten()
     }
     #[cfg(not(target_os = "macos"))]
     {

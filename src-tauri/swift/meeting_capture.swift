@@ -26,6 +26,60 @@ private func response(_ object: [String: Any]) -> UnsafeMutablePointer<CChar>? {
     return running != 0 ? 1 : 0
 }
 
+/// Bundle identifiers of the other apps using audio input right now, as a JSON
+/// array, or `null` where macOS can't say (before 14.2). SilkScribe itself is
+/// left out, so its own mic stream doesn't look like a call.
+@_cdecl("ss_input_apps") public func ssInputApps() -> UnsafeMutablePointer<CChar>? {
+    guard #available(macOS 14.2, *) else { return strdup("null") }
+    return autoreleasepool { inputApps().map(jsonArray) ?? strdup("null") }
+}
+
+private func jsonArray(_ items: [String]) -> UnsafeMutablePointer<CChar>? {
+    guard let data = try? JSONSerialization.data(withJSONObject: items), let text = String(data: data, encoding: .utf8) else { return strdup("null") }
+    return strdup(text)
+}
+
+@available(macOS 14.2, *)
+private func inputApps() -> [String]? {
+    let system = AudioObjectID(kAudioObjectSystemObject)
+    var address = AudioObjectPropertyAddress(
+        mSelector: kAudioHardwarePropertyProcessObjectList,
+        mScope: kAudioObjectPropertyScopeGlobal,
+        mElement: kAudioObjectPropertyElementMain)
+    var size: UInt32 = 0
+    guard AudioObjectGetPropertyDataSize(system, &address, 0, nil, &size) == noErr else { return nil }
+    var processes = [AudioObjectID](repeating: 0, count: Int(size) / MemoryLayout<AudioObjectID>.size)
+    guard AudioObjectGetPropertyData(system, &address, 0, nil, &size, &processes) == noErr else { return nil }
+    let me = getpid()
+    var apps: [String] = []
+    for process in processes {
+        var running: UInt32 = 0
+        var runningSize = UInt32(MemoryLayout<UInt32>.size)
+        var runningAddress = AudioObjectPropertyAddress(
+            mSelector: kAudioProcessPropertyIsRunningInput,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain)
+        guard AudioObjectGetPropertyData(process, &runningAddress, 0, nil, &runningSize, &running) == noErr, running != 0 else { continue }
+        var pid: pid_t = 0
+        var pidSize = UInt32(MemoryLayout<pid_t>.size)
+        var pidAddress = AudioObjectPropertyAddress(
+            mSelector: kAudioProcessPropertyPID,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain)
+        if AudioObjectGetPropertyData(process, &pidAddress, 0, nil, &pidSize, &pid) == noErr, pid == me { continue }
+        var bundle: Unmanaged<CFString>?
+        var bundleSize = UInt32(MemoryLayout<Unmanaged<CFString>?>.size)
+        var bundleAddress = AudioObjectPropertyAddress(
+            mSelector: kAudioProcessPropertyBundleID,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain)
+        guard AudioObjectGetPropertyData(process, &bundleAddress, 0, nil, &bundleSize, &bundle) == noErr,
+              let id = bundle?.takeRetainedValue() as String?, !id.isEmpty else { continue }
+        apps.append(id)
+    }
+    return apps
+}
+
 // While dictation records, the meeting's mic track is silenced so dictated words
 // stay out of the meeting. Set from any thread; independent of the capture object.
 private let micGateLock = NSLock()

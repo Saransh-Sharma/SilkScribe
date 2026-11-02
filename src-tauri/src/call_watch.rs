@@ -55,6 +55,25 @@ pub fn running_call_apps() -> Vec<FocusedApp> {
     }
 }
 
+/// The call app among the apps using the mic, if any, in `CALL_APPS` order.
+/// A helper process (`us.zoom.xos.helper`) counts as its app.
+fn call_app_using_input(users: &[String]) -> Option<FocusedApp> {
+    CALL_APPS.iter().find_map(|(bundle_id, name)| {
+        users
+            .iter()
+            .any(|user| {
+                user == bundle_id
+                    || user
+                        .strip_prefix(bundle_id)
+                        .is_some_and(|rest| rest.starts_with('.'))
+            })
+            .then(|| FocusedApp {
+                bundle_id: bundle_id.to_string(),
+                name: name.to_string(),
+            })
+    })
+}
+
 /// Call apps running now, for "Capture audio from" in the meeting form.
 #[tauri::command]
 #[specta::specta]
@@ -103,9 +122,9 @@ impl Watch {
     }
 }
 
-/// Starts the watcher thread. It does nothing while the setting is off, a
-/// meeting is recording, or SilkScribe's own mic stream is open (the mic
-/// check can't tell other apps from ours).
+/// Starts the watcher thread. It does nothing while the setting is off or a
+/// meeting is recording. Before macOS 14.2 it also waits while SilkScribe's
+/// own mic stream is open, as the mic check can't tell other apps from ours.
 pub fn start(app: AppHandle) {
     #[cfg(not(target_os = "macos"))]
     {
@@ -143,14 +162,26 @@ fn check(app: &AppHandle, watch: &mut Watch) {
         }
         return;
     }
-    if !settings.suggest_meeting_notes || meeting || own_stream {
+    if !settings.suggest_meeting_notes || meeting {
         watch.live_since = None;
         return;
     }
-    let Some(mic_in_use) = crate::workspace::capture::microphone_in_use() else {
-        return;
+    // Which apps are using the mic, where macOS says. Otherwise all there is
+    // to go on is "the mic is busy and a call app is open", which can't tell
+    // an idle Slack from the call, nor SilkScribe's own mic stream from theirs.
+    let (mic_in_use, call) = match crate::workspace::capture::input_apps() {
+        Some(users) => (!users.is_empty(), call_app_using_input(&users)),
+        None if own_stream => {
+            watch.live_since = None;
+            return;
+        }
+        None => {
+            let Some(mic_in_use) = crate::workspace::capture::microphone_in_use() else {
+                return;
+            };
+            (mic_in_use, running_call_apps().into_iter().next())
+        }
     };
-    let call = running_call_apps().into_iter().next();
     if let Some(call) = watch.observe(Instant::now(), mic_in_use, call) {
         log::info!("Call detected in {}; offering to take notes", call.name);
         // Name it after the calendar meeting going on, if there is one.
@@ -168,6 +199,24 @@ fn check(app: &AppHandle, watch: &mut Watch) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn the_call_app_is_the_one_using_the_mic() {
+        let users = |ids: &[&str]| ids.iter().map(|id| id.to_string()).collect::<Vec<_>>();
+        // Slack idles in the background while Teams has the mic.
+        assert_eq!(
+            call_app_using_input(&users(&["com.microsoft.teams2"])).map(|app| app.name),
+            Some("Microsoft Teams".to_string())
+        );
+        assert_eq!(
+            call_app_using_input(&users(&["us.zoom.xos.helper"])).map(|app| app.bundle_id),
+            Some("us.zoom.xos".to_string())
+        );
+        // Voice Memos or a browser isn't a call app we can capture by name.
+        assert!(call_app_using_input(&users(&["com.apple.VoiceMemos"])).is_none());
+        assert!(call_app_using_input(&users(&["us.zoom.xosmeeting"])).is_none());
+        assert!(call_app_using_input(&[]).is_none());
+    }
 
     fn zoom() -> Option<FocusedApp> {
         Some(FocusedApp {
