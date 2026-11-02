@@ -12,10 +12,29 @@ type AskState =
 
 /** Ask a question across meetings and notes; the answer cites the passages it
  * comes from, and each citation opens the transcript at that moment. */
+/** Error codes Ask returns, and the words for them. */
+const ASK_ERRORS: Record<string, string> = {
+  "ask:busy": "workspace.ask.errors.busy",
+  "ask:no-engine": "workspace.ask.errors.noEngine",
+  "ask:timeout": "workspace.ask.errors.timeout",
+};
+
 export function AskPanel({
   onOpen,
+  onSetupEngine,
+  focusRequest = 0,
+  shortcut,
+  meetings = true,
 }: {
   onOpen: (documentId: string, start: number | null) => void;
+  /** Takes the person to where they can download a notes engine. */
+  onSetupEngine: () => void;
+  /** Changes when the workspace wants the question box focused (⌘K). */
+  focusRequest?: number;
+  /** The shortcut that focuses the box, shown as a hint. */
+  shortcut: string;
+  /** Whether the Library has meetings, not only dictations. */
+  meetings?: boolean;
 }) {
   const { t } = useTranslation();
   const [question, setQuestion] = useState("");
@@ -23,18 +42,12 @@ export function AskPanel({
   const input = useRef<HTMLInputElement>(null);
   const asked = useRef(0);
 
-  // ⌘K / Ctrl+K jumps to the question box from anywhere.
+  // The workspace handles ⌘K / Ctrl+K on every screen and asks for focus.
   useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault();
-        input.current?.focus();
-        input.current?.select();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
+    if (!focusRequest) return;
+    input.current?.focus();
+    input.current?.select();
+  }, [focusRequest]);
 
   const ask = async () => {
     const text = question.trim();
@@ -47,7 +60,10 @@ export function AskPanel({
         setState({ kind: "answer", question: text, result });
     } catch (error) {
       if (request === asked.current)
-        setState({ kind: "error", message: String(error) });
+        setState({
+          kind: "error",
+          message: String(error).replace(/^Error:\s*/, ""),
+        });
     }
   };
 
@@ -91,7 +107,12 @@ export function AskPanel({
     });
 
   return (
-    <section className="ws-ask" aria-label={t("workspace.ask.title")}>
+    <section
+      className="ws-ask"
+      aria-label={t(
+        meetings ? "workspace.ask.title" : "workspace.ask.titleAll",
+      )}
+    >
       <form
         className="ws-ask-form"
         onSubmit={(event) => {
@@ -105,11 +126,17 @@ export function AskPanel({
           dir="auto"
           value={question}
           maxLength={500}
-          aria-label={t("workspace.ask.label")}
-          placeholder={t("workspace.ask.placeholder")}
+          aria-label={t(
+            meetings ? "workspace.ask.label" : "workspace.ask.labelAll",
+          )}
+          placeholder={t(
+            meetings
+              ? "workspace.ask.placeholder"
+              : "workspace.ask.placeholderAll",
+          )}
           onChange={(event) => setQuestion(event.target.value)}
         />
-        <kbd aria-hidden="true">{t("workspace.ask.shortcut")}</kbd>
+        <kbd aria-hidden="true">{shortcut}</kbd>
         <button
           type="submit"
           className="ws-secondary"
@@ -128,7 +155,16 @@ export function AskPanel({
       )}
       {state.kind === "error" && (
         <div className="ws-ask-result" role="alert">
-          <p>{state.message}</p>
+          <p>
+            {ASK_ERRORS[state.message]
+              ? t(ASK_ERRORS[state.message])
+              : t("workspace.ask.errors.other", { error: state.message })}
+          </p>
+          {state.message === "ask:no-engine" && (
+            <button className="ws-secondary" onClick={onSetupEngine}>
+              {t("workspace.ask.errors.getEngine")}
+            </button>
+          )}
         </div>
       )}
       {state.kind === "answer" && (

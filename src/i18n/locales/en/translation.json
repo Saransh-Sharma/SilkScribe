@@ -1343,7 +1343,18 @@
       "checkSources": "Answers come from your transcripts. Check the sources before relying on them.",
       "yourNotes": "Your notes",
       "openSource": "Open {{source}}",
-      "shortcut": "⌘K"
+      "shortcut": "⌘K",
+      "titleAll": "Ask your library",
+      "labelAll": "Ask about your dictations",
+      "placeholderAll": "Ask about your dictations…",
+      "shortcutOther": "Ctrl+K",
+      "errors": {
+        "busy": "A meeting is being processed. Ask again when it’s done.",
+        "noEngine": "Answers come from the notes engine, which isn’t downloaded yet.",
+        "getEngine": "Get the notes engine",
+        "timeout": "Answering took too long. Try a narrower question.",
+        "other": "Couldn’t answer that: {{error}}"
+      }
     },
     "openNotes": "Open notes",
     "settingsTabs": {

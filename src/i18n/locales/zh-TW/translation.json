@@ -1337,7 +1337,18 @@
       "checkSources": "答案來自你的逐字稿。請先核對來源再採用。",
       "yourNotes": "你的筆記",
       "openSource": "打開 {{source}}",
-      "shortcut": "⌘K"
+      "shortcut": "⌘K",
+      "titleAll": "向資料庫提問",
+      "labelAll": "詢問你的聽寫內容",
+      "placeholderAll": "詢問你的聽寫內容…",
+      "shortcutOther": "Ctrl+K",
+      "errors": {
+        "busy": "正在處理一場會議，處理完後再提問。",
+        "noEngine": "回答由筆記引擎產生，但它尚未下載。",
+        "getEngine": "下載筆記引擎",
+        "timeout": "回答耗時過長，請試著問得更具體。",
+        "other": "無法回答：{{error}}"
+      }
     },
     "cleanupUses": "AI 潤飾使用 {{provider}}",
     "openNotes": "打開筆記",

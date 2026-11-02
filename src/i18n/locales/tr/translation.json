@@ -1342,7 +1342,18 @@
       "checkSources": "Yanıtlar transkriptlerinden gelir. Güvenmeden önce kaynakları denetle.",
       "yourNotes": "Notların",
       "openSource": "{{source}} kaynağını aç",
-      "shortcut": "⌘K"
+      "shortcut": "⌘K",
+      "titleAll": "Kitaplığınıza sorun",
+      "labelAll": "Diktelerinizle ilgili sorun",
+      "placeholderAll": "Diktelerinizle ilgili sorun…",
+      "shortcutOther": "Ctrl+K",
+      "errors": {
+        "busy": "Bir toplantı işleniyor. Bittiğinde yeniden sorun.",
+        "noEngine": "Yanıtları not motoru yazar; henüz indirilmedi.",
+        "getEngine": "Not motorunu indir",
+        "timeout": "Yanıt çok uzun sürdü. Daha dar bir soru deneyin.",
+        "other": "Yanıtlanamadı: {{error}}"
+      }
     },
     "cleanupUses": "YZ düzenlemesi {{provider}} kullanıyor",
     "openNotes": "Notları aç",

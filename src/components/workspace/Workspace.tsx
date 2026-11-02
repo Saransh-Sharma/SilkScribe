@@ -641,17 +641,44 @@ export default function Workspace({
       clearInterval(timer);
     };
   }, []);
-  const navigate = async (next: string) => {
+  // ⌘K / Ctrl+K asks a question from any screen: back to Home if the question
+  // box isn't showing, then into it.
+  const [askFocus, setAskFocus] = useState(0);
+  const askShowing =
+    !selected && !create && (page === "home" || page === "library");
+  const askShowingRef = useRef(askShowing);
+  askShowingRef.current = askShowing;
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (!(event.metaKey || event.ctrlKey) || event.key.toLowerCase() !== "k")
+        return;
+      event.preventDefault();
+      if (askShowingRef.current) {
+        setAskFocus((n) => n + 1);
+        return;
+      }
+      // Focus goes to the question box, not the page, after this navigation.
+      void navigateRef
+        .current("home", false)
+        .then(() => setAskFocus((n) => n + 1));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+  const navigate = async (next: string, focusMain = true) => {
     if (saveBarrier.current && !(await saveBarrier.current())) return;
     setPage(next);
     setSelected(null);
     setCreate(null);
     setQuery("");
     setFilter("all");
-    requestAnimationFrame(() =>
-      document.getElementById("main-content")?.focus(),
-    );
+    if (focusMain)
+      requestAnimationFrame(() =>
+        document.getElementById("main-content")?.focus(),
+      );
   };
+  const navigateRef = useRef(navigate);
+  navigateRef.current = navigate;
   const chooseFiles = async () => {
     if (saveBarrier.current && !(await saveBarrier.current())) return;
     if (files.length && create !== "import") {
@@ -1867,6 +1894,17 @@ export default function Workspace({
               {documents.length > 0 && (
                 <AskPanel
                   onOpen={(id, start) => void openDocument(id, start)}
+                  onSetupEngine={() => {
+                    void navigate("settings");
+                    setSettingsPage("meetings");
+                  }}
+                  focusRequest={askFocus}
+                  shortcut={t(
+                    osType === "macos"
+                      ? "workspace.ask.shortcut"
+                      : "workspace.ask.shortcutOther",
+                  )}
+                  meetings={documents.some((doc) => doc.source !== "dictation")}
                 />
               )}
               {page === "home" && (

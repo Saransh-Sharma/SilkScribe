@@ -1348,7 +1348,18 @@
       "checkSources": "Le risposte provengono dalle tue trascrizioni. Controlla le fonti prima di fidarti.",
       "yourNotes": "Le tue note",
       "openSource": "Apri {{source}}",
-      "shortcut": "⌘K"
+      "shortcut": "⌘K",
+      "titleAll": "Chiedi alla tua libreria",
+      "labelAll": "Chiedi sulle tue dettature",
+      "placeholderAll": "Chiedi sulle tue dettature…",
+      "shortcutOther": "Ctrl+K",
+      "errors": {
+        "busy": "È in corso l’elaborazione di una riunione. Chiedi di nuovo quando è finita.",
+        "noEngine": "Le risposte arrivano dal motore delle note, non ancora scaricato.",
+        "getEngine": "Scarica il motore delle note",
+        "timeout": "La risposta ha richiesto troppo tempo. Prova una domanda più precisa.",
+        "other": "Impossibile rispondere: {{error}}"
+      }
     },
     "cleanupUses": "La pulizia con IA usa {{provider}}",
     "openNotes": "Apri note",

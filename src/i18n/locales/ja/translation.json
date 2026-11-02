@@ -1337,7 +1337,18 @@
       "checkSources": "回答は文字起こしに基づいています。頼る前に出典を確認してください。",
       "yourNotes": "あなたのメモ",
       "openSource": "{{source}} を開く",
-      "shortcut": "⌘K"
+      "shortcut": "⌘K",
+      "titleAll": "ライブラリに質問",
+      "labelAll": "音声入力について質問",
+      "placeholderAll": "音声入力について質問…",
+      "shortcutOther": "Ctrl+K",
+      "errors": {
+        "busy": "ミーティングを処理中です。完了してからもう一度質問してください。",
+        "noEngine": "回答はメモエンジンが作成しますが、まだダウンロードされていません。",
+        "getEngine": "メモエンジンを入手",
+        "timeout": "回答に時間がかかりすぎました。質問を絞ってみてください。",
+        "other": "回答できませんでした: {{error}}"
+      }
     },
     "cleanupUses": "AI クリーンアップに {{provider}} を使用中",
     "openNotes": "メモを開く",

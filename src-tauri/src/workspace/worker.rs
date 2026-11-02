@@ -229,7 +229,7 @@ pub fn run(
     let _ = errors.join();
     if timed_out {
         if request["task"] == "ask" {
-            bail!("Answering took too long. Try a narrower question.");
+            bail!("ask:timeout");
         }
         bail!("Local runtime dependency check timed out");
     }

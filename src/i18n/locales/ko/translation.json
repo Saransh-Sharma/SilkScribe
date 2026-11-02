@@ -1337,7 +1337,18 @@
       "checkSources": "답변은 스크립트를 바탕으로 합니다. 답변을 믿기 전에 출처를 확인하세요.",
       "yourNotes": "내 메모",
       "openSource": "{{source}} 열기",
-      "shortcut": "⌘K"
+      "shortcut": "⌘K",
+      "titleAll": "라이브러리에 질문",
+      "labelAll": "받아쓰기에 대해 질문",
+      "placeholderAll": "받아쓰기에 대해 질문…",
+      "shortcutOther": "Ctrl+K",
+      "errors": {
+        "busy": "회의를 처리하는 중입니다. 끝나면 다시 질문하세요.",
+        "noEngine": "답변은 메모 엔진이 작성하는데, 아직 다운로드되지 않았습니다.",
+        "getEngine": "메모 엔진 받기",
+        "timeout": "답변이 너무 오래 걸렸습니다. 질문을 좁혀 보세요.",
+        "other": "답변하지 못했습니다: {{error}}"
+      }
     },
     "cleanupUses": "AI 정리에 {{provider}} 사용 중",
     "openNotes": "메모 열기",

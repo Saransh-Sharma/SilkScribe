@@ -961,8 +961,10 @@ fn assemble_passages(
     passages
 }
 
-/// Why a question can't be answered right now.
-pub const ASK_BUSY: &str = "A meeting is being processed. Ask again when it's done.";
+/// Why a question can't be answered, as codes the app turns into its own
+/// words: a meeting is being processed, or there's no notes engine to answer.
+pub const ASK_BUSY: &str = "ask:busy";
+pub const ASK_NO_ENGINE: &str = "ask:no-engine";
 
 impl Workspace {
     /// Answers a question from the meetings and notes in the Library, citing
@@ -1003,9 +1005,7 @@ impl Workspace {
         let model_path = ["qwen3.5-9b", "qwen3.6-27b"]
             .iter()
             .find_map(|id| packs::model_path(app, id).ok())
-            .context(
-                "Download a notes engine in Settings → AI notes to ask about your meetings.",
-            )?;
+            .context(ASK_NO_ENGINE)?;
         let request = serde_json::json!({
             "protocol": 1,
             "task": "ask",

@@ -1354,7 +1354,18 @@
       "checkSources": "Odpowiedzi pochodzą z Twoich transkryptów. Sprawdź źródła, zanim na nich polegniesz.",
       "yourNotes": "Twoje notatki",
       "openSource": "Otwórz {{source}}",
-      "shortcut": "⌘K"
+      "shortcut": "⌘K",
+      "titleAll": "Zapytaj bibliotekę",
+      "labelAll": "Zapytaj o swoje dyktowanie",
+      "placeholderAll": "Zapytaj o swoje dyktowanie…",
+      "shortcutOther": "Ctrl+K",
+      "errors": {
+        "busy": "Trwa przetwarzanie spotkania. Zapytaj ponownie, gdy się skończy.",
+        "noEngine": "Odpowiedzi pisze silnik notatek, który nie jest jeszcze pobrany.",
+        "getEngine": "Pobierz silnik notatek",
+        "timeout": "Odpowiedź trwała zbyt długo. Spróbuj węższego pytania.",
+        "other": "Nie udało się odpowiedzieć: {{error}}"
+      }
     },
     "cleanupUses": "Korekta AI korzysta z {{provider}}",
     "openNotes": "Otwórz notatki",

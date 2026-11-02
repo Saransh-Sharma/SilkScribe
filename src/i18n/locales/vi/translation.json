@@ -1337,7 +1337,18 @@
       "checkSources": "Câu trả lời lấy từ các bản ghi của bạn. Hãy kiểm tra nguồn trước khi dựa vào.",
       "yourNotes": "Ghi chú của bạn",
       "openSource": "Mở {{source}}",
-      "shortcut": "⌘K"
+      "shortcut": "⌘K",
+      "titleAll": "Hỏi thư viện của bạn",
+      "labelAll": "Hỏi về nội dung đọc chính tả",
+      "placeholderAll": "Hỏi về nội dung đọc chính tả…",
+      "shortcutOther": "Ctrl+K",
+      "errors": {
+        "busy": "Một cuộc họp đang được xử lý. Hãy hỏi lại khi xong.",
+        "noEngine": "Câu trả lời đến từ công cụ ghi chú, công cụ này chưa được tải xuống.",
+        "getEngine": "Tải công cụ ghi chú",
+        "timeout": "Trả lời mất quá lâu. Hãy thử câu hỏi hẹp hơn.",
+        "other": "Không thể trả lời: {{error}}"
+      }
     },
     "cleanupUses": "Chỉnh sửa bằng AI dùng {{provider}}",
     "openNotes": "Mở ghi chú",

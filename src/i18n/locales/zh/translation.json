@@ -1337,7 +1337,18 @@
       "checkSources": "答案来自你的文字稿。请先核对来源再采用。",
       "yourNotes": "你的笔记",
       "openSource": "打开 {{source}}",
-      "shortcut": "⌘K"
+      "shortcut": "⌘K",
+      "titleAll": "向资料库提问",
+      "labelAll": "询问你的听写内容",
+      "placeholderAll": "询问你的听写内容…",
+      "shortcutOther": "Ctrl+K",
+      "errors": {
+        "busy": "正在处理一场会议，处理完后再提问。",
+        "noEngine": "回答由笔记引擎生成，但它尚未下载。",
+        "getEngine": "下载笔记引擎",
+        "timeout": "回答耗时过长，请尝试更具体的问题。",
+        "other": "无法回答：{{error}}"
+      }
     },
     "cleanupUses": "AI 润色使用 {{provider}}",
     "openNotes": "打开笔记",

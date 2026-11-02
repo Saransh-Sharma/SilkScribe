@@ -1354,7 +1354,18 @@
       "checkSources": "Odpovědi vycházejí z vašich přepisů. Než se na ně spolehnete, ověřte si zdroje.",
       "yourNotes": "Vaše poznámky",
       "openSource": "Otevřít {{source}}",
-      "shortcut": "⌘K"
+      "shortcut": "⌘K",
+      "titleAll": "Zeptejte se knihovny",
+      "labelAll": "Zeptejte se na své diktáty",
+      "placeholderAll": "Zeptejte se na své diktáty…",
+      "shortcutOther": "Ctrl+K",
+      "errors": {
+        "busy": "Zpracovává se schůzka. Zeptejte se znovu, až skončí.",
+        "noEngine": "Odpovědi píše modul poznámek, který ještě není stažený.",
+        "getEngine": "Stáhnout modul poznámek",
+        "timeout": "Odpověď trvala příliš dlouho. Zkuste užší otázku.",
+        "other": "Na to se nepodařilo odpovědět: {{error}}"
+      }
     },
     "cleanupUses": "Úprava pomocí AI používá {{provider}}",
     "openNotes": "Otevřít poznámky",

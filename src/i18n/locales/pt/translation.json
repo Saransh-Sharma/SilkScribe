@@ -1348,7 +1348,18 @@
       "checkSources": "As respostas vêm das suas transcrições. Confira as fontes antes de confiar nelas.",
       "yourNotes": "Suas anotações",
       "openSource": "Abrir {{source}}",
-      "shortcut": "⌘K"
+      "shortcut": "⌘K",
+      "titleAll": "Pergunte à sua biblioteca",
+      "labelAll": "Pergunte sobre seus ditados",
+      "placeholderAll": "Pergunte sobre seus ditados…",
+      "shortcutOther": "Ctrl+K",
+      "errors": {
+        "busy": "Uma reunião está sendo processada. Pergunte de novo quando terminar.",
+        "noEngine": "As respostas vêm do motor de anotações, que ainda não foi baixado.",
+        "getEngine": "Baixar o motor de anotações",
+        "timeout": "A resposta demorou demais. Tente uma pergunta mais específica.",
+        "other": "Não foi possível responder: {{error}}"
+      }
     },
     "cleanupUses": "A limpeza com IA usa {{provider}}",
     "openNotes": "Abrir anotações",

@@ -760,6 +760,30 @@ test("asking across meetings answers with sources that open the moment", async (
   );
 });
 
+test("Command-K asks from inside a transcript", async ({ page }) => {
+  await page.goto(fixture);
+  await page.getByText("Product design review", { exact: true }).click();
+  await expect(
+    page.getByRole("article", { name: "Product design review" }),
+  ).toBeVisible();
+  await page.keyboard.press("Meta+k");
+  await expect(page.getByLabel("Ask about your meetings")).toBeFocused();
+});
+
+test("asking without a notes engine says how to get one", async ({ page }) => {
+  await page.goto(`${fixture}?askNoEngine`);
+  const box = page.getByLabel("Ask about your meetings");
+  await box.fill("Who is bringing the screens?");
+  await box.press("Enter");
+  await expect(
+    page.getByText("Answers come from the notes engine", { exact: false }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Get the notes engine" }).click();
+  await expect(
+    page.getByRole("tab", { name: "Meetings & notes" }),
+  ).toHaveAttribute("aria-selected", "true");
+});
+
 test("asking says when nothing in the Library matches", async ({ page }) => {
   await page.goto(fixture);
   const box = page.getByLabel("Ask about your meetings");

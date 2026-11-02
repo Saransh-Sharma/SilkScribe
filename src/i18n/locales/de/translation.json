@@ -1342,7 +1342,18 @@
       "checkSources": "Antworten stammen aus deinen Transkripten. Prüfe die Quellen, bevor du dich darauf verlässt.",
       "yourNotes": "Deine Notizen",
       "openSource": "{{source}} öffnen",
-      "shortcut": "⌘K"
+      "shortcut": "⌘K",
+      "titleAll": "Frag deine Bibliothek",
+      "labelAll": "Frag zu deinen Diktaten",
+      "placeholderAll": "Frag zu deinen Diktaten …",
+      "shortcutOther": "Strg+K",
+      "errors": {
+        "busy": "Ein Meeting wird gerade verarbeitet. Frag noch einmal, wenn es fertig ist.",
+        "noEngine": "Antworten kommen von der Notizen-Engine, die noch nicht geladen ist.",
+        "getEngine": "Notizen-Engine laden",
+        "timeout": "Die Antwort hat zu lange gedauert. Versuch eine engere Frage.",
+        "other": "Das ließ sich nicht beantworten: {{error}}"
+      }
     },
     "cleanupUses": "KI-Bereinigung nutzt {{provider}}",
     "openNotes": "Notizen öffnen",

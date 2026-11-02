@@ -522,6 +522,8 @@ commands.changeCalendarRemindersSetting = async () => ({
 // Asking: questions about the screens are answered from the first meeting.
 api.ask = async (question) => {
   localStorage.setItem("fixture-ask", question);
+  // ?askNoEngine: no notes engine is downloaded to answer with.
+  if (params.has("askNoEngine")) throw "ask:no-engine";
   if (!/screen/i.test(question)) return { answer: "", sources: [] };
   return {
     answer: "Sam is bringing the revised screens to Friday’s review [p1].",
