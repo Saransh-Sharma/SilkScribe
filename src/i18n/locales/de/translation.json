@@ -898,7 +898,8 @@
     "handsFree": {
       "listening": "Hört freihändig zu. Drücke das Tastenkürzel erneut zum Beenden oder Esc zum Abbrechen.",
       "tag": "Freihändig"
-    }
+    },
+    "silent": "Es ist nichts zu hören. Prüfe dein Mikrofon."
   },
   "meetingOrb": {
     "orbLabel": "Meeting-Aufnahme, {{state}}",

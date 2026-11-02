@@ -900,7 +900,8 @@
     "handsFree": {
       "listening": "Poslouchám bez držení. Dokončete opětovným stiskem zkratky, nebo zrušte klávesou Esc.",
       "tag": "Bez držení"
-    }
+    },
+    "silent": "Nic neslyším. Zkontrolujte mikrofon."
   },
   "meetingOrb": {
     "orbLabel": "Nahrávání schůzky, {{state}}",

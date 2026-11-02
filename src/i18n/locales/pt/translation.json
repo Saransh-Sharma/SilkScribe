@@ -899,7 +899,8 @@
     "handsFree": {
       "listening": "Ouvindo sem segurar a tecla. Pressione o atalho de novo para terminar, ou Esc para cancelar.",
       "tag": "Mãos livres"
-    }
+    },
+    "silent": "Não dá para ouvir nada. Verifique o microfone."
   },
   "meetingOrb": {
     "orbLabel": "Gravação de reunião, {{state}}",

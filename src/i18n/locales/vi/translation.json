@@ -897,7 +897,8 @@
     "handsFree": {
       "listening": "Đang nghe rảnh tay. Nhấn phím tắt lần nữa để kết thúc, hoặc Esc để hủy.",
       "tag": "Rảnh tay"
-    }
+    },
+    "silent": "Không nghe thấy gì. Hãy kiểm tra micrô."
   },
   "meetingOrb": {
     "orbLabel": "Đang ghi cuộc họp, {{state}}",

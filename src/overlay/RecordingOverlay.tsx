@@ -13,6 +13,11 @@ import { WAVEFORM_BUCKET_COUNT } from "./waveformConfig";
 import i18n, { syncLanguageFromSettings } from "@/i18n";
 import { getLanguageDirection } from "@/lib/utils/rtl";
 
+/** Levels at or below this are silence: a muted mic, or no signal at all. */
+const SILENCE_FLOOR = 0.02;
+/** How long a recording hears nothing before it says so. */
+const SILENCE_WARNING_MS = 3000;
+
 export type OverlayState =
   | "recording"
   | "transcribing"
@@ -103,6 +108,8 @@ interface RecordingOverlayProps {
   previewTheme?: ResolvedOverlayTheme;
   /** Fixture-only: live text while recording. */
   previewPartial?: string;
+  /** Fixture-only: the mic has heard nothing for a while. */
+  previewSilent?: boolean;
 }
 
 const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
@@ -111,8 +118,13 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
   previewPayload,
   previewTheme,
   previewPartial,
+  previewSilent,
 }) => {
   const { t } = useTranslation();
+  // When the mic last sent anything above silence while recording. A muted
+  // or wrong mic, or one without permission, sends nothing for good.
+  const heardAtRef = useRef(0);
+  const [silent, setSilent] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [overlay, setOverlay] = useState<OverlayEventPayload>({
     state: "recording",
@@ -238,6 +250,10 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
           isVisibleRef.current = true;
           if (nextOverlay.state === "recording") {
             recordingStartedAtRef.current = Date.now();
+            if (!nextOverlay.locked) {
+              heardAtRef.current = Date.now();
+              setSilent(false);
+            }
             setElapsedSeconds(0);
             // A tap locking the recording re-shows it; keep what's heard.
             if (!nextOverlay.locked) setPartial("");
@@ -267,10 +283,16 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
           const newLevels = event.payload as number[];
           const nextLevels = levelsRef.current;
           let sum = 0;
+          let loudest = 0;
           for (let index = 0; index < WAVEFORM_BUCKET_COUNT; index += 1) {
             const value = newLevels[index] ?? 0;
             nextLevels[index] = value;
             sum += value;
+            loudest = Math.max(loudest, value);
+          }
+          if (loudest > SILENCE_FLOOR) {
+            heardAtRef.current = Date.now();
+            setSilent(false);
           }
 
           if (
@@ -365,11 +387,26 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
     t,
   ]);
 
+  // Say so if a recording has heard nothing for a few seconds, whether the
+  // mic sends silence or nothing at all.
+  useEffect(() => {
+    if (previewState || !isRecording) return;
+    const timer = window.setInterval(() => {
+      if (Date.now() - heardAtRef.current >= SILENCE_WARNING_MS)
+        setSilent(true);
+    }, 500);
+    return () => window.clearInterval(timer);
+  }, [previewState, isRecording]);
+  const showsSilence = isRecording && (previewSilent ?? silent);
+
   const isQuoted = Boolean(payload.previewText);
   // One line, ending with the latest words.
   const partialText = previewPartial ?? partial;
   const partialLine = isRecording && partialText ? trimToEnd(partialText) : "";
-  const announcement = [stateLabel, detailText].filter(Boolean).join(". ");
+  const silenceLine = showsSilence && !partialLine ? t("overlay.silent") : "";
+  const announcement = [stateLabel, detailText, silenceLine]
+    .filter(Boolean)
+    .join(". ");
 
   return (
     <div
@@ -383,7 +420,7 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
         className={`overlay-pill ${visible ? "is-visible" : ""}`}
         data-state={state}
         data-has-detail={detailText ? "true" : "false"}
-        data-has-partial={partialLine ? "true" : "false"}
+        data-has-partial={partialLine || silenceLine ? "true" : "false"}
         role="status"
         aria-live="polite"
         aria-atomic="true"
@@ -439,6 +476,15 @@ const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
           // what counts.
           <div className="overlay-partial" dir="auto" aria-hidden="true">
             {partialLine}
+          </div>
+        ) : silenceLine ? (
+          // Announced through the pill's label above.
+          <div
+            className="overlay-partial overlay-silence"
+            dir="auto"
+            aria-hidden="true"
+          >
+            {silenceLine}
           </div>
         ) : null}
 

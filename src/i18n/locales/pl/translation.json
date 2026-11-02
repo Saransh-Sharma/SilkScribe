@@ -900,7 +900,8 @@
     "handsFree": {
       "listening": "Słucham bez trzymania. Naciśnij skrót ponownie, aby zakończyć, lub Esc, aby anulować.",
       "tag": "Bez trzymania"
-    }
+    },
+    "silent": "Nic nie słychać. Sprawdź mikrofon."
   },
   "meetingOrb": {
     "orbLabel": "Nagrywanie spotkania, {{state}}",

@@ -897,7 +897,8 @@
     "handsFree": {
       "listening": "正在免按住收听。再按一次快捷键结束，或按 Esc 取消。",
       "tag": "免按住"
-    }
+    },
+    "silent": "听不到任何声音。请检查麦克风。"
   },
   "meetingOrb": {
     "orbLabel": "会议录音，{{state}}",

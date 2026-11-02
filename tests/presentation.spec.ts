@@ -307,6 +307,20 @@ test.describe("deterministic product states", () => {
     expect(fits).toBe(true);
   });
 
+  test("says when the mic hears nothing", async ({ page }) => {
+    await page.setViewportSize({ width: 460, height: 180 });
+    await page.goto(fixture("view=overlay&state=recording&silent=1"));
+    const line = page.locator(".overlay-silence");
+    await expect(line).toHaveText("Can’t hear anything. Check your mic.");
+    const fits = await line.evaluate((el) => el.scrollWidth <= el.clientWidth);
+    expect(fits).toBe(true);
+    // Read out once through the indicator's status, not as live text.
+    await expect(page.getByRole("status")).toHaveAttribute(
+      "aria-label",
+      /Can’t hear anything/,
+    );
+  });
+
   test("shows when a tap made the recording hands-free", async ({ page }) => {
     await page.setViewportSize({ width: 460, height: 180 });
     await page.goto(fixture("view=overlay&state=recording&locked=1"));

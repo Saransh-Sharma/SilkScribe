@@ -958,3 +958,9 @@ body {
 /* The marks all centre inside `.overlay-spine`, which is anchored with
    `inset-inline-start`, so they mirror for free — only the copy gutter needs
    flipping (handled above). */
+
+/* The mic hears nothing: say so in the live-text line, in the warning tone. */
+.overlay-silence {
+  color: var(--ov-danger);
+  font-weight: 600;
+}

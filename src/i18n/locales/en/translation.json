@@ -898,7 +898,8 @@
     "handsFree": {
       "listening": "Listening hands-free. Press the shortcut again to finish, or Esc to cancel.",
       "tag": "Hands-free"
-    }
+    },
+    "silent": "Can’t hear anything. Check your mic."
   },
   "meetingOrb": {
     "orbLabel": "Meeting recording, {{state}}",

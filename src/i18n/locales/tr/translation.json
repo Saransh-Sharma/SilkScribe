@@ -898,7 +898,8 @@
     "handsFree": {
       "listening": "Eller serbest dinleniyor. Bitirmek için kısayola yeniden bas, iptal için Esc’ye bas.",
       "tag": "Eller serbest"
-    }
+    },
+    "silent": "Hiçbir şey duyulmuyor. Mikrofonunuzu kontrol edin."
   },
   "meetingOrb": {
     "orbLabel": "Toplantı kaydı, {{state}}",
