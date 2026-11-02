@@ -116,45 +116,53 @@ pub fn start(app: AppHandle) {
         let mut watch = Watch::default();
         loop {
             std::thread::sleep(POLL);
-            let settings = crate::settings::get_settings(&app);
-            let meeting = app
-                .try_state::<Arc<crate::workspace::Workspace>>()
-                .is_some_and(|ws| ws.meeting_active.load(std::sync::atomic::Ordering::SeqCst));
-            let own_stream = app
-                .try_state::<Arc<crate::managers::audio::AudioRecordingManager>>()
-                .is_some_and(|audio| audio.is_microphone_open());
-            if crate::meeting_orb::is_prompting(&app) {
-                let timed_out = watch
-                    .prompted_at
-                    .is_some_and(|at| at.elapsed() >= PROMPT_TIMEOUT);
-                let mic = crate::workspace::capture::microphone_in_use();
-                if meeting || timed_out || mic == Some(false) {
-                    crate::meeting_orb::dismiss_prompt(&app);
-                }
-                continue;
-            }
-            if !settings.suggest_meeting_notes || meeting || own_stream {
-                watch.live_since = None;
-                continue;
-            }
-            let Some(mic_in_use) = crate::workspace::capture::microphone_in_use() else {
-                continue;
-            };
-            let call = running_call_apps().into_iter().next();
-            if let Some(call) = watch.observe(Instant::now(), mic_in_use, call) {
-                log::info!("Call detected in {}; offering to take notes", call.name);
-                // Name it after the calendar meeting going on, if there is one.
-                let title = crate::calendar::current_meeting(&app).map(|event| event.title);
-                crate::meeting_orb::show_prompt(
-                    &app,
-                    crate::meeting_orb::MeetingPrompt {
-                        app: Some(call),
-                        title,
-                    },
-                );
-            }
+            // AppKit calls on a plain thread autorelease into a pool nobody
+            // drains; give each check its own.
+            tauri_nspanel::objc2::rc::autoreleasepool(|_| check(&app, &mut watch));
         }
     });
+}
+
+/// One look for a call, and the prompt if one is found.
+#[cfg(target_os = "macos")]
+fn check(app: &AppHandle, watch: &mut Watch) {
+    let settings = crate::settings::get_settings(app);
+    let meeting = app
+        .try_state::<Arc<crate::workspace::Workspace>>()
+        .is_some_and(|ws| ws.meeting_active.load(std::sync::atomic::Ordering::SeqCst));
+    let own_stream = app
+        .try_state::<Arc<crate::managers::audio::AudioRecordingManager>>()
+        .is_some_and(|audio| audio.is_microphone_open());
+    if crate::meeting_orb::is_prompting(app) {
+        let timed_out = watch
+            .prompted_at
+            .is_some_and(|at| at.elapsed() >= PROMPT_TIMEOUT);
+        let mic = crate::workspace::capture::microphone_in_use();
+        if meeting || timed_out || mic == Some(false) {
+            crate::meeting_orb::dismiss_prompt(app);
+        }
+        return;
+    }
+    if !settings.suggest_meeting_notes || meeting || own_stream {
+        watch.live_since = None;
+        return;
+    }
+    let Some(mic_in_use) = crate::workspace::capture::microphone_in_use() else {
+        return;
+    };
+    let call = running_call_apps().into_iter().next();
+    if let Some(call) = watch.observe(Instant::now(), mic_in_use, call) {
+        log::info!("Call detected in {}; offering to take notes", call.name);
+        // Name it after the calendar meeting going on, if there is one.
+        let title = crate::calendar::current_meeting(app).map(|event| event.title);
+        crate::meeting_orb::show_prompt(
+            app,
+            crate::meeting_orb::MeetingPrompt {
+                app: Some(call),
+                title,
+            },
+        );
+    }
 }
 
 #[cfg(test)]

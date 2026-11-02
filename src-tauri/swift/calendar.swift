@@ -72,7 +72,13 @@ private func joinURL(_ event: EKEvent) -> String? {
 }
 
 /// Events overlapping [from, to] (Unix seconds), as a JSON array, soonest first.
+/// Called from a background thread every few seconds for the app's lifetime,
+/// so it drains its own autorelease pool rather than growing one forever.
 @_cdecl("ss_calendar_events") public func ssCalendarEvents(_ from: Double, _ to: Double) -> UnsafeMutablePointer<CChar>? {
+    autoreleasepool { calendarEvents(from, to) }
+}
+
+private func calendarEvents(_ from: Double, _ to: Double) -> UnsafeMutablePointer<CChar>? {
     guard ssCalendarAccess() == 2 else { return response([]) }
     let predicate = store.predicateForEvents(
         withStart: Date(timeIntervalSince1970: from),

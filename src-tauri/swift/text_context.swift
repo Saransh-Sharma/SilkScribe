@@ -29,6 +29,11 @@ private func copyAttribute(_ element: AXUIElement, _ attribute: String) -> CFTyp
 /// their text can be read. It costs them some speed, so only command mode
 /// asks; the first read after asking may still come back empty.
 @_cdecl("ss_context_focused_text") public func ssContextFocusedText(_ around: Int32, _ selectionLimit: Int32, _ wakeWebApps: Int32) -> UnsafeMutablePointer<CChar>? {
+    // Runs on a worker thread with no pool of its own.
+    autoreleasepool { focusedText(around, selectionLimit, wakeWebApps) }
+}
+
+private func focusedText(_ around: Int32, _ selectionLimit: Int32, _ wakeWebApps: Int32) -> UnsafeMutablePointer<CChar>? {
     guard AXIsProcessTrusted() else { return response(["error": "not_trusted"]) }
     let system = AXUIElementCreateSystemWide()
     // Don't let a hung app stall dictation.

@@ -208,19 +208,27 @@ pub fn change_calendar_reminders_setting(app: AppHandle, enabled: bool) -> Resul
 /// The next few meetings in the coming day, for Home.
 #[tauri::command]
 #[specta::specta]
-pub fn upcoming_meetings(app: AppHandle) -> Vec<CalendarEvent> {
+pub async fn upcoming_meetings(app: AppHandle) -> Vec<CalendarEvent> {
     if !connected(&app) {
         return Vec::new();
     }
-    let now = now();
-    upcoming_in(events(now, now + 24.0 * 3600.0), now, 4)
+    // EventKit can take a while on a big calendar; keep it off the main thread.
+    tauri::async_runtime::spawn_blocking(|| {
+        let now = now();
+        upcoming_in(events(now, now + 24.0 * 3600.0), now, 4)
+    })
+    .await
+    .unwrap_or_default()
 }
 
 /// The meeting happening now, to name a new recording after.
 #[tauri::command]
 #[specta::specta]
-pub fn current_calendar_meeting(app: AppHandle) -> Option<CalendarEvent> {
-    current_meeting(&app)
+pub async fn current_calendar_meeting(app: AppHandle) -> Option<CalendarEvent> {
+    tauri::async_runtime::spawn_blocking(move || current_meeting(&app))
+        .await
+        .ok()
+        .flatten()
 }
 
 /// Opens Privacy & Security → Calendars, to turn access back on.
