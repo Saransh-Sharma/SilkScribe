@@ -985,7 +985,8 @@
       "commandTimedOut": "Час вичерпано, нічого не змінено",
       "commandTooLong": "Виділіть менше тексту",
       "commandPassword": "Недоступно в полях паролів",
-      "commandNotText": "Виділіть текст"
+      "commandNotText": "Виділіть текст",
+      "commandKeysHeld": "Спершу відпустіть клавіші"
     },
     "style": {
       "casual": "Невимушений",

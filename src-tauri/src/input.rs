@@ -14,6 +14,56 @@ impl EnigoState {
     }
 }
 
+/// How long to wait for the person to let go of modifier keys before a
+/// simulated copy or paste. Releasing a shortcut usually takes well under this.
+pub const MODIFIER_RELEASE_WAIT: std::time::Duration = std::time::Duration::from_millis(500);
+
+/// Whether Shift, Control, Option, Command or Fn is held right now. A held
+/// modifier merges into a simulated shortcut and turns Cmd+C or Cmd+V into
+/// something else (Option+Cmd+V moves files in Finder). Elsewhere this can't
+/// be read, so it reports nothing held.
+pub fn modifiers_held() -> bool {
+    #[cfg(target_os = "macos")]
+    {
+        use tauri_nspanel::objc2_app_kit::{NSEvent, NSEventModifierFlags};
+        let keys = NSEventModifierFlags::Shift
+            | NSEventModifierFlags::Control
+            | NSEventModifierFlags::Option
+            | NSEventModifierFlags::Command
+            | NSEventModifierFlags::Function;
+        NSEvent::modifierFlags_class().intersects(keys)
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        false
+    }
+}
+
+/// Blocks until no modifier is held or `timeout` passes. Returns whether
+/// they were all released. Don't call it on the main thread.
+pub fn wait_for_modifiers_released(timeout: std::time::Duration) -> bool {
+    let deadline = std::time::Instant::now() + timeout;
+    while modifiers_held() {
+        if std::time::Instant::now() >= deadline {
+            return false;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(15));
+    }
+    true
+}
+
+/// `wait_for_modifiers_released` for async code.
+pub async fn wait_for_modifiers_released_async(timeout: std::time::Duration) -> bool {
+    let deadline = std::time::Instant::now() + timeout;
+    while modifiers_held() {
+        if std::time::Instant::now() >= deadline {
+            return false;
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(15)).await;
+    }
+    true
+}
+
 /// Get the current mouse cursor position using the managed Enigo instance.
 /// Returns None if the state is not available or if getting the location fails.
 pub fn get_cursor_position(app_handle: &AppHandle) -> Option<(i32, i32)> {

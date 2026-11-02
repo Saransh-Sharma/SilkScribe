@@ -56,9 +56,14 @@ fn skips_restore(bundle_id: &str) -> bool {
     NO_RESTORE_APPS.contains(&bundle_id)
 }
 
-/// How long to wait for the frontmost app to answer a simulated copy.
+/// How long to wait for the frontmost app to answer a simulated copy. A busy
+/// app that answers later reads as "nothing selected".
 #[cfg(target_os = "macos")]
-const COPY_WAIT: Duration = Duration::from_millis(400);
+const COPY_WAIT: Duration = Duration::from_millis(800);
+
+/// Why a simulated copy didn't run.
+#[cfg(target_os = "macos")]
+pub const KEYS_STILL_HELD: &str = "A modifier key is still held";
 
 fn resolve_paste_strategy(
     paste_method: PasteMethod,
@@ -291,10 +296,14 @@ pub enum CopiedSelection {
 
 /// Copies the frontmost app's selection with Cmd+C and reads it, then puts the
 /// clipboard back. For apps whose text the Accessibility API can't read. Call
-/// it off the main thread, after the shortcut's keys are up: it waits for the
-/// app to answer, and a held modifier would turn Cmd+C into something else.
+/// it off the main thread: it waits for the shortcut's keys to come up (a held
+/// modifier would turn Cmd+C into something else) and for the app to answer.
 #[cfg(target_os = "macos")]
 pub fn copy_selection(app_handle: &AppHandle) -> Result<CopiedSelection, String> {
+    // In toggle and hands-free modes the stop press can still be down here.
+    if !input::wait_for_modifiers_released(input::MODIFIER_RELEASE_WAIT) {
+        return Err(KEYS_STILL_HELD.to_string());
+    }
     let (sender, receiver) = std::sync::mpsc::channel();
     let app = app_handle.clone();
     app_handle

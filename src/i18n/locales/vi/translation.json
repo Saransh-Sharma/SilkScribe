@@ -982,7 +982,8 @@
       "commandTimedOut": "Hết thời gian, không có gì thay đổi",
       "commandTooLong": "Chọn ít văn bản hơn",
       "commandPassword": "Không dùng trong ô mật khẩu",
-      "commandNotText": "Hãy chọn văn bản"
+      "commandNotText": "Hãy chọn văn bản",
+      "commandKeysHeld": "Hãy nhả phím trước"
     },
     "style": {
       "casual": "Thân mật",

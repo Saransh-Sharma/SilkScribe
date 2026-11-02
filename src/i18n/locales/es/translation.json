@@ -984,7 +984,8 @@
       "commandTimedOut": "Tiempo agotado, sin cambios",
       "commandTooLong": "Selecciona menos texto",
       "commandPassword": "No en campos de contraseña",
-      "commandNotText": "Selecciona algo de texto"
+      "commandNotText": "Selecciona algo de texto",
+      "commandKeysHeld": "Suelta primero las teclas"
     },
     "style": {
       "casual": "Informal",

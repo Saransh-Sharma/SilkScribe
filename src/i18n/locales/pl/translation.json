@@ -985,7 +985,8 @@
       "commandTimedOut": "Przekroczono czas, nic nie zmieniono",
       "commandTooLong": "Zaznacz mniej tekstu",
       "commandPassword": "Nie w polach haseł",
-      "commandNotText": "Zaznacz jakiś tekst"
+      "commandNotText": "Zaznacz jakiś tekst",
+      "commandKeysHeld": "Najpierw puść klawisze"
     },
     "style": {
       "casual": "Swobodny",

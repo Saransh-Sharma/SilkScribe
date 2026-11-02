@@ -983,7 +983,8 @@
       "commandTimedOut": "Zeit abgelaufen, nichts geändert",
       "commandTooLong": "Weniger Text markieren",
       "commandPassword": "Nicht in Passwortfeldern",
-      "commandNotText": "Text markieren"
+      "commandNotText": "Text markieren",
+      "commandKeysHeld": "Lass zuerst die Tasten los"
     },
     "style": {
       "casual": "Locker",

@@ -985,7 +985,8 @@
       "commandTimedOut": "Время вышло, ничего не изменилось",
       "commandTooLong": "Выделите меньше текста",
       "commandPassword": "Не в полях паролей",
-      "commandNotText": "Выделите текст"
+      "commandNotText": "Выделите текст",
+      "commandKeysHeld": "Сначала отпустите клавиши"
     },
     "style": {
       "casual": "Непринуждённый",

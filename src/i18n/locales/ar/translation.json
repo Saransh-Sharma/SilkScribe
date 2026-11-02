@@ -987,7 +987,8 @@
       "commandTimedOut": "انتهت المهلة، لم يتغير شيء",
       "commandTooLong": "حدّد نصًا أقل",
       "commandPassword": "ليس في حقول كلمات السر",
-      "commandNotText": "حدّد بعض النص"
+      "commandNotText": "حدّد بعض النص",
+      "commandKeysHeld": "ارفع إصبعك عن المفاتيح أولًا"
     },
     "style": {
       "casual": "ودّي",

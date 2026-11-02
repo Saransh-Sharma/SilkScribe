@@ -983,7 +983,8 @@
       "commandTimedOut": "Süre doldu, hiçbir şey değişmedi",
       "commandTooLong": "Daha az metin seç",
       "commandPassword": "Parola alanlarında olmaz",
-      "commandNotText": "Biraz metin seç"
+      "commandNotText": "Biraz metin seç",
+      "commandKeysHeld": "Önce tuşları bırakın"
     },
     "style": {
       "casual": "Samimi",

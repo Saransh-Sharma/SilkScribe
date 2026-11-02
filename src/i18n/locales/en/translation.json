@@ -983,7 +983,8 @@
       "commandTimedOut": "Timed out, nothing changed",
       "commandTooLong": "Select less text",
       "commandPassword": "Not in password fields",
-      "commandNotText": "Select some text"
+      "commandNotText": "Select some text",
+      "commandKeysHeld": "Release the keys first"
     },
     "style": {
       "casual": "Casual",

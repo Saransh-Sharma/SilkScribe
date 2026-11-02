@@ -985,7 +985,8 @@
       "commandTimedOut": "Vypršel čas, nic se nezměnilo",
       "commandTooLong": "Vyberte méně textu",
       "commandPassword": "V polích pro hesla nelze",
-      "commandNotText": "Vyberte nějaký text"
+      "commandNotText": "Vyberte nějaký text",
+      "commandKeysHeld": "Nejdřív pusťte klávesy"
     },
     "style": {
       "casual": "Neformální",

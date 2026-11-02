@@ -982,7 +982,8 @@
       "commandTimedOut": "已超时，没有任何更改",
       "commandTooLong": "请少选一些文字",
       "commandPassword": "不可用于密码栏",
-      "commandNotText": "请选中一些文字"
+      "commandNotText": "请选中一些文字",
+      "commandKeysHeld": "请先松开按键"
     },
     "style": {
       "casual": "随意",

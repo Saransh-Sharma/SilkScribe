@@ -984,7 +984,8 @@
       "commandTimedOut": "Délai dépassé, rien n’a changé",
       "commandTooLong": "Sélectionnez moins de texte",
       "commandPassword": "Pas dans les mots de passe",
-      "commandNotText": "Sélectionnez du texte"
+      "commandNotText": "Sélectionnez du texte",
+      "commandKeysHeld": "Relâchez d’abord les touches"
     },
     "style": {
       "casual": "Décontracté",

@@ -982,7 +982,8 @@
       "commandTimedOut": "タイムアウトしたため変更はありません",
       "commandTooLong": "選択するテキストを減らしてください",
       "commandPassword": "パスワード欄では使えません",
-      "commandNotText": "テキストを選択してください"
+      "commandNotText": "テキストを選択してください",
+      "commandKeysHeld": "先にキーを離してください"
     },
     "style": {
       "casual": "カジュアル",

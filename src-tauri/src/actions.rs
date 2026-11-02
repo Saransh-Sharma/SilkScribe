@@ -411,7 +411,13 @@ impl ShortcutAction for TranscribeAction {
                                 }
                             });
 
-                            // Paste the final text (either processed or original)
+                            // Paste the final text (either processed or original),
+                            // once the stop press's modifiers are up if they come
+                            // up soon; a dictation is never dropped for it.
+                            crate::input::wait_for_modifiers_released_async(
+                                crate::input::MODIFIER_RELEASE_WAIT,
+                            )
+                            .await;
                             let ah_clone = ah.clone();
                             let paste_text = final_text.clone();
                             let paste_time = Instant::now();
@@ -556,6 +562,7 @@ fn command_selection(
             Ok(CopiedSelection::Text(text)) => Ok(Some(text)),
             Ok(CopiedSelection::Nothing) => Ok(None),
             Ok(CopiedSelection::NotText) => Err("commandNotText"),
+            Err(e) if e == crate::clipboard::KEYS_STILL_HELD => Err("commandKeysHeld"),
             Err(e) => {
                 error!("Command couldn't copy the selection: {}", e);
                 Err("commandFailed")
@@ -709,6 +716,14 @@ impl ShortcutAction for CommandAction {
                 }
             };
 
+            // Replacing the selection with a modifier held would type
+            // something else, so this one waits and gives up.
+            if !crate::input::wait_for_modifiers_released_async(crate::input::MODIFIER_RELEASE_WAIT)
+                .await
+            {
+                finish_with_error(&ah, "commandKeysHeld");
+                return;
+            }
             let ah_clone = ah.clone();
             ah.run_on_main_thread(move || {
                 let _finish_guard = finish_guard;
