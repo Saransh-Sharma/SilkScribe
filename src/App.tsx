@@ -80,6 +80,9 @@ function App() {
     (state) => state.refreshOutputDevices,
   );
   const hasCompletedPostOnboardingInit = useRef(false);
+  // Set while finishing dictation setup from Home after skipping it at first,
+  // so the permission steps lead on to the engine, shortcut and practice.
+  const finishingDictationSetup = useRef(false);
   const themePreference = settings?.theme ?? "system";
   const resolvedTheme: ResolvedTheme =
     themePreference === "system" ? systemTheme : themePreference;
@@ -389,12 +392,26 @@ function App() {
       return;
     }
 
-    setOnboardingStep(hasCompletedOnboarding ? "done" : "setup");
+    setOnboardingStep(
+      hasCompletedOnboarding && !finishingDictationSetup.current
+        ? "done"
+        : "setup",
+    );
   };
 
   const handlePracticeComplete = () => {
+    finishingDictationSetup.current = false;
     setHasCompletedOnboarding(true);
     setOnboardingStep("done");
+  };
+
+  const handleFinishDictationSetup = async () => {
+    const currentPermissions = await loadPermissionSnapshot();
+    setPermissions(currentPermissions);
+    finishingDictationSetup.current = true;
+    setOnboardingStep(
+      getFirstMissingPermissionStep(currentPermissions) ?? "setup",
+    );
   };
 
   const handleStartPermissionRepair = async () => {
@@ -524,7 +541,7 @@ function App() {
               return <Section />;
             }}
             onSetupDictation={() => {
-              void handleStartPermissionRepair();
+              void handleFinishDictationSetup();
             }}
           />
         </ErrorBoundary>
