@@ -643,7 +643,11 @@ test("Home shows the dictation shortcut once dictation is ready", async ({
   const strip = page.getByRole("button", { name: /^Dictation/ });
   await expect(strip).toContainText("Ready");
   await expect(strip.locator("kbd")).toHaveText("Option + Space");
-  await expect(page.getByText("Note to Sam", { exact: true })).toBeVisible();
+  await expect(
+    page
+      .getByRole("region", { name: "Recent dictation" })
+      .getByText("Can you send the revised screens before Friday?"),
+  ).toBeVisible();
 });
 
 test("a tap can make dictation hands-free", async ({ page }) => {
@@ -792,7 +796,10 @@ test("a cleaned-up dictation can show the text before cleanup", async ({
   page,
 }) => {
   await page.goto(`${fixture}?dictation=ready`);
-  await page.getByText("Note to Sam", { exact: true }).click();
+  await page
+    .getByRole("region", { name: "Recent dictation" })
+    .getByText("Can you send the revised screens before Friday?")
+    .click();
   const show = page.getByRole("button", { name: "Show original" });
   await show.click();
   await expect(page.getByLabel("Text before AI cleanup")).toHaveText(
@@ -804,7 +811,10 @@ test("a cleaned-up dictation can show the text before cleanup", async ({
 
 test("a dictation can teach the dictionary a spelling", async ({ page }) => {
   await page.goto(`${fixture}?dictation=ready`);
-  await page.getByText("Note to Sam", { exact: true }).click();
+  await page
+    .getByRole("region", { name: "Recent dictation" })
+    .getByText("Can you send the revised screens before Friday?")
+    .click();
   await page.getByRole("button", { name: "Add to dictionary" }).click();
   await page.getByLabel("Heard as").fill("sam");
   await page.getByLabel("Write as").fill("Sam");
@@ -944,6 +954,36 @@ test("meeting setup offers a heads-up for the people on the call", async ({
   await expect(
     page.getByRole("button", { name: "Copy a heads-up message" }),
   ).toBeVisible();
+});
+
+test("Home puts what needs you first and lists dictations once", async ({
+  page,
+}) => {
+  await page.goto(`${fixture}?dictation=ready`);
+  const attention = page.getByRole("region", {
+    name: "Needs attention",
+    exact: true,
+  });
+  const dictations = page.getByRole("region", { name: "Recent dictation" });
+  await expect(attention).toBeVisible();
+  await expect(dictations).toBeVisible();
+  const above = await page.evaluate(() => {
+    const [first, second] = [
+      document.querySelector('[aria-label="Needs attention"]'),
+      document.querySelector(".ws-dictation-strip"),
+    ];
+    return !!(
+      first &&
+      second &&
+      first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING
+    );
+  });
+  expect(above).toBe(true);
+  // The dictation shows in its own section, not again under Recent.
+  await expect(
+    page.locator(".ws-document-row", { hasText: "Note to Sam" }),
+  ).toHaveCount(0);
+  await expect(dictations.getByText(/revised screens/)).toBeVisible();
 });
 
 test("Home surfaces recovery work and opens the filtered Library", async ({

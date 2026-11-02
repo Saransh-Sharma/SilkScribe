@@ -86,6 +86,10 @@ export default function Workspace({
   const [dictationSummary, setDictationSummary] = useState<
     import("@/bindings").DictationSummary | null
   >(null);
+  // Home lists recent dictations in their own section when there are any.
+  const showsRecentDictations = !!dictationSummary?.recent.some(
+    (entry) => entry.transcription_text.trim() !== "",
+  );
   useEffect(() => {
     let current = true;
     const load = () => {
@@ -1817,6 +1821,59 @@ export default function Workspace({
                       </button>
                     </div>
                   )}
+                  {/* What needs you now first, then dictation, then suggestions. */}
+                  {active.length > 0 && (
+                    <section className="ws-active-jobs">
+                      <h2>{t("workspace.inProgress")}</h2>
+                      {renderRows(active)}
+                    </section>
+                  )}
+                  {attention.length > 0 && (
+                    <section
+                      className="ws-active-jobs"
+                      aria-label={t("workspace.stage.failed")}
+                    >
+                      <div className="ws-section-heading">
+                        <h2>{t("workspace.stage.failed")}</h2>
+                        <button
+                          className="ws-text-button"
+                          onClick={async () => {
+                            await navigate("library");
+                            setFilter("attention");
+                          }}
+                        >
+                          {t("workspace.viewLibrary")}
+                          <ArrowUpRight size={15} />
+                        </button>
+                      </div>
+                      {renderRows(attention.slice(0, 5))}
+                    </section>
+                  )}
+                  {upcoming.length > 0 && (
+                    <section
+                      className="ws-upcoming"
+                      aria-label={t("workspace.upcoming.title")}
+                    >
+                      <h2>{t("workspace.upcoming.title")}</h2>
+                      <ul>
+                        {upcoming.map((event) => (
+                          <li key={event.id}>
+                            <time>{formatEventTime(event)}</time>
+                            <span dir="auto">{event.title}</span>
+                            <button
+                              className="ws-text-button"
+                              onClick={async () => {
+                                await beginMeeting();
+                                setTitle(event.title);
+                              }}
+                            >
+                              {t("workspace.upcoming.takeNotes")}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
                   <button
                     className={`ws-dictation-strip${dictationReady ? "" : " is-attention"}`}
                     onClick={() => {
@@ -1971,31 +2028,6 @@ export default function Workspace({
                       </button>
                     </section>
                   )}
-                  {upcoming.length > 0 && (
-                    <section
-                      className="ws-upcoming"
-                      aria-label={t("workspace.upcoming.title")}
-                    >
-                      <h2>{t("workspace.upcoming.title")}</h2>
-                      <ul>
-                        {upcoming.map((event) => (
-                          <li key={event.id}>
-                            <time>{formatEventTime(event)}</time>
-                            <span dir="auto">{event.title}</span>
-                            <button
-                              className="ws-text-button"
-                              onClick={async () => {
-                                await beginMeeting();
-                                setTitle(event.title);
-                              }}
-                            >
-                              {t("workspace.upcoming.takeNotes")}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </section>
-                  )}
                   {calendar &&
                     !calendar.connected &&
                     calendar.access !== "unavailable" &&
@@ -2040,33 +2072,6 @@ export default function Workspace({
                         </button>
                       </section>
                     )}
-                  {attention.length > 0 && (
-                    <section
-                      className="ws-active-jobs"
-                      aria-label={t("workspace.stage.failed")}
-                    >
-                      <div className="ws-section-heading">
-                        <h2>{t("workspace.stage.failed")}</h2>
-                        <button
-                          className="ws-text-button"
-                          onClick={async () => {
-                            await navigate("library");
-                            setFilter("attention");
-                          }}
-                        >
-                          {t("workspace.viewLibrary")}
-                          <ArrowUpRight size={15} />
-                        </button>
-                      </div>
-                      {renderRows(attention.slice(0, 5))}
-                    </section>
-                  )}
-                  {active.length > 0 && (
-                    <section className="ws-active-jobs">
-                      <h2>{t("workspace.inProgress")}</h2>
-                      {renderRows(active)}
-                    </section>
-                  )}
                 </>
               )}
               <div className="ws-section-heading">
@@ -2151,7 +2156,11 @@ export default function Workspace({
                         .filter(
                           (d) =>
                             !busy(d.stage) &&
-                            !attention.slice(0, 5).some((a) => a.id === d.id),
+                            !attention.slice(0, 5).some((a) => a.id === d.id) &&
+                            // Recent dictations are listed above already.
+                            !(
+                              showsRecentDictations && d.source === "dictation"
+                            ),
                         )
                         .slice(0, 8)
                     : documents,
