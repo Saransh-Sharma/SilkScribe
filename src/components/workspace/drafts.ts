@@ -45,9 +45,14 @@ export const drafts = {
         } catch {
           /* malformed legacy draft */
         }
-        if (saved && saved.id === id && Array.isArray(saved.segments))
-          await draftStorage.put(saved);
-        else saved = null;
+        if (saved && saved.id === id && Array.isArray(saved.segments)) {
+          try {
+            await draftStorage.put(saved);
+          } catch (error) {
+            console.warn("Couldn't migrate an earlier draft", error);
+            saved = null;
+          }
+        } else saved = null;
       }
       cache.set(id, saved);
       localStorage.removeItem(key(id));

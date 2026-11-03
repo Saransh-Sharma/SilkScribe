@@ -1,6 +1,17 @@
 import type { AppSettings } from "@/bindings";
 
-const LOCAL_URL = /^(https?:\/\/)?(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/i;
+/**
+ * Whether a base URL points at this computer. Mirrors Rust's
+ * `cleanup_runs_on_device` (text_context.rs), which decides what's sent.
+ */
+const isLocalUrl = (baseUrl: string): boolean => {
+  const url = baseUrl.trim().replace(/[A-Z]/g, (c) => c.toLowerCase());
+  let host = (url.split("://")[1] ?? url).split(/[/?]/)[0];
+  const colon = host.lastIndexOf(":");
+  if (colon >= 0 && /^\d*$/.test(host.slice(colon + 1)))
+    host = host.slice(0, colon);
+  return host === "localhost" || host === "127.0.0.1" || host === "[::1]";
+};
 
 /** Whether this AI cleanup provider runs on this computer. */
 export const isOnDeviceProvider = (
@@ -8,7 +19,7 @@ export const isOnDeviceProvider = (
   baseUrl: string | null | undefined,
 ): boolean =>
   providerId === "apple_intelligence" ||
-  (providerId === "custom" && LOCAL_URL.test(baseUrl ?? ""));
+  (providerId === "custom" && isLocalUrl(baseUrl ?? ""));
 
 /**
  * The cloud provider dictation text can go to, or null when nothing leaves

@@ -27,6 +27,9 @@ const SETTLE: Duration = Duration::from_secs(5);
 const QUIET_RESET: Duration = Duration::from_secs(30);
 /// An unanswered offer goes away after this.
 const PROMPT_TIMEOUT: Duration = Duration::from_secs(60);
+/// A calendar reminder stays up for its whole window (`calendar.rs` reminds
+/// from 70 s before a meeting until 120 s after), whatever the mic is doing.
+const REMINDER_PROMPT_TIMEOUT: Duration = Duration::from_secs(190);
 
 /// Call apps running now, in `CALL_APPS` order.
 pub fn running_call_apps() -> Vec<FocusedApp> {
@@ -90,7 +93,6 @@ struct Watch {
     quiet_since: Option<Instant>,
     /// Already offered (or answered) for this call.
     offered: bool,
-    prompted_at: Option<Instant>,
 }
 
 impl Watch {
@@ -117,8 +119,27 @@ impl Watch {
             return None;
         }
         self.offered = true;
-        self.prompted_at = Some(now);
         Some(call)
+    }
+}
+
+/// Whether to withdraw the prompt showing now. Recording a meeting replaces
+/// any prompt. A call offer ends with the call or after `PROMPT_TIMEOUT`; a
+/// calendar reminder (`is_call == false`) comes before anyone is on the mic,
+/// so only its own timeout ends it.
+fn should_dismiss_prompt(
+    is_call: bool,
+    shown_for: Duration,
+    meeting: bool,
+    mic_in_use: Option<bool>,
+) -> bool {
+    if meeting {
+        return true;
+    }
+    if is_call {
+        shown_for >= PROMPT_TIMEOUT || mic_in_use == Some(false)
+    } else {
+        shown_for >= REMINDER_PROMPT_TIMEOUT
     }
 }
 
@@ -152,17 +173,18 @@ fn check(app: &AppHandle, watch: &mut Watch) {
     let own_stream = app
         .try_state::<Arc<crate::managers::audio::AudioRecordingManager>>()
         .is_some_and(|audio| audio.is_microphone_open());
-    if crate::meeting_orb::is_prompting(app) {
-        let timed_out = watch
-            .prompted_at
-            .is_some_and(|at| at.elapsed() >= PROMPT_TIMEOUT);
+    if let Some((is_call, shown_at)) = crate::meeting_orb::current_prompt(app) {
         // Where macOS says who's using the mic, SilkScribe's own stream
         // doesn't keep the prompt up after the call ends.
-        let mic = match crate::workspace::capture::input_apps() {
-            Some(users) => Some(!users.is_empty()),
-            None => crate::workspace::capture::microphone_in_use(),
+        let mic = if is_call {
+            match crate::workspace::capture::input_apps() {
+                Some(users) => Some(!users.is_empty()),
+                None => crate::workspace::capture::microphone_in_use(),
+            }
+        } else {
+            None
         };
-        if meeting || timed_out || mic == Some(false) {
+        if should_dismiss_prompt(is_call, shown_at.elapsed(), meeting, mic) {
             crate::meeting_orb::dismiss_prompt(app);
         }
         return;
@@ -242,6 +264,35 @@ mod tests {
         assert_eq!(watch.observe(start + SETTLE, true, zoom()), zoom());
         // Not again during the same call.
         assert_eq!(watch.observe(start + SETTLE * 3, true, zoom()), None);
+    }
+
+    #[test]
+    fn a_calendar_reminder_survives_an_idle_mic() {
+        let shown = Duration::from_secs(10);
+        assert!(!should_dismiss_prompt(false, shown, false, Some(false)));
+        assert!(!should_dismiss_prompt(false, PROMPT_TIMEOUT, false, None));
+        assert!(should_dismiss_prompt(
+            false,
+            REMINDER_PROMPT_TIMEOUT,
+            false,
+            None
+        ));
+        assert!(should_dismiss_prompt(false, shown, true, None));
+    }
+
+    #[test]
+    fn a_call_offer_ends_with_the_call_or_its_timeout() {
+        let shown = Duration::from_secs(10);
+        assert!(!should_dismiss_prompt(true, shown, false, Some(true)));
+        assert!(!should_dismiss_prompt(true, shown, false, None));
+        assert!(should_dismiss_prompt(true, shown, false, Some(false)));
+        assert!(should_dismiss_prompt(
+            true,
+            PROMPT_TIMEOUT,
+            false,
+            Some(true)
+        ));
+        assert!(should_dismiss_prompt(true, shown, true, Some(true)));
     }
 
     #[test]

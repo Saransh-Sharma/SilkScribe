@@ -8,7 +8,7 @@ import {
   type MeetingPrompt,
   type RecordingStatus,
 } from "@/bindings";
-import i18n from "@/i18n";
+import i18n, { syncLanguageFromSettings } from "@/i18n";
 import { getLanguageDirection } from "@/lib/utils/rtl";
 import "./MeetingOrb.css";
 
@@ -211,6 +211,8 @@ const MeetingOrb: React.FC<{ preview?: MeetingOrbPreview }> = ({ preview }) => {
         setFollowing(true);
         setPinned(false);
         setActionError(null);
+        setConsentCopied(false);
+        setStatus(EMPTY_STATUS);
       }
     };
 
@@ -218,6 +220,9 @@ const MeetingOrb: React.FC<{ preview?: MeetingOrbPreview }> = ({ preview }) => {
       const handlers = [
         listen<OrbStatePayload>("meeting-orb-state", ({ payload }) => {
           acceptDocument(payload.document_id);
+          // The window lives all session: pick up a language changed in
+          // Settings each time it shows.
+          if (payload.phase !== "hidden") void syncLanguageFromSettings();
           setPhase((previous) => {
             // A prompt opens the panel expanded; once it's answered or a
             // meeting replaces it, the panel is back to the orb.

@@ -291,6 +291,8 @@
       "downloadedOf": "{{downloaded}} of {{total}}",
       "speed": "{{speed}}/s",
       "eta": "{{eta}} left",
+      "etaSeconds": "{{count}}s",
+      "etaMinutes": "{{count}}m",
       "starting": "Starting download",
       "extracting": "Extracting model",
       "almostDone": "Almost done",
@@ -1166,6 +1168,8 @@
       "aligned_or_segments": "Word-level timestamps where supported, sentence-level otherwise",
       "segments": "Sentence-level timestamps"
     },
+    "sizeMB": "{{value}} MB",
+    "sizeGB": "{{value}} GB",
     "memoryAvailable": "About {{gb}} GB free",
     "memoryObserved": "Has used up to {{gb}} GB here. Longer audio may need more.",
     "memoryUnmeasured": "Not measured on this Mac yet",

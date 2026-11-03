@@ -194,6 +194,8 @@ fn open(dir: &Path) -> Result<Connection, String> {
     )
     .map_err(|e| format!("Couldn't open SilkScribe's library: {e}"))?;
     let _ = conn.busy_timeout(std::time::Duration::from_secs(3));
+    crate::workspace::store::register_functions(&conn)
+        .map_err(|e| format!("Couldn't open SilkScribe's library: {e}"))?;
     Ok(conn)
 }
 
@@ -253,7 +255,7 @@ fn search(conn: &Connection, arguments: &Value) -> Result<Value, String> {
 fn list(conn: &Connection, arguments: &Value) -> Result<Value, String> {
     let limit = clamp_limit(&arguments["limit"], 20, 100);
     let source = arguments["source"].as_str();
-    let title = arguments["title"].as_str().map(|t| t.to_lowercase());
+    let title = arguments["title"].as_str();
     let folder = arguments["folder"].as_str();
     let mut stmt = conn
         .prepare(
@@ -261,7 +263,7 @@ fn list(conn: &Connection, arguments: &Value) -> Result<Value, String> {
                     json_extract(body,'$.duration'), json_extract(body,'$.stage'), json_extract(body,'$.folder')
              FROM workspace_documents
              WHERE (?1 IS NULL OR json_extract(body,'$.source')=?1)
-               AND (?2 IS NULL OR instr(lower(json_extract(body,'$.title')), ?2) > 0)
+               AND (?2 IS NULL OR unicode_contains(coalesce(json_extract(body,'$.title'),''), coalesce(?2,'')))
                AND (?4 IS NULL OR json_extract(body,'$.folder')=?4)
              ORDER BY created_at DESC LIMIT ?3",
         )
@@ -481,6 +483,21 @@ mod tests {
 
         let missing = call(dir.path(), "get_document", json!({"id": "nope"}));
         assert_eq!(missing["isError"], true);
+    }
+
+    #[test]
+    fn the_title_filter_folds_case_beyond_ascii() {
+        let dir = library(true);
+        let store = crate::workspace::store::Store::new(dir.path()).unwrap();
+        let mut doc = crate::workspace::store::tests_support::document();
+        doc.id = "equipe".into();
+        doc.title = "Équipe produit".into();
+        store.put(&doc).unwrap();
+        let listed = call(dir.path(), "list_library", json!({"title": "équipe"}));
+        let listed: Value =
+            serde_json::from_str(listed["content"][0]["text"].as_str().unwrap()).unwrap();
+        assert_eq!(listed.as_array().unwrap().len(), 1);
+        assert_eq!(listed[0]["id"], "equipe");
     }
 
     #[test]

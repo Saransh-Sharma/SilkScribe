@@ -38,6 +38,8 @@ export function readWorkflowOptions(): Record<
     speakers: value?.speakers === true,
     notes_model:
       typeof value?.notes_model === "string" ? value.notes_model : null,
+    notes_template:
+      typeof value?.notes_template === "string" ? value.notes_template : null,
   });
   return { meeting: validate(stored.meeting), import: validate(stored.import) };
 }

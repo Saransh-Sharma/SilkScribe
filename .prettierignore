@@ -14,3 +14,4 @@ src-tauri/vendor/
 public/playwright/
 site/
 docs/superpowers/plans/
+src/bindings.ts

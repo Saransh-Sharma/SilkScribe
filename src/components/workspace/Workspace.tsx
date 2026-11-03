@@ -483,7 +483,7 @@ export default function Workspace({
           title: callTitle,
           microphone_id: device || null,
           system_audio: true,
-          options,
+          options: workflowOptions.meeting,
           target_bundle_id: call?.bundle_id ?? null,
         }),
       );
@@ -553,7 +553,10 @@ export default function Workspace({
             if (doc && busy(doc.stage)) {
               void api
                 .get(doc.id)
-                .then(setSelected)
+                .then((next) => {
+                  // Only if it's still the open document.
+                  if (selectedRef.current?.id === next.id) setSelected(next);
+                })
                 .catch(() => {});
             }
           },
@@ -644,7 +647,21 @@ export default function Workspace({
       running = true;
       try {
         const status = await api.status();
-        if (!disposed) setRecording(status);
+        // Keep the same object when nothing changed, so an idle poll
+        // doesn't re-render the workspace every second.
+        if (!disposed)
+          setRecording((previous) =>
+            previous &&
+            previous.document_id === status.document_id &&
+            previous.paused === status.paused &&
+            previous.seconds === status.seconds &&
+            previous.microphone_level === status.microphone_level &&
+            previous.system_level === status.system_level &&
+            previous.error === status.error &&
+            previous.mic_gated === status.mic_gated
+              ? previous
+              : status,
+          );
       } catch {
         /* recording capability may be unavailable */
       } finally {
@@ -805,15 +822,21 @@ export default function Workspace({
   const [focusNotesFor, setFocusNotesFor] = useState<string | null>(null);
   // Bumped on every open, so the transcript takes focus once per open.
   const [openToken, setOpenToken] = useState(0);
+  // Only the latest open wins when opens overlap.
+  const openTicket = useRef(0);
   const openDocument = async (id: string, at: number | null = null) => {
     if (saveBarrier.current && !(await saveBarrier.current())) return;
+    const ticket = ++openTicket.current;
     try {
+      const doc = await api.get(id);
+      if (ticket !== openTicket.current) return;
       setOpenAt(at);
       setOpenToken((token) => token + 1);
-      setSelected(await api.get(id));
+      setSelected(doc);
       setCreate(null);
     } catch (e) {
-      toastError(t("workspace.errors.openTranscript"), e);
+      if (ticket === openTicket.current)
+        toastError(t("workspace.errors.openTranscript"), e);
     }
   };
   const openDocumentRef = useRef(openDocument);
@@ -1429,7 +1452,7 @@ export default function Workspace({
                               )!;
                               return (
                                 item.error ||
-                                `${(item.bytes / 1024 ** 2).toFixed(1)} MB · ${item.duration === null ? t("workspace.durationUnknown") : duration(item.duration)}`
+                                `${t("workspace.sizeMB", { value: (item.bytes / 1024 ** 2).toFixed(1) })} · ${item.duration === null ? t("workspace.durationUnknown") : duration(item.duration)}`
                               );
                             })()}
                           </small>
@@ -1740,7 +1763,14 @@ export default function Workspace({
                               <p>
                                 {t(`workspace.purpose.${pack.purpose}`)} ·{" "}
                                 {pack.artifacts.length
-                                  ? `${(pack.artifacts.reduce((n, a) => n + a.bytes, 0) / 1e9).toFixed(1)} GB`
+                                  ? t("workspace.sizeGB", {
+                                      value: (
+                                        pack.artifacts.reduce(
+                                          (n, a) => n + a.bytes,
+                                          0,
+                                        ) / 1e9
+                                      ).toFixed(1),
+                                    })
                                   : t("workspace.unpublished")}{" "}
                                 · {pack.license}
                               </p>
@@ -1883,7 +1913,9 @@ export default function Workspace({
                             <p key={label}>
                               {t(`workspace.${label}`)}{" "}
                               <strong>
-                                {(Number(bytes) / 1e9).toFixed(1)} GB
+                                {t("workspace.sizeGB", {
+                                  value: (Number(bytes) / 1e9).toFixed(1),
+                                })}
                               </strong>
                             </p>
                           ))}

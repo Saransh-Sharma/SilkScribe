@@ -69,7 +69,11 @@ impl Workspace {
             ask_child: Arc::new(Mutex::new(None)),
             ask_cancelled: AtomicBool::new(false),
         });
-        workspace.store.sync_history(&workspace.root)?;
+        // The Library can catch up on the next history update; a launch that
+        // fails every time can't.
+        if let Err(error) = workspace.store.sync_history(&workspace.root) {
+            log::error!("Workspace history synchronization failed: {error:#}");
+        }
         let history_workspace = workspace.clone();
         let event_app = app.clone();
         app.listen("history-updated", move |_| {
@@ -296,7 +300,11 @@ impl Workspace {
         if self.active.lock().unwrap().as_deref() == Some(id) {
             self.cancelled.store(true, Ordering::Relaxed);
         }
-        doc.failed_stage = Some(doc.stage.clone());
+        // A queued retry already says which stage it's redoing (e.g. Notes);
+        // keep that so Retry after the cancel redoes the same work.
+        if doc.stage != Stage::Queued || doc.failed_stage.is_none() {
+            doc.failed_stage = Some(doc.stage.clone());
+        }
         doc.stage = Stage::Cancelled;
         self.store.put(&doc)
     }
@@ -430,7 +438,10 @@ impl Workspace {
             if let Err(error) = this.process(&app, doc.clone()) {
                 let _guard = this.lock.lock().unwrap();
                 if let Ok(mut current) = this.store.get(&doc.id) {
-                    current.failed_stage = Some(current.stage.clone());
+                    // `cancel` already recorded the stage it stopped in.
+                    if current.stage != Stage::Cancelled {
+                        current.failed_stage = Some(current.stage.clone());
+                    }
                     current.stage = if this.cancelled.load(Ordering::Relaxed) {
                         Stage::Cancelled
                     } else {
@@ -1020,9 +1031,7 @@ impl Workspace {
             "passages": passages.iter().map(|p| serde_json::json!({
                 "id": p.id,
                 "title": p.title,
-                "date": chrono::DateTime::from_timestamp(p.created_at, 0)
-                    .map(|date| date.format("%Y-%m-%d").to_string())
-                    .unwrap_or_default(),
+                "date": passage_date(p.created_at),
                 "text": p.text,
             })).collect::<Vec<_>>(),
         });
@@ -1087,9 +1096,7 @@ impl Workspace {
             "passages": passages.iter().map(|p| serde_json::json!({
                 "id": p.id,
                 "title": p.title,
-                "date": chrono::DateTime::from_timestamp(p.created_at, 0)
-                    .map(|date| date.format("%Y-%m-%d").to_string())
-                    .unwrap_or_default(),
+                "date": passage_date(p.created_at),
                 "text": p.text,
             })).collect::<Vec<_>>(),
         });
@@ -1117,6 +1124,21 @@ impl Workspace {
             let _ = child.kill();
         }
     }
+}
+
+/// A passage's calendar date as the person saw it, in local time, so the
+/// engine doesn't cite the day before or after. Falls back to UTC.
+fn passage_date(created_at: i64) -> String {
+    use chrono::TimeZone;
+    chrono::Local
+        .timestamp_opt(created_at, 0)
+        .single()
+        .map(|date| date.format("%Y-%m-%d").to_string())
+        .or_else(|| {
+            chrono::DateTime::from_timestamp(created_at, 0)
+                .map(|date| date.format("%Y-%m-%d").to_string())
+        })
+        .unwrap_or_default()
 }
 
 #[cfg(test)]

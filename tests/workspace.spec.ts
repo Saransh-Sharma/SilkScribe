@@ -1114,6 +1114,22 @@ test("AI apps can be let in to read the library", async ({ page }) => {
   ).toBeVisible();
 });
 
+test("clicking a switch's visible track toggles it", async ({ page }) => {
+  await page.goto(`${fixture}?dictation=ready`);
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
+  await page.getByRole("tab", { name: "Privacy & storage" }).click();
+  const share = page.getByRole("switch", {
+    name: "Let AI apps read your library",
+  });
+  // The checkbox itself is visually hidden; people click the track.
+  const track = share.locator("xpath=following-sibling::span");
+  await expect(share).not.toBeChecked();
+  await track.click();
+  await expect(share).toBeChecked();
+  await track.click();
+  await expect(share).not.toBeChecked();
+});
+
 test("documents can be filed in folders and the Library filtered by them", async ({
   page,
 }) => {

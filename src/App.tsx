@@ -447,18 +447,21 @@ function App() {
     );
   }
 
+  // Finishing dictation setup from Home runs the onboarding steps, not repair.
+  const repairing = hasCompletedOnboarding && !finishingDictationSetup.current;
+
   if (onboardingStep === "microphone_permission") {
-    const stepLabels = hasCompletedOnboarding
+    const stepLabels = repairing
       ? getRepairStepLabels(permissions)
       : onboardingStepLabels;
-    const activeStep = hasCompletedOnboarding ? 0 : 1;
+    const activeStep = repairing ? 0 : 1;
 
     return (
       <>
         {toaster}
         <PermissionStep
           permission="microphone"
-          mode={hasCompletedOnboarding ? "repair" : "onboarding"}
+          mode={repairing ? "repair" : "onboarding"}
           stepLabels={stepLabels}
           activeStep={activeStep}
           onContinue={handlePermissionContinue}
@@ -468,21 +471,17 @@ function App() {
   }
 
   if (onboardingStep === "accessibility_permission") {
-    const stepLabels = hasCompletedOnboarding
+    const stepLabels = repairing
       ? getRepairStepLabels(permissions)
       : onboardingStepLabels;
-    const activeStep = hasCompletedOnboarding
-      ? stepLabels.length > 1
-        ? 1
-        : 0
-      : 2;
+    const activeStep = repairing ? (stepLabels.length > 1 ? 1 : 0) : 2;
 
     return (
       <>
         {toaster}
         <PermissionStep
           permission="accessibility"
-          mode={hasCompletedOnboarding ? "repair" : "onboarding"}
+          mode={repairing ? "repair" : "onboarding"}
           stepLabels={stepLabels}
           activeStep={activeStep}
           onContinue={handlePermissionContinue}

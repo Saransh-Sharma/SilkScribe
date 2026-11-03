@@ -121,8 +121,10 @@ def diarize(request):
     pipeline = Pipeline.from_pretrained(local_model(request['model_path']))
     import soundfile as sf
     import torch
-    waveform, rate = sf.read(request['audio_path'], dtype='float32', always_2d=True)
-    output = pipeline({'waveform':torch.from_numpy(waveform.T.copy()),'sample_rate':rate})
+    # One mono float32 copy: a long meeting's audio is hundreds of MB.
+    waveform, rate = sf.read(request['audio_path'], dtype='float32')
+    if waveform.ndim > 1: waveform = waveform.mean(axis=1, dtype='float32')
+    output = pipeline({'waveform':torch.from_numpy(waveform).unsqueeze(0),'sample_rate':rate})
     def turns(annotation):
         return [dict(start=float(turn.start),end=float(turn.end),speaker=str(speaker)) for turn, _, speaker in annotation.itertracks(yield_label=True)]
     return {'turns':turns(output.speaker_diarization),'exclusive':turns(output.exclusive_speaker_diarization)}

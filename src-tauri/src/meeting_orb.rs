@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 use specta::Type;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
+use std::time::Instant;
 use tauri::{AppHandle, Emitter, Manager};
 
 const LABEL: &str = "meeting_orb";
@@ -68,6 +69,8 @@ struct OrbInner {
     poller: Option<Arc<AtomicBool>>,
     /// What the current prompt is about.
     prompt: Option<MeetingPrompt>,
+    /// When the prompt now showing went up.
+    prompt_shown_at: Option<Instant>,
 }
 
 pub struct MeetingOrbState(Mutex<OrbInner>);
@@ -86,6 +89,7 @@ impl Default for MeetingOrbState {
             dragged_to: None,
             poller: None,
             prompt: None,
+            prompt_shown_at: None,
         }))
     }
 }
@@ -114,6 +118,7 @@ pub fn show(app: &AppHandle, document_id: &str, title: &str) {
         };
         inner.expanded = false;
         inner.drag_origin = None;
+        inner.prompt_shown_at = None;
         inner.poller.replace(poller.clone())
     })
     .flatten();
@@ -142,6 +147,7 @@ pub fn show_prompt(app: &AppHandle, prompt: MeetingPrompt) {
             prompt: Some(prompt.clone()),
         };
         inner.prompt = Some(prompt);
+        inner.prompt_shown_at = Some(Instant::now());
         inner.expanded = true;
         inner.drag_origin = None;
     });
@@ -153,6 +159,23 @@ pub fn show_prompt(app: &AppHandle, prompt: MeetingPrompt) {
 /// Whether the orb is currently offering to take notes.
 pub fn is_prompting(app: &AppHandle) -> bool {
     with_state(app, |inner| inner.snapshot.phase == MeetingOrbPhase::Prompt).unwrap_or(false)
+}
+
+/// The prompt showing now, if any: whether it's for a call (rather than a
+/// calendar reminder), and when it went up.
+pub fn current_prompt(app: &AppHandle) -> Option<(bool, Instant)> {
+    with_state(app, |inner| {
+        if inner.snapshot.phase != MeetingOrbPhase::Prompt {
+            return None;
+        }
+        let is_call = inner
+            .snapshot
+            .prompt
+            .as_ref()
+            .is_some_and(|prompt| prompt.app.is_some());
+        inner.prompt_shown_at.map(|at| (is_call, at))
+    })
+    .flatten()
 }
 
 /// Withdraw an unanswered prompt (the call ended, or it timed out).
@@ -189,6 +212,7 @@ pub fn hide(app: &AppHandle) {
         };
         inner.expanded = false;
         inner.drag_origin = None;
+        inner.prompt_shown_at = None;
         inner.poller.take()
     })
     .flatten();

@@ -35,6 +35,23 @@ test("Apple Intelligence and local servers run on this computer", () => {
   expect(isOnDeviceProvider("openai", "http://localhost")).toBe(false);
 });
 
+test("the on-device check reads the host the way the Rust side does", () => {
+  expect(isOnDeviceProvider("custom", "http://[::1]:8080")).toBe(true);
+  expect(isOnDeviceProvider("custom", "  HTTP://LocalHost:11434/v1 ")).toBe(
+    true,
+  );
+  expect(isOnDeviceProvider("custom", "localhost:1234")).toBe(true);
+  expect(isOnDeviceProvider("custom", "http://localhost?x=1")).toBe(true);
+  expect(
+    isOnDeviceProvider("custom", "http://localhost:11434@api.example.com/v1"),
+  ).toBe(false);
+  expect(isOnDeviceProvider("custom", "http://localhost.example.com")).toBe(
+    false,
+  );
+  expect(isOnDeviceProvider("custom", "http://127.0.0.1:abc")).toBe(false);
+  expect(isOnDeviceProvider("custom", "")).toBe(false);
+});
+
 test("only a cloud provider in use makes text leave this computer", () => {
   expect(cloudCleanupProvider(null)).toBeNull();
   expect(

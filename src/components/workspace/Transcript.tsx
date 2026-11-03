@@ -1511,13 +1511,16 @@ export function Transcript({
                 {doc.notes && (
                   <ShareButton
                     label={t("workspace.share.notes")}
-                    text={() =>
-                      api.exportPreview(doc.id, "md", {
+                    text={async () => {
+                      // Share what's on screen, including unsaved edits.
+                      if (!(await flush()))
+                        throw new Error(t("workspace.saveFailed"));
+                      return api.exportPreview(doc.id, "md", {
                         transcript: false,
                         notes: true,
                         speakers: false,
-                      })
-                    }
+                      });
+                    }}
                   />
                 )}
               </div>

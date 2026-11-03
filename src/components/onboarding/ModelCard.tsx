@@ -375,8 +375,12 @@ const ModelCard: React.FC<ModelCardProps> = ({
           : 0;
       const etaLabel = etaSeconds
         ? etaSeconds < 60
-          ? `${Math.max(1, Math.ceil(etaSeconds))}s`
-          : `${Math.ceil(etaSeconds / 60)}m`
+          ? t("modelSelector.downloadProgress.etaSeconds", {
+              count: Math.max(1, Math.ceil(etaSeconds)),
+            })
+          : t("modelSelector.downloadProgress.etaMinutes", {
+              count: Math.ceil(etaSeconds / 60),
+            })
         : null;
 
       return (

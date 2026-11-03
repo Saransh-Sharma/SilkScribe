@@ -312,7 +312,7 @@ export const troubleshootingCards: TroubleshootingCard[] = [
     body: "Most insertion issues come from focus or paste method selection rather than the speech engine.",
     steps: [
       "Keep the destination text field focused until transcription finishes.",
-      "Check Settings → Dictation → Output.",
+      "Check Settings → Dictation → Pasting.",
       "If you preserve clipboard contents, SilkScribe may switch to direct insertion to avoid replacing your clipboard.",
     ],
   },
@@ -322,7 +322,7 @@ export const troubleshootingCards: TroubleshootingCard[] = [
     body: "If the preferred speech engine is still preparing, SilkScribe needs time to finish model setup locally.",
     steps: [
       "Wait for the model setup screen to finish preparing the offline engine.",
-      "Open Settings → Engines & language to confirm the selected engine is installed.",
+      "Open Settings → Engines to confirm the selected engine is installed.",
       "If a download fails, try again on a stable connection or switch to another supported model.",
     ],
     note: "Community models are supported, but troubleshooting is strongest for the default packaged options.",
@@ -334,7 +334,7 @@ export const troubleshootingCards: TroubleshootingCard[] = [
     steps: [
       "Open Home or Library to review recent dictations and saved transcripts.",
       "Press Cmd+Shift+D to show the Developer settings.",
-      "Then open Settings → Storage & privacy → Developer to reveal the log folder when support asks for logs.",
+      "Then open Settings → Privacy & storage → Developer to reveal the log folder when support asks for logs.",
       "Share your macOS version, chip type, model choice, and the exact behavior you saw.",
     ],
   },

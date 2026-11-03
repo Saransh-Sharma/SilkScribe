@@ -291,56 +291,60 @@ private final class MeetingCapture: NSObject, SCStreamOutput, SCStreamDelegate {
 }
 private var capture: AnyObject?
 @_cdecl("ss_capture_call") public func ssCaptureCall(_ json: UnsafePointer<CChar>) -> UnsafeMutablePointer<CChar>? {
-    guard let data=String(cString:json).data(using:.utf8),let request=(try? JSONSerialization.jsonObject(with:data)) as? [String:Any] else {return response(["error":"Invalid capture request"])}
-    guard #available(macOS 13.0, *) else {return response(["error":"Meeting recording needs macOS 13 or later."])}
-    let operation=request["operation"] as? String ?? "status"
-    if operation=="devices" {
-        var size:UInt32=0
-        var address=AudioObjectPropertyAddress(mSelector:kAudioHardwarePropertyDevices,mScope:kAudioObjectPropertyScopeGlobal,mElement:kAudioObjectPropertyElementMain)
-        AudioObjectGetPropertyDataSize(AudioObjectID(kAudioObjectSystemObject),&address,0,nil,&size)
-        var devices=[AudioDeviceID](repeating:0,count:Int(size)/MemoryLayout<AudioDeviceID>.size)
-        AudioObjectGetPropertyData(AudioObjectID(kAudioObjectSystemObject),&address,0,nil,&size,&devices)
-        let results:[[String:String]]=devices.compactMap { device in
-            var streams=AudioObjectPropertyAddress(mSelector:kAudioDevicePropertyStreams,mScope:kAudioDevicePropertyScopeInput,mElement:kAudioObjectPropertyElementMain)
-            var bytes:UInt32=0; AudioObjectGetPropertyDataSize(device,&streams,0,nil,&bytes)
-            guard bytes>0 else {return nil}
-            var property=AudioObjectPropertyAddress(mSelector:kAudioObjectPropertyName,mScope:kAudioObjectPropertyScopeGlobal,mElement:kAudioObjectPropertyElementMain)
-            var name:CFString="Microphone" as CFString;var length=UInt32(MemoryLayout<CFString>.size)
-            AudioObjectGetPropertyData(device,&property,0,nil,&length,&name)
-            return ["id":String(device),"name":name as String]
+    // Called from Rust threads, which have no autorelease pool: without one,
+    // each call's Foundation objects pile up for the thread's lifetime.
+    return autoreleasepool { () -> UnsafeMutablePointer<CChar>? in
+        guard let data=String(cString:json).data(using:.utf8),let request=(try? JSONSerialization.jsonObject(with:data)) as? [String:Any] else {return response(["error":"Invalid capture request"])}
+        guard #available(macOS 13.0, *) else {return response(["error":"Meeting recording needs macOS 13 or later."])}
+        let operation=request["operation"] as? String ?? "status"
+        if operation=="devices" {
+            var size:UInt32=0
+            var address=AudioObjectPropertyAddress(mSelector:kAudioHardwarePropertyDevices,mScope:kAudioObjectPropertyScopeGlobal,mElement:kAudioObjectPropertyElementMain)
+            AudioObjectGetPropertyDataSize(AudioObjectID(kAudioObjectSystemObject),&address,0,nil,&size)
+            var devices=[AudioDeviceID](repeating:0,count:Int(size)/MemoryLayout<AudioDeviceID>.size)
+            AudioObjectGetPropertyData(AudioObjectID(kAudioObjectSystemObject),&address,0,nil,&size,&devices)
+            let results:[[String:String]]=devices.compactMap { device in
+                var streams=AudioObjectPropertyAddress(mSelector:kAudioDevicePropertyStreams,mScope:kAudioDevicePropertyScopeInput,mElement:kAudioObjectPropertyElementMain)
+                var bytes:UInt32=0; AudioObjectGetPropertyDataSize(device,&streams,0,nil,&bytes)
+                guard bytes>0 else {return nil}
+                var property=AudioObjectPropertyAddress(mSelector:kAudioObjectPropertyName,mScope:kAudioObjectPropertyScopeGlobal,mElement:kAudioObjectPropertyElementMain)
+                var name:CFString="Microphone" as CFString;var length=UInt32(MemoryLayout<CFString>.size)
+                AudioObjectGetPropertyData(device,&property,0,nil,&length,&name)
+                return ["id":String(device),"name":name as String]
+            }
+            return response(["devices":results])
         }
-        return response(["devices":results])
-    }
-    if operation=="start" {
-        guard capture==nil,let path=request["path"] as? String else {return response(["error":"A recording is already active."])}
-        liveRing.reset()
-        let instance=MeetingCapture(path:path);capture=instance
-        let semaphore=DispatchSemaphore(value:0);var failure:String?
-        Task { do {try await instance.start(system:request["system"] as? Bool ?? true,device:(request["device"] as? String).flatMap(UInt32.init),app:request["app"] as? String)} catch {failure=error.localizedDescription};semaphore.signal() }
-        semaphore.wait()
-        if let failure=failure {capture=nil;return response(["error":failure])}
-        return response(["ok":true])
-    }
-    guard let instance=capture as? MeetingCapture else {return response(["seconds":0,"paused":false])}
-    if operation=="pause" { instance.queue.sync {if instance.pausedAt==nil {instance.pausedAt=ProcessInfo.processInfo.systemUptime}} }
-    if operation=="resume" { instance.queue.sync {if let time=instance.pausedAt {
-        let now = ProcessInfo.processInfo.systemUptime
-        instance.pausedDuration += now-time;instance.pausedAt=nil
-        instance.lastMicrophoneBuffer=now;instance.lastSystemBuffer=now;instance.error=nil
-    }} }
-    if operation=="stop" {
-        let semaphore=DispatchSemaphore(value:0);var failure:String?
-        Task { do {try await instance.stop()} catch {failure=error.localizedDescription};semaphore.signal() };semaphore.wait();capture=nil
-        if let failure=failure {return response(["error":failure])}
-        return response(["ok":true])
-    }
-    return instance.queue.sync {
-        let now = ProcessInfo.processInfo.systemUptime
-        let paused = instance.pausedAt != nil
-        let microphoneStalled = !paused && now-instance.lastMicrophoneBuffer > 3
-        let microphoneLevel = paused || microphoneStalled ? 0 : instance.microphoneLevel
-        let systemLevel = paused || now-instance.lastSystemBuffer > 3 ? 0 : instance.systemLevel
-        let error = instance.error ?? (microphoneStalled ? "The microphone stopped sending audio. Check your input, then pause and resume." : nil)
-        return response(["seconds":instance.elapsed,"paused":paused,"microphone_level":microphoneLevel,"system_level":systemLevel,"mic_gated":isMicGated(),"error":error as Any? ?? NSNull()])
+        if operation=="start" {
+            guard capture==nil,let path=request["path"] as? String else {return response(["error":"A recording is already active."])}
+            liveRing.reset()
+            let instance=MeetingCapture(path:path);capture=instance
+            let semaphore=DispatchSemaphore(value:0);var failure:String?
+            Task { do {try await instance.start(system:request["system"] as? Bool ?? true,device:(request["device"] as? String).flatMap(UInt32.init),app:request["app"] as? String)} catch {failure=error.localizedDescription};semaphore.signal() }
+            semaphore.wait()
+            if let failure=failure {capture=nil;return response(["error":failure])}
+            return response(["ok":true])
+        }
+        guard let instance=capture as? MeetingCapture else {return response(["seconds":0,"paused":false])}
+        if operation=="pause" { instance.queue.sync {if instance.pausedAt==nil {instance.pausedAt=ProcessInfo.processInfo.systemUptime}} }
+        if operation=="resume" { instance.queue.sync {if let time=instance.pausedAt {
+            let now = ProcessInfo.processInfo.systemUptime
+            instance.pausedDuration += now-time;instance.pausedAt=nil
+            instance.lastMicrophoneBuffer=now;instance.lastSystemBuffer=now;instance.error=nil
+        }} }
+        if operation=="stop" {
+            let semaphore=DispatchSemaphore(value:0);var failure:String?
+            Task { do {try await instance.stop()} catch {failure=error.localizedDescription};semaphore.signal() };semaphore.wait();capture=nil
+            if let failure=failure {return response(["error":failure])}
+            return response(["ok":true])
+        }
+        return instance.queue.sync {
+            let now = ProcessInfo.processInfo.systemUptime
+            let paused = instance.pausedAt != nil
+            let microphoneStalled = !paused && now-instance.lastMicrophoneBuffer > 3
+            let microphoneLevel = paused || microphoneStalled ? 0 : instance.microphoneLevel
+            let systemLevel = paused || now-instance.lastSystemBuffer > 3 ? 0 : instance.systemLevel
+            let error = instance.error ?? (microphoneStalled ? "The microphone stopped sending audio. Check your input, then pause and resume." : nil)
+            return response(["seconds":instance.elapsed,"paused":paused,"microphone_level":microphoneLevel,"system_level":systemLevel,"mic_gated":isMicGated(),"error":error as Any? ?? NSNull()])
+        }
     }
 }

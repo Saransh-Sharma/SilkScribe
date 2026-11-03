@@ -10,6 +10,9 @@ use symphonia::core::{
     meta::MetadataOptions, probe::Hint,
 };
 
+/// Undecodable packets in a row after which a file counts as unreadable.
+const MAX_BAD_PACKETS: u32 = 100;
+
 #[derive(serde::Serialize, specta::Type)]
 pub struct FileInspection {
     pub path: String,
@@ -90,6 +93,7 @@ pub fn decode(input: &Path, output: &Path, cancelled: &AtomicBool) -> Result<f64
     let mut resampler: Option<rubato::SincFixedIn<f32>> = None;
     let mut pending = Vec::new();
     let mut rate = 0;
+    let mut bad_packets = 0u32;
     use rubato::Resampler;
     loop {
         if cancelled.load(Ordering::Relaxed) {
@@ -107,7 +111,23 @@ pub fn decode(input: &Path, output: &Path, cancelled: &AtomicBool) -> Result<f64
         if packet.track_id() != track_id {
             continue;
         }
-        let decoded = decoder.decode(&packet)?;
+        // A corrupt packet (e.g. an MP3 cut mid-stream) is skipped, as
+        // players do; only a long run of them means the file is unreadable.
+        let decoded = match decoder.decode(&packet) {
+            Ok(decoded) => {
+                bad_packets = 0;
+                decoded
+            }
+            Err(symphonia::core::errors::Error::DecodeError(error)) => {
+                bad_packets += 1;
+                log::warn!("Skipping an undecodable audio packet: {error}");
+                if bad_packets >= MAX_BAD_PACKETS {
+                    bail!("This audio file is damaged and couldn't be read.");
+                }
+                continue;
+            }
+            Err(error) => return Err(error.into()),
+        };
         let spec = *decoded.spec();
         if rate != spec.rate {
             if rate != 0 {

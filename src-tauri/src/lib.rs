@@ -320,12 +320,24 @@ fn initialize_core_logic(app_handle: &AppHandle) {
             "quit" => {
                 let app = app.clone();
                 std::thread::spawn(move || {
-                    if let Some(ws) = app.try_state::<Arc<workspace::Workspace>>() {
-                        // Don't hold up quitting for the last live lines.
-                        workspace::capture::abandon_live_transcript(ws.inner());
-                        if ws.recording.lock().unwrap().is_some() {
-                            let _ = workspace::capture::control(&app, ws.inner(), "stop");
+                    // Saving the meeting is best effort: a panic here (say, a
+                    // poisoned lock) must not stop the app from quitting.
+                    let saved = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                        if let Some(ws) = app.try_state::<Arc<workspace::Workspace>>() {
+                            // Don't hold up quitting for the last live lines.
+                            workspace::capture::abandon_live_transcript(ws.inner());
+                            let recording = ws
+                                .recording
+                                .lock()
+                                .unwrap_or_else(|e| e.into_inner())
+                                .is_some();
+                            if recording {
+                                let _ = workspace::capture::control(&app, ws.inner(), "stop");
+                            }
                         }
+                    }));
+                    if saved.is_err() {
+                        log::error!("Stopping the meeting on quit panicked; quitting anyway");
                     }
                     app.exit(0);
                 });
@@ -394,12 +406,12 @@ fn trigger_update_check(app: AppHandle) -> Result<(), String> {
     }
 }
 
-#[cfg_attr(mobile, tauri::mobile_entry_point)]
 /// Serves the library over MCP on stdin/stdout (`--mcp`); returns the exit code.
 pub fn serve_mcp() -> i32 {
     mcp::serve()
 }
 
+#[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run(cli_args: CliArgs) {
     portable::init();
 

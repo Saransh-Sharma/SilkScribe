@@ -517,12 +517,16 @@ impl TranscriptionManager {
         Ok(())
     }
 
-    /// Kicks off the model loading in a background thread if it's not already loaded
+    /// Kicks off loading the dictation model in a background thread, unless it's
+    /// already the one loaded. A background job may have swapped in another
+    /// model; reloading now overlaps the recording instead of following it.
     pub fn initiate_model_load(&self) {
         let Some(loading_guard) = self.try_start_loading() else {
             return;
         };
-        if self.is_model_loaded() {
+        let selected = get_settings(&self.app_handle).selected_model;
+        if self.is_model_loaded() && self.get_current_model().as_deref() == Some(selected.as_str())
+        {
             return;
         }
 
@@ -589,8 +593,10 @@ impl TranscriptionManager {
     }
 
     /// A quick, throwaway transcription of a recording in progress, for the
-    /// live preview. Never waits: returns None if the engine is busy, loading
-    /// or not loaded, so the dictation's own transcription isn't held up.
+    /// live preview. Never waits: returns None if the engine is busy, loading,
+    /// not loaded, or holding another model than the dictation one (say, for a
+    /// background import), so the dictation's own transcription isn't held up
+    /// by a model swap.
     pub fn transcribe_partial(&self, audio: Vec<f32>) -> Option<String> {
         if self.engine_evicted.load(Ordering::SeqCst)
             || *self.is_loading.lock().unwrap()
@@ -599,6 +605,11 @@ impl TranscriptionManager {
             return None;
         }
         let guard = self.inference_lock.try_lock().ok()?;
+        // Checked under the lock: background jobs swap models while holding it.
+        let selected = get_settings(&self.app_handle).selected_model;
+        if self.get_current_model().as_deref() != Some(selected.as_str()) {
+            return None;
+        }
         match self.transcribe_locked(&guard, audio, None, None) {
             Ok(result) => Some(result.text),
             Err(error) => {

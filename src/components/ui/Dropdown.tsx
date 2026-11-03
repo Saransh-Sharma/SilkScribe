@@ -176,6 +176,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
   useEffect(() => {
     if (!isOpen) {
       setMenuPosition(null);
+      // Reopening starts from the selected option, not where focus was.
+      setFocusedIndex(-1);
       return;
     }
 

@@ -92,9 +92,11 @@ export function UserNotes({
         if (!current) return;
         latest.set(documentId, body);
         setText(body);
+        setLoaded(true);
       })
-      .catch((error) => toastError(t("workspace.errors.loadNotes"), error))
-      .finally(() => current && setLoaded(true));
+      // Left disabled on failure: typing into an empty box would save over
+      // the notes that couldn't be read.
+      .catch((error) => toastError(t("workspace.errors.loadNotes"), error));
     return () => {
       current = false;
     };
@@ -124,6 +126,7 @@ export function UserNotes({
   );
 
   const update = (body: string) => {
+    if (!loaded) return;
     latest.set(documentId, body);
     setText(body);
     queue.current!.enqueue(body);

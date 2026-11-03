@@ -287,14 +287,21 @@ impl SoundTheme {
         }
     }
 
-    /// Bundled resource path for one cue, e.g. `resources/silk_done.wav`.
+    /// File path for one cue, relative to the theme's base directory.
+    ///
+    /// Bundled themes resolve against the resource dir, e.g.
+    /// `resources/silk_done.wav`. `Custom` resolves against the app data dir,
+    /// where the user's files sit at the top level, e.g. `custom_start.wav`.
     ///
     /// Only `Silk` ships the full cue set. Marimba and Pop provide `start` and
     /// `stop` only, and `Custom` provides whatever the user dropped in; callers
     /// are expected to fall back to `Silk` when a cue is missing (see
     /// `audio_feedback::resolve_sound_path`).
     pub fn sound_file(&self, cue: &str) -> String {
-        format!("resources/{}_{}.wav", self.as_str(), cue)
+        match self {
+            SoundTheme::Custom => format!("custom_{}.wav", cue),
+            _ => format!("resources/{}_{}.wav", self.as_str(), cue),
+        }
     }
 }
 
@@ -1141,6 +1148,39 @@ impl AppSettings {
     }
 }
 
+/// Adds default bindings that `bindings` lacks (a shortcut added in an
+/// update). A new default that's already taken by another binding is added
+/// unassigned, so it can't steal a shortcut the person relies on. Returns
+/// whether anything was added.
+fn merge_missing_bindings(
+    bindings: &mut HashMap<String, ShortcutBinding>,
+    defaults: HashMap<String, ShortcutBinding>,
+) -> bool {
+    let mut added = false;
+    for (key, mut value) in defaults {
+        if bindings.contains_key(&key) {
+            continue;
+        }
+        let taken = !value.current_binding.trim().is_empty()
+            && bindings.values().any(|existing| {
+                existing
+                    .current_binding
+                    .eq_ignore_ascii_case(&value.current_binding)
+            });
+        if taken {
+            warn!(
+                "New shortcut '{}' ({}) is already in use; leaving it unassigned",
+                key, value.current_binding
+            );
+            value.current_binding = String::new();
+        }
+        debug!("Adding missing binding: {}", key);
+        bindings.insert(key, value);
+        added = true;
+    }
+    added
+}
+
 pub fn load_or_create_app_settings(app: &AppHandle) -> AppSettings {
     // Initialize store
     let store = app
@@ -1157,14 +1197,8 @@ pub fn load_or_create_app_settings(app: &AppHandle) -> AppSettings {
                 let mut updated = false;
 
                 // Merge default bindings into existing settings
-                for (key, value) in default_settings.bindings {
-                    if let std::collections::hash_map::Entry::Vacant(slot) =
-                        settings.bindings.entry(key)
-                    {
-                        debug!("Adding missing binding: {}", slot.key());
-                        slot.insert(value);
-                        updated = true;
-                    }
+                if merge_missing_bindings(&mut settings.bindings, default_settings.bindings) {
+                    updated = true;
                 }
 
                 if needs_onboarding_migration {
@@ -1259,6 +1293,58 @@ pub fn get_recording_retention_period(app: &AppHandle) -> RecordingRetentionPeri
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn custom_sound_files_sit_at_the_app_data_root() {
+        assert_eq!(SoundTheme::Custom.sound_file("start"), "custom_start.wav");
+        assert_eq!(SoundTheme::Custom.sound_file("stop"), "custom_stop.wav");
+        assert_eq!(
+            SoundTheme::Silk.sound_file("done"),
+            "resources/silk_done.wav"
+        );
+    }
+
+    fn binding(id: &str, keys: &str) -> ShortcutBinding {
+        ShortcutBinding {
+            id: id.into(),
+            name: id.into(),
+            description: String::new(),
+            default_binding: keys.into(),
+            current_binding: keys.into(),
+        }
+    }
+
+    #[test]
+    fn a_new_default_binding_does_not_take_a_shortcut_in_use() {
+        let mut bindings = HashMap::from([
+            (
+                "transcribe".to_string(),
+                binding("transcribe", "Ctrl+Shift+Space"),
+            ),
+            ("cancel".to_string(), binding("cancel", "escape")),
+        ]);
+        let defaults = HashMap::from([
+            ("transcribe".to_string(), binding("transcribe", "alt+space")),
+            (
+                "command".to_string(),
+                binding("command", "ctrl+shift+space"),
+            ),
+            (
+                "paste_last".to_string(),
+                binding("paste_last", "alt+shift+v"),
+            ),
+        ]);
+        assert!(merge_missing_bindings(&mut bindings, defaults));
+        // The person's own shortcut is kept.
+        assert_eq!(bindings["transcribe"].current_binding, "Ctrl+Shift+Space");
+        // The clashing new one is added unassigned; a free one as shipped.
+        assert_eq!(bindings["command"].current_binding, "");
+        assert_eq!(bindings["command"].default_binding, "ctrl+shift+space");
+        assert_eq!(bindings["paste_last"].current_binding, "alt+shift+v");
+        // Nothing more to add the second time.
+        let defaults = HashMap::from([("command".to_string(), binding("command", "x"))]);
+        assert!(!merge_missing_bindings(&mut bindings, defaults));
+    }
 
     #[test]
     fn default_settings_disable_auto_submit() {

@@ -17,6 +17,23 @@ const PASSAGE_SCHEMA: i64 = 2;
 const PASSAGE_SLOT_BITS: u32 = 20;
 /// The slot for the notes a person typed, the last one.
 const NOTES_SLOT: u32 = (1 << PASSAGE_SLOT_BITS) - 1;
+/// SQL functions the Library's queries use, on any connection to its file.
+/// `unicode_contains(haystack, needle)` matches case-insensitively beyond
+/// ASCII, which SQLite's own `lower()` doesn't.
+pub(crate) fn register_functions(conn: &Connection) -> rusqlite::Result<()> {
+    conn.create_scalar_function(
+        "unicode_contains",
+        2,
+        rusqlite::functions::FunctionFlags::SQLITE_UTF8
+            | rusqlite::functions::FunctionFlags::SQLITE_DETERMINISTIC,
+        |ctx| {
+            Ok(ctx
+                .get::<String>(0)?
+                .to_lowercase()
+                .contains(&ctx.get::<String>(1)?.to_lowercase()))
+        },
+    )
+}
 impl Store {
     pub fn new(root: &Path) -> Result<Self> {
         let media = root.join("workspace-audio");
@@ -30,7 +47,9 @@ impl Store {
                 && name.ends_with(".partial")
                 && entry.file_type()?.is_file()
             {
-                std::fs::remove_file(entry.path())?;
+                if let Err(error) = std::fs::remove_file(entry.path()) {
+                    log::warn!("Couldn't remove the unfinished import copy {name}: {error}");
+                }
             }
         }
         let store = Self {
@@ -238,7 +257,13 @@ impl Store {
             .query_map([], |row| row.get::<_, String>(0))?
             .collect::<rusqlite::Result<Vec<_>>>()?;
         for body in bodies {
-            let mut doc: Document = serde_json::from_str(&body)?;
+            let mut doc: Document = match serde_json::from_str(&body) {
+                Ok(doc) => doc,
+                Err(error) => {
+                    log::warn!("Skipping an unreadable import receipt: {error}");
+                    continue;
+                }
+            };
             let Some(audio) = doc.audio_path.as_ref().map(PathBuf::from) else {
                 continue;
             };
@@ -267,18 +292,7 @@ impl Store {
     pub fn conn(&self) -> Result<Connection> {
         let conn = Connection::open(&self.path)?;
         conn.busy_timeout(Duration::from_secs(5))?;
-        conn.create_scalar_function(
-            "unicode_contains",
-            2,
-            rusqlite::functions::FunctionFlags::SQLITE_UTF8
-                | rusqlite::functions::FunctionFlags::SQLITE_DETERMINISTIC,
-            |ctx| {
-                Ok(ctx
-                    .get::<String>(0)?
-                    .to_lowercase()
-                    .contains(&ctx.get::<String>(1)?.to_lowercase()))
-            },
-        )?;
+        register_functions(&conn)?;
         Ok(conn)
     }
     pub fn put(&self, doc: &Document) -> Result<()> {
@@ -559,11 +573,24 @@ impl Store {
         )?;
         Ok(rows.collect::<std::result::Result<Vec<_>, _>>()?)
     }
+    /// Documents left mid-processing, for recovery at launch. A row that
+    /// doesn't decode is logged and skipped so one bad row can't stop launch.
     pub fn processing_documents(&self) -> Result<Vec<Document>> {
         let conn = self.conn()?;
         let mut stmt=conn.prepare("SELECT body FROM workspace_documents WHERE json_extract(body,'$.stage') IN ('preparing','transcribing','diarizing','notes','recording','paused')")?;
-        let rows = stmt.query_map([], |r| r.get::<_, String>(0))?;
-        rows.map(|r| Ok(serde_json::from_str(&r?)?)).collect()
+        let bodies = stmt
+            .query_map([], |r| r.get::<_, String>(0))?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        Ok(bodies
+            .into_iter()
+            .filter_map(|body| match serde_json::from_str(&body) {
+                Ok(doc) => Some(doc),
+                Err(error) => {
+                    log::warn!("Skipping an unreadable document during recovery: {error}");
+                    None
+                }
+            })
+            .collect())
     }
     pub fn next_queued(&self) -> Result<Option<Document>> {
         use rusqlite::OptionalExtension;
@@ -1985,6 +2012,30 @@ mod tests {
             ..Default::default()
         };
         assert!(validate_notes(&notes, &d.segments).is_err());
+    }
+    #[test]
+    fn an_unreadable_row_doesnt_stop_launch() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::new(dir.path()).unwrap();
+        let mut d = document();
+        d.stage = Stage::Transcribing;
+        store.put(&d).unwrap();
+        let conn = store.conn().unwrap();
+        conn.execute(
+            "INSERT INTO workspace_documents(id,created_at,history_id,body) VALUES('broken',1,NULL,'{\"stage\":\"notes\"}')",
+            [],
+        )
+        .unwrap();
+        conn.execute(
+            "INSERT INTO workspace_import_receipts(request_key,document_id,body) VALUES('k','gone','{\"title\":1}')",
+            [],
+        )
+        .unwrap();
+        drop(conn);
+        drop(store);
+        let store = Store::new(dir.path()).unwrap();
+        // The readable job is still recovered.
+        assert_eq!(store.get("meeting-1").unwrap().stage, Stage::Interrupted);
     }
     #[test]
     fn legacy_history_import_is_idempotent_and_survives_retention() {

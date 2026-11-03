@@ -423,6 +423,12 @@ fn register_all_shortcuts_for_implementation(
             .cloned()
             .unwrap_or_else(|| default_binding.clone());
 
+        // An empty binding is deliberately unbound (e.g. a new default that
+        // clashed with a shortcut already in use); don't reset it.
+        if binding.current_binding.is_empty() {
+            continue;
+        }
+
         // Validate the shortcut for the target implementation
         if let Err(e) =
             validate_shortcut_for_implementation(&binding.current_binding, implementation)

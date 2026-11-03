@@ -97,7 +97,9 @@ export const api = {
   /** Writes something from meetings by a recipe; the weekly recap with no
    * ids reads the past week's meetings. */
   runRecipe: (recipe: string, documentIds: string[], instruction?: string) =>
-    unwrap(commands.workspaceRunRecipe(recipe, documentIds, instruction ?? null)),
+    unwrap(
+      commands.workspaceRunRecipe(recipe, documentIds, instruction ?? null),
+    ),
   /** Files a document in a Library folder by name; null takes it out. */
   setFolder: (id: string, folder: string | null) =>
     unwrap(commands.workspaceSetFolder(id, folder)),
@@ -133,7 +135,10 @@ export const api = {
   list: (query = "", filter = "all", offset = 0) =>
     unwrap(commands.workspaceList(query, filter, offset)),
   get: async (id: string) => {
-    await drafts.load(id);
+    // A draft that can't load must not stop the document opening.
+    await drafts.load(id).catch((error) => {
+      console.warn("Couldn't load the saved draft", error);
+    });
     return unwrap(commands.workspaceGet(id));
   },
   discardPartialImport: (path: string) =>
