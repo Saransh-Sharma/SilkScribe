@@ -142,14 +142,15 @@ SilkScribe supports command-line parameters on all platforms for integration wit
 
 **Available flags:**
 
-| Flag                     | Description                                                                        |
-| ------------------------ | ---------------------------------------------------------------------------------- |
-| `--toggle-transcription` | Toggle recording on/off on a running instance (via `tauri_plugin_single_instance`) |
-| `--toggle-post-process`  | Toggle recording with post-processing on/off on a running instance                 |
-| `--cancel`               | Cancel the current operation on a running instance                                 |
-| `--start-hidden`         | Launch without showing the main window (tray icon still visible)                   |
-| `--no-tray`              | Launch without the system tray icon (closing window quits the app)                 |
-| `--debug`                | Enable debug mode with verbose (Trace) logging                                     |
+| Flag                     | Description                                                                                                                               |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `--toggle-transcription` | Toggle recording on/off on a running instance (via `tauri_plugin_single_instance`)                                                        |
+| `--toggle-post-process`  | Toggle recording with post-processing on/off on a running instance                                                                        |
+| `--cancel`               | Cancel the current operation on a running instance                                                                                        |
+| `--start-hidden`         | Launch without showing the main window (tray icon still visible)                                                                          |
+| `--no-tray`              | Launch without the system tray icon (closing window quits the app)                                                                        |
+| `--debug`                | Enable debug mode with verbose (Trace) logging                                                                                            |
+| `--mcp`                  | Serve the library to an AI app over MCP on stdin/stdout instead of starting the app (read-only; needs "Let AI apps read your library" on) |
 
 **Key design decisions:**
 

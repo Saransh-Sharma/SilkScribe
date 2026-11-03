@@ -809,6 +809,15 @@
         "importFailed": "Couldn’t import the dictionary",
         "exportFailed": "Couldn’t export the dictionary"
       }
+    },
+    "mcp": {
+      "title": "AI apps",
+      "label": "Let AI apps read your library",
+      "description": "Claude, Cursor and other apps that support MCP can search and read your transcripts, notes and dictations. What they read goes to the AI they use.",
+      "setup": "Add this to the app’s MCP settings (for Claude Desktop, Settings → Developer → Edit Config), then restart it.",
+      "copy": "Copy setup",
+      "copied": "Setup copied",
+      "copyFailed": "Couldn’t copy the setup"
     }
   },
   "footer": {
@@ -1382,7 +1391,8 @@
       "title": "What leaves this device",
       "local": "Recordings, transcripts, meeting notes and your dictionary stay on this device.",
       "noCloud": "Dictations stay on this device too.",
-      "cloud": "Dictations go to {{provider}} for AI cleanup. Change this in AI writing."
+      "cloud": "Dictations go to {{provider}} for AI cleanup. Change this in AI writing.",
+      "mcp": "AI apps you connect can read your library and send what they read to the AI they use."
     },
     "notesEngine": "Engine",
     "meetingEngines": {

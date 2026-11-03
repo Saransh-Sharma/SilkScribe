@@ -808,6 +808,15 @@
         "importFailed": "Không nhập được từ điển",
         "exportFailed": "Không xuất được từ điển"
       }
+    },
+    "mcp": {
+      "title": "Ứng dụng AI",
+      "label": "Cho phép ứng dụng AI đọc thư viện",
+      "description": "Claude, Cursor và các ứng dụng hỗ trợ MCP khác có thể tìm và đọc bản chép lời, ghi chú và nội dung đọc chính tả của bạn. Những gì chúng đọc được gửi đến AI mà chúng dùng.",
+      "setup": "Thêm đoạn này vào cài đặt MCP của ứng dụng (với Claude Desktop: Cài đặt → Nhà phát triển → Sửa cấu hình), rồi khởi động lại.",
+      "copy": "Sao chép thiết lập",
+      "copied": "Đã sao chép thiết lập",
+      "copyFailed": "Không sao chép được thiết lập"
     }
   },
   "footer": {
@@ -1377,7 +1386,8 @@
       "title": "Những gì rời khỏi thiết bị này",
       "local": "Bản ghi âm, bản chép lời, ghi chú cuộc họp và từ điển của bạn ở lại trên thiết bị này.",
       "noCloud": "Nội dung đọc chính tả cũng ở lại trên thiết bị này.",
-      "cloud": "Nội dung đọc chính tả được gửi đến {{provider}} để chỉnh sửa bằng AI. Thay đổi trong mục Viết bằng AI."
+      "cloud": "Nội dung đọc chính tả được gửi đến {{provider}} để chỉnh sửa bằng AI. Thay đổi trong mục Viết bằng AI.",
+      "mcp": "Các ứng dụng AI bạn kết nối có thể đọc thư viện và gửi những gì đọc được đến AI mà chúng dùng."
     },
     "notesEngine": "Công cụ",
     "meetingEngines": {

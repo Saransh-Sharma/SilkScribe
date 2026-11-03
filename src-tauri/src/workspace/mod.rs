@@ -7,7 +7,7 @@ pub mod live;
 mod memory;
 pub mod packs;
 pub mod readiness;
-mod store;
+pub(crate) mod store;
 pub mod templates;
 pub mod types;
 mod worker;

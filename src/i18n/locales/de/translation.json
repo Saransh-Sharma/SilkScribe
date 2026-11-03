@@ -809,6 +809,15 @@
         "importFailed": "Wörterbuch konnte nicht importiert werden",
         "exportFailed": "Wörterbuch konnte nicht exportiert werden"
       }
+    },
+    "mcp": {
+      "title": "KI-Apps",
+      "label": "KI-Apps deine Bibliothek lesen lassen",
+      "description": "Claude, Cursor und andere Apps mit MCP-Unterstützung können deine Transkripte, Notizen und Diktate durchsuchen und lesen. Was sie lesen, geht an die KI, die sie nutzen.",
+      "setup": "Füge das in den MCP-Einstellungen der App ein (bei Claude Desktop: Einstellungen → Entwickler → Konfiguration bearbeiten) und starte sie neu.",
+      "copy": "Einrichtung kopieren",
+      "copied": "Einrichtung kopiert",
+      "copyFailed": "Einrichtung konnte nicht kopiert werden"
     }
   },
   "footer": {
@@ -1382,7 +1391,8 @@
       "title": "Was dieses Gerät verlässt",
       "local": "Aufnahmen, Transkripte, Meeting-Notizen und dein Wörterbuch bleiben auf diesem Gerät.",
       "noCloud": "Diktate bleiben ebenfalls auf diesem Gerät.",
-      "cloud": "Diktate gehen zur KI-Bereinigung an {{provider}}. Ändere das unter „Schreiben mit KI“."
+      "cloud": "Diktate gehen zur KI-Bereinigung an {{provider}}. Ändere das unter „Schreiben mit KI“.",
+      "mcp": "Verbundene KI-Apps können deine Bibliothek lesen und das Gelesene an die KI senden, die sie nutzen."
     },
     "notesEngine": "Engine",
     "meetingEngines": {

@@ -998,11 +998,19 @@ pub fn validate_notes(notes: &Notes, segments: &[Segment]) -> Result<()> {
     Ok(())
 }
 
+/// A sample meeting for tests elsewhere in the crate.
+#[cfg(test)]
+pub(crate) mod tests_support {
+    pub fn document() -> super::Document {
+        super::tests::document()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::workspace::export::render_content;
-    fn document() -> Document {
+    pub(super) fn document() -> Document {
         Document {
             id: "meeting-1".into(),
             title: "Design review".into(),

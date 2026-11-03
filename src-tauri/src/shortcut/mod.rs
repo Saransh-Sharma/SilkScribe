@@ -1285,6 +1285,32 @@ pub fn change_preview_languages_setting(app: AppHandle, enabled: bool) -> Result
 
 #[tauri::command]
 #[specta::specta]
+pub fn change_mcp_enabled_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.mcp_enabled = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// How an AI app starts SilkScribe's MCP server: this executable, `--mcp`.
+#[derive(serde::Serialize, specta::Type)]
+pub struct McpLaunch {
+    pub command: String,
+    pub args: Vec<String>,
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn mcp_launch_command() -> Result<McpLaunch, String> {
+    let command = std::env::current_exe().map_err(|e| e.to_string())?;
+    Ok(McpLaunch {
+        command: command.to_string_lossy().into_owned(),
+        args: vec!["--mcp".to_string()],
+    })
+}
+
+#[tauri::command]
+#[specta::specta]
 pub fn change_theme_setting(app: AppHandle, theme: String) -> Result<(), String> {
     let parsed = match theme.as_str() {
         "system" => ThemePreference::System,

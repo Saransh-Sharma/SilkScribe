@@ -16,6 +16,7 @@ mod input;
 mod live_preview;
 mod llm_client;
 mod managers;
+mod mcp;
 mod meeting_orb;
 mod overlay;
 pub mod portable;
@@ -393,6 +394,11 @@ fn trigger_update_check(app: AppHandle) -> Result<(), String> {
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
+/// Serves the library over MCP on stdin/stdout (`--mcp`); returns the exit code.
+pub fn serve_mcp() -> i32 {
+    mcp::serve()
+}
+
 pub fn run(cli_args: CliArgs) {
     portable::init();
 
@@ -640,6 +646,8 @@ fn command_builder() -> Builder<tauri::Wry> {
             shortcut::change_append_trailing_space_setting,
             shortcut::change_app_language_setting,
             shortcut::change_preview_languages_setting,
+            shortcut::change_mcp_enabled_setting,
+            shortcut::mcp_launch_command,
             shortcut::change_theme_setting,
             shortcut::change_update_checks_setting,
             shortcut::change_keyboard_implementation_setting,

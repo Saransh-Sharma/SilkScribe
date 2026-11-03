@@ -462,6 +462,10 @@ pub struct AppSettings {
     /// Off means the app uses English in place of an unreviewed language.
     #[serde(default)]
     pub preview_languages: bool,
+    /// Let AI apps read the library through `silkscribe --mcp`. Off until
+    /// the person turns it on.
+    #[serde(default)]
+    pub mcp_enabled: bool,
     #[serde(default)]
     pub experimental_enabled: bool,
     #[serde(default)]
@@ -1095,6 +1099,7 @@ pub fn get_default_settings() -> AppSettings {
         append_trailing_space: false,
         app_language: default_app_language(),
         preview_languages: false,
+        mcp_enabled: false,
         experimental_enabled: false,
         lazy_stream_close: false,
         keyboard_implementation: KeyboardImplementation::default(),

@@ -163,6 +163,7 @@ const settingUpdaters: {
   app_language: (value) => commands.changeAppLanguageSetting(value as string),
   preview_languages: (value) =>
     commands.changePreviewLanguagesSetting(value as boolean),
+  mcp_enabled: (value) => commands.changeMcpEnabledSetting(value as boolean),
   theme: (value) => commands.changeThemeSetting(value as string),
   experimental_enabled: (value) =>
     commands.changeExperimentalEnabledSetting(value as boolean),

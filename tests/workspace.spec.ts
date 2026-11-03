@@ -1034,6 +1034,26 @@ test("collapsed settings sections keep their controls out of reach", async ({
   await expect(space).toHaveCount(1);
 });
 
+test("AI apps can be let in to read the library", async ({ page }) => {
+  await page.goto(`${fixture}?dictation=ready`);
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
+  await page.getByRole("tab", { name: "Privacy & storage" }).click();
+  const share = page.getByRole("switch", {
+    name: "Let AI apps read your library",
+  });
+  await expect(share).not.toBeChecked();
+  await expect(page.locator("pre")).toHaveCount(0);
+  await share.focus();
+  await page.keyboard.press("Space");
+  await expect(share).toBeChecked();
+  await expect(page.locator("pre")).toContainText('"--mcp"');
+  await expect(
+    page.getByText("AI apps you connect can read your library", {
+      exact: false,
+    }),
+  ).toBeVisible();
+});
+
 test("a meeting keeps a record of how people were told", async ({ page }) => {
   await page.goto(`${fixture}?consent`);
   await page.getByText("Product design review", { exact: true }).click();

@@ -573,6 +573,14 @@ commands.changePreviewLanguagesSetting = async () => ({
   data: null,
 });
 commands.changeAppLanguageSetting = async () => ({ status: "ok", data: null });
+commands.changeMcpEnabledSetting = async () => ({ status: "ok", data: null });
+commands.mcpLaunchCommand = async () => ({
+  status: "ok",
+  data: {
+    command: "/Applications/SilkScribe.app/Contents/MacOS/silkscribe",
+    args: ["--mcp"],
+  },
+});
 commands.changePttSetting = async () => ({ status: "ok", data: null });
 api.dismissCleanupSuggestion = async () => null;
 // User notes persist across reloads, like the real store.

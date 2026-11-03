@@ -25,6 +25,9 @@
 - **Preview languages**: languages a native speaker hasn't reviewed yet are listed only when Preview languages is on (Settings → General); otherwise the app uses English. Existing installs keep the language they use.
 - Starting a meeting opens it on **Your notes**, and the recording bar can always get back to them.
 - **Ask from anywhere**: Command-K (Ctrl+K) works from a transcript or Settings too; without a notes engine, Ask offers to get one.
+- **Let AI apps read your library** (Settings → Privacy & storage, off by default): Claude, Cursor and other MCP apps can search and read transcripts, notes and dictations through `silkscribe --mcp`, a read-only server built into the app. Settings shows the config to paste.
+- **Consent record**: each meeting notes whose audio it captured, whether the reminder to tell people showed, and when the heads-up was copied; exports include it.
+- The recording indicator says when the mic hears nothing for three seconds.
 - CI checks every push: lint, the frontend build, unit, translation, worker, browser and Rust tests, clippy, and that Windows, Linux and the App Store build still compile.
 - `scripts/dictation-latency.ts` summarises dictation timing from the logs (p50/p95 per engine), split by whether live text was on.
 

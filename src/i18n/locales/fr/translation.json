@@ -810,6 +810,15 @@
         "importFailed": "Impossible d’importer le dictionnaire",
         "exportFailed": "Impossible d’exporter le dictionnaire"
       }
+    },
+    "mcp": {
+      "title": "Apps d’IA",
+      "label": "Autoriser les apps d’IA à lire votre bibliothèque",
+      "description": "Claude, Cursor et les autres apps compatibles MCP peuvent rechercher et lire vos transcriptions, notes et dictées. Ce qu’elles lisent est envoyé à l’IA qu’elles utilisent.",
+      "setup": "Ajoutez ceci dans les réglages MCP de l’app (dans Claude Desktop : Réglages → Développeur → Modifier la configuration), puis redémarrez-la.",
+      "copy": "Copier la configuration",
+      "copied": "Configuration copiée",
+      "copyFailed": "Impossible de copier la configuration"
     }
   },
   "footer": {
@@ -1388,7 +1397,8 @@
       "title": "Ce qui quitte cet appareil",
       "local": "Les enregistrements, transcriptions, notes de réunion et votre dictionnaire restent sur cet appareil.",
       "noCloud": "Les dictées restent aussi sur cet appareil.",
-      "cloud": "Les dictées sont envoyées à {{provider}} pour le nettoyage par IA. Modifiez cela dans Écriture par IA."
+      "cloud": "Les dictées sont envoyées à {{provider}} pour le nettoyage par IA. Modifiez cela dans Écriture par IA.",
+      "mcp": "Les apps d’IA que vous connectez peuvent lire votre bibliothèque et envoyer ce qu’elles lisent à l’IA qu’elles utilisent."
     },
     "notesEngine": "Moteur",
     "meetingEngines": {

@@ -811,6 +811,15 @@
         "importFailed": "Slovník se nepodařilo importovat",
         "exportFailed": "Slovník se nepodařilo exportovat"
       }
+    },
+    "mcp": {
+      "title": "Aplikace s AI",
+      "label": "Povolit aplikacím s AI číst vaši knihovnu",
+      "description": "Claude, Cursor a další aplikace s podporou MCP mohou prohledávat a číst vaše přepisy, poznámky a diktáty. Co přečtou, posílají AI, kterou používají.",
+      "setup": "Přidejte toto do nastavení MCP dané aplikace (v Claude Desktop: Nastavení → Developer → Edit Config) a aplikaci restartujte.",
+      "copy": "Kopírovat nastavení",
+      "copied": "Nastavení zkopírováno",
+      "copyFailed": "Nastavení se nepodařilo zkopírovat"
     }
   },
   "footer": {
@@ -1394,7 +1403,8 @@
       "title": "Co opouští toto zařízení",
       "local": "Nahrávky, přepisy, poznámky ze schůzek a váš slovník zůstávají v tomto zařízení.",
       "noCloud": "Diktáty zůstávají v tomto zařízení také.",
-      "cloud": "Diktáty se posílají do {{provider}} k úpravě pomocí AI. Změníte to v části Psaní s AI."
+      "cloud": "Diktáty se posílají do {{provider}} k úpravě pomocí AI. Změníte to v části Psaní s AI.",
+      "mcp": "Připojené aplikace s AI mohou číst vaši knihovnu a posílat přečtené AI, kterou používají."
     },
     "notesEngine": "Modul",
     "meetingEngines": {

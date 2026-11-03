@@ -20,6 +20,7 @@ import { HistoryLimit } from "../settings/HistoryLimit";
 import { RecordingRetentionPeriodSelector } from "../settings/RecordingRetentionPeriod";
 import { UpdateChecksToggle } from "../settings/UpdateChecksToggle";
 import { ModelsSettings } from "../settings/models/ModelsSettings";
+import { McpSettings } from "../settings/McpSettings";
 import { useSettings } from "@/hooks/useSettings";
 import { cloudCleanupProvider } from "@/lib/utils/privacy";
 
@@ -118,7 +119,13 @@ export function Preferences({ page }: { page: PreferencesPage }) {
                 ? t("workspace.privacy.cloud", { provider: cloudProvider })
                 : t("workspace.privacy.noCloud")}
             </p>
+            {settings?.mcp_enabled && (
+              <p className="px-4 py-3 text-sm text-ss-text-secondary">
+                {t("workspace.privacy.mcp")}
+              </p>
+            )}
           </SettingsGroup>
+          <McpSettings />
           <p className="ws-alert">{t("workspace.retentionHelp")}</p>
           <SettingsGroup title={t("workspace.dictationRetention")}>
             <HistoryLimit descriptionMode="inline" grouped />

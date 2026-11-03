@@ -809,6 +809,15 @@
         "importFailed": "Sözlük içe aktarılamadı",
         "exportFailed": "Sözlük dışa aktarılamadı"
       }
+    },
+    "mcp": {
+      "title": "YZ uygulamaları",
+      "label": "YZ uygulamalarının kitaplığınızı okumasına izin verin",
+      "description": "Claude, Cursor ve MCP destekleyen diğer uygulamalar transkriptlerinizi, notlarınızı ve diktelerinizi arayıp okuyabilir. Okudukları, kullandıkları YZ’ye gider.",
+      "setup": "Bunu uygulamanın MCP ayarlarına ekleyin (Claude Desktop’ta Ayarlar → Geliştirici → Yapılandırmayı Düzenle) ve uygulamayı yeniden başlatın.",
+      "copy": "Kurulumu kopyala",
+      "copied": "Kurulum kopyalandı",
+      "copyFailed": "Kurulum kopyalanamadı"
     }
   },
   "footer": {
@@ -1382,7 +1391,8 @@
       "title": "Bu cihazdan ne çıkıyor",
       "local": "Kayıtlar, transkriptler, toplantı notları ve sözlüğünüz bu cihazda kalır.",
       "noCloud": "Dikteler de bu cihazda kalır.",
-      "cloud": "Dikteler YZ düzenlemesi için {{provider}} hizmetine gönderilir. Bunu YZ ile yazma bölümünden değiştirin."
+      "cloud": "Dikteler YZ düzenlemesi için {{provider}} hizmetine gönderilir. Bunu YZ ile yazma bölümünden değiştirin.",
+      "mcp": "Bağladığınız YZ uygulamaları kitaplığınızı okuyabilir ve okuduklarını kullandıkları YZ’ye gönderebilir."
     },
     "notesEngine": "Motor",
     "meetingEngines": {

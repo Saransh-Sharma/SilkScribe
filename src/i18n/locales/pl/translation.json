@@ -811,6 +811,15 @@
         "importFailed": "Nie udało się zaimportować słownika",
         "exportFailed": "Nie udało się wyeksportować słownika"
       }
+    },
+    "mcp": {
+      "title": "Aplikacje AI",
+      "label": "Pozwól aplikacjom AI czytać bibliotekę",
+      "description": "Claude, Cursor i inne aplikacje obsługujące MCP mogą przeszukiwać i czytać transkrypcje, notatki i dyktowane teksty. To, co przeczytają, trafia do AI, z której korzystają.",
+      "setup": "Dodaj to do ustawień MCP aplikacji (w Claude Desktop: Ustawienia → Developer → Edit Config) i uruchom ją ponownie.",
+      "copy": "Kopiuj konfigurację",
+      "copied": "Skopiowano konfigurację",
+      "copyFailed": "Nie udało się skopiować konfiguracji"
     }
   },
   "footer": {
@@ -1394,7 +1403,8 @@
       "title": "Co opuszcza to urządzenie",
       "local": "Nagrania, transkrypcje, notatki ze spotkań i Twój słownik zostają na tym urządzeniu.",
       "noCloud": "Dyktowane teksty też zostają na tym urządzeniu.",
-      "cloud": "Dyktowane teksty trafiają do {{provider}} do korekty AI. Zmienisz to w sekcji Pisanie z AI."
+      "cloud": "Dyktowane teksty trafiają do {{provider}} do korekty AI. Zmienisz to w sekcji Pisanie z AI.",
+      "mcp": "Połączone aplikacje AI mogą czytać Twoją bibliotekę i wysyłać przeczytane treści do AI, z której korzystają."
     },
     "notesEngine": "Silnik",
     "meetingEngines": {

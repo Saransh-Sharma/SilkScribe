@@ -808,6 +808,15 @@
         "importFailed": "無法匯入字典",
         "exportFailed": "無法匯出字典"
       }
+    },
+    "mcp": {
+      "title": "AI App",
+      "label": "允許 AI App 讀取你的資料庫",
+      "description": "Claude、Cursor 等支援 MCP 的 App 可以搜尋並讀取你的轉錄稿、筆記和聽寫內容。它們讀取的內容會傳送給它們使用的 AI。",
+      "setup": "將此內容加入該 App 的 MCP 設定（Claude Desktop：設定 → 開發者 → 編輯設定），然後重新啟動該 App。",
+      "copy": "複製設定",
+      "copied": "已複製設定",
+      "copyFailed": "無法複製設定"
     }
   },
   "footer": {
@@ -1377,7 +1386,8 @@
       "title": "哪些內容會離開這部裝置",
       "local": "錄音、轉錄稿、會議筆記和你的詞典都保留在這部裝置上。",
       "noCloud": "聽寫內容也保留在這部裝置上。",
-      "cloud": "聽寫內容會傳送到 {{provider}} 進行 AI 潤飾。可在「AI 寫作」中變更。"
+      "cloud": "聽寫內容會傳送到 {{provider}} 進行 AI 潤飾。可在「AI 寫作」中變更。",
+      "mcp": "你連接的 AI App 可以讀取你的資料庫，並把讀取的內容傳送給它們使用的 AI。"
     },
     "notesEngine": "引擎",
     "meetingEngines": {
