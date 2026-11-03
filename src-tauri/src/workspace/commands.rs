@@ -669,6 +669,35 @@ pub async fn workspace_ask(app: AppHandle, question: String) -> Result<AskAnswer
         .map_err(|e| e.to_string())?
 }
 
+/// Files a document in a folder by name, or takes it out of one with none.
+#[tauri::command]
+#[specta::specta]
+pub async fn workspace_set_folder(
+    app: AppHandle,
+    id: String,
+    folder: Option<String>,
+) -> Result<(), String> {
+    let workspace = ws(&app);
+    let result = tauri::async_runtime::spawn_blocking(move || {
+        workspace.store.set_folder(&id, folder).map(|_| ())
+    })
+    .await
+    .map_err(|e| e.to_string())?;
+    ws(&app).emit(&app);
+    result.map_err(|e| e.to_string())
+}
+
+/// Every Library folder in use, by name.
+#[tauri::command]
+#[specta::specta]
+pub async fn workspace_folders(app: AppHandle) -> Result<Vec<String>, String> {
+    let workspace = ws(&app);
+    tauri::async_runtime::spawn_blocking(move || workspace.store.folders())
+        .await
+        .map_err(|e| e.to_string())?
+        .map_err(|e| e.to_string())
+}
+
 /// Writes something from meetings by a recipe (see `recipes::RECIPES`), or
 /// by the person's own instruction with `recipe` "custom". The weekly recap
 /// with no meetings given reads the past week's.

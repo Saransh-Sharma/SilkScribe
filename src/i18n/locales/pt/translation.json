@@ -1443,6 +1443,15 @@
       "label": "Compartilhar…",
       "notes": "Compartilhar anotações…",
       "failed": "Não foi possível abrir o menu de compartilhamento"
+    },
+    "folders": {
+      "label": "Pasta",
+      "none": "Sem pasta",
+      "new": "Nova pasta…",
+      "name": "Nome da pasta",
+      "file": "Arquivar",
+      "all": "Todas as pastas",
+      "failed": "Não foi possível arquivar"
     }
   },
   "audioPlayer": {

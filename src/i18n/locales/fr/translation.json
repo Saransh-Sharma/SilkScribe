@@ -1443,6 +1443,15 @@
       "label": "Partager…",
       "notes": "Partager les notes…",
       "failed": "Impossible d’ouvrir le menu de partage"
+    },
+    "folders": {
+      "label": "Dossier",
+      "none": "Aucun dossier",
+      "new": "Nouveau dossier…",
+      "name": "Nom du dossier",
+      "file": "Classer",
+      "all": "Tous les dossiers",
+      "failed": "Impossible de classer"
     }
   },
   "audioPlayer": {

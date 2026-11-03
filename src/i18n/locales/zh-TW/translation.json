@@ -1432,6 +1432,15 @@
       "label": "分享…",
       "notes": "分享筆記…",
       "failed": "無法開啟分享選單"
+    },
+    "folders": {
+      "label": "資料夾",
+      "none": "無資料夾",
+      "new": "新增資料夾…",
+      "name": "資料夾名稱",
+      "file": "歸檔",
+      "all": "所有資料夾",
+      "failed": "無法歸檔"
     }
   },
   "audioPlayer": {

@@ -1449,6 +1449,15 @@
       "label": "Udostępnij…",
       "notes": "Udostępnij notatki…",
       "failed": "Nie udało się otworzyć menu udostępniania"
+    },
+    "folders": {
+      "label": "Folder",
+      "none": "Bez folderu",
+      "new": "Nowy folder…",
+      "name": "Nazwa folderu",
+      "file": "Przenieś",
+      "all": "Wszystkie foldery",
+      "failed": "Nie udało się przenieść"
     }
   },
   "audioPlayer": {

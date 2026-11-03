@@ -161,6 +161,7 @@ fn tools() -> Value {
                 "properties": {
                     "source": {"type": "string", "enum": ["meeting", "file", "dictation"], "description": "Only this kind of document."},
                     "title": {"type": "string", "description": "Only documents whose title contains this."},
+                    "folder": {"type": "string", "description": "Only documents filed in this Library folder."},
                     "limit": {"type": "integer", "minimum": 1, "maximum": 100, "description": "How many to return (default 20)."}
                 }
             },
@@ -253,18 +254,20 @@ fn list(conn: &Connection, arguments: &Value) -> Result<Value, String> {
     let limit = clamp_limit(&arguments["limit"], 20, 100);
     let source = arguments["source"].as_str();
     let title = arguments["title"].as_str().map(|t| t.to_lowercase());
+    let folder = arguments["folder"].as_str();
     let mut stmt = conn
         .prepare(
             "SELECT id, json_extract(body,'$.title'), json_extract(body,'$.source'), created_at,
-                    json_extract(body,'$.duration'), json_extract(body,'$.stage')
+                    json_extract(body,'$.duration'), json_extract(body,'$.stage'), json_extract(body,'$.folder')
              FROM workspace_documents
              WHERE (?1 IS NULL OR json_extract(body,'$.source')=?1)
                AND (?2 IS NULL OR instr(lower(json_extract(body,'$.title')), ?2) > 0)
+               AND (?4 IS NULL OR json_extract(body,'$.folder')=?4)
              ORDER BY created_at DESC LIMIT ?3",
         )
         .map_err(|e| e.to_string())?;
     let rows = stmt
-        .query_map(params![source, title, limit], |row| {
+        .query_map(params![source, title, limit, folder], |row| {
             Ok(json!({
                 "id": row.get::<_, String>(0)?,
                 "title": row.get::<_, Option<String>>(1)?,
@@ -272,6 +275,7 @@ fn list(conn: &Connection, arguments: &Value) -> Result<Value, String> {
                 "date": date(row.get(3)?),
                 "duration_seconds": row.get::<_, Option<f64>>(4)?,
                 "stage": row.get::<_, Option<String>>(5)?,
+                "folder": row.get::<_, Option<String>>(6)?,
             }))
         })
         .map_err(|e| e.to_string())?

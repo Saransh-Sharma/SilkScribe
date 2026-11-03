@@ -1443,6 +1443,15 @@
       "label": "Compartir…",
       "notes": "Compartir notas…",
       "failed": "No se pudo abrir el menú de compartir"
+    },
+    "folders": {
+      "label": "Carpeta",
+      "none": "Sin carpeta",
+      "new": "Carpeta nueva…",
+      "name": "Nombre de la carpeta",
+      "file": "Archivar",
+      "all": "Todas las carpetas",
+      "failed": "No se pudo archivar"
     }
   },
   "audioPlayer": {

@@ -408,6 +408,7 @@ mod tests {
             stage_errors: vec![],
             live_segments: vec![],
             consent: None,
+            folder: None,
         }
     }
     #[test]

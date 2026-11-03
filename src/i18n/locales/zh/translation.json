@@ -1432,6 +1432,15 @@
       "label": "共享…",
       "notes": "共享笔记…",
       "failed": "无法打开共享菜单"
+    },
+    "folders": {
+      "label": "文件夹",
+      "none": "无文件夹",
+      "new": "新建文件夹…",
+      "name": "文件夹名称",
+      "file": "归档",
+      "all": "所有文件夹",
+      "failed": "无法归档"
     }
   },
   "audioPlayer": {

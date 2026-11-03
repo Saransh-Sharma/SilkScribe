@@ -757,6 +757,8 @@ fn command_builder() -> Builder<tauri::Wry> {
             workspace::commands::workspace_save_user_notes,
             workspace::commands::workspace_record_heads_up,
             workspace::commands::workspace_run_recipe,
+            workspace::commands::workspace_set_folder,
+            workspace::commands::workspace_folders,
             share::share_text,
             meeting_orb::meeting_orb_snapshot,
             meeting_orb::meeting_orb_set_expanded,

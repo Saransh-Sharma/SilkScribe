@@ -53,6 +53,7 @@ import {
 import { Transcript } from "./Transcript";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { Preferences } from "./Preferences";
+import { Dropdown } from "../ui/Dropdown";
 import { SettingsGroup } from "../ui/SettingsGroup";
 import { WsErrorDetail, WsMeter, WsSelect, WsToggle } from "./controls";
 import { LANGUAGES } from "@/lib/constants/languages";
@@ -240,6 +241,15 @@ export default function Workspace({
   const [selected, setSelected] = useState<Document | null>(null);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
+  // Library folders in use, for the folder filter.
+  const [folders, setFolders] = useState<string[]>([]);
+  useEffect(() => {
+    if (page !== "library") return;
+    api
+      .folders()
+      .then(setFolders)
+      .catch(() => setFolders([]));
+  }, [page, documents]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [more, setMore] = useState(false);
@@ -834,6 +844,7 @@ export default function Workspace({
                 {doc.duration > 0 && `· ${duration(doc.duration)}`}
                 {doc.speaker_count > 0 &&
                   ` · ${t("workspace.speakerCount", { count: doc.speaker_count })}`}
+                {doc.folder && ` · ${doc.folder}`}
                 {doc.notes_available && ` · ${t("workspace.notes")}`}
               </span>
             </span>
@@ -2268,6 +2279,22 @@ export default function Workspace({
                         )}
                       </button>
                     ))}
+                    {folders.length > 0 && (
+                      <Dropdown
+                        ariaLabel={t("workspace.folders.label")}
+                        selectedValue={
+                          filter.startsWith("folder:") ? filter : ""
+                        }
+                        options={[
+                          { value: "", label: t("workspace.folders.all") },
+                          ...folders.map((name) => ({
+                            value: `folder:${name}`,
+                            label: name,
+                          })),
+                        ]}
+                        onSelect={(value) => setFilter(value || "all")}
+                      />
+                    )}
                   </div>
                 </>
               )}

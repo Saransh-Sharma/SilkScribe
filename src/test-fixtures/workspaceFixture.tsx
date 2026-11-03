@@ -321,6 +321,8 @@ api.list = async (query = "", filter = "all") =>
           (filter === "all" ||
             filter === d.source ||
             (filter === "saved" && d.saved) ||
+            (filter.startsWith("folder:") &&
+              d.folder === filter.slice("folder:".length)) ||
             (filter === "attention" &&
               (["failed", "interrupted"].includes(d.stage) ||
                 (d.stage === "complete" && !!d.stage_errors?.length)))) &&
@@ -333,6 +335,7 @@ api.list = async (query = "", filter = "all") =>
         attempt_id: d.attempt_id ?? "",
         revision: d.revision,
         title: d.title,
+        folder: d.folder ?? null,
         source: d.source,
         created_at: d.created_at,
         duration: d.duration,
@@ -431,6 +434,15 @@ api.status = async () => ({
   system_level: 0,
   error: null,
 });
+api.folders = async () =>
+  [
+    ...new Set(docs.map((d) => d.folder).filter((f): f is string => !!f)),
+  ].sort();
+api.setFolder = async (id, folder) => {
+  const doc = docs.find((item) => item.id === id);
+  if (doc) doc.folder = folder ?? undefined;
+  return null;
+};
 api.recordHeadsUp = async (id) => {
   const doc = docs.find((item) => item.id === id);
   if (!doc) return null;

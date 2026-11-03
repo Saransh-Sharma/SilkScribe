@@ -39,6 +39,7 @@ import { LiveTranscript } from "./LiveTranscript";
 import { UserNotes } from "./UserNotes";
 import { RecipePanel } from "./RecipePanel";
 import { ShareButton } from "./ShareButton";
+import { FolderPicker } from "./FolderPicker";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { cloudCleanupProvider } from "@/lib/utils/privacy";
 import { toastError } from "@/lib/utils/toastError";
@@ -131,6 +132,8 @@ export function Transcript({
     recovered.current.revision === initial.revision &&
     !busy(initial.stage);
   const [conflict, setConflict] = useState(!!recovered.current && !canRestore);
+  // Filing isn't an edit to the transcript, so it's kept apart from `doc`.
+  const [folder, setFolder] = useState(initial.folder ?? null);
   const [doc, setDoc] = useState(() =>
     canRestore
       ? {
@@ -649,6 +652,14 @@ export function Transcript({
           {consentSummary(doc.consent, t)}
         </p>
       )}
+      <FolderPicker
+        documentId={doc.id}
+        folder={folder}
+        onChange={(next) => {
+          setFolder(next);
+          onUpdated();
+        }}
+      />
       {doc.source === "dictation" && (
         <div className="ws-original">
           <div className="ws-review-controls">

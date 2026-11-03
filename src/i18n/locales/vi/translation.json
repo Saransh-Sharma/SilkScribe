@@ -1432,6 +1432,15 @@
       "label": "Chia sẻ…",
       "notes": "Chia sẻ ghi chú…",
       "failed": "Không mở được menu chia sẻ"
+    },
+    "folders": {
+      "label": "Thư mục",
+      "none": "Không có thư mục",
+      "new": "Thư mục mới…",
+      "name": "Tên thư mục",
+      "file": "Xếp vào",
+      "all": "Tất cả thư mục",
+      "failed": "Không xếp được"
     }
   },
   "audioPlayer": {

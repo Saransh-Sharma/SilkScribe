@@ -1497,3 +1497,24 @@
 .ws-ask-recap {
   margin-top: 6px;
 }
+
+.ws-folder-picker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-block: 4px 10px;
+  color: var(--ss-text-secondary);
+  font-size: 12px;
+}
+.ws-folder-picker form {
+  display: flex;
+  gap: 6px;
+}
+.ws-folder-picker input {
+  padding: 4px 8px;
+  border: 1px solid var(--ss-border-default);
+  border-radius: var(--ss-radius-sm);
+  background: var(--ss-bg-surface);
+  color: var(--ss-text-primary);
+  font: inherit;
+}

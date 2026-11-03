@@ -1350,6 +1350,28 @@ async workspaceRunRecipe(recipe: string, documentIds: string[], instruction: str
 }
 },
 /**
+ * Files a document in a folder by name, or takes it out of one with none.
+ */
+async workspaceSetFolder(id: string, folder: string | null) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("workspace_set_folder", { id, folder }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Every Library folder in use, by name.
+ */
+async workspaceFolders() : Promise<Result<string[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("workspace_folders") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Opens the share menu for `text` beside `anchor`. Returns once the menu is
  * on its way; what the person picks is up to them and the app they choose.
  */
@@ -1732,12 +1754,16 @@ live_segments?: LiveSegment[];
 /**
  * For a recorded meeting: what was captured and when people were told.
  */
-consent?: ConsentRecord | null }
+consent?: ConsentRecord | null; 
+/**
+ * The Library folder it's filed in, by name; none for unfiled.
+ */
+folder?: string | null }
 export type DocumentEdit = { id: string; expected_revision: number; title: string; segments: Segment[]; speakers: Speaker[]; notes: Notes | null; turns?: SpeakerTurn[] | null; saved: boolean }
 /**
  * Compact Library/Activity projection. Transcript content stays behind workspace_get.
  */
-export type DocumentSummary = { attempt_id: string; revision: number; id: string; title: string; source: Source; created_at: number; duration: number; stage: Stage; progress: number; saved: boolean; segment_count: number; speaker_count: number; notes_available: boolean; stage_errors: StageError[] }
+export type DocumentSummary = { attempt_id: string; revision: number; id: string; title: string; source: Source; created_at: number; duration: number; stage: Stage; progress: number; saved: boolean; segment_count: number; speaker_count: number; notes_available: boolean; stage_errors: StageError[]; folder?: string | null }
 export type EngineType = "Whisper" | "Parakeet" | "Moonshine" | "MoonshineStreaming" | "SenseVoice" | "GigaAM" | "Canary" | "Cohere"
 export type ExportContent = { original_text?: boolean; transcript: boolean; notes: boolean; speakers: boolean }
 export type FileInspection = { path: string; bytes: number; duration: number | null; error: string | null }

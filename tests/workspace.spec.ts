@@ -1111,6 +1111,27 @@ test("AI apps can be let in to read the library", async ({ page }) => {
   ).toBeVisible();
 });
 
+test("documents can be filed in folders and the Library filtered by them", async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  await page.getByText("Product design review", { exact: true }).click();
+  await page.getByRole("button", { name: "Folder" }).click();
+  await page.getByRole("option", { name: "New folder…" }).click();
+  await page.getByLabel("Folder name").fill("Acme");
+  await page.getByRole("button", { name: "File", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Folder" })).toContainText(
+    "Acme",
+  );
+  await page.getByRole("button", { name: "Library", exact: true }).click();
+  await page.getByRole("button", { name: "Folder" }).click();
+  await page.getByRole("option", { name: "Acme" }).click();
+  const rows = page.locator(".ws-document-row");
+  await expect(rows).toHaveCount(1);
+  await expect(rows).toContainText("Product design review");
+  await expect(rows).toContainText("Acme");
+});
+
 test("a meeting keeps a record of how people were told", async ({ page }) => {
   await page.goto(`${fixture}?consent`);
   await page.getByText("Product design review", { exact: true }).click();

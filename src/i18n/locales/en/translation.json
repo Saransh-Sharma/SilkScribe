@@ -1437,6 +1437,15 @@
       "label": "Share…",
       "notes": "Share notes…",
       "failed": "Couldn’t open the share menu"
+    },
+    "folders": {
+      "label": "Folder",
+      "none": "No folder",
+      "new": "New folder…",
+      "name": "Folder name",
+      "file": "File",
+      "all": "All folders",
+      "failed": "Couldn’t file it"
     }
   },
   "audioPlayer": {

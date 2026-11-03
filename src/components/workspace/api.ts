@@ -98,6 +98,10 @@ export const api = {
    * ids reads the past week's meetings. */
   runRecipe: (recipe: string, documentIds: string[], instruction?: string) =>
     unwrap(commands.workspaceRunRecipe(recipe, documentIds, instruction ?? null)),
+  /** Files a document in a Library folder by name; null takes it out. */
+  setFolder: (id: string, folder: string | null) =>
+    unwrap(commands.workspaceSetFolder(id, folder)),
+  folders: () => unwrap(commands.workspaceFolders()),
   /** Notes on a meeting that its heads-up message was copied. */
   recordHeadsUp: (id: string) => unwrap(commands.workspaceRecordHeadsUp(id)),
   cancelImport: () => unwrap(commands.workspaceCancelImport()),

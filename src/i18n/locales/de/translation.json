@@ -1437,6 +1437,15 @@
       "label": "Teilen …",
       "notes": "Notizen teilen …",
       "failed": "Teilen-Menü konnte nicht geöffnet werden"
+    },
+    "folders": {
+      "label": "Ordner",
+      "none": "Kein Ordner",
+      "new": "Neuer Ordner …",
+      "name": "Ordnername",
+      "file": "Ablegen",
+      "all": "Alle Ordner",
+      "failed": "Konnte nicht abgelegt werden"
     }
   },
   "audioPlayer": {

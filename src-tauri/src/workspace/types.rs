@@ -257,6 +257,10 @@ pub struct Document {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(default)]
     pub consent: Option<ConsentRecord>,
+    /// The Library folder it's filed in, by name; none for unfiled.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
+    pub folder: Option<String>,
 }
 
 /// What a meeting recorded about letting people know: what audio it
@@ -330,6 +334,9 @@ pub struct DocumentSummary {
     pub speaker_count: u32,
     pub notes_available: bool,
     pub stage_errors: Vec<StageError>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
+    pub folder: Option<String>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, Type)]
 pub struct DocumentEdit {

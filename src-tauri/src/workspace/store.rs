@@ -347,6 +347,26 @@ impl Store {
     /// held since it started. Fields only people change (title, saved) are kept
     /// from the stored document rather than reverted, and a document deleted in
     /// the meantime stays deleted instead of being written back.
+    /// Files a document in a folder by name, or takes it out with `None`.
+    /// Not a content change, so editors' revisions stay valid.
+    pub fn set_folder(&self, id: &str, folder: Option<String>) -> Result<Document> {
+        let folder = folder
+            .map(|name| name.trim().chars().take(80).collect::<String>())
+            .filter(|name| !name.is_empty());
+        self.update(id, |doc| doc.folder = folder)
+    }
+    /// Every folder in use, by name.
+    pub fn folders(&self) -> Result<Vec<String>> {
+        let conn = self.conn()?;
+        let mut stmt = conn.prepare(
+            "SELECT DISTINCT json_extract(body,'$.folder') AS folder FROM workspace_documents
+             WHERE folder IS NOT NULL ORDER BY folder COLLATE NOCASE",
+        )?;
+        let names = stmt
+            .query_map([], |r| r.get(0))?
+            .collect::<rusqlite::Result<Vec<String>>>()?;
+        Ok(names)
+    }
     /// Notes that a heads-up message was copied for a meeting, now.
     pub fn record_heads_up(&self, id: &str, at: i64) -> Result<Document> {
         self.update(id, |doc| {
@@ -361,12 +381,15 @@ impl Store {
             let title = std::mem::take(&mut stored.title);
             let saved = stored.saved;
             // A heads-up copied while the job ran is recorded straight to the
-            // store; the job's older copy mustn't drop it.
+            // store, and the person may file it meanwhile; the job's older
+            // copy mustn't drop either.
             let consent = stored.consent.take();
+            let folder = stored.folder.take();
             *stored = doc.clone();
             stored.title = title;
             stored.saved = saved;
             stored.consent = consent;
+            stored.folder = folder;
         })?;
         Ok(())
     }
@@ -492,7 +515,8 @@ impl Store {
             'progress',json_extract(body,'$.progress'),'saved',json(coalesce(json_extract(body,'$.saved')=1,0)),
             'segment_count',json_array_length(body,'$.segments'),'speaker_count',json_array_length(body,'$.speakers'),
             'notes_available',json(CASE WHEN json_type(body,'$.notes')='object' THEN 'true' ELSE 'false' END),
-            'stage_errors',json(coalesce(json_extract(body,'$.stage_errors'),'[]')))";
+            'stage_errors',json(coalesce(json_extract(body,'$.stage_errors'),'[]')),
+            'folder',json_extract(body,'$.folder'))";
         // SQLite boolean values need JSON booleans for typed deserialization.
         let projection = projection.replace(
             "json(coalesce(json_extract(body,'$.saved')=1,0))",
@@ -525,7 +549,7 @@ impl Store {
             )
         };
         let sql = format!("SELECT {projection} FROM workspace_documents WHERE {search}
-            AND (?2='' OR ?2='all' OR json_extract(body,'$.source')=?2 OR (?2='saved' AND json_extract(body,'$.saved')=1) OR (?2='attention' AND (json_extract(body,'$.stage') IN ('failed','interrupted') OR (json_extract(body,'$.stage')='complete' AND json_array_length(body,'$.stage_errors')>0))) OR (?2='jobs' AND json_extract(body,'$.stage') IN ('queued','preparing','transcribing','diarizing','notes','recording','paused')))
+            AND (?2='' OR ?2='all' OR json_extract(body,'$.source')=?2 OR (?2='saved' AND json_extract(body,'$.saved')=1) OR (?2='attention' AND (json_extract(body,'$.stage') IN ('failed','interrupted') OR (json_extract(body,'$.stage')='complete' AND json_array_length(body,'$.stage_errors')>0))) OR (?2='jobs' AND json_extract(body,'$.stage') IN ('queued','preparing','transcribing','diarizing','notes','recording','paused')) OR (substr(?2,1,7)='folder:' AND json_extract(body,'$.folder')=substr(?2,8)))
             ORDER BY created_at DESC, id DESC LIMIT ?3 OFFSET ?4");
         let conn = self.conn()?;
         let mut stmt = conn.prepare(&sql)?;
@@ -620,6 +644,7 @@ impl Store {
                 stage_errors: vec![],
                 live_segments: vec![],
                 consent: None,
+                folder: None,
             })?;
         }
         // Retrying a dictation rewrites its history row. Refresh the Library
@@ -1061,6 +1086,7 @@ mod tests {
             stage_errors: vec![],
             live_segments: vec![],
             consent: None,
+            folder: None,
         }
     }
     #[test]
@@ -1104,6 +1130,32 @@ mod tests {
         assert_eq!(store.search_passages("monday launch", 10).unwrap().len(), 1);
         store.delete(&doc.id).unwrap();
         assert!(store.search_passages("monday", 10).unwrap().is_empty());
+    }
+
+    #[test]
+    fn folders_file_documents_and_survive_processing() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::new(dir.path()).unwrap();
+        let mut doc = document();
+        store.put(&doc).unwrap();
+        doc.id = "other".into();
+        store.put(&doc).unwrap();
+        let held = store.get("meeting-1").unwrap();
+        store
+            .set_folder("meeting-1", Some("  Acme  ".into()))
+            .unwrap();
+        // Processing writes back the copy it held from before filing.
+        store.put_processed(&held).unwrap();
+        assert_eq!(
+            store.get("meeting-1").unwrap().folder.as_deref(),
+            Some("Acme")
+        );
+        assert_eq!(store.folders().unwrap(), ["Acme"]);
+        let filed = store.summaries(None, Some("folder:Acme"), 10, 0).unwrap();
+        assert_eq!(filed.len(), 1);
+        assert_eq!(filed[0].folder.as_deref(), Some("Acme"));
+        store.set_folder("meeting-1", Some("   ".into())).unwrap();
+        assert!(store.folders().unwrap().is_empty());
     }
 
     #[test]

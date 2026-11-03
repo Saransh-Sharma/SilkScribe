@@ -1437,6 +1437,15 @@
       "label": "Paylaş…",
       "notes": "Notları paylaş…",
       "failed": "Paylaşım menüsü açılamadı"
+    },
+    "folders": {
+      "label": "Klasör",
+      "none": "Klasör yok",
+      "new": "Yeni klasör…",
+      "name": "Klasör adı",
+      "file": "Dosyala",
+      "all": "Tüm klasörler",
+      "failed": "Dosyalanamadı"
     }
   },
   "audioPlayer": {

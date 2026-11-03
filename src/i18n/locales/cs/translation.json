@@ -1449,6 +1449,15 @@
       "label": "Sdílet…",
       "notes": "Sdílet poznámky…",
       "failed": "Nabídku sdílení se nepodařilo otevřít"
+    },
+    "folders": {
+      "label": "Složka",
+      "none": "Bez složky",
+      "new": "Nová složka…",
+      "name": "Název složky",
+      "file": "Zařadit",
+      "all": "Všechny složky",
+      "failed": "Zařazení se nepodařilo"
     }
   },
   "audioPlayer": {
