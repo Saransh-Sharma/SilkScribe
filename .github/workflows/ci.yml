@@ -139,11 +139,16 @@ jobs:
           "C:\VulkanSDK\$version\Bin" | Out-File -FilePath $env:GITHUB_PATH -Append
 
       # windows-latest ships Visual Studio 2026, which the cmake crate behind
-      # whisper.cpp (0.1.54) can't detect on its own; name the generator.
-      - name: Use the Visual Studio 2026 generator (Windows)
+      # whisper.cpp (0.1.54) can't detect on its own, so name the generator.
+      # Its Vulkan shader build nests ~230 characters deep inside the target
+      # folder, past Windows' 260-character path limit under the checkout,
+      # so build in a short folder at the drive root.
+      - name: Configure the Windows build
         if: runner.os == 'Windows'
         shell: bash
-        run: echo "CMAKE_GENERATOR=Visual Studio 18 2026" >> "$GITHUB_ENV"
+        run: |
+          echo "CMAKE_GENERATOR=Visual Studio 18 2026" >> "$GITHUB_ENV"
+          echo 'CARGO_TARGET_DIR=D:\t' >> "$GITHUB_ENV"
 
       # The app embeds the built frontend; a stub is enough to compile.
       - name: Stub the frontend
