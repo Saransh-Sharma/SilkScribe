@@ -47,7 +47,14 @@ Decisions (3 Nov): **interleave** hardening with features; **no fixed date** (1.
 
 ## Progress (3 Nov)
 
-Done and committed (22 commits, `800d5b8..c9b7472`): R1, R2, R3a–g, U1, R4, U3, R5, R6, U2, U4, U6, U5, R7, plus a clippy cleanup so CI can deny warnings. R3h (App Store dictation-only gating) moved to the MAS release track. Waiting on the user: the H gate (hardware checklist §4b, notarized clean-machine run, D9 decision) and B1a (Community-1 publish).
+Done and committed (`800d5b8..HEAD`, all attributed to Saransh):
+- **Waves 0–2 code:** R1, R2, R3a–g, U1, R4, U3, R5, R6, U2, U4, U6, U5, R7, a clippy cleanup so CI can deny warnings, and loose ends (capture-check error, call-prompt dismissal with the mic kept open).
+- **Bets that need no hardware:** D11 mic-silence warning, M8 consent record, B3 MCP server (`silkscribe --mcp`), B2 recipes (incl. weekly recap), B4 macOS share menu, M9 folders.
+- **Docs:** CHANGELOG, manual checklist §4b additions, implementation status, this plan in `docs/superpowers/plans/`.
+
+Waiting on the user: H gate (checklist §4b on a notarized build, clean machine, D9 decision), B1a (Community-1 publish), the first push (validates CI; `macos-latest` must have the macOS 26 SDK for the Apple Intelligence bridge).
+
+Deferred on purpose: D10 dictionary learning and D12 voice editing change dictation output paths not yet verified on hardware (after the gate); B1b people needs speakers (after B1a); R3h App Store dictation-only gating moves to the MAS release track. Not yet done: Ask scoped to one meeting or folder, tray "Ask…", default notes engine/template in Settings, splitting `Workspace.tsx`.
 
 ## Waves
 
