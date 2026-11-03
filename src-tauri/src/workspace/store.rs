@@ -444,6 +444,21 @@ impl Store {
             .execute("DELETE FROM workspace_drafts WHERE document_id=?1", [id])?;
         Ok(())
     }
+    /// Meetings and imports with a transcript from `since` on, oldest first,
+    /// at most `limit` of the newest.
+    pub fn meetings_since(&self, since: i64, limit: usize) -> Result<Vec<String>> {
+        let conn = self.conn()?;
+        let mut stmt = conn.prepare(
+            "SELECT id FROM (SELECT id, created_at FROM workspace_documents
+               WHERE created_at >= ?1 AND json_extract(body,'$.source') IN ('meeting','file')
+                 AND json_array_length(json_extract(body,'$.segments')) > 0
+               ORDER BY created_at DESC LIMIT ?2) ORDER BY created_at",
+        )?;
+        let ids = stmt
+            .query_map(params![since, limit as i64], |r| r.get(0))?
+            .collect::<rusqlite::Result<Vec<String>>>()?;
+        Ok(ids)
+    }
     pub fn get(&self, id: &str) -> Result<Document> {
         let body: String = self.conn()?.query_row(
             "SELECT body FROM workspace_documents WHERE id=?1",
@@ -1089,6 +1104,33 @@ mod tests {
         assert_eq!(store.search_passages("monday launch", 10).unwrap().len(), 1);
         store.delete(&doc.id).unwrap();
         assert!(store.search_passages("monday", 10).unwrap().is_empty());
+    }
+
+    #[test]
+    fn the_weekly_recap_reads_recent_meetings_with_transcripts() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::new(dir.path()).unwrap();
+        for (id, created_at, source, segments) in [
+            ("old", 100, Source::Meeting, true),
+            ("recent", 1_000, Source::Meeting, true),
+            ("empty", 1_100, Source::Meeting, false),
+            ("dictated", 1_200, Source::Dictation, true),
+            ("imported", 1_300, Source::File, true),
+        ] {
+            let mut doc = document();
+            doc.id = id.into();
+            doc.created_at = created_at;
+            doc.source = source;
+            if !segments {
+                doc.segments.clear();
+            }
+            store.put(&doc).unwrap();
+        }
+        assert_eq!(
+            store.meetings_since(500, 10).unwrap(),
+            ["recent", "imported"]
+        );
+        assert_eq!(store.meetings_since(500, 1).unwrap(), ["imported"]);
     }
 
     #[test]

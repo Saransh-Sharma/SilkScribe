@@ -1420,6 +1420,30 @@
       "app": "Nahrán mikrofon a {{app}}",
       "reminder": "Zobrazena připomínka informovat ostatní",
       "headsUp": "Upozornění zkopírováno v {{time}}"
+    },
+    "recipes": {
+      "title": "Napsat ze schůzky",
+      "label": "Recept",
+      "write": "Napsat",
+      "writing": "Píšu… Poprvé to může trvat minutu, než se načte modul poznámek.",
+      "nothing": "Na tento recept se ve schůzce nic nehodí.",
+      "copy": "Kopírovat",
+      "copied": "Zkopírováno",
+      "copyFailed": "Kopírování se nepodařilo",
+      "customLabel": "Co napsat",
+      "customPlaceholder": "Například: shrnutí pro týmový kanál",
+      "weekly": "Shrnout týden",
+      "names": {
+        "follow_up_email": "Následný e-mail",
+        "action_items": "Úkoly",
+        "customer_notes": "Poznámky o zákazníkovi",
+        "interview_summary": "Shrnutí pohovoru",
+        "custom": "Něco jiného…"
+      },
+      "errors": {
+        "empty": "Za poslední týden nejsou žádné schůzky s přepisem.",
+        "emptyMeeting": "Tato schůzka zatím nemá přepis."
+      }
     }
   },
   "audioPlayer": {

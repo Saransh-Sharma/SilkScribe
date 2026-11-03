@@ -111,7 +111,7 @@ fn should_evict(task: Option<&str>, uses_notes_model: bool, available: u64) -> b
         return true;
     }
     match task {
-        Some("ask") => available < ASK_HEADROOM,
+        Some("ask" | "recipe") => available < ASK_HEADROOM,
         _ => uses_notes_model,
     }
 }
@@ -123,6 +123,8 @@ fn time_limit(task: Option<&str>) -> Option<Duration> {
         Some("health") => Some(Duration::from_secs(240)),
         // Loading the model cold and answering fits well inside this.
         Some("ask") => Some(Duration::from_secs(180)),
+        // Writing a recap of several meetings takes longer than an answer.
+        Some("recipe") => Some(Duration::from_secs(360)),
         _ => None,
     }
 }
@@ -143,7 +145,7 @@ pub fn run(
         thread::sleep(Duration::from_millis(100));
     }
     // Asking a question loads the same notes model.
-    let uses_notes_model = matches!(request["task"].as_str(), Some("notes" | "ask"));
+    let uses_notes_model = matches!(request["task"].as_str(), Some("notes" | "ask" | "recipe"));
     let note_model = uses_notes_model
         .then(|| request["model_path"].as_str())
         .flatten()
@@ -228,7 +230,7 @@ pub fn run(
         .map_err(|_| anyhow::anyhow!("Worker output reader failed"))??;
     let _ = errors.join();
     if timed_out {
-        if request["task"] == "ask" {
+        if request["task"] == "ask" || request["task"] == "recipe" {
             bail!("ask:timeout");
         }
         bail!("Local runtime dependency check timed out");

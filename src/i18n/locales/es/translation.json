@@ -1414,6 +1414,30 @@
       "app": "Se grabó tu micrófono y {{app}}",
       "reminder": "Se mostró el recordatorio de avisar",
       "headsUp": "Aviso copiado a las {{time}}"
+    },
+    "recipes": {
+      "title": "Escribir a partir de esta reunión",
+      "label": "Receta",
+      "write": "Escribir",
+      "writing": "Escribiendo… La primera vez puede tardar un minuto mientras se carga el motor de notas.",
+      "nothing": "Nada de esta reunión encaja con esa receta.",
+      "copy": "Copiar",
+      "copied": "Copiado",
+      "copyFailed": "No se pudo copiar",
+      "customLabel": "Qué escribir",
+      "customPlaceholder": "Por ejemplo: un resumen para el canal del equipo",
+      "weekly": "Resumir mi semana",
+      "names": {
+        "follow_up_email": "Correo de seguimiento",
+        "action_items": "Tareas",
+        "customer_notes": "Notas del cliente",
+        "interview_summary": "Resumen de entrevista",
+        "custom": "Otra cosa…"
+      },
+      "errors": {
+        "empty": "No hay reuniones con transcripción en la última semana.",
+        "emptyMeeting": "Esta reunión aún no tiene transcripción."
+      }
     }
   },
   "audioPlayer": {

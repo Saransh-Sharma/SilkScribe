@@ -1420,6 +1420,30 @@
       "app": "Nagrano mikrofon i {{app}}",
       "reminder": "Pokazano przypomnienie o poinformowaniu",
       "headsUp": "Powiadomienie skopiowane o {{time}}"
+    },
+    "recipes": {
+      "title": "Napisz na podstawie spotkania",
+      "label": "Przepis",
+      "write": "Napisz",
+      "writing": "Piszę… Za pierwszym razem może to potrwać minutę, aż wczyta się silnik notatek.",
+      "nothing": "Nic w tym spotkaniu nie pasuje do tego przepisu.",
+      "copy": "Kopiuj",
+      "copied": "Skopiowano",
+      "copyFailed": "Nie udało się skopiować",
+      "customLabel": "Co napisać",
+      "customPlaceholder": "Na przykład: podsumowanie dla kanału zespołu",
+      "weekly": "Podsumuj mój tydzień",
+      "names": {
+        "follow_up_email": "E-mail z podsumowaniem",
+        "action_items": "Zadania",
+        "customer_notes": "Notatki o kliencie",
+        "interview_summary": "Podsumowanie rozmowy kwalifikacyjnej",
+        "custom": "Coś innego…"
+      },
+      "errors": {
+        "empty": "W ostatnim tygodniu nie ma spotkań z transkrypcją.",
+        "emptyMeeting": "To spotkanie nie ma jeszcze transkrypcji."
+      }
     }
   },
   "audioPlayer": {

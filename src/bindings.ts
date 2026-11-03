@@ -1336,6 +1336,19 @@ async workspaceRecordHeadsUp(id: string) : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+/**
+ * Writes something from meetings by a recipe (see `recipes::RECIPES`), or
+ * by the person's own instruction with `recipe` "custom". The weekly recap
+ * with no meetings given reads the past week's.
+ */
+async workspaceRunRecipe(recipe: string, documentIds: string[], instruction: string | null) : Promise<Result<AskAnswer, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("workspace_run_recipe", { recipe, documentIds, instruction }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async meetingOrbSnapshot() : Promise<MeetingOrbSnapshot> {
     return await TAURI_INVOKE("meeting_orb_snapshot");
 },

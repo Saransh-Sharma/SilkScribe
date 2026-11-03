@@ -1403,6 +1403,30 @@
       "app": "마이크와 {{app}}을(를) 녹음함",
       "reminder": "알림 미리 알림 표시됨",
       "headsUp": "{{time}}에 안내 메시지 복사함"
+    },
+    "recipes": {
+      "title": "이 회의로 작성",
+      "label": "레시피",
+      "write": "작성",
+      "writing": "작성 중… 처음에는 메모 엔진을 불러오느라 1분 정도 걸릴 수 있습니다.",
+      "nothing": "이 회의에는 해당 레시피에 맞는 내용이 없습니다.",
+      "copy": "복사",
+      "copied": "복사했습니다",
+      "copyFailed": "복사하지 못했습니다",
+      "customLabel": "작성할 내용",
+      "customPlaceholder": "예: 팀 채널용 요약",
+      "weekly": "이번 주 정리",
+      "names": {
+        "follow_up_email": "후속 이메일",
+        "action_items": "할 일",
+        "customer_notes": "고객 메모",
+        "interview_summary": "면접 요약",
+        "custom": "기타…"
+      },
+      "errors": {
+        "empty": "지난주에 텍스트 변환이 있는 회의가 없습니다.",
+        "emptyMeeting": "이 회의에는 아직 텍스트 변환이 없습니다."
+      }
     }
   },
   "audioPlayer": {

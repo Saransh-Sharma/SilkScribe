@@ -115,6 +115,31 @@ class AskTests(unittest.TestCase):
                 result=ask(request)
         self.assertIn('When does pricing ship?',prompts[0]);self.assertIn('Pricing ships Friday.',prompts[0])
         self.assertEqual(result,{'answer':'Friday [p1].','citations':['p1']})
+class RecipeTests(unittest.TestCase):
+    def test_writes_from_passages_and_keeps_only_real_citations(self):
+        import tempfile, pathlib, types
+        from unittest.mock import patch
+        from worker import recipe
+        class Tokenizer:
+            def encode(self,text): return list(text)
+            def apply_chat_template(self,messages,**kwargs): return messages[0]['content']+'\n'+messages[-1]['content']
+        prompts=[]
+        def generate(*args,**kwargs):
+            prompts.append(kwargs['prompt'])
+            return 'Thanks for today.\n- Sam sends the screens Friday [p1]\n- Budget approved [p9]'
+        with tempfile.TemporaryDirectory() as directory:
+            pathlib.Path(directory,'installed.json').write_text('{}')
+            runtime=types.SimpleNamespace(load=lambda _: (object(),Tokenizer()),generate=generate)
+            request={'model_path':directory,'instruction':'Write a follow-up email.','passages':[{'id':'p1','title':'Design review','date':'2026-10-01','text':'Sam will send the screens Friday.'}]}
+            with patch.dict('sys.modules',{'mlx_lm':runtime}):
+                result=recipe(request)
+        self.assertIn('<recipe>\nWrite a follow-up email.',prompts[0]);self.assertIn('untrusted data',prompts[0])
+        self.assertEqual(result['citations'],['p1'])
+        self.assertNotIn('[p9]',result['answer'])
+    def test_needs_an_instruction(self):
+        from worker import recipe
+        with self.assertRaises(ValueError): recipe({'instruction':' ','passages':[]})
+
 class ChunkTests(unittest.TestCase):
     def test_original_offsets_and_last_partial_chunk(self):
         self.assertEqual(chunk_bounds({'start_seconds':120,'end_seconds':240}, 200*16000,16000),(120*16000,200*16000))

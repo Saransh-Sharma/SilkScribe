@@ -1408,6 +1408,30 @@
       "app": "Mikrofonunuz ve {{app}} kaydedildi",
       "reminder": "Haber verme hatırlatıcısı gösterildi",
       "headsUp": "Bilgilendirme {{time}} saatinde kopyalandı"
+    },
+    "recipes": {
+      "title": "Bu toplantıdan yaz",
+      "label": "Tarif",
+      "write": "Yaz",
+      "writing": "Yazılıyor… İlki, not motoru yüklenirken bir dakika sürebilir.",
+      "nothing": "Bu toplantıda o tarife uyan bir şey yok.",
+      "copy": "Kopyala",
+      "copied": "Kopyalandı",
+      "copyFailed": "Kopyalanamadı",
+      "customLabel": "Ne yazılsın",
+      "customPlaceholder": "Örneğin: ekip kanalı için bir özet",
+      "weekly": "Haftamı özetle",
+      "names": {
+        "follow_up_email": "Takip e-postası",
+        "action_items": "Yapılacaklar",
+        "customer_notes": "Müşteri notları",
+        "interview_summary": "Mülakat özeti",
+        "custom": "Başka bir şey…"
+      },
+      "errors": {
+        "empty": "Geçen hafta transkripti olan toplantı yok.",
+        "emptyMeeting": "Bu toplantının henüz transkripti yok."
+      }
     }
   },
   "audioPlayer": {

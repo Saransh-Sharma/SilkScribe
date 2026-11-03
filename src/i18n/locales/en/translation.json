@@ -1408,6 +1408,30 @@
       "app": "Recorded your mic and {{app}}",
       "reminder": "Reminder to tell people shown",
       "headsUp": "Heads-up copied at {{time}}"
+    },
+    "recipes": {
+      "title": "Write from this meeting",
+      "label": "Recipe",
+      "write": "Write",
+      "writing": "Writing… The first one can take a minute while the notes engine loads.",
+      "nothing": "Nothing in this meeting fits that recipe.",
+      "copy": "Copy",
+      "copied": "Copied",
+      "copyFailed": "Couldn’t copy",
+      "customLabel": "What to write",
+      "customPlaceholder": "For example: a summary for the team channel",
+      "weekly": "Recap my week",
+      "names": {
+        "follow_up_email": "Follow-up email",
+        "action_items": "Action items",
+        "customer_notes": "Customer notes",
+        "interview_summary": "Interview summary",
+        "custom": "Something else…"
+      },
+      "errors": {
+        "empty": "No meetings with a transcript in the past week.",
+        "emptyMeeting": "This meeting has no transcript to write from yet."
+      }
     }
   },
   "audioPlayer": {

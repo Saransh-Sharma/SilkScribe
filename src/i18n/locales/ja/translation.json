@@ -1403,6 +1403,30 @@
       "app": "マイクと {{app}} を録音",
       "reminder": "知らせるためのリマインダーを表示済み",
       "headsUp": "{{time}} にお知らせをコピー"
+    },
+    "recipes": {
+      "title": "このミーティングから作成",
+      "label": "レシピ",
+      "write": "作成",
+      "writing": "作成中… 初回はメモエンジンの読み込みに 1 分ほどかかることがあります。",
+      "nothing": "このミーティングにはそのレシピに合う内容がありません。",
+      "copy": "コピー",
+      "copied": "コピーしました",
+      "copyFailed": "コピーできませんでした",
+      "customLabel": "作成する内容",
+      "customPlaceholder": "例：チームチャンネル向けの要約",
+      "weekly": "今週をまとめる",
+      "names": {
+        "follow_up_email": "フォローアップメール",
+        "action_items": "アクションアイテム",
+        "customer_notes": "顧客メモ",
+        "interview_summary": "面接のまとめ",
+        "custom": "その他…"
+      },
+      "errors": {
+        "empty": "過去 1 週間に文字起こしのあるミーティングはありません。",
+        "emptyMeeting": "このミーティングにはまだ文字起こしがありません。"
+      }
     }
   },
   "audioPlayer": {

@@ -1414,6 +1414,30 @@
       "app": "Micro et {{app}} enregistrés",
       "reminder": "Rappel de prévenir affiché",
       "headsUp": "Message de prévenance copié à {{time}}"
+    },
+    "recipes": {
+      "title": "Rédiger à partir de cette réunion",
+      "label": "Recette",
+      "write": "Rédiger",
+      "writing": "Rédaction… La première fois peut prendre une minute, le temps de charger le moteur de notes.",
+      "nothing": "Rien dans cette réunion ne correspond à cette recette.",
+      "copy": "Copier",
+      "copied": "Copié",
+      "copyFailed": "Impossible de copier",
+      "customLabel": "Quoi rédiger",
+      "customPlaceholder": "Par exemple : un résumé pour le canal de l’équipe",
+      "weekly": "Résumer ma semaine",
+      "names": {
+        "follow_up_email": "E-mail de suivi",
+        "action_items": "Actions",
+        "customer_notes": "Notes client",
+        "interview_summary": "Résumé d’entretien",
+        "custom": "Autre chose…"
+      },
+      "errors": {
+        "empty": "Aucune réunion avec transcription la semaine passée.",
+        "emptyMeeting": "Cette réunion n’a pas encore de transcription."
+      }
     }
   },
   "audioPlayer": {

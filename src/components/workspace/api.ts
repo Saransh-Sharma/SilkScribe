@@ -94,6 +94,10 @@ export const api = {
   userNotes: (id: string) => unwrap(commands.workspaceUserNotes(id)),
   saveUserNotes: (id: string, body: string) =>
     unwrap(commands.workspaceSaveUserNotes(id, body)),
+  /** Writes something from meetings by a recipe; the weekly recap with no
+   * ids reads the past week's meetings. */
+  runRecipe: (recipe: string, documentIds: string[], instruction?: string) =>
+    unwrap(commands.workspaceRunRecipe(recipe, documentIds, instruction ?? null)),
   /** Notes on a meeting that its heads-up message was copied. */
   recordHeadsUp: (id: string) => unwrap(commands.workspaceRecordHeadsUp(id)),
   cancelImport: () => unwrap(commands.workspaceCancelImport()),

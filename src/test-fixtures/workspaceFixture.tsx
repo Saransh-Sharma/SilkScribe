@@ -561,6 +561,26 @@ api.ask = async (question) => {
   };
 };
 api.cancelAsk = async () => {};
+api.runRecipe = async (recipe, documentIds) => {
+  localStorage.setItem("fixture-recipe", JSON.stringify([recipe, documentIds]));
+  const doc = docs.find((item) => item.id === (documentIds[0] ?? "one"))!;
+  return {
+    answer:
+      recipe === "weekly_recap"
+        ? "This week the team agreed to simplify the first recording [p1]."
+        : "Thanks for the review.\n- Sam brings the revised screens [p1]",
+    sources: [
+      {
+        id: "p1",
+        document_id: doc.id,
+        title: doc.title,
+        created_at: doc.created_at,
+        start: 9,
+        text: "I’ll bring revised screens to the next review.",
+      },
+    ],
+  };
+};
 api.addToDictionary = async (heard, write) =>
   heard && heard !== write ? "replacement" : "word";
 // Dictionary edits save without a backend.

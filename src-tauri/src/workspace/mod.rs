@@ -7,6 +7,7 @@ pub mod live;
 mod memory;
 pub mod packs;
 pub mod readiness;
+pub mod recipes;
 pub(crate) mod store;
 pub mod templates;
 pub mod types;
@@ -966,6 +967,8 @@ fn assemble_passages(
 /// words: a meeting is being processed, or there's no notes engine to answer.
 pub const ASK_BUSY: &str = "ask:busy";
 pub const ASK_NO_ENGINE: &str = "ask:no-engine";
+/// A recipe found nothing to write from: no transcript in the chosen meetings.
+pub const RECIPE_EMPTY: &str = "recipe:empty";
 
 impl Workspace {
     /// Answers a question from the meetings and notes in the Library, citing
@@ -1033,7 +1036,70 @@ impl Workspace {
         Ok(AskAnswer { answer, sources })
     }
 
-    /// Stops a question being answered.
+    /// Writes something from meetings by a recipe, citing its passages. With
+    /// no meetings given, the weekly recap reads the past week's.
+    pub fn run_recipe(
+        &self,
+        app: &tauri::AppHandle,
+        recipe: &str,
+        document_ids: &[String],
+        custom: Option<&str>,
+    ) -> Result<AskAnswer> {
+        self.ask_cancelled.store(false, Ordering::SeqCst);
+        let instruction = recipes::instruction(recipe, custom).context("Choose a recipe.")?;
+        if self.active.lock().unwrap().is_some() {
+            bail!("{ASK_BUSY}");
+        }
+        let ids: Vec<String> = if document_ids.is_empty() && recipe == recipes::WEEKLY {
+            let since = chrono::Utc::now().timestamp() - recipes::WEEK;
+            self.store.meetings_since(since, recipes::WEEKLY_LIMIT)?
+        } else {
+            document_ids.to_vec()
+        };
+        let documents: Vec<(Document, String)> = ids
+            .iter()
+            .filter_map(|id| self.store.get(id).ok())
+            .filter(|doc| !doc.segments.is_empty())
+            .map(|doc| {
+                let typed = self.store.user_notes(&doc.id).unwrap_or_default();
+                (doc, typed)
+            })
+            .collect();
+        let passages = recipes::passages(&documents, 400);
+        if passages.is_empty() {
+            bail!("{RECIPE_EMPTY}");
+        }
+        let model_path = ["qwen3.5-9b", "qwen3.6-27b"]
+            .iter()
+            .find_map(|id| packs::model_path(app, id).ok())
+            .context(ASK_NO_ENGINE)?;
+        let request = serde_json::json!({
+            "protocol": 1,
+            "task": "recipe",
+            "instruction": instruction,
+            "model_path": model_path,
+            "passages": passages.iter().map(|p| serde_json::json!({
+                "id": p.id,
+                "title": p.title,
+                "date": chrono::DateTime::from_timestamp(p.created_at, 0)
+                    .map(|date| date.format("%Y-%m-%d").to_string())
+                    .unwrap_or_default(),
+                "text": p.text,
+            })).collect::<Vec<_>>(),
+        });
+        let result = worker::run(app, request, &self.ask_child, &self.ask_cancelled)?;
+        let answer = result["answer"].as_str().unwrap_or_default().to_string();
+        let sources = result["citations"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter_map(|id| id.as_str())
+            .filter_map(|id| passages.iter().find(|p| p.id == id).cloned())
+            .collect();
+        Ok(AskAnswer { answer, sources })
+    }
+
+    /// Stops a question being answered, or a recipe being written.
     pub fn cancel_ask(&self) {
         self.ask_cancelled.store(true, Ordering::SeqCst);
         if let Some(child) = self.ask_child.lock().unwrap().as_mut() {

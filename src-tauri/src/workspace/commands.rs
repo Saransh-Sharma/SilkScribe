@@ -669,6 +669,26 @@ pub async fn workspace_ask(app: AppHandle, question: String) -> Result<AskAnswer
         .map_err(|e| e.to_string())?
 }
 
+/// Writes something from meetings by a recipe (see `recipes::RECIPES`), or
+/// by the person's own instruction with `recipe` "custom". The weekly recap
+/// with no meetings given reads the past week's.
+#[tauri::command]
+#[specta::specta]
+pub async fn workspace_run_recipe(
+    app: AppHandle,
+    recipe: String,
+    document_ids: Vec<String>,
+    instruction: Option<String>,
+) -> Result<AskAnswer, String> {
+    let ws = ws(&app);
+    tauri::async_runtime::spawn_blocking(move || {
+        ws.run_recipe(&app, &recipe, &document_ids, instruction.as_deref())
+            .map_err(|e| e.to_string())
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
+
 #[tauri::command]
 #[specta::specta]
 pub fn workspace_cancel_ask(app: AppHandle) {

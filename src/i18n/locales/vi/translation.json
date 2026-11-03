@@ -1403,6 +1403,30 @@
       "app": "Đã ghi âm micrô và {{app}}",
       "reminder": "Đã hiện lời nhắc báo cho mọi người",
       "headsUp": "Đã sao chép thông báo lúc {{time}}"
+    },
+    "recipes": {
+      "title": "Viết từ cuộc họp này",
+      "label": "Công thức",
+      "write": "Viết",
+      "writing": "Đang viết… Lần đầu có thể mất một phút trong lúc tải công cụ ghi chú.",
+      "nothing": "Không có gì trong cuộc họp này phù hợp với công thức đó.",
+      "copy": "Sao chép",
+      "copied": "Đã sao chép",
+      "copyFailed": "Không sao chép được",
+      "customLabel": "Viết gì",
+      "customPlaceholder": "Ví dụ: bản tóm tắt cho kênh của nhóm",
+      "weekly": "Tóm tắt tuần của tôi",
+      "names": {
+        "follow_up_email": "Email theo dõi",
+        "action_items": "Việc cần làm",
+        "customer_notes": "Ghi chú khách hàng",
+        "interview_summary": "Tóm tắt phỏng vấn",
+        "custom": "Nội dung khác…"
+      },
+      "errors": {
+        "empty": "Không có cuộc họp nào có bản chép lời trong tuần qua.",
+        "emptyMeeting": "Cuộc họp này chưa có bản chép lời."
+      }
     }
   },
   "audioPlayer": {

@@ -1403,6 +1403,30 @@
       "app": "錄製了麥克風和 {{app}}",
       "reminder": "已顯示告知他人的提醒",
       "headsUp": "已於 {{time}} 複製提醒訊息"
+    },
+    "recipes": {
+      "title": "根據此會議撰寫",
+      "label": "範本",
+      "write": "撰寫",
+      "writing": "正在撰寫… 第一次可能需要一分鐘來載入筆記引擎。",
+      "nothing": "此會議中沒有符合該範本的內容。",
+      "copy": "複製",
+      "copied": "已複製",
+      "copyFailed": "無法複製",
+      "customLabel": "要寫什麼",
+      "customPlaceholder": "例如：給團隊頻道的摘要",
+      "weekly": "總結我的一週",
+      "names": {
+        "follow_up_email": "後續追蹤郵件",
+        "action_items": "待辦事項",
+        "customer_notes": "客戶筆記",
+        "interview_summary": "面試摘要",
+        "custom": "其他…"
+      },
+      "errors": {
+        "empty": "過去一週沒有附轉錄稿的會議。",
+        "emptyMeeting": "此會議還沒有轉錄稿。"
+      }
     }
   },
   "audioPlayer": {

@@ -1,8 +1,9 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowUpRight, MessageCircleQuestion } from "lucide-react";
-import type { AskAnswer, AskSource } from "@/bindings";
-import { api, duration } from "./api";
+import { CalendarRange, MessageCircleQuestion } from "lucide-react";
+import type { AskAnswer } from "@/bindings";
+import { CitedAnswer } from "./CitedAnswer";
+import { api } from "./api";
 
 type AskState =
   | { kind: "idle" }
@@ -17,7 +18,11 @@ const ASK_ERRORS: Record<string, string> = {
   "ask:busy": "workspace.ask.errors.busy",
   "ask:no-engine": "workspace.ask.errors.noEngine",
   "ask:timeout": "workspace.ask.errors.timeout",
+  "recipe:empty": "workspace.recipes.errors.empty",
 };
+
+/** Marks an answer as the weekly recap rather than a question's. */
+const WEEKLY_RECAP = "\u0000weekly-recap";
 
 export function AskPanel({
   onOpen,
@@ -67,44 +72,29 @@ export function AskPanel({
     }
   };
 
+  // The past week's meetings, written up by the weekly recap recipe.
+  const recap = async () => {
+    if (state.kind === "asking") return;
+    const request = ++asked.current;
+    setState({ kind: "asking" });
+    try {
+      const result = await api.runRecipe("weekly_recap", []);
+      if (request === asked.current)
+        setState({ kind: "answer", question: WEEKLY_RECAP, result });
+    } catch (error) {
+      if (request === asked.current)
+        setState({
+          kind: "error",
+          message: String(error).replace(/^Error:\s*/, ""),
+        });
+    }
+  };
+
   const cancel = () => {
     asked.current += 1;
     setState({ kind: "idle" });
     void api.cancelAsk().catch(() => {});
   };
-
-  const sourceLabel = (source: AskSource) =>
-    [
-      source.title,
-      new Date(source.created_at * 1000).toLocaleDateString(),
-      source.start === null
-        ? t("workspace.ask.yourNotes")
-        : duration(source.start),
-    ].join(" · ");
-
-  // The answer with its [p1] markers as numbered citation buttons.
-  const renderAnswer = (result: AskAnswer) =>
-    result.answer.split(/(\[p\d+\])/).map((part, index) => {
-      const id = /^\[(p\d+)\]$/.exec(part)?.[1];
-      const position = id
-        ? result.sources.findIndex((source) => source.id === id)
-        : -1;
-      if (!id) return <Fragment key={index}>{part}</Fragment>;
-      if (position < 0) return null;
-      const source = result.sources[position];
-      return (
-        <button
-          key={index}
-          className="ws-ask-cite"
-          aria-label={t("workspace.ask.openSource", {
-            source: sourceLabel(source),
-          })}
-          onClick={() => onOpen(source.document_id, source.start)}
-        >
-          {position + 1}
-        </button>
-      );
-    });
 
   return (
     <section
@@ -145,6 +135,17 @@ export function AskPanel({
           {t("workspace.ask.submit")}
         </button>
       </form>
+      {meetings && (
+        <button
+          type="button"
+          className="ws-text-button ws-ask-recap"
+          disabled={state.kind === "asking"}
+          onClick={() => void recap()}
+        >
+          <CalendarRange size={14} aria-hidden="true" />
+          {t("workspace.recipes.weekly")}
+        </button>
+      )}
       {state.kind === "asking" && (
         <div className="ws-ask-result" role="status">
           <p className="ws-meta">{t("workspace.ask.thinking")}</p>
@@ -170,31 +171,11 @@ export function AskPanel({
       {state.kind === "answer" && (
         <div className="ws-ask-result" role="status">
           {state.result.answer ? (
-            <>
-              <p className="ws-ask-answer" dir="auto">
-                {renderAnswer(state.result)}
-              </p>
-              {state.result.sources.length > 0 && (
-                <ol className="ws-ask-sources">
-                  {state.result.sources.map((source) => (
-                    <li key={source.id}>
-                      <button
-                        onClick={() => onOpen(source.document_id, source.start)}
-                      >
-                        <span className="ws-ask-source-title">
-                          {sourceLabel(source)}
-                        </span>
-                        <span className="ws-ask-excerpt" dir="auto">
-                          {source.text}
-                        </span>
-                        <ArrowUpRight size={14} aria-hidden="true" />
-                      </button>
-                    </li>
-                  ))}
-                </ol>
-              )}
-              <p className="ws-meta">{t("workspace.ask.checkSources")}</p>
-            </>
+            <CitedAnswer
+              result={state.result}
+              onOpen={onOpen}
+              copyable={state.question === WEEKLY_RECAP}
+            />
           ) : (
             <p className="ws-meta">{t("workspace.ask.nothingFound")}</p>
           )}

@@ -789,6 +789,42 @@ test("asking without a notes engine says how to get one", async ({ page }) => {
   ).toHaveAttribute("aria-selected", "true");
 });
 
+test("a recipe writes a follow-up from the meeting, with its sources", async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  await page.getByText("Product design review", { exact: true }).click();
+  await page.getByRole("tab", { name: "Notes", exact: true }).click();
+  const recipes = page.getByRole("region", { name: "Write from this meeting" });
+  await expect(recipes.getByRole("button", { name: "Recipe" })).toContainText(
+    "Follow-up email",
+  );
+  await recipes.getByRole("button", { name: "Write", exact: true }).click();
+  await expect(
+    recipes.getByText("Sam brings the revised screens"),
+  ).toBeVisible();
+  await expect(
+    recipes
+      .getByRole("button", { name: /^Open Product design review/ })
+      .first(),
+  ).toBeVisible();
+  await expect(recipes.getByRole("button", { name: "Copy" })).toBeVisible();
+  expect(
+    await page.evaluate(() => localStorage.getItem("fixture-recipe")),
+  ).toBe('["follow_up_email",["one"]]');
+});
+
+test("Ask can recap the past week of meetings", async ({ page }) => {
+  await page.goto(fixture);
+  await page.getByRole("button", { name: "Recap my week" }).click();
+  await expect(
+    page.getByText("This week the team agreed", { exact: false }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(() => localStorage.getItem("fixture-recipe")),
+  ).toBe('["weekly_recap",[]]');
+});
+
 test("asking says when nothing in the Library matches", async ({ page }) => {
   await page.goto(fixture);
   const box = page.getByLabel("Ask about your meetings");

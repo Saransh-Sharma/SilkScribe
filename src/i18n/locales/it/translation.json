@@ -1414,6 +1414,30 @@
       "app": "Registrati microfono e {{app}}",
       "reminder": "Promemoria per avvisare mostrato",
       "headsUp": "Avviso copiato alle {{time}}"
+    },
+    "recipes": {
+      "title": "Scrivi da questa riunione",
+      "label": "Ricetta",
+      "write": "Scrivi",
+      "writing": "Scrittura in corso… La prima volta può richiedere un minuto mentre si carica il motore delle note.",
+      "nothing": "Niente in questa riunione corrisponde a questa ricetta.",
+      "copy": "Copia",
+      "copied": "Copiato",
+      "copyFailed": "Impossibile copiare",
+      "customLabel": "Cosa scrivere",
+      "customPlaceholder": "Ad esempio: un riepilogo per il canale del team",
+      "weekly": "Riepiloga la settimana",
+      "names": {
+        "follow_up_email": "Email di follow-up",
+        "action_items": "Azioni",
+        "customer_notes": "Note sul cliente",
+        "interview_summary": "Riepilogo del colloquio",
+        "custom": "Altro…"
+      },
+      "errors": {
+        "empty": "Nessuna riunione con trascrizione nell’ultima settimana.",
+        "emptyMeeting": "Questa riunione non ha ancora una trascrizione."
+      }
     }
   },
   "audioPlayer": {

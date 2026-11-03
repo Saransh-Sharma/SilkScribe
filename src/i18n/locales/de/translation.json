@@ -1408,6 +1408,30 @@
       "app": "Mikrofon und {{app}} aufgenommen",
       "reminder": "Erinnerung, Bescheid zu geben, angezeigt",
       "headsUp": "Hinweis um {{time}} kopiert"
+    },
+    "recipes": {
+      "title": "Aus diesem Meeting schreiben",
+      "label": "Rezept",
+      "write": "Schreiben",
+      "writing": "Schreibe … Beim ersten Mal kann es eine Minute dauern, bis die Notizen-Engine geladen ist.",
+      "nothing": "In diesem Meeting passt nichts zu diesem Rezept.",
+      "copy": "Kopieren",
+      "copied": "Kopiert",
+      "copyFailed": "Kopieren fehlgeschlagen",
+      "customLabel": "Was soll geschrieben werden",
+      "customPlaceholder": "Zum Beispiel: eine Zusammenfassung für den Team-Kanal",
+      "weekly": "Meine Woche zusammenfassen",
+      "names": {
+        "follow_up_email": "Follow-up-E-Mail",
+        "action_items": "Aufgaben",
+        "customer_notes": "Kundennotizen",
+        "interview_summary": "Interview-Zusammenfassung",
+        "custom": "Etwas anderes …"
+      },
+      "errors": {
+        "empty": "Keine Meetings mit Transkript in der letzten Woche.",
+        "emptyMeeting": "Dieses Meeting hat noch kein Transkript."
+      }
     }
   },
   "audioPlayer": {

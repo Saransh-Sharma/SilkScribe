@@ -1403,6 +1403,30 @@
       "app": "录制了麦克风和 {{app}}",
       "reminder": "已显示告知他人的提醒",
       "headsUp": "已于 {{time}} 复制提醒消息"
+    },
+    "recipes": {
+      "title": "根据此会议撰写",
+      "label": "模板",
+      "write": "撰写",
+      "writing": "正在撰写… 首次可能需要一分钟来加载笔记引擎。",
+      "nothing": "此会议中没有适合该模板的内容。",
+      "copy": "复制",
+      "copied": "已复制",
+      "copyFailed": "无法复制",
+      "customLabel": "要写什么",
+      "customPlaceholder": "例如：给团队频道的摘要",
+      "weekly": "总结我的一周",
+      "names": {
+        "follow_up_email": "跟进邮件",
+        "action_items": "待办事项",
+        "customer_notes": "客户笔记",
+        "interview_summary": "面试总结",
+        "custom": "其他…"
+      },
+      "errors": {
+        "empty": "过去一周没有带转写稿的会议。",
+        "emptyMeeting": "此会议还没有转写稿。"
+      }
     }
   },
   "audioPlayer": {

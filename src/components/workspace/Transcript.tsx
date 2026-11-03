@@ -37,6 +37,7 @@ import { drafts } from "./drafts";
 import { AudioPlayer } from "../ui/AudioPlayer";
 import { LiveTranscript } from "./LiveTranscript";
 import { UserNotes } from "./UserNotes";
+import { RecipePanel } from "./RecipePanel";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { cloudCleanupProvider } from "@/lib/utils/privacy";
 import { toastError } from "@/lib/utils/toastError";
@@ -1648,6 +1649,19 @@ export function Transcript({
               </>
             )}
           </fieldset>
+          {/* Writing from the meeting is separate from editing its notes,
+              so it stays open while notes are locked for review. */}
+          {doc.source !== "dictation" &&
+            doc.segments.length > 0 &&
+            !busy(doc.stage) && (
+              <RecipePanel
+                documentId={doc.id}
+                onSeek={(seconds) => seek(seconds)}
+                onSetupEngine={() => {
+                  void flush().then((ok) => ok && onSetupModels());
+                }}
+              />
+            )}
         </section>
       )}
       {evidence && (

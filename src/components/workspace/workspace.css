@@ -1478,3 +1478,22 @@
   word-break: break-word;
   color: var(--ss-text-secondary);
 }
+
+.ws-recipes {
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid var(--ss-border-subtle);
+}
+.ws-recipe-custom {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--ss-border-default);
+  border-radius: var(--ss-radius-sm);
+  background: var(--ss-bg-surface);
+  color: var(--ss-text-primary);
+  font: inherit;
+}
+.ws-ask-recap {
+  margin-top: 6px;
+}
