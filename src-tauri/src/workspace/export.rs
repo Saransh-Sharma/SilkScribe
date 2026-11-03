@@ -19,6 +19,34 @@ pub struct ExportContent {
     pub notes: bool,
     pub speakers: bool,
 }
+/// One line saying what a meeting captured and how people were told, as a
+/// quote under the title.
+fn consent_line(consent: &ConsentRecord) -> String {
+    let time = |at: i64| {
+        chrono::DateTime::from_timestamp(at, 0)
+            .map(|t| t.format("%Y-%m-%d %H:%M UTC").to_string())
+            .unwrap_or_default()
+    };
+    let mut parts = vec![match &consent.capture {
+        CaptureScope::Microphone => "Recorded: microphone only".to_string(),
+        CaptureScope::AllAudio => "Recorded: microphone and computer audio".to_string(),
+        CaptureScope::App { bundle_id } => {
+            format!("Recorded: microphone and {bundle_id}")
+        }
+    }];
+    if let Some(at) = consent.reminder_shown_at {
+        parts.push(format!("reminder to tell people shown {}", time(at)));
+    }
+    if !consent.heads_up_copied_at.is_empty() {
+        let times: Vec<String> = consent
+            .heads_up_copied_at
+            .iter()
+            .map(|&at| time(at))
+            .collect();
+        parts.push(format!("heads-up copied {}", times.join(", ")));
+    }
+    format!("> {}.\n\n", parts.join("; "))
+}
 pub fn render_content(
     doc: &Document,
     format: &str,
@@ -178,6 +206,7 @@ fn render_with_evidence(
                 "start": s.start, "end": s.end, "transcript_revision": s.transcript_revision
             })).collect::<Vec<_>>(),
             "timing": if doc.history_id.is_some() { "unavailable" } else { "segments" },
+            "consent": doc.consent,
             "notes_outdated":doc.notes.as_ref().is_some_and(|n|n.transcript_revision!=doc.revision)
         }))?),
         "txt" => Ok(format!(
@@ -195,6 +224,9 @@ fn render_with_evidence(
         )),
         "md" => {
             let mut out = format!("# {}\n\n", doc.title);
+            if let Some(consent) = &doc.consent {
+                out.push_str(&consent_line(consent));
+            }
             if doc
                 .notes
                 .as_ref()
@@ -322,6 +354,24 @@ fn render_with_evidence(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn markdown_says_what_was_recorded_and_how_people_were_told() {
+        let line = consent_line(&ConsentRecord {
+            capture: CaptureScope::App {
+                bundle_id: "us.zoom.xos".into(),
+            },
+            reminder_shown_at: Some(1_790_000_000),
+            heads_up_copied_at: vec![1_790_000_060],
+        });
+        assert!(line.starts_with("> Recorded: microphone and us.zoom.xos; "));
+        assert!(line.contains("reminder to tell people shown 2026-"));
+        assert!(line.contains("heads-up copied 2026-"));
+        assert_eq!(
+            consent_line(&ConsentRecord::default()),
+            "> Recorded: microphone only.\n\n"
+        );
+    }
     fn document() -> Document {
         Document {
             id: "meeting-1".into(),
@@ -357,6 +407,7 @@ mod tests {
             diarized: false,
             stage_errors: vec![],
             live_segments: vec![],
+            consent: None,
         }
     }
     #[test]

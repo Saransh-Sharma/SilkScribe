@@ -1297,12 +1297,24 @@ async workspaceUserNotes(id: string) : Promise<Result<string, string>> {
 }
 },
 /**
- * Saves the notes a person wrote. Works while a meeting records or processes:
- * they're stored apart from the document.
+ * The notes a person typed for a document, saved as they type; like the
+ * heads-up record, they're stored apart from what processing writes.
  */
 async workspaceSaveUserNotes(id: string, body: string) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("workspace_save_user_notes", { id, body }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Saves the notes a person wrote. Works while a meeting records or processes:
+ * they're stored apart from the document.
+ */
+async workspaceRecordHeadsUp(id: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("workspace_record_heads_up", { id }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -1608,7 +1620,38 @@ export type CalendarStatus = { access: CalendarAccess;
  */
 connected: boolean }
 export type CaptureDevice = { id: string; name: string }
+/**
+ * Whose audio a meeting captured.
+ */
+export type CaptureScope = 
+/**
+ * Only the microphone: the person recording.
+ */
+{ kind: "microphone" } | 
+/**
+ * The microphone and all computer audio.
+ */
+{ kind: "all_audio" } | 
+/**
+ * The microphone and one app's audio, such as the call app.
+ */
+{ kind: "app"; bundle_id: string }
 export type ClipboardHandling = "dont_modify" | "copy_to_clipboard"
+/**
+ * What a meeting recorded about letting people know: what audio it
+ * captured, whether the reminder to tell people showed when recording
+ * started, and each time a heads-up message was copied. Kept with the
+ * meeting and in its export, so it can be shown later.
+ */
+export type ConsentRecord = { capture: CaptureScope; 
+/**
+ * When the reminder showed (Unix seconds), if it was on.
+ */
+reminder_shown_at?: number | null; 
+/**
+ * When a heads-up message was copied (Unix seconds), oldest first.
+ */
+heads_up_copied_at?: number[] }
 export type CustomSounds = { start: boolean; stop: boolean }
 /**
  * How formal AI cleanup writes for a category.
@@ -1639,7 +1682,11 @@ export type Document = { notes_section?: NotesSection | null; attempt_id?: strin
  * Quick "You / Others" lines made while a meeting recorded. Shown until the
  * full transcript exists; processing never changes them.
  */
-live_segments?: LiveSegment[] }
+live_segments?: LiveSegment[]; 
+/**
+ * For a recorded meeting: what was captured and when people were told.
+ */
+consent?: ConsentRecord | null }
 export type DocumentEdit = { id: string; expected_revision: number; title: string; segments: Segment[]; speakers: Speaker[]; notes: Notes | null; turns?: SpeakerTurn[] | null; saved: boolean }
 /**
  * Compact Library/Activity projection. Transcript content stays behind workspace_get.

@@ -347,13 +347,26 @@ impl Store {
     /// held since it started. Fields only people change (title, saved) are kept
     /// from the stored document rather than reverted, and a document deleted in
     /// the meantime stays deleted instead of being written back.
+    /// Notes that a heads-up message was copied for a meeting, now.
+    pub fn record_heads_up(&self, id: &str, at: i64) -> Result<Document> {
+        self.update(id, |doc| {
+            doc.consent
+                .get_or_insert_with(Default::default)
+                .heads_up_copied_at
+                .push(at);
+        })
+    }
     pub fn put_processed(&self, doc: &Document) -> Result<()> {
         self.update(&doc.id, |stored| {
             let title = std::mem::take(&mut stored.title);
             let saved = stored.saved;
+            // A heads-up copied while the job ran is recorded straight to the
+            // store; the job's older copy mustn't drop it.
+            let consent = stored.consent.take();
             *stored = doc.clone();
             stored.title = title;
             stored.saved = saved;
+            stored.consent = consent;
         })?;
         Ok(())
     }
@@ -591,6 +604,7 @@ impl Store {
                 diarized: false,
                 stage_errors: vec![],
                 live_segments: vec![],
+                consent: None,
             })?;
         }
         // Retrying a dictation rewrites its history row. Refresh the Library
@@ -1023,6 +1037,7 @@ mod tests {
             diarized: false,
             stage_errors: vec![],
             live_segments: vec![],
+            consent: None,
         }
     }
     #[test]
@@ -1066,6 +1081,26 @@ mod tests {
         assert_eq!(store.search_passages("monday launch", 10).unwrap().len(), 1);
         store.delete(&doc.id).unwrap();
         assert!(store.search_passages("monday", 10).unwrap().is_empty());
+    }
+
+    #[test]
+    fn a_heads_up_copied_during_processing_is_kept() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::new(dir.path()).unwrap();
+        let mut doc = document();
+        doc.consent = Some(ConsentRecord {
+            capture: CaptureScope::AllAudio,
+            reminder_shown_at: Some(100),
+            heads_up_copied_at: vec![],
+        });
+        store.put(&doc).unwrap();
+        // Processing holds this copy while someone copies the heads-up.
+        let held = store.get(&doc.id).unwrap();
+        store.record_heads_up(&doc.id, 160).unwrap();
+        store.put_processed(&held).unwrap();
+        let consent = store.get(&doc.id).unwrap().consent.unwrap();
+        assert_eq!(consent.heads_up_copied_at, vec![160]);
+        assert_eq!(consent.reminder_shown_at, Some(100));
     }
 
     #[test]

@@ -94,7 +94,12 @@ export default function Workspace({
   const consentReminder = settings?.meeting_consent_reminder ?? true;
   const copyConsentMessage = () =>
     writeText(t("workspace.consent.message"))
-      .then(() => toast.success(t("workspace.consent.copied")))
+      .then(() => {
+        toast.success(t("workspace.consent.copied"));
+        // Keep a record on the meeting being recorded, if there is one.
+        const id = recordingRef.current?.document_id;
+        if (id) void api.recordHeadsUp(id).catch(() => {});
+      })
       .catch((error) => toastError(t("workspace.errors.copyMessage"), error));
   const osType = useOsType();
   const [dictationSummary, setDictationSummary] = useState<
@@ -362,6 +367,8 @@ export default function Workspace({
   }, [create, system]);
   const [recording, setRecording] = useState<RecordingStatus | null>(null);
   const [working, setWorking] = useState(false);
+  const recordingRef = useRef(recording);
+  recordingRef.current = recording;
   const [captureOperation, setCaptureOperation] = useState<string | null>(null);
   const [packs, setPacks] = useState<ModelPack[]>([]);
   const [runtime, setRuntime] = useState<boolean | null>(null);

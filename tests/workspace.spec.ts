@@ -1034,6 +1034,14 @@ test("collapsed settings sections keep their controls out of reach", async ({
   await expect(space).toHaveCount(1);
 });
 
+test("a meeting keeps a record of how people were told", async ({ page }) => {
+  await page.goto(`${fixture}?consent`);
+  await page.getByText("Product design review", { exact: true }).click();
+  await expect(page.locator(".ws-consent-record")).toHaveText(
+    "Recorded your mic and Zoom · Reminder to tell people shown",
+  );
+});
+
 test("Home puts what needs you first and lists dictations once", async ({
   page,
 }) => {

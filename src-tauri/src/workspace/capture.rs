@@ -128,6 +128,17 @@ pub fn read_live(source: LiveSource, buffer: &mut [f32]) -> Option<(i64, usize)>
         None
     }
 }
+/// Whose audio a recording with these options captures.
+fn capture_scope(system_audio: bool, target_bundle_id: Option<&str>) -> CaptureScope {
+    match (system_audio, target_bundle_id) {
+        (false, _) => CaptureScope::Microphone,
+        (true, Some(bundle_id)) => CaptureScope::App {
+            bundle_id: bundle_id.to_string(),
+        },
+        (true, None) => CaptureScope::AllAudio,
+    }
+}
+
 pub fn start(
     app: &tauri::AppHandle,
     ws: &Arc<Workspace>,
@@ -153,6 +164,12 @@ pub fn start(
     let path = ws.store.media.join(format!("{}.wav", doc.id));
     doc.audio_path = Some(path.to_string_lossy().into());
     doc.stage = Stage::Recording;
+    let reminder = crate::settings::get_settings(app).meeting_consent_reminder;
+    doc.consent = Some(ConsentRecord {
+        capture: capture_scope(options.system_audio, options.target_bundle_id.as_deref()),
+        reminder_shown_at: reminder.then_some(doc.created_at),
+        heads_up_copied_at: Vec::new(),
+    });
     ws.store.put(&doc)?;
     // Reserve the meeting slot before crossing the native bridge.
     *recording = Some(Recording {
@@ -492,5 +509,25 @@ mod tests {
         assert!(recover_audio(&path).is_err());
         assert_eq!(std::fs::read(&path).unwrap(), previous);
         assert!(dir.path().join("meeting.wav.mic.wav").exists());
+    }
+}
+
+#[cfg(test)]
+mod consent_tests {
+    use super::*;
+
+    #[test]
+    fn the_capture_scope_follows_the_recording_options() {
+        assert_eq!(
+            capture_scope(false, Some("us.zoom.xos")),
+            CaptureScope::Microphone
+        );
+        assert_eq!(capture_scope(true, None), CaptureScope::AllAudio);
+        assert_eq!(
+            capture_scope(true, Some("us.zoom.xos")),
+            CaptureScope::App {
+                bundle_id: "us.zoom.xos".into()
+            }
+        );
     }
 }

@@ -1415,7 +1415,14 @@
       "balanced": "متوازن · Whisper turbo",
       "fastest": "الأسرع · Parakeet"
     },
-    "speakersHint": "يميّز بين الأصوات على هذا الجهاز"
+    "speakersHint": "يميّز بين الأصوات على هذا الجهاز",
+    "consentRecord": {
+      "microphone": "سُجّل الميكروفون فقط",
+      "allAudio": "سُجّل الميكروفون وصوت الكمبيوتر",
+      "app": "سُجّل الميكروفون و{{app}}",
+      "reminder": "ظهر التذكير بإخبار الحاضرين",
+      "headsUp": "نُسخ التنبيه عند {{time}}"
+    }
   },
   "audioPlayer": {
     "play": "تشغيل",

@@ -94,6 +94,8 @@ export const api = {
   userNotes: (id: string) => unwrap(commands.workspaceUserNotes(id)),
   saveUserNotes: (id: string, body: string) =>
     unwrap(commands.workspaceSaveUserNotes(id, body)),
+  /** Notes on a meeting that its heads-up message was copied. */
+  recordHeadsUp: (id: string) => unwrap(commands.workspaceRecordHeadsUp(id)),
   cancelImport: () => unwrap(commands.workspaceCancelImport()),
   importBatches: () => unwrap(commands.workspaceImportBatches()),
   discardImportBatch: (requestId: string) =>

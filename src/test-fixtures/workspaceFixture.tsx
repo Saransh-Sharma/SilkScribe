@@ -215,6 +215,13 @@ if (params.has("userNote"))
     sources: [],
     origin: "user",
   });
+// ?consent: the meeting was recorded with Zoom's audio after a reminder.
+if (params.has("consent"))
+  docs[0].consent = {
+    capture: { kind: "app", bundle_id: "us.zoom.xos" },
+    reminder_shown_at: 1788950000,
+    heads_up_copied_at: [],
+  };
 if (params.has("empty")) docs = [];
 // ?dictation=ready|setup seeds the settings store (commands.* aren't mocked)
 // and a dictation document, so Home's dictation strip can be exercised.
@@ -424,6 +431,20 @@ api.status = async () => ({
   system_level: 0,
   error: null,
 });
+api.recordHeadsUp = async (id) => {
+  const doc = docs.find((item) => item.id === id);
+  if (!doc) return null;
+  doc.consent ??= {
+    capture: { kind: "all_audio" },
+    reminder_shown_at: null,
+    heads_up_copied_at: [],
+  };
+  doc.consent.heads_up_copied_at = [
+    ...(doc.consent.heads_up_copied_at ?? []),
+    Math.floor(Date.now() / 1000),
+  ];
+  return null;
+};
 // Starting a meeting adds a recording document with no transcript yet.
 api.start = async (options) => {
   recordingId = "live-meeting";

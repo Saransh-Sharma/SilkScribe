@@ -1386,7 +1386,14 @@
       "balanced": "バランス · Whisper turbo",
       "fastest": "最速 · Parakeet"
     },
-    "speakersHint": "このデバイス上で声を聞き分けます"
+    "speakersHint": "このデバイス上で声を聞き分けます",
+    "consentRecord": {
+      "microphone": "マイクのみ録音",
+      "allAudio": "マイクとコンピュータの音声を録音",
+      "app": "マイクと {{app}} を録音",
+      "reminder": "知らせるためのリマインダーを表示済み",
+      "headsUp": "{{time}} にお知らせをコピー"
+    }
   },
   "audioPlayer": {
     "play": "再生",

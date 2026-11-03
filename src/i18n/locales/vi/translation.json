@@ -1386,7 +1386,14 @@
       "balanced": "Cân bằng · Whisper turbo",
       "fastest": "Nhanh nhất · Parakeet"
     },
-    "speakersHint": "Phân biệt giọng nói ngay trên thiết bị này"
+    "speakersHint": "Phân biệt giọng nói ngay trên thiết bị này",
+    "consentRecord": {
+      "microphone": "Chỉ ghi âm micrô của bạn",
+      "allAudio": "Đã ghi âm micrô và âm thanh máy tính",
+      "app": "Đã ghi âm micrô và {{app}}",
+      "reminder": "Đã hiện lời nhắc báo cho mọi người",
+      "headsUp": "Đã sao chép thông báo lúc {{time}}"
+    }
   },
   "audioPlayer": {
     "play": "Phát",

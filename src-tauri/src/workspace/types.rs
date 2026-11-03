@@ -253,6 +253,38 @@ pub struct Document {
     /// full transcript exists; processing never changes them.
     #[serde(default)]
     pub live_segments: Vec<LiveSegment>,
+    /// For a recorded meeting: what was captured and when people were told.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
+    pub consent: Option<ConsentRecord>,
+}
+
+/// What a meeting recorded about letting people know: what audio it
+/// captured, whether the reminder to tell people showed when recording
+/// started, and each time a heads-up message was copied. Kept with the
+/// meeting and in its export, so it can be shown later.
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize, Type)]
+pub struct ConsentRecord {
+    pub capture: CaptureScope,
+    /// When the reminder showed (Unix seconds), if it was on.
+    #[serde(default)]
+    pub reminder_shown_at: Option<i64>,
+    /// When a heads-up message was copied (Unix seconds), oldest first.
+    #[serde(default)]
+    pub heads_up_copied_at: Vec<i64>,
+}
+
+/// Whose audio a meeting captured.
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize, Type)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum CaptureScope {
+    /// Only the microphone: the person recording.
+    #[default]
+    Microphone,
+    /// The microphone and all computer audio.
+    AllAudio,
+    /// The microphone and one app's audio, such as the call app.
+    App { bundle_id: String },
 }
 /// Which side of a meeting a live line came from.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, Type)]

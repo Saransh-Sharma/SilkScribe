@@ -1397,7 +1397,14 @@
       "balanced": "Équilibré · Whisper turbo",
       "fastest": "Le plus rapide · Parakeet"
     },
-    "speakersHint": "Distingue les voix sur cet appareil"
+    "speakersHint": "Distingue les voix sur cet appareil",
+    "consentRecord": {
+      "microphone": "Seul votre micro a été enregistré",
+      "allAudio": "Micro et son de l’ordinateur enregistrés",
+      "app": "Micro et {{app}} enregistrés",
+      "reminder": "Rappel de prévenir affiché",
+      "headsUp": "Message de prévenance copié à {{time}}"
+    }
   },
   "audioPlayer": {
     "play": "Lecture",

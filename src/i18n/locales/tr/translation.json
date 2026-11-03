@@ -1391,7 +1391,14 @@
       "balanced": "Dengeli · Whisper turbo",
       "fastest": "En hızlı · Parakeet"
     },
-    "speakersHint": "Sesleri bu cihazda ayırt eder"
+    "speakersHint": "Sesleri bu cihazda ayırt eder",
+    "consentRecord": {
+      "microphone": "Yalnızca mikrofonunuz kaydedildi",
+      "allAudio": "Mikrofonunuz ve bilgisayar sesi kaydedildi",
+      "app": "Mikrofonunuz ve {{app}} kaydedildi",
+      "reminder": "Haber verme hatırlatıcısı gösterildi",
+      "headsUp": "Bilgilendirme {{time}} saatinde kopyalandı"
+    }
   },
   "audioPlayer": {
     "play": "Oynat",

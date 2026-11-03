@@ -91,6 +91,22 @@ pub async fn workspace_user_notes(app: AppHandle, id: String) -> Result<String, 
 /// they're stored apart from the document.
 #[tauri::command]
 #[specta::specta]
+pub async fn workspace_record_heads_up(app: AppHandle, id: String) -> Result<(), String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        ws(&app)
+            .store
+            .record_heads_up(&id, chrono::Utc::now().timestamp())
+            .map(|_| ())
+            .map_err(|e| e.to_string())
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
+
+/// The notes a person typed for a document, saved as they type; like the
+/// heads-up record, they're stored apart from what processing writes.
+#[tauri::command]
+#[specta::specta]
 pub async fn workspace_save_user_notes(
     app: AppHandle,
     id: String,

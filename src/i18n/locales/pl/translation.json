@@ -1403,7 +1403,14 @@
       "balanced": "Zrównoważony · Whisper turbo",
       "fastest": "Najszybszy · Parakeet"
     },
-    "speakersHint": "Rozróżnia głosy na tym urządzeniu"
+    "speakersHint": "Rozróżnia głosy na tym urządzeniu",
+    "consentRecord": {
+      "microphone": "Nagrano tylko Twój mikrofon",
+      "allAudio": "Nagrano mikrofon i dźwięk komputera",
+      "app": "Nagrano mikrofon i {{app}}",
+      "reminder": "Pokazano przypomnienie o poinformowaniu",
+      "headsUp": "Powiadomienie skopiowane o {{time}}"
+    }
   },
   "audioPlayer": {
     "play": "Odtwarzaj",

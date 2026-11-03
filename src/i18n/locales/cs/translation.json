@@ -1403,7 +1403,14 @@
       "balanced": "Vyvážený · Whisper turbo",
       "fastest": "Nejrychlejší · Parakeet"
     },
-    "speakersHint": "Rozliší hlasy přímo v tomto zařízení"
+    "speakersHint": "Rozliší hlasy přímo v tomto zařízení",
+    "consentRecord": {
+      "microphone": "Nahrán jen váš mikrofon",
+      "allAudio": "Nahrán mikrofon a zvuk počítače",
+      "app": "Nahrán mikrofon a {{app}}",
+      "reminder": "Zobrazena připomínka informovat ostatní",
+      "headsUp": "Upozornění zkopírováno v {{time}}"
+    }
   },
   "audioPlayer": {
     "play": "Přehrát",

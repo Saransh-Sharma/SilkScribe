@@ -746,6 +746,7 @@ fn command_builder() -> Builder<tauri::Wry> {
             workspace::commands::workspace_live_transcript,
             workspace::commands::workspace_user_notes,
             workspace::commands::workspace_save_user_notes,
+            workspace::commands::workspace_record_heads_up,
             meeting_orb::meeting_orb_snapshot,
             meeting_orb::meeting_orb_set_expanded,
             meeting_orb::meeting_orb_drag,

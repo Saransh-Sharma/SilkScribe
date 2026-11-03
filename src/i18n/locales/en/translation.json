@@ -1391,7 +1391,14 @@
       "balanced": "Balanced · Whisper turbo",
       "fastest": "Fastest · Parakeet"
     },
-    "speakersHint": "Tells voices apart, on this device"
+    "speakersHint": "Tells voices apart, on this device",
+    "consentRecord": {
+      "microphone": "Recorded your mic only",
+      "allAudio": "Recorded your mic and computer audio",
+      "app": "Recorded your mic and {{app}}",
+      "reminder": "Reminder to tell people shown",
+      "headsUp": "Heads-up copied at {{time}}"
+    }
   },
   "audioPlayer": {
     "play": "Play",

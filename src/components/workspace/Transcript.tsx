@@ -41,6 +41,51 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { cloudCleanupProvider } from "@/lib/utils/privacy";
 import { toastError } from "@/lib/utils/toastError";
 
+/** Names for the call apps a meeting can capture by itself. */
+const CALL_APP_NAMES: Record<string, string> = {
+  "us.zoom.xos": "Zoom",
+  "com.microsoft.teams2": "Microsoft Teams",
+  "com.microsoft.teams": "Microsoft Teams",
+  "com.cisco.webexmeetingsapp": "Webex",
+  "Cisco-Systems.Spark": "Webex",
+  "com.apple.FaceTime": "FaceTime",
+  "com.hnc.Discord": "Discord",
+  "com.tinyspeck.slackmacgap": "Slack",
+};
+
+/** What a meeting recorded and how people were told, in one line. */
+const consentSummary = (
+  consent: import("@/bindings").ConsentRecord,
+  t: (key: string, options?: Record<string, unknown>) => string,
+) => {
+  const capture = consent.capture;
+  const parts = [
+    capture.kind === "microphone"
+      ? t("workspace.consentRecord.microphone")
+      : capture.kind === "all_audio"
+        ? t("workspace.consentRecord.allAudio")
+        : t("workspace.consentRecord.app", {
+            app: CALL_APP_NAMES[capture.bundle_id] ?? capture.bundle_id,
+          }),
+  ];
+  if (
+    consent.reminder_shown_at !== null &&
+    consent.reminder_shown_at !== undefined
+  )
+    parts.push(t("workspace.consentRecord.reminder"));
+  const copied = consent.heads_up_copied_at ?? [];
+  if (copied.length)
+    parts.push(
+      t("workspace.consentRecord.headsUp", {
+        time: new Date(copied[copied.length - 1] * 1000).toLocaleTimeString(
+          [],
+          { hour: "numeric", minute: "2-digit" },
+        ),
+      }),
+    );
+  return parts.join(" · ");
+};
+
 /** The open that last moved focus into a transcript. */
 let focusedOpen = 0;
 
@@ -597,6 +642,11 @@ export function Transcript({
         {(doc.source !== "dictation" || !cloudProvider) &&
           ` · ${t("workspace.localOnly")}`}
       </p>
+      {doc.consent && (
+        <p className="ws-meta ws-consent-record">
+          {consentSummary(doc.consent, t)}
+        </p>
+      )}
       {doc.source === "dictation" && (
         <div className="ws-original">
           <div className="ws-review-controls">

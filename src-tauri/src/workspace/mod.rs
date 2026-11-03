@@ -136,6 +136,7 @@ impl Workspace {
             diarized: false,
             stage_errors: vec![],
             live_segments: vec![],
+            consent: None,
         }
     }
     pub fn import(

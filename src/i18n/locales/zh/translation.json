@@ -1386,7 +1386,14 @@
       "balanced": "均衡 · Whisper turbo",
       "fastest": "最快 · Parakeet"
     },
-    "speakersHint": "在此设备上区分不同说话人"
+    "speakersHint": "在此设备上区分不同说话人",
+    "consentRecord": {
+      "microphone": "仅录制了你的麦克风",
+      "allAudio": "录制了麦克风和电脑音频",
+      "app": "录制了麦克风和 {{app}}",
+      "reminder": "已显示告知他人的提醒",
+      "headsUp": "已于 {{time}} 复制提醒消息"
+    }
   },
   "audioPlayer": {
     "play": "播放",

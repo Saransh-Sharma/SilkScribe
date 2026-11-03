@@ -1386,7 +1386,14 @@
       "balanced": "균형 · Whisper turbo",
       "fastest": "가장 빠름 · Parakeet"
     },
-    "speakersHint": "이 기기에서 목소리를 구분합니다"
+    "speakersHint": "이 기기에서 목소리를 구분합니다",
+    "consentRecord": {
+      "microphone": "마이크만 녹음함",
+      "allAudio": "마이크와 컴퓨터 소리를 녹음함",
+      "app": "마이크와 {{app}}을(를) 녹음함",
+      "reminder": "알림 미리 알림 표시됨",
+      "headsUp": "{{time}}에 안내 메시지 복사함"
+    }
   },
   "audioPlayer": {
     "play": "재생",

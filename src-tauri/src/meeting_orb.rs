@@ -281,7 +281,26 @@ pub fn meeting_orb_answer_prompt(app: AppHandle, start: bool) {
 #[specta::specta]
 pub fn meeting_orb_copy(app: AppHandle, text: String) -> Result<(), String> {
     use tauri_plugin_clipboard_manager::ClipboardExt;
-    app.clipboard().write_text(text).map_err(|e| e.to_string())
+    app.clipboard()
+        .write_text(text)
+        .map_err(|e| e.to_string())?;
+    // The orb copies one thing, the heads-up message; note it on the meeting.
+    if let Some(ws) = app.try_state::<std::sync::Arc<crate::workspace::Workspace>>() {
+        let recording = ws
+            .recording
+            .lock()
+            .ok()
+            .and_then(|recording| recording.as_ref().map(|r| r.document_id.clone()));
+        if let Some(id) = recording {
+            if let Err(error) = ws
+                .store
+                .record_heads_up(&id, chrono::Utc::now().timestamp())
+            {
+                log::warn!("Couldn't note the heads-up on the meeting: {error}");
+            }
+        }
+    }
+    Ok(())
 }
 
 #[cfg(target_os = "macos")]
