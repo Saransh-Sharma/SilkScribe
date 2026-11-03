@@ -1427,6 +1427,11 @@
         "empty": "过去一周没有带转写稿的会议。",
         "emptyMeeting": "此会议还没有转写稿。"
       }
+    },
+    "share": {
+      "label": "共享…",
+      "notes": "共享笔记…",
+      "failed": "无法打开共享菜单"
     }
   },
   "audioPlayer": {

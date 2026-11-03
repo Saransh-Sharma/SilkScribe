@@ -1444,6 +1444,11 @@
         "empty": "Za poslední týden nejsou žádné schůzky s přepisem.",
         "emptyMeeting": "Tato schůzka zatím nemá přepis."
       }
+    },
+    "share": {
+      "label": "Sdílet…",
+      "notes": "Sdílet poznámky…",
+      "failed": "Nabídku sdílení se nepodařilo otevřít"
     }
   },
   "audioPlayer": {

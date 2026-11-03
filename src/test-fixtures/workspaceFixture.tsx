@@ -594,6 +594,10 @@ commands.changePreviewLanguagesSetting = async () => ({
 });
 commands.changeAppLanguageSetting = async () => ({ status: "ok", data: null });
 commands.changeMcpEnabledSetting = async () => ({ status: "ok", data: null });
+commands.shareText = async (text) => {
+  localStorage.setItem("fixture-share", text);
+  return { status: "ok", data: null };
+};
 commands.mcpLaunchCommand = async () => ({
   status: "ok",
   data: {

@@ -27,6 +27,7 @@
 - **Ask from anywhere**: Command-K (Ctrl+K) works from a transcript or Settings too; without a notes engine, Ask offers to get one.
 - **Let AI apps read your library** (Settings → Privacy & storage, off by default): Claude, Cursor and other MCP apps can search and read transcripts, notes and dictations through `silkscribe --mcp`, a read-only server built into the app. Settings shows the config to paste.
 - **Recipes**: write a follow-up email, action items, customer notes or an interview summary from a meeting, or describe what you want, with the local notes engine; **Recap my week** (in the Ask box) writes up the past week's meetings. Like Ask, everything cites its source and nothing leaves the Mac.
+- **Share** (macOS): send a meeting's notes or a recipe's text to Mail, Messages, Notes, Slack or any app in the share menu.
 - **Consent record**: each meeting notes whose audio it captured, whether the reminder to tell people showed, and when the heads-up was copied; exports include it.
 - The recording indicator says when the mic hears nothing for three seconds.
 - CI checks every push: lint, the frontend build, unit, translation, worker, browser and Rust tests, clippy, and that Windows, Linux and the App Store build still compile.

@@ -1438,6 +1438,11 @@
         "empty": "No hay reuniones con transcripción en la última semana.",
         "emptyMeeting": "Esta reunión aún no tiene transcripción."
       }
+    },
+    "share": {
+      "label": "Compartir…",
+      "notes": "Compartir notas…",
+      "failed": "No se pudo abrir el menú de compartir"
     }
   },
   "audioPlayer": {

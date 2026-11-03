@@ -1444,6 +1444,11 @@
         "empty": "W ostatnim tygodniu nie ma spotkań z transkrypcją.",
         "emptyMeeting": "To spotkanie nie ma jeszcze transkrypcji."
       }
+    },
+    "share": {
+      "label": "Udostępnij…",
+      "notes": "Udostępnij notatki…",
+      "failed": "Nie udało się otworzyć menu udostępniania"
     }
   },
   "audioPlayer": {

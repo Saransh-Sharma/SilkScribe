@@ -1432,6 +1432,11 @@
         "empty": "Keine Meetings mit Transkript in der letzten Woche.",
         "emptyMeeting": "Dieses Meeting hat noch kein Transkript."
       }
+    },
+    "share": {
+      "label": "Teilen …",
+      "notes": "Notizen teilen …",
+      "failed": "Teilen-Menü konnte nicht geöffnet werden"
     }
   },
   "audioPlayer": {

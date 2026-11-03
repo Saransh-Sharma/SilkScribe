@@ -814,6 +814,27 @@ test("a recipe writes a follow-up from the meeting, with its sources", async ({
   ).toBe('["follow_up_email",["one"]]');
 });
 
+test("notes and recipe text can be shared from the Mac", async ({ page }) => {
+  await page.goto(fixture);
+  await page.getByText("Product design review", { exact: true }).click();
+  await page.getByRole("tab", { name: "Notes", exact: true }).click();
+  await page.getByRole("button", { name: "Share notes…" }).click();
+  // The notes as Markdown, without the transcript.
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem("fixture-share")))
+    .toContain('"format": "md"');
+  expect(
+    await page.evaluate(() => localStorage.getItem("fixture-share")),
+  ).toContain('"segments": []');
+  const recipes = page.getByRole("region", { name: "Write from this meeting" });
+  await recipes.getByRole("button", { name: "Write", exact: true }).click();
+  await recipes.getByRole("button", { name: "Share…" }).click();
+  // Shared without the citation markers.
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem("fixture-share")))
+    .toBe("Thanks for the review.\n- Sam brings the revised screens");
+});
+
 test("Ask can recap the past week of meetings", async ({ page }) => {
   await page.goto(fixture);
   await page.getByRole("button", { name: "Recap my week" }).click();

@@ -1427,6 +1427,11 @@
         "empty": "過去一週沒有附轉錄稿的會議。",
         "emptyMeeting": "此會議還沒有轉錄稿。"
       }
+    },
+    "share": {
+      "label": "分享…",
+      "notes": "分享筆記…",
+      "failed": "無法開啟分享選單"
     }
   },
   "audioPlayer": {

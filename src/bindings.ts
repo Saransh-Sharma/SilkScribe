@@ -1349,6 +1349,18 @@ async workspaceRunRecipe(recipe: string, documentIds: string[], instruction: str
     else return { status: "error", error: e  as any };
 }
 },
+/**
+ * Opens the share menu for `text` beside `anchor`. Returns once the menu is
+ * on its way; what the person picks is up to them and the app they choose.
+ */
+async shareText(text: string, anchor: ShareAnchor) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("share_text", { text, anchor }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async meetingOrbSnapshot() : Promise<MeetingOrbSnapshot> {
     return await TAURI_INVOKE("meeting_orb_snapshot");
 },
@@ -1900,6 +1912,11 @@ mic_gated?: boolean }
  */
 export type Replacement = { from: string; to: string }
 export type Segment = { id: string; start: number; end: number; text: string; original_text: string; speaker: string | null }
+/**
+ * Where the share button is, in the window's web coordinates, so the share
+ * menu opens beside it.
+ */
+export type ShareAnchor = { x: number; y: number; width: number; height: number }
 export type ShortcutBinding = { id: string; name: string; description: string; default_binding: string; current_binding: string }
 /**
  * A short spoken phrase that expands into longer text, like an address.

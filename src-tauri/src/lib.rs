@@ -21,6 +21,7 @@ mod meeting_orb;
 mod overlay;
 pub mod portable;
 mod settings;
+mod share;
 mod shortcut;
 mod signal_handle;
 mod text_context;
@@ -756,6 +757,7 @@ fn command_builder() -> Builder<tauri::Wry> {
             workspace::commands::workspace_save_user_notes,
             workspace::commands::workspace_record_heads_up,
             workspace::commands::workspace_run_recipe,
+            share::share_text,
             meeting_orb::meeting_orb_snapshot,
             meeting_orb::meeting_orb_set_expanded,
             meeting_orb::meeting_orb_drag,

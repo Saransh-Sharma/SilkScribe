@@ -1432,6 +1432,11 @@
         "empty": "No meetings with a transcript in the past week.",
         "emptyMeeting": "This meeting has no transcript to write from yet."
       }
+    },
+    "share": {
+      "label": "Share…",
+      "notes": "Share notes…",
+      "failed": "Couldn’t open the share menu"
     }
   },
   "audioPlayer": {

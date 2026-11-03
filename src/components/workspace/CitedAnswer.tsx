@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import type { AskAnswer, AskSource } from "@/bindings";
 import { toastError } from "@/lib/utils/toastError";
 import { duration } from "./api";
+import { ShareButton } from "./ShareButton";
 
 /** The text without its [p1] citation markers, for copying elsewhere. */
 export const withoutCitations = (text: string) =>
@@ -62,6 +63,7 @@ export function CitedAnswer({
       <p className="ws-ask-answer" dir="auto">
         {parts}
       </p>
+      {copyable && <ShareButton text={withoutCitations(result.answer)} />}
       {copyable && (
         <button
           className="ws-secondary"

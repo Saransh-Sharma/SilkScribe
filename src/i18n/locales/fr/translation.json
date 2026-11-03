@@ -1438,6 +1438,11 @@
         "empty": "Aucune réunion avec transcription la semaine passée.",
         "emptyMeeting": "Cette réunion n’a pas encore de transcription."
       }
+    },
+    "share": {
+      "label": "Partager…",
+      "notes": "Partager les notes…",
+      "failed": "Impossible d’ouvrir le menu de partage"
     }
   },
   "audioPlayer": {

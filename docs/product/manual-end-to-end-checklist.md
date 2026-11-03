@@ -103,6 +103,9 @@ Added after the 3 November hardening pass:
 - **Call detection by app** (macOS 14.2+): with Slack open but idle, join a Teams or Zoom call. The prompt names the app on the call, and "Start notes" captures that app. Voice Memos recording does not prompt. With Always-on microphone on, the prompt still appears and goes away after the call.
 - **Ask while processing**: ask a question while a meeting transcribes. It says to ask again when processing is done; the next dictation doesn't reload its engine.
 - **Preview languages**: on a Mac set to Japanese, a fresh install shows English, and the tray is English. Turning on Preview languages (Settings → General) switches both to Japanese.
+- **Share menu**: in a meeting's notes, "Share notes…" opens the macOS share menu beside the button; Mail gets the notes as text. A recipe's "Share…" sends its text without citation numbers.
+- **MCP**: with "Let AI apps read your library" on, add the copied config to Claude Desktop and restart it. Ask Claude about a meeting; it searches and quotes it. Turn the setting off; the next request says sharing is off.
+- **Recipes**: write a follow-up email from a recorded meeting and "Recap my week" from the Ask box. Citations open the right moment; the first run's time while the notes engine loads is acceptable.
 - **Memory over time**: leave the app running a day with call detection and the calendar on; `leaks SilkScribe` shows no growth from the call watcher or calendar thread.
 
 ## 5. Release acceptance

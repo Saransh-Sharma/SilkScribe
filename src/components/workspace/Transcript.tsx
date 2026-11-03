@@ -38,6 +38,7 @@ import { AudioPlayer } from "../ui/AudioPlayer";
 import { LiveTranscript } from "./LiveTranscript";
 import { UserNotes } from "./UserNotes";
 import { RecipePanel } from "./RecipePanel";
+import { ShareButton } from "./ShareButton";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { cloudCleanupProvider } from "@/lib/utils/privacy";
 import { toastError } from "@/lib/utils/toastError";
@@ -1496,6 +1497,18 @@ export function Transcript({
                     }
                   />
                 </label>
+                {doc.notes && (
+                  <ShareButton
+                    label={t("workspace.share.notes")}
+                    text={() =>
+                      api.exportPreview(doc.id, "md", {
+                        transcript: false,
+                        notes: true,
+                        speakers: false,
+                      })
+                    }
+                  />
+                )}
               </div>
             )}
             {doc.notes && (

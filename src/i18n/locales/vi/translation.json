@@ -1427,6 +1427,11 @@
         "empty": "Không có cuộc họp nào có bản chép lời trong tuần qua.",
         "emptyMeeting": "Cuộc họp này chưa có bản chép lời."
       }
+    },
+    "share": {
+      "label": "Chia sẻ…",
+      "notes": "Chia sẻ ghi chú…",
+      "failed": "Không mở được menu chia sẻ"
     }
   },
   "audioPlayer": {

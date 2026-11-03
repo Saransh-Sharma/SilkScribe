@@ -1432,6 +1432,11 @@
         "empty": "Geçen hafta transkripti olan toplantı yok.",
         "emptyMeeting": "Bu toplantının henüz transkripti yok."
       }
+    },
+    "share": {
+      "label": "Paylaş…",
+      "notes": "Notları paylaş…",
+      "failed": "Paylaşım menüsü açılamadı"
     }
   },
   "audioPlayer": {
