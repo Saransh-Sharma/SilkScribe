@@ -18,9 +18,52 @@ enum EffectivePasteStrategy {
     None,
     Direct,
     ClipboardHotkey,
+    /// Paste through the clipboard, then put back what was on it (macOS).
+    #[cfg(target_os = "macos")]
+    ClipboardRestore,
     #[cfg(not(feature = "mac-app-store"))]
     ExternalScript,
 }
+
+/// How long after the paste keys to put the old clipboard back. The target app
+/// reads the clipboard when it handles the keystroke, which a busy app (Electron
+/// under load, a browser) can take well over half a second to do. Restoring too
+/// early pastes the old clipboard instead of the dictation.
+#[cfg(target_os = "macos")]
+const RESTORE_DELAY: Duration = Duration::from_millis(1000);
+
+/// Apps that forward the clipboard to another computer, which reads it at its
+/// own pace. Restoring under them races the remote paste, so the dictation is
+/// left on the clipboard instead.
+#[cfg(target_os = "macos")]
+const NO_RESTORE_APPS: [&str; 11] = [
+    "com.apple.ScreenSharing",
+    "com.p5sys.jump.mac.viewer",
+    "com.parallels.desktop.console",
+    "com.parallels.winapp",
+    "com.vmware.fusion",
+    "com.utmapp.UTM",
+    "com.citrix.receiver.icaviewer.mac",
+    "com.microsoft.rdc.macos",
+    "com.microsoft.rdc.mac",
+    "com.realvnc.vncviewer",
+    "com.teamviewer.TeamViewer",
+];
+
+/// Whether pasting into this app should leave the dictation on the clipboard.
+#[cfg(target_os = "macos")]
+fn skips_restore(bundle_id: &str) -> bool {
+    NO_RESTORE_APPS.contains(&bundle_id)
+}
+
+/// How long to wait for the frontmost app to answer a simulated copy. A busy
+/// app that answers later reads as "nothing selected".
+#[cfg(target_os = "macos")]
+const COPY_WAIT: Duration = Duration::from_millis(800);
+
+/// Why a simulated copy didn't run.
+#[cfg(target_os = "macos")]
+pub const KEYS_STILL_HELD: &str = "A modifier key is still held";
 
 fn resolve_paste_strategy(
     paste_method: PasteMethod,
@@ -34,13 +77,276 @@ fn resolve_paste_strategy(
         #[cfg(not(feature = "mac-app-store"))]
         PasteMethod::ExternalScript => EffectivePasteStrategy::ExternalScript,
         PasteMethod::CtrlV | PasteMethod::CtrlShiftV | PasteMethod::ShiftInsert => {
+            // Only macOS can snapshot and restore the whole clipboard. Elsewhere
+            // a clipboard paste leaves the text on it.
+            #[cfg(target_os = "macos")]
             if clipboard_handling == ClipboardHandling::DontModify {
-                EffectivePasteStrategy::Direct
-            } else {
-                EffectivePasteStrategy::ClipboardHotkey
+                return EffectivePasteStrategy::ClipboardRestore;
+            }
+            #[cfg(not(target_os = "macos"))]
+            let _ = clipboard_handling;
+            EffectivePasteStrategy::ClipboardHotkey
+        }
+    }
+}
+
+/// Sends the paste keystroke for a clipboard paste method.
+fn send_paste_keys(enigo: &mut Enigo, paste_method: &PasteMethod) -> Result<(), String> {
+    match paste_method {
+        PasteMethod::CtrlV => input::send_paste_ctrl_v(enigo),
+        PasteMethod::CtrlShiftV => input::send_paste_ctrl_shift_v(enigo),
+        PasteMethod::ShiftInsert => input::send_paste_shift_insert(enigo),
+        _ => Err("Invalid paste method for clipboard paste".into()),
+    }
+}
+
+/// Pastes through the clipboard and then puts back whatever was on it. Our text
+/// is marked transient and concealed so clipboard managers skip it, and the old
+/// contents come back only if nothing else has written to the clipboard since —
+/// something the user copies in the meantime wins.
+#[cfg(target_os = "macos")]
+fn paste_and_restore(
+    enigo: &mut Enigo,
+    text: &str,
+    app_handle: &AppHandle,
+    paste_method: &PasteMethod,
+    paste_delay_ms: u64,
+) -> Result<(), String> {
+    let target = crate::app_context::frontmost_app();
+    let saved = match target.as_ref() {
+        Some(app) if skips_restore(&app.bundle_id) => pasteboard::Snapshot::Skip,
+        _ => pasteboard::snapshot(),
+    };
+    let written = pasteboard::write_transient_text(text);
+    std::thread::sleep(Duration::from_millis(paste_delay_ms));
+    send_paste_keys(enigo, paste_method)?;
+    if !saved.restorable() {
+        info!(
+            "Leaving the dictation on the clipboard ({})",
+            saved.reason()
+        );
+        return Ok(());
+    }
+
+    // Restore off this (main) thread's critical path, back on the main thread.
+    let app = app_handle.clone();
+    std::thread::spawn(move || {
+        std::thread::sleep(RESTORE_DELAY);
+        let _ = app.run_on_main_thread(move || {
+            if !pasteboard::restore(saved, written) {
+                info!("Clipboard changed after pasting; leaving the new contents");
+            }
+        });
+    });
+    Ok(())
+}
+
+/// The general pasteboard, read and written item by item so a restore keeps
+/// images, rich text and files, not just plain text.
+#[cfg(target_os = "macos")]
+pub(crate) mod pasteboard {
+    use tauri_nspanel::objc2::rc::Retained;
+    use tauri_nspanel::objc2::runtime::ProtocolObject;
+    use tauri_nspanel::objc2_app_kit::{
+        NSPasteboard, NSPasteboardItem, NSPasteboardTypeString, NSPasteboardWriting,
+    };
+    use tauri_nspanel::objc2_foundation::{NSArray, NSData, NSString};
+
+    /// Markers from nspasteboard.org that clipboard managers honour.
+    const MARKERS: [&str; 2] = [
+        "org.nspasteboard.TransientType",
+        "org.nspasteboard.ConcealedType",
+    ];
+
+    /// Clipboards bigger than this aren't copied aside; the dictation stays.
+    const MAX_SNAPSHOT_BYTES: usize = 32 * 1024 * 1024;
+
+    /// What was on the clipboard before a paste.
+    pub enum Snapshot {
+        /// Each pasteboard item as its (type, data) pairs.
+        Items(Vec<Vec<(String, Vec<u8>)>>),
+        /// A password manager's (concealed or transient) item. Putting it back
+        /// would undo the manager clearing it, so it isn't kept.
+        Sensitive,
+        /// Larger than `MAX_SNAPSHOT_BYTES`.
+        TooLarge,
+        /// Not taken, e.g. for a remote-desktop app.
+        Skip,
+    }
+
+    impl Snapshot {
+        pub fn restorable(&self) -> bool {
+            matches!(self, Snapshot::Items(_))
+        }
+
+        pub fn reason(&self) -> &'static str {
+            match self {
+                Snapshot::Items(_) => "restorable",
+                Snapshot::Sensitive => "the clipboard held a concealed item",
+                Snapshot::TooLarge => "the clipboard was too large to keep",
+                Snapshot::Skip => "this app reads the clipboard remotely",
             }
         }
     }
+
+    /// Whether an item's types mark it as something clipboard tools must not
+    /// keep, like a password.
+    pub(crate) fn is_sensitive<'a>(mut types: impl Iterator<Item = &'a str>) -> bool {
+        types.any(|kind| MARKERS.contains(&kind))
+    }
+
+    pub fn snapshot() -> Snapshot {
+        let pasteboard = NSPasteboard::generalPasteboard();
+        let Some(items) = pasteboard.pasteboardItems() else {
+            return Snapshot::Items(Vec::new());
+        };
+        let mut kept = Vec::new();
+        let mut total = 0usize;
+        for item in items.iter() {
+            let types: Vec<String> = item.types().iter().map(|kind| kind.to_string()).collect();
+            if is_sensitive(types.iter().map(String::as_str)) {
+                return Snapshot::Sensitive;
+            }
+            let mut pairs = Vec::new();
+            for kind in types {
+                let Some(data) = item.dataForType(&NSString::from_str(&kind)) else {
+                    continue;
+                };
+                total += data.len();
+                if total > MAX_SNAPSHOT_BYTES {
+                    return Snapshot::TooLarge;
+                }
+                pairs.push((kind, data.to_vec()));
+            }
+            kept.push(pairs);
+        }
+        Snapshot::Items(kept)
+    }
+
+    /// Replaces the clipboard with `text`. Returns the change count after the
+    /// write, so a later restore can tell whether anyone wrote since.
+    pub fn write_transient_text(text: &str) -> isize {
+        let pasteboard = NSPasteboard::generalPasteboard();
+        pasteboard.clearContents();
+        let item = NSPasteboardItem::new();
+        // SAFETY: a constant AppKit provides for the lifetime of the process.
+        let string_type = unsafe { NSPasteboardTypeString };
+        item.setString_forType(&NSString::from_str(text), string_type);
+        let marker_data = NSData::with_bytes(&[]);
+        for marker in MARKERS {
+            item.setData_forType(&marker_data, &NSString::from_str(marker));
+        }
+        pasteboard.writeObjects(&NSArray::from_retained_slice(&[
+            ProtocolObject::from_retained(item),
+        ]));
+        pasteboard.changeCount()
+    }
+
+    pub fn change_count() -> isize {
+        NSPasteboard::generalPasteboard().changeCount()
+    }
+
+    /// The clipboard's plain text, if it holds any.
+    pub fn read_string() -> Option<String> {
+        // SAFETY: a constant AppKit provides for the lifetime of the process.
+        let string_type = unsafe { NSPasteboardTypeString };
+        NSPasteboard::generalPasteboard()
+            .stringForType(string_type)
+            .map(|text| text.to_string())
+    }
+
+    /// Puts a snapshot back unless the clipboard changed since `written`.
+    /// Returns whether it was restored.
+    pub fn restore(snapshot: Snapshot, written: isize) -> bool {
+        let Snapshot::Items(saved) = snapshot else {
+            return false;
+        };
+        let pasteboard = NSPasteboard::generalPasteboard();
+        if pasteboard.changeCount() != written {
+            return false;
+        }
+        pasteboard.clearContents();
+        let items: Vec<Retained<ProtocolObject<dyn NSPasteboardWriting>>> = saved
+            .into_iter()
+            .map(|types| {
+                let item = NSPasteboardItem::new();
+                for (kind, data) in types {
+                    item.setData_forType(&NSData::from_vec(data), &NSString::from_str(&kind));
+                }
+                ProtocolObject::from_retained(item)
+            })
+            .collect();
+        if !items.is_empty() {
+            pasteboard.writeObjects(&NSArray::from_retained_slice(&items));
+        }
+        true
+    }
+}
+
+/// What a simulated copy of the selection found.
+#[cfg(target_os = "macos")]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum CopiedSelection {
+    /// The clipboard didn't change: nothing was selected.
+    Nothing,
+    Text(String),
+    /// Something other than text was copied, like a file in Finder.
+    NotText,
+}
+
+/// Copies the frontmost app's selection with Cmd+C and reads it, then puts the
+/// clipboard back. For apps whose text the Accessibility API can't read. Call
+/// it off the main thread: it waits for the shortcut's keys to come up (a held
+/// modifier would turn Cmd+C into something else) and for the app to answer.
+#[cfg(target_os = "macos")]
+pub fn copy_selection(app_handle: &AppHandle) -> Result<CopiedSelection, String> {
+    // In toggle and hands-free modes the stop press can still be down here.
+    if !input::wait_for_modifiers_released(input::MODIFIER_RELEASE_WAIT) {
+        return Err(KEYS_STILL_HELD.to_string());
+    }
+    let (sender, receiver) = std::sync::mpsc::channel();
+    let app = app_handle.clone();
+    app_handle
+        .run_on_main_thread(move || {
+            let result = (|| {
+                let saved = pasteboard::snapshot();
+                let before = pasteboard::change_count();
+                let state = app
+                    .try_state::<EnigoState>()
+                    .ok_or("Enigo state not initialized")?;
+                let mut enigo = state
+                    .0
+                    .lock()
+                    .map_err(|e| format!("Failed to lock Enigo: {}", e))?;
+                input::send_copy(&mut enigo)?;
+                Ok::<_, String>((saved, before))
+            })();
+            let _ = sender.send(result);
+        })
+        .map_err(|e| format!("Failed to run copy on main thread: {}", e))?;
+    let (saved, before) = receiver
+        .recv_timeout(Duration::from_secs(2))
+        .map_err(|_| "The copy keystroke didn't run".to_string())??;
+
+    let deadline = std::time::Instant::now() + COPY_WAIT;
+    while pasteboard::change_count() == before && std::time::Instant::now() < deadline {
+        std::thread::sleep(Duration::from_millis(20));
+    }
+    if pasteboard::change_count() == before {
+        return Ok(CopiedSelection::Nothing);
+    }
+    // Some apps write a copy in more than one step; let it settle.
+    std::thread::sleep(Duration::from_millis(40));
+    let copied = pasteboard::read_string();
+    let after = pasteboard::change_count();
+    let _ = app_handle.run_on_main_thread(move || {
+        pasteboard::restore(saved, after);
+    });
+    Ok(match copied {
+        Some(text) if text.is_empty() => CopiedSelection::Nothing,
+        Some(text) => CopiedSelection::Text(text),
+        None => CopiedSelection::NotText,
+    })
 }
 
 /// Pastes text using the clipboard: writes text, waits for clipboard sync, then sends the paste keystroke.
@@ -83,12 +389,7 @@ fn paste_via_clipboard(
 
     // Fall back to enigo if no native tool handled it
     if !key_combo_sent {
-        match paste_method {
-            PasteMethod::CtrlV => input::send_paste_ctrl_v(enigo)?,
-            PasteMethod::CtrlShiftV => input::send_paste_ctrl_shift_v(enigo)?,
-            PasteMethod::ShiftInsert => input::send_paste_shift_insert(enigo)?,
-            _ => return Err("Invalid paste method for clipboard paste".into()),
-        }
+        send_paste_keys(enigo, paste_method)?;
     }
 
     Ok(())
@@ -605,14 +906,26 @@ fn should_send_auto_submit(auto_submit: bool, effective_strategy: EffectivePaste
     auto_submit && effective_strategy != EffectivePasteStrategy::None
 }
 
+/// Delivers a dictation: pastes it with the trailing space and auto-submit
+/// the user chose.
 pub fn paste(text: String, app_handle: AppHandle) -> Result<(), String> {
+    paste_with(text, app_handle, true)
+}
+
+/// Delivers a command's result, usually over a selection. A trailing space or
+/// a submitted message would be wrong there, so neither is added.
+pub fn paste_replacement(text: String, app_handle: AppHandle) -> Result<(), String> {
+    paste_with(text, app_handle, false)
+}
+
+fn paste_with(text: String, app_handle: AppHandle, as_dictation: bool) -> Result<(), String> {
     let settings = get_settings(&app_handle);
     let paste_method = settings.paste_method;
     let paste_delay_ms = settings.paste_delay_ms;
     let effective_strategy = resolve_paste_strategy(paste_method, settings.clipboard_handling);
 
     // Append trailing space if setting is enabled
-    let text = if settings.append_trailing_space {
+    let text = if as_dictation && settings.append_trailing_space {
         format!("{} ", text)
     } else {
         text
@@ -622,19 +935,6 @@ pub fn paste(text: String, app_handle: AppHandle) -> Result<(), String> {
         "Using paste method: {:?}, delay: {}ms",
         paste_method, paste_delay_ms
     );
-
-    if effective_strategy == EffectivePasteStrategy::Direct
-        && settings.clipboard_handling == ClipboardHandling::DontModify
-        && matches!(
-            paste_method,
-            PasteMethod::CtrlV | PasteMethod::CtrlShiftV | PasteMethod::ShiftInsert
-        )
-    {
-        info!(
-            "Clipboard-preserving mode selected for {:?}; using direct text insertion to avoid clipboard restore races",
-            paste_method
-        );
-    }
 
     // Get the managed Enigo instance
     let enigo_state = app_handle
@@ -665,6 +965,14 @@ pub fn paste(text: String, app_handle: AppHandle) -> Result<(), String> {
             &paste_method,
             paste_delay_ms,
         )?,
+        #[cfg(target_os = "macos")]
+        EffectivePasteStrategy::ClipboardRestore => paste_and_restore(
+            &mut enigo,
+            &text,
+            &app_handle,
+            &paste_method,
+            paste_delay_ms,
+        )?,
         #[cfg(not(feature = "mac-app-store"))]
         EffectivePasteStrategy::ExternalScript => {
             let script_path = settings
@@ -676,7 +984,7 @@ pub fn paste(text: String, app_handle: AppHandle) -> Result<(), String> {
         }
     }
 
-    if should_send_auto_submit(settings.auto_submit, effective_strategy) {
+    if as_dictation && should_send_auto_submit(settings.auto_submit, effective_strategy) {
         std::thread::sleep(Duration::from_millis(50));
         send_return_key(&mut enigo, settings.auto_submit_key)?;
     }
@@ -697,19 +1005,51 @@ mod tests {
     use super::*;
 
     #[test]
-    fn clipboard_hotkeys_use_direct_when_preserving_clipboard() {
+    #[cfg(target_os = "macos")]
+    fn password_manager_items_are_never_put_back() {
+        assert!(pasteboard::is_sensitive(
+            ["public.utf8-plain-text", "org.nspasteboard.ConcealedType"].into_iter()
+        ));
+        assert!(pasteboard::is_sensitive(
+            ["org.nspasteboard.TransientType"].into_iter()
+        ));
+        assert!(!pasteboard::is_sensitive(
+            ["public.png", "public.utf8-plain-text"].into_iter()
+        ));
+    }
+
+    #[test]
+    #[cfg(target_os = "macos")]
+    fn remote_desktop_apps_keep_the_dictation_on_the_clipboard() {
+        assert!(skips_restore("com.apple.ScreenSharing"));
+        assert!(skips_restore("com.microsoft.rdc.macos"));
+        assert!(!skips_restore("com.apple.Notes"));
+        // Long enough for a busy app to read the clipboard before it's restored.
+        assert!(RESTORE_DELAY >= Duration::from_millis(1000));
+    }
+
+    #[test]
+    #[cfg(target_os = "macos")]
+    fn clipboard_hotkeys_restore_the_clipboard_on_macos() {
         assert_eq!(
             resolve_paste_strategy(PasteMethod::CtrlV, ClipboardHandling::DontModify),
-            EffectivePasteStrategy::Direct
+            EffectivePasteStrategy::ClipboardRestore
         );
-        assert_eq!(
-            resolve_paste_strategy(PasteMethod::CtrlShiftV, ClipboardHandling::DontModify),
-            EffectivePasteStrategy::Direct
-        );
-        assert_eq!(
-            resolve_paste_strategy(PasteMethod::ShiftInsert, ClipboardHandling::DontModify),
-            EffectivePasteStrategy::Direct
-        );
+    }
+
+    #[test]
+    #[cfg(not(target_os = "macos"))]
+    fn clipboard_hotkeys_keep_text_on_the_clipboard_elsewhere() {
+        for method in [
+            PasteMethod::CtrlV,
+            PasteMethod::CtrlShiftV,
+            PasteMethod::ShiftInsert,
+        ] {
+            assert_eq!(
+                resolve_paste_strategy(method, ClipboardHandling::DontModify),
+                EffectivePasteStrategy::ClipboardHotkey
+            );
+        }
     }
 
     #[test]

@@ -1,9 +1,6 @@
 // Settings section components
-export { GeneralSettings } from "./general/GeneralSettings";
 export { AdvancedSettings } from "./advanced/AdvancedSettings";
 export { DebugSettings } from "./debug/DebugSettings";
-export { HistorySettings } from "./history/HistorySettings";
-export { PostProcessingSettings } from "./post-processing/PostProcessingSettings";
 export { ModelsSettings } from "./models/ModelsSettings";
 
 // Individual setting components
@@ -14,6 +11,7 @@ export { AlwaysOnMicrophone } from "./AlwaysOnMicrophone";
 export { PushToTalk } from "./PushToTalk";
 export { AudioFeedback } from "./AudioFeedback";
 export { ShowOverlay } from "./ShowOverlay";
+export { OverlayAppearance } from "./OverlayAppearance";
 export { GlobalShortcutInput } from "./GlobalShortcutInput";
 export { NativeKeysShortcutInput } from "./NativeKeysShortcutInput";
 export { ShortcutInput } from "./ShortcutInput";

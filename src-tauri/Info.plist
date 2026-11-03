@@ -6,7 +6,11 @@
     <false/>
     <key>LSApplicationCategoryType</key>
     <string>public.app-category.productivity</string>
+    <key>NSCalendarsFullAccessUsageDescription</key>
+    <string>SilkScribe shows your upcoming meetings, names your meeting notes after them, and reminds you to take notes. Your calendar stays on this Mac.</string>
+    <key>NSCalendarsUsageDescription</key>
+    <string>SilkScribe shows your upcoming meetings, names your meeting notes after them, and reminds you to take notes. Your calendar stays on this Mac.</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Request microphone access to transcribe audio locally</string>
+    <string>SilkScribe turns your voice into text on this Mac. It only listens while you're dictating or recording.</string>
 </dict>
 </plist>

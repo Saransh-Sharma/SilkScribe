@@ -1,5 +1,11 @@
 import { listen } from "@tauri-apps/api/event";
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import "./RecordingOverlay.css";
 import GpuWaveformStage from "./GpuWaveformStage";
@@ -7,44 +13,129 @@ import { WAVEFORM_BUCKET_COUNT } from "./waveformConfig";
 import i18n, { syncLanguageFromSettings } from "@/i18n";
 import { getLanguageDirection } from "@/lib/utils/rtl";
 
-type OverlayState =
+/** Levels at or below this are silence: a muted mic, or no signal at all. */
+const SILENCE_FLOOR = 0.02;
+/** How long a recording hears nothing before it says so. */
+const SILENCE_WARNING_MS = 3000;
+
+export type OverlayState =
   | "recording"
   | "transcribing"
   | "processing"
   | "success"
   | "error"
-  | "cancelled";
+  | "cancelled"
+  | "empty";
+
+export type OverlayMode = "command" | "edit" | "write";
+
+/** Theme preference as sent by Rust. `system` is resolved here, not there. */
+export type OverlayThemePreference = "light" | "dark" | "system";
+
+export type ResolvedOverlayTheme = "light" | "dark";
 
 interface OverlayEventPayload {
   state: OverlayState;
-  title?: string;
-  detail?: string;
+  theme?: OverlayThemePreference;
+  /** i18n key suffix under `overlay.detail.*`, sent instead of a literal
+   *  string because Rust has no access to the user's translation bundle. */
+  detailCode?: string;
+  /** Excerpt of the text that was actually delivered, shown on success. */
   previewText?: string;
+  /** The app the text is going into, while AI cleanup writes for it. */
+  contextApp?: string;
+  /** Key suffix under `overlay.style.*`. */
+  contextStyle?: string;
+  /** Cleanup is using the text around the cursor. */
+  contextNearby?: boolean;
+  /** A spoken command: "command" while recording, then "edit" (a selection)
+   *  or "write" (at the cursor) while it runs. */
+  mode?: OverlayMode;
+  /** Recording hands-free after a tap; the next press stops it. */
+  locked?: boolean;
+  /** Screen edge the overlay is anchored to, so it can enter from that side. */
+  position?: "top" | "bottom";
   canCancel: boolean;
 }
 
+const OVERLAY_STATES: readonly OverlayState[] = [
+  "recording",
+  "transcribing",
+  "processing",
+  "success",
+  "error",
+  "cancelled",
+  "empty",
+];
+
 const isOverlayState = (value: unknown): value is OverlayState =>
-  typeof value === "string" &&
-  [
-    "recording",
-    "transcribing",
-    "processing",
-    "success",
-    "error",
-    "cancelled",
-  ].includes(value);
+  typeof value === "string" && OVERLAY_STATES.includes(value as OverlayState);
+
+/** Live text is one line; longer keeps its end, the newest words. */
+const PARTIAL_MAX_CHARS = 44;
+
+/** The end of the live text, starting at a word where it's cut. */
+const trimToEnd = (text: string) => {
+  if (text.length <= PARTIAL_MAX_CHARS) return text;
+  const tail = text.slice(-PARTIAL_MAX_CHARS);
+  const space = tail.indexOf(" ");
+  return `…${(space >= 0 && space < 16 ? tail.slice(space + 1) : tail).trimStart()}`;
+};
 
 const ENERGY_ATTACK = 0.5;
 const ENERGY_RELEASE = 0.12;
 
-const RecordingOverlay: React.FC = () => {
+const DARK_SCHEME_QUERY = "(prefers-color-scheme: dark)";
+
+const resolveTheme = (
+  preference: OverlayThemePreference,
+): ResolvedOverlayTheme => {
+  if (preference === "light" || preference === "dark") return preference;
+  if (typeof window === "undefined" || !window.matchMedia) return "light";
+  return window.matchMedia(DARK_SCHEME_QUERY).matches ? "dark" : "light";
+};
+
+const readDocumentTheme = (): ResolvedOverlayTheme =>
+  document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+
+interface RecordingOverlayProps {
+  previewState?: OverlayState;
+  previewVisible?: boolean;
+  /** Fixture-only: exercise the detail/preview line without a backend. */
+  previewPayload?: Partial<OverlayEventPayload>;
+  /** Fixture-only: pin one treatment without touching the document theme, so a
+   *  single page can show both side by side. */
+  previewTheme?: ResolvedOverlayTheme;
+  /** Fixture-only: live text while recording. */
+  previewPartial?: string;
+  /** Fixture-only: the mic has heard nothing for a while. */
+  previewSilent?: boolean;
+}
+
+const RecordingOverlay: React.FC<RecordingOverlayProps> = ({
+  previewState,
+  previewVisible,
+  previewPayload,
+  previewTheme,
+  previewPartial,
+  previewSilent,
+}) => {
   const { t } = useTranslation();
+  // When the mic last sent anything above silence while recording. A muted
+  // or wrong mic, or one without permission, sends nothing for good.
+  const heardAtRef = useRef(0);
+  const [silent, setSilent] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [overlay, setOverlay] = useState<OverlayEventPayload>({
     state: "recording",
     canCancel: true,
   });
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  // Experimental live text: what the engine has heard so far.
+  const [partial, setPartial] = useState("");
+  const [resolvedTheme, setResolvedTheme] =
+    useState<ResolvedOverlayTheme>(readDocumentTheme);
+  const theme = previewTheme ?? resolvedTheme;
   const levelsRef = useRef<number[]>(Array(WAVEFORM_BUCKET_COUNT).fill(0));
   const waveformSinkRef = useRef<((levels: number[]) => void) | null>(null);
   const isVisibleRef = useRef(false);
@@ -52,28 +143,60 @@ const RecordingOverlay: React.FC = () => {
   const recordingStartedAtRef = useRef<number | null>(null);
   const pillRef = useRef<HTMLDivElement | null>(null);
   const energyRef = useRef(0);
+  const themePreferenceRef = useRef<OverlayThemePreference>("system");
   const direction = getLanguageDirection(i18n.language);
 
-  const state = overlay.state;
+  const state = previewState ?? overlay.state;
+  const visible = previewVisible ?? isVisible;
   const isRecording = state === "recording";
-  const shouldRenderGpuWaveform = isVisible && isRecording;
+  const shouldRenderGpuWaveform = visible && isRecording;
 
-  const ariaForState = (value: OverlayState) => {
-    switch (value) {
-      case "recording":
-        return t("overlay.listening");
-      case "transcribing":
-        return t("overlay.transcribing");
-      case "processing":
-        return t("overlay.processing");
-      case "success":
-        return t("overlay.success");
-      case "error":
-        return t("overlay.failed");
-      case "cancelled":
-        return t("overlay.cancelled");
-    }
-  };
+  /** Push the resolved theme onto the document so the CSS token layer picks
+   *  it up, exactly as the main window does. */
+  const applyTheme = useCallback((preference: OverlayThemePreference) => {
+    themePreferenceRef.current = preference;
+    const resolved = resolveTheme(preference);
+    document.documentElement.dataset.theme = resolved;
+    setResolvedTheme(resolved);
+  }, []);
+
+  // The OS appearance can flip while the overlay is on screen; the payload only
+  // re-syncs on the next show.
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+
+    const query = window.matchMedia(DARK_SCHEME_QUERY);
+    const handleChange = () => {
+      if (themePreferenceRef.current === "system") {
+        applyTheme("system");
+      }
+    };
+
+    query.addEventListener("change", handleChange);
+    return () => query.removeEventListener("change", handleChange);
+  }, [applyTheme]);
+
+  const ariaForState = useCallback(
+    (value: OverlayState) => {
+      switch (value) {
+        case "recording":
+          return t("overlay.listening");
+        case "transcribing":
+          return t("overlay.transcribing");
+        case "processing":
+          return t("overlay.processing");
+        case "success":
+          return t("overlay.success");
+        case "error":
+          return t("overlay.failed");
+        case "cancelled":
+          return t("overlay.cancelled");
+        case "empty":
+          return t("overlay.empty");
+      }
+    },
+    [t],
+  );
 
   const formatElapsed = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -96,9 +219,15 @@ const RecordingOverlay: React.FC = () => {
         : "recording";
       return {
         state: next,
-        title: candidate.title,
-        detail: candidate.detail,
+        theme: candidate.theme,
+        detailCode: candidate.detailCode,
         previewText: candidate.previewText,
+        contextApp: candidate.contextApp,
+        contextStyle: candidate.contextStyle,
+        contextNearby: candidate.contextNearby,
+        mode: candidate.mode,
+        locked: candidate.locked,
+        position: candidate.position,
         canCancel: candidate.canCancel ?? next === "recording",
       };
     }
@@ -107,26 +236,42 @@ const RecordingOverlay: React.FC = () => {
   };
 
   useEffect(() => {
+    if (previewState) return;
+
     let disposed = false;
     const unlisteners: Array<() => void> = [];
 
     const setupEventListeners = async () => {
       const listeners = await Promise.all([
-        listen("show-overlay", async (event) => {
-          await syncLanguageFromSettings();
+        listen("show-overlay", (event) => {
           const nextOverlay = resolvePayload(event.payload);
+          applyTheme(nextOverlay.theme ?? "system");
           overlayStateRef.current = nextOverlay.state;
           isVisibleRef.current = true;
           if (nextOverlay.state === "recording") {
             recordingStartedAtRef.current = Date.now();
+            if (!nextOverlay.locked) {
+              heardAtRef.current = Date.now();
+              setSilent(false);
+            }
             setElapsedSeconds(0);
+            // A tap locking the recording re-shows it; keep what's heard.
+            if (!nextOverlay.locked) setPartial("");
           } else {
+            setPartial("");
             recordingStartedAtRef.current = null;
             energyRef.current = 0;
             pillRef.current?.style.setProperty("--overlay-energy", "0");
           }
           setOverlay(nextOverlay);
           setIsVisible(true);
+          // Language sync is a round-trip to Rust; never let it gate the paint.
+          void syncLanguageFromSettings();
+        }),
+        listen<string>("overlay-partial", (event) => {
+          if (overlayStateRef.current === "recording") {
+            setPartial(event.payload);
+          }
         }),
         listen("hide-overlay", () => {
           isVisibleRef.current = false;
@@ -138,10 +283,16 @@ const RecordingOverlay: React.FC = () => {
           const newLevels = event.payload as number[];
           const nextLevels = levelsRef.current;
           let sum = 0;
+          let loudest = 0;
           for (let index = 0; index < WAVEFORM_BUCKET_COUNT; index += 1) {
             const value = newLevels[index] ?? 0;
             nextLevels[index] = value;
             sum += value;
+            loudest = Math.max(loudest, value);
+          }
+          if (loudest > SILENCE_FLOOR) {
+            heardAtRef.current = Date.now();
+            setSilent(false);
           }
 
           if (
@@ -178,10 +329,10 @@ const RecordingOverlay: React.FC = () => {
       disposed = true;
       unlisteners.forEach((unlisten) => unlisten());
     };
-  }, [t]);
+  }, [applyTheme, previewState, t]);
 
   useEffect(() => {
-    if (!isVisible || !isRecording) return;
+    if (!visible || !isRecording) return;
 
     const timer = window.setInterval(() => {
       if (recordingStartedAtRef.current === null) {
@@ -195,33 +346,95 @@ const RecordingOverlay: React.FC = () => {
     }, 1000);
 
     return () => window.clearInterval(timer);
-  }, [isRecording, isVisible]);
+  }, [isRecording, visible]);
+
+  const payload = previewPayload ?? overlay;
+  const mode = payload.mode;
 
   const showElapsed = isRecording && elapsedSeconds >= 5;
-  const stateLabel = ariaForState(state);
-  const detailText =
-    overlay.detail ??
-    (state === "cancelled" ? t("overlay.cancelledDetail") : undefined);
-  const announcement = [stateLabel, detailText].filter(Boolean).join(". ");
+  const isCommand = isRecording && mode === "command";
+  const isLocked = isRecording && Boolean(payload.locked);
+  const stateLabel = isLocked
+    ? t("overlay.handsFree.listening")
+    : isCommand
+      ? t("overlay.command.listening")
+      : state === "processing" && mode === "edit"
+        ? t("overlay.command.editing")
+        : state === "processing" && mode === "write"
+          ? t("overlay.command.writing")
+          : ariaForState(state);
+
+  // A transcript excerpt is the most useful thing we can show, so it wins over
+  // the generic per-state detail line.
+  const detailText = useMemo(() => {
+    if (payload.previewText) return payload.previewText;
+    if (payload.contextApp && payload.contextStyle)
+      return [
+        payload.contextApp,
+        t(`overlay.style.${payload.contextStyle}`),
+        payload.contextNearby ? t("overlay.nearbyText") : null,
+      ]
+        .filter(Boolean)
+        .join(" · ");
+    if (payload.detailCode) return t(`overlay.detail.${payload.detailCode}`);
+    return undefined;
+  }, [
+    payload.contextApp,
+    payload.contextNearby,
+    payload.contextStyle,
+    payload.detailCode,
+    payload.previewText,
+    t,
+  ]);
+
+  // Say so if a recording has heard nothing for a few seconds, whether the
+  // mic sends silence or nothing at all.
+  useEffect(() => {
+    if (previewState || !isRecording) return;
+    const timer = window.setInterval(() => {
+      if (Date.now() - heardAtRef.current >= SILENCE_WARNING_MS)
+        setSilent(true);
+    }, 500);
+    return () => window.clearInterval(timer);
+  }, [previewState, isRecording]);
+  const showsSilence = isRecording && (previewSilent ?? silent);
+
+  const isQuoted = Boolean(payload.previewText);
+  // One line, ending with the latest words.
+  const partialText = previewPartial ?? partial;
+  const partialLine = isRecording && partialText ? trimToEnd(partialText) : "";
+  const silenceLine = showsSilence && !partialLine ? t("overlay.silent") : "";
+  const announcement = [stateLabel, detailText, silenceLine]
+    .filter(Boolean)
+    .join(". ");
 
   return (
-    <div className="overlay-stage" dir={direction}>
+    <div
+      className="overlay-stage"
+      dir={direction}
+      data-overlay-theme={theme}
+      data-position={payload.position ?? "bottom"}
+    >
       <div
         ref={pillRef}
-        className={`overlay-pill ${isVisible ? "is-visible" : ""}`}
+        className={`overlay-pill ${visible ? "is-visible" : ""}`}
         data-state={state}
+        data-has-detail={detailText ? "true" : "false"}
+        data-has-partial={partialLine || silenceLine ? "true" : "false"}
         role="status"
         aria-live="polite"
         aria-atomic="true"
         aria-label={announcement}
       >
         <div className="overlay-grain" aria-hidden="true" />
+        <div className="overlay-sheen" aria-hidden="true" />
 
         <div className="overlay-waveform-bay" aria-hidden="true">
           {shouldRenderGpuWaveform ? (
             <GpuWaveformStage
               initialLevels={levelsRef.current}
               isActive={shouldRenderGpuWaveform}
+              theme={theme}
               onReady={(pushLevels) => {
                 waveformSinkRef.current = pushLevels;
                 pushLevels(levelsRef.current);
@@ -241,16 +454,49 @@ const RecordingOverlay: React.FC = () => {
           <div className="overlay-ring" />
         </div>
 
-        {showElapsed ? (
-          <div className="overlay-timer" aria-hidden="true">
-            {formatElapsed(elapsedSeconds)}
+        {isCommand || isLocked || showElapsed ? (
+          <div
+            className="overlay-timer"
+            data-mode={isCommand ? "command" : undefined}
+            data-locked={isLocked ? "true" : undefined}
+            aria-hidden="true"
+          >
+            {[
+              isCommand ? t("overlay.command.tag") : null,
+              isLocked ? t("overlay.handsFree.tag") : null,
+              showElapsed ? formatElapsed(elapsedSeconds) : null,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
           </div>
         ) : null}
 
-        <div className="overlay-copy">
+        {partialLine ? (
+          // Not announced: it changes every second and the pasted text is
+          // what counts.
+          <div className="overlay-partial" dir="auto" aria-hidden="true">
+            {partialLine}
+          </div>
+        ) : silenceLine ? (
+          // Announced through the pill's label above.
+          <div
+            className="overlay-partial overlay-silence"
+            dir="auto"
+            aria-hidden="true"
+          >
+            {silenceLine}
+          </div>
+        ) : null}
+
+        <div className="overlay-copy" key={state}>
           <div className="overlay-label">{stateLabel}</div>
           {detailText ? (
-            <div className="overlay-detail">{detailText}</div>
+            <div
+              className="overlay-detail"
+              data-quoted={isQuoted ? "true" : "false"}
+            >
+              {detailText}
+            </div>
           ) : null}
         </div>
       </div>

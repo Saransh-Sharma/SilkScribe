@@ -17,7 +17,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   className = "",
 }) => (
   <div
-    className={`rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-[linear-gradient(180deg,color-mix(in_srgb,var(--ss-bg-surface-alt)_70%,var(--ss-bg-surface))_0%,var(--ss-bg-surface)_100%)] px-5 py-8 shadow-[var(--ss-shadow-card)] ${className}`}
+    className={`ss-empty-state rounded-[var(--ss-radius-xl)] border border-ss-border-subtle bg-ss-bg-surface px-6 py-9 shadow-[var(--ss-shadow-card)] ${className}`}
   >
     <div className="flex max-w-[60ch] items-start gap-3">
       <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--ss-radius-md)] border border-ss-border-subtle bg-ss-bg-elevated text-ss-brand-secondary">

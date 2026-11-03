@@ -1,0 +1,1 @@
+Synthetic one-second, 440 Hz stereo tone generated locally with FFmpeg at 44.1 kHz. No recorded speech or third-party content. Files exercise PCM WAV, MP3, AAC/M4A, FLAC, and Vorbis/OGG decoding. FFmpeg is used only to prepare these fixtures; the shipped app uses its bundled decoder.

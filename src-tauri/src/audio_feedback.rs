@@ -9,40 +9,113 @@ use std::path::{Path, PathBuf};
 use std::thread;
 use tauri::{AppHandle, Manager};
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum SoundType {
+    /// Recording has started and the microphone is live.
     Start,
-    Stop,
+    /// Recording stopped; the transcription pipeline has taken the audio.
+    Transcribing,
+    /// Text was produced and delivered. The one cue the user is waiting on.
+    Done,
+    /// Something went wrong — transcription failed, or the paste did.
+    Error,
+    /// The user backed out before anything was transcribed.
+    Cancel,
 }
 
+impl SoundType {
+    /// Filename stem for this cue in the current (five-cue) scheme.
+    fn cue(self) -> &'static str {
+        match self {
+            SoundType::Start => "start",
+            SoundType::Transcribing => "transcribing",
+            SoundType::Done => "done",
+            SoundType::Error => "error",
+            SoundType::Cancel => "cancel",
+        }
+    }
+
+    /// Filename stem in the original two-cue scheme, for themes that predate
+    /// the full set. `Transcribing` fires at exactly the moment the old `stop`
+    /// sound did, so it maps cleanly; the remaining cues have no equivalent and
+    /// fall through to the Silk set instead.
+    fn legacy_cue(self) -> Option<&'static str> {
+        match self {
+            SoundType::Start => Some("start"),
+            SoundType::Transcribing => Some("stop"),
+            SoundType::Done | SoundType::Error | SoundType::Cancel => None,
+        }
+    }
+}
+
+/// Locate the audio file for a cue.
+///
+/// Resolution order, first hit wins:
+///   1. the selected theme's file for this cue (`marimba_done.wav`)
+///   2. the selected theme's legacy file, if the cue has one (`marimba_stop.wav`)
+///   3. the Silk file for this cue (`silk_done.wav`)
+///
+/// This is what lets Marimba and Pop keep working while shipping only the two
+/// WAVs they always had: the three new cues borrow Silk's.
 fn resolve_sound_path(
     app: &AppHandle,
     settings: &AppSettings,
     sound_type: SoundType,
 ) -> Option<PathBuf> {
-    let sound_file = get_sound_path(settings, sound_type);
-    if settings.sound_theme == SoundTheme::Custom {
-        return crate::portable::resolve_app_data(app, &sound_file).ok();
+    let theme = settings.sound_theme;
+
+    let mut candidates: Vec<(String, tauri::path::BaseDirectory)> = Vec::new();
+    let base_dir = theme_base_dir(theme);
+
+    candidates.push((theme.sound_file(sound_type.cue()), base_dir));
+    if let Some(legacy) = sound_type.legacy_cue() {
+        candidates.push((theme.sound_file(legacy), base_dir));
     }
-    let base_dir = get_sound_base_dir(settings);
-    app.path().resolve(&sound_file, base_dir).ok()
+    if theme != SoundTheme::Silk {
+        candidates.push((
+            SoundTheme::Silk.sound_file(sound_type.cue()),
+            tauri::path::BaseDirectory::Resource,
+        ));
+    }
+
+    for (file, dir) in candidates {
+        if let Some(path) = resolve_candidate(app, &file, dir) {
+            return Some(path);
+        }
+    }
+
+    debug!(
+        "No sound file found for cue '{}' in theme '{}'",
+        sound_type.cue(),
+        theme.as_str()
+    );
+    None
 }
 
-fn get_sound_path(settings: &AppSettings, sound_type: SoundType) -> String {
-    match (settings.sound_theme, sound_type) {
-        (SoundTheme::Custom, SoundType::Start) => "custom_start.wav".to_string(),
-        (SoundTheme::Custom, SoundType::Stop) => "custom_stop.wav".to_string(),
-        (_, SoundType::Start) => settings.sound_theme.to_start_path(),
-        (_, SoundType::Stop) => settings.sound_theme.to_stop_path(),
-    }
+fn resolve_candidate(
+    app: &AppHandle,
+    file: &str,
+    base_dir: tauri::path::BaseDirectory,
+) -> Option<PathBuf> {
+    let path = match base_dir {
+        // Custom sounds live beside the app data, which the portable build
+        // relocates; go through the helper that knows about that.
+        tauri::path::BaseDirectory::AppData => crate::portable::resolve_app_data(app, file).ok()?,
+        other => app.path().resolve(file, other).ok()?,
+    };
+
+    path.is_file().then_some(path)
 }
 
-fn get_sound_base_dir(settings: &AppSettings) -> tauri::path::BaseDirectory {
-    match settings.sound_theme {
+fn theme_base_dir(theme: SoundTheme) -> tauri::path::BaseDirectory {
+    match theme {
         SoundTheme::Custom => tauri::path::BaseDirectory::AppData,
         _ => tauri::path::BaseDirectory::Resource,
     }
 }
 
+/// Play a cue without blocking the caller. Used everywhere the pipeline must
+/// keep moving — notably the `Done` cue, which must never delay the paste.
 pub fn play_feedback_sound(app: &AppHandle, sound_type: SoundType) {
     let settings = settings::get_settings(app);
     if !settings.audio_feedback {
@@ -53,6 +126,8 @@ pub fn play_feedback_sound(app: &AppHandle, sound_type: SoundType) {
     }
 }
 
+/// Play a cue and wait for it to finish. Used at recording start so the
+/// microphone mute can be applied only once the sound has stopped.
 pub fn play_feedback_sound_blocking(app: &AppHandle, sound_type: SoundType) {
     let settings = settings::get_settings(app);
     if !settings.audio_feedback {

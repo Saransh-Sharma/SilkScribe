@@ -11,7 +11,7 @@ interface ThemeSelectorProps {
 }
 
 export const ThemeSelector: React.FC<ThemeSelectorProps> = React.memo(
-  ({ descriptionMode = "tooltip", grouped = false }) => {
+  ({ descriptionMode = "inline", grouped = false }) => {
     const { t } = useTranslation();
     const { settings, updateSetting } = useSettings();
     const currentTheme = settings?.theme ?? "system";
@@ -34,7 +34,6 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = React.memo(
     return (
       <SettingContainer
         title={t("settings.general.theme.title")}
-        description={t("settings.general.theme.description")}
         descriptionMode={descriptionMode}
         grouped={grouped}
       >

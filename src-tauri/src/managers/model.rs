@@ -534,7 +534,7 @@ impl ModelManager {
 
         for filename in &bundled_models {
             let bundled_path = self.app_handle.path().resolve(
-                &format!("resources/models/{}", filename),
+                format!("resources/models/{}", filename),
                 tauri::path::BaseDirectory::Resource,
             );
 
@@ -562,10 +562,10 @@ impl ModelManager {
             if model.is_directory {
                 // For directory-based models, check if the directory exists
                 let model_path = self.models_dir.join(&model.filename);
-                let partial_path = self.models_dir.join(format!("{}.partial", &model.filename));
+                let partial_path = self.models_dir.join(format!("{}.partial", model.filename));
                 let extracting_path = self
                     .models_dir
-                    .join(format!("{}.extracting", &model.filename));
+                    .join(format!("{}.extracting", model.filename));
 
                 // Clean up any leftover .extracting directories from interrupted extractions
                 // But only if this model is NOT currently being extracted
@@ -590,7 +590,7 @@ impl ModelManager {
             } else {
                 // For file-based models (existing logic)
                 let model_path = self.models_dir.join(&model.filename);
-                let partial_path = self.models_dir.join(format!("{}.partial", &model.filename));
+                let partial_path = self.models_dir.join(format!("{}.partial", model.filename));
 
                 model.is_downloaded = model_path.exists();
                 model.is_downloading = false;
@@ -786,18 +786,12 @@ impl ModelManager {
                     model_id, expected, actual
                 );
                 let _ = fs::remove_file(path);
-                Err(anyhow::anyhow!(
-                    "Download verification failed for model {}: file is corrupt. Please retry.",
-                    model_id
-                ))
+                Err(anyhow::anyhow!("The download was damaged. Try again."))
             }
             Err(e) => {
+                warn!("Failed to verify download for model {}: {}", model_id, e);
                 let _ = fs::remove_file(path);
-                Err(anyhow::anyhow!(
-                    "Failed to verify download for model {}: {}. Please retry.",
-                    model_id,
-                    e
-                ))
+                Err(anyhow::anyhow!("The download was damaged. Try again."))
             }
         }
     }
@@ -966,7 +960,7 @@ impl ModelManager {
         let model_path = self.models_dir.join(&model_info.filename);
         let partial_path = self
             .models_dir
-            .join(format!("{}.partial", &model_info.filename));
+            .join(format!("{}.partial", model_info.filename));
 
         // Don't download if complete version already exists
         if model_path.exists() {
@@ -1048,9 +1042,14 @@ impl ModelManager {
                     model.is_downloading = false;
                 }
             }
-            return Err(anyhow::anyhow!(
-                "Failed to download model: HTTP {}",
+            warn!(
+                "Failed to download model {}: HTTP {}",
+                model_id,
                 response.status()
+            );
+            return Err(anyhow::anyhow!(
+                "Download failed (HTTP {}). Try again.",
+                response.status().as_u16()
             ));
         }
 
@@ -1119,7 +1118,7 @@ impl ModelManager {
                 return Ok(());
             }
 
-            let chunk = chunk.map_err(|e| {
+            let chunk = chunk.inspect_err(|_| {
                 // Mark as not downloading on error
                 {
                     let mut models = self.available_models.lock().unwrap();
@@ -1127,7 +1126,6 @@ impl ModelManager {
                         model.is_downloading = false;
                     }
                 }
-                e
             })?;
 
             file.write_all(&chunk)?;
@@ -1182,11 +1180,11 @@ impl ModelManager {
                         model.is_downloading = false;
                     }
                 }
-                return Err(anyhow::anyhow!(
-                    "Download incomplete: expected {} bytes, got {} bytes",
-                    total_size,
-                    actual_size
-                ));
+                warn!(
+                    "Download incomplete for model {}: expected {} bytes, got {} bytes",
+                    model_id, total_size, actual_size
+                );
+                return Err(anyhow::anyhow!("The download was cut short. Try again."));
             }
         }
 
@@ -1218,7 +1216,7 @@ impl ModelManager {
             // Use a temporary extraction directory to ensure atomic operations
             let temp_extract_dir = self
                 .models_dir
-                .join(format!("{}.extracting", &model_info.filename));
+                .join(format!("{}.extracting", model_info.filename));
             let final_model_dir = self.models_dir.join(&model_info.filename);
 
             // Clean up any previous incomplete extraction
@@ -1334,7 +1332,7 @@ impl ModelManager {
         let model_size_bytes = model_info.size_mb.saturating_mul(1024 * 1024);
         let partial_path = self
             .models_dir
-            .join(format!("{}.partial", &model_info.filename));
+            .join(format!("{}.partial", model_info.filename));
         let partial_bytes = partial_path.metadata().map(|m| m.len()).unwrap_or(0);
         let remaining_download_bytes = model_size_bytes.saturating_sub(partial_bytes);
         let recommended_headroom_bytes = RECOMMENDED_DOWNLOAD_HEADROOM_BYTES;
@@ -1376,7 +1374,7 @@ impl ModelManager {
         let model_path = self.models_dir.join(&model_info.filename);
         let partial_path = self
             .models_dir
-            .join(format!("{}.partial", &model_info.filename));
+            .join(format!("{}.partial", model_info.filename));
         debug!("ModelManager: Model path: {:?}", model_path);
         debug!("ModelManager: Partial path: {:?}", partial_path);
 
@@ -1450,7 +1448,7 @@ impl ModelManager {
         let model_path = self.models_dir.join(&model_info.filename);
         let partial_path = self
             .models_dir
-            .join(format!("{}.partial", &model_info.filename));
+            .join(format!("{}.partial", model_info.filename));
 
         if model_info.is_directory {
             // For directory-based models, ensure the directory exists and is complete

@@ -16,6 +16,8 @@ interface DropdownProps {
   placeholder?: string;
   disabled?: boolean;
   onRefresh?: () => void;
+  /** Accessible name. Required wherever no visible <label> names the control. */
+  ariaLabel?: string;
 }
 
 interface DropdownMenuPosition {
@@ -36,15 +38,19 @@ export const Dropdown: React.FC<DropdownProps> = ({
   selectedValue,
   onSelect,
   className = "",
-  placeholder = "Select an option...",
+  placeholder: placeholderProp,
   disabled = false,
+  ariaLabel,
   onRefresh,
 }) => {
   const { t } = useTranslation();
+  const placeholder = placeholderProp ?? t("common.choose");
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
   const listboxId = useId();
   const [menuPosition, setMenuPosition] = useState<DropdownMenuPosition | null>(
     null,
@@ -133,7 +139,23 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
     updateMenuPosition();
 
-    const animationFrame = window.requestAnimationFrame(updateMenuPosition);
+    const animationFrame = window.requestAnimationFrame(() => {
+      updateMenuPosition();
+      const selectedIndex = options.findIndex(
+        (option) => option.value === selectedValue && !option.disabled,
+      );
+      const firstEnabledIndex = options.findIndex((option) => !option.disabled);
+      const nextIndex =
+        focusedIndex >= 0 && !options[focusedIndex]?.disabled
+          ? focusedIndex
+          : selectedIndex >= 0
+            ? selectedIndex
+            : firstEnabledIndex;
+      setFocusedIndex(nextIndex);
+      if (nextIndex >= 0) {
+        optionRefs.current[nextIndex]?.focus();
+      }
+    });
     window.addEventListener("resize", updateMenuPosition);
     window.addEventListener("scroll", updateMenuPosition, true);
 
@@ -142,11 +164,20 @@ export const Dropdown: React.FC<DropdownProps> = ({
       window.removeEventListener("resize", updateMenuPosition);
       window.removeEventListener("scroll", updateMenuPosition, true);
     };
-  }, [disabled, isOpen, updateMenuPosition]);
+  }, [
+    disabled,
+    focusedIndex,
+    isOpen,
+    options,
+    selectedValue,
+    updateMenuPosition,
+  ]);
 
   useEffect(() => {
     if (!isOpen) {
       setMenuPosition(null);
+      // Reopening starts from the selected option, not where focus was.
+      setFocusedIndex(-1);
       return;
     }
 
@@ -177,18 +208,79 @@ export const Dropdown: React.FC<DropdownProps> = ({
     setIsOpen(!isOpen);
   };
 
+  const focusOption = (index: number) => {
+    const enabledIndexes = options
+      .map((option, optionIndex) => (!option.disabled ? optionIndex : -1))
+      .filter((optionIndex) => optionIndex >= 0);
+    if (enabledIndexes.length === 0) return;
+    const normalized =
+      enabledIndexes[
+        ((index % enabledIndexes.length) + enabledIndexes.length) %
+          enabledIndexes.length
+      ];
+    setFocusedIndex(normalized);
+    optionRefs.current[normalized]?.focus();
+  };
+
+  const handleOptionKeyDown = (
+    event: React.KeyboardEvent<HTMLButtonElement>,
+    index: number,
+    value: string,
+  ) => {
+    const enabledIndexes = options
+      .map((option, optionIndex) => (!option.disabled ? optionIndex : -1))
+      .filter((optionIndex) => optionIndex >= 0);
+    const enabledPosition = enabledIndexes.indexOf(index);
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      focusOption(enabledPosition + 1);
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      focusOption(enabledPosition - 1);
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      focusOption(0);
+    } else if (event.key === "End") {
+      event.preventDefault();
+      focusOption(enabledIndexes.length - 1);
+    } else if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleSelect(value);
+    }
+  };
+
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         ref={triggerRef}
         type="button"
-        className={`flex min-h-11 min-w-[220px] items-center justify-between gap-2 rounded-[var(--ss-radius-md)] border px-3.5 py-2 text-start text-sm font-medium transition-[background-color,border-color,box-shadow,transform] duration-150 ${
+        className={`ss-control flex min-h-11 min-w-[220px] items-center justify-between gap-2 rounded-[var(--ss-radius-md)] border px-3.5 py-2 text-start text-sm font-medium transition-[background-color,border-color,box-shadow,transform] duration-200 ${
           disabled
             ? "cursor-not-allowed border-ss-border-subtle bg-ss-bg-surface-alt text-ss-text-disabled opacity-70"
             : "cursor-pointer border-ss-border-default bg-ss-bg-elevated text-ss-text-primary hover:-translate-y-0.5 hover:border-ss-brand-secondary/35 hover:bg-ss-bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35"
         }`}
         onClick={handleToggle}
+        onKeyDown={(event) => {
+          if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+            event.preventDefault();
+            const enabledIndexes = options
+              .map((option, index) => (!option.disabled ? index : -1))
+              .filter((index) => index >= 0);
+            setFocusedIndex(
+              event.key === "ArrowUp"
+                ? (enabledIndexes[enabledIndexes.length - 1] ?? -1)
+                : (enabledIndexes[0] ?? -1),
+            );
+            setIsOpen(true);
+          }
+        }}
         disabled={disabled}
+        // Deliberately left as an implicit `button`, not `role="combobox"`:
+        // `combobox` takes its accessible name from the author only, so
+        // adopting it would silently strip the name from every Dropdown that
+        // relies on its visible trigger text. `ariaLabel` covers the cases with
+        // no visible label of their own.
+        aria-label={ariaLabel}
         aria-expanded={isOpen}
         aria-controls={isOpen ? listboxId : undefined}
         aria-haspopup="listbox"
@@ -215,7 +307,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
               id={listboxId}
               role="listbox"
               aria-label={selectedOption?.label || placeholder}
-              className="overflow-y-auto overscroll-contain rounded-[var(--ss-radius-md)] border border-ss-border-default bg-ss-bg-surface p-1 shadow-[var(--ss-shadow-lift)] transition-[opacity,transform] duration-150"
+              className="ss-popover overflow-y-auto overscroll-contain rounded-[var(--ss-radius-lg)] border border-ss-border-default bg-ss-bg-surface p-1.5 shadow-[var(--ss-shadow-lift)] transition-[opacity,transform] duration-200"
               style={{
                 position: "fixed",
                 top: menuPosition?.top ?? -9999,
@@ -235,12 +327,20 @@ export const Dropdown: React.FC<DropdownProps> = ({
                   {t("common.noOptionsFound")}
                 </div>
               ) : (
-                options.map((option) => (
+                options.map((option, index) => (
                   <button
                     key={option.value}
                     type="button"
                     role="option"
                     aria-selected={selectedValue === option.value}
+                    ref={(element) => {
+                      optionRefs.current[index] = element;
+                    }}
+                    tabIndex={focusedIndex === index ? 0 : -1}
+                    onFocus={() => setFocusedIndex(index)}
+                    onKeyDown={(event) =>
+                      handleOptionKeyDown(event, index, option.value)
+                    }
                     className={`w-full rounded-[10px] px-3 py-2 text-start text-sm transition-colors duration-150 ${
                       selectedValue === option.value
                         ? "bg-ss-brand-secondary/14 font-semibold text-ss-brand-secondary"

@@ -1,6 +1,7 @@
 use crate::input;
 use crate::settings;
-use crate::settings::OverlayPosition;
+use crate::settings::{OverlayAppearance, OverlayPosition, ThemePreference};
+use std::sync::atomic::{AtomicU64, Ordering};
 use tauri::{AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize};
 
 #[cfg(not(target_os = "macos"))]
@@ -30,29 +31,89 @@ tauri_panel! {
     })
 }
 
-const OVERLAY_WIDTH: f64 = 300.0;
-const OVERLAY_HEIGHT: f64 = 84.0;
+// The native window is deliberately larger than the pill it contains. The pill
+// is centred inside it and morphs its own width per state, so the surplus is
+// what gives the drop shadow and the recording glow room to render instead of
+// being clipped at the window edge. Pill max is roughly 340x84.
+const OVERLAY_WIDTH: f64 = 400.0;
+const OVERLAY_HEIGHT: f64 = 116.0;
 
 #[derive(Clone, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
 struct OverlayPayload {
     state: String,
-    title: Option<String>,
-    detail: Option<String>,
+    /// Theme *preference* for the overlay webview: "light", "dark" or "system".
+    /// "system" is resolved on the TypeScript side via `matchMedia`, which keeps
+    /// this off the platform window-theme APIs (the macOS overlay is an NSPanel).
+    theme: String,
+    /// i18n key suffix under `overlay.detail.*`. Rust has no access to the
+    /// user's translation bundle, so it sends a code and the webview renders it.
+    detail_code: Option<String>,
+    /// A short excerpt of what was actually transcribed, shown on success.
     preview_text: Option<String>,
+    /// The app the text is going into, shown while AI cleanup writes for it.
+    context_app: Option<String>,
+    /// Key suffix under `overlay.style.*` for how cleanup writes for that app.
+    context_style: Option<String>,
+    /// Cleanup is using the text around the cursor.
+    context_nearby: bool,
+    /// A spoken command rather than dictation: "command" while recording,
+    /// then "edit" (a selection) or "write" (at the cursor) while it runs.
+    mode: Option<String>,
+    /// Recording hands-free after a tap; the next press stops it.
+    locked: bool,
+    /// Screen edge the overlay is anchored to, so it can animate in from there.
+    position: String,
     can_cancel: bool,
 }
 
-#[cfg(target_os = "macos")]
-const OVERLAY_TOP_OFFSET: f64 = 46.0;
-#[cfg(any(target_os = "windows", target_os = "linux"))]
-const OVERLAY_TOP_OFFSET: f64 = 4.0;
+/// Longest transcript excerpt the overlay will show. The pill is one line wide;
+/// past this the text is truncated on a word boundary and ellipsised.
+const PREVIEW_MAX_CHARS: usize = 64;
+
+fn build_preview(text: &str) -> Option<String> {
+    let trimmed = text.split_whitespace().collect::<Vec<_>>().join(" ");
+    if trimmed.is_empty() {
+        return None;
+    }
+
+    if trimmed.chars().count() <= PREVIEW_MAX_CHARS {
+        return Some(trimmed);
+    }
+
+    let head: String = trimmed.chars().take(PREVIEW_MAX_CHARS).collect();
+    let cut = head.rfind(' ').unwrap_or(head.len());
+    let clipped = head[..cut].trim_end();
+    Some(format!("{}\u{2026}", clipped))
+}
+
+/// Resolve which theme preference to hand the overlay webview.
+///
+/// `OverlayAppearance::Auto` defers to the app-wide theme preference; the other
+/// two pin the overlay regardless of what the rest of the app is doing.
+fn resolve_overlay_theme(settings: &settings::AppSettings) -> String {
+    match settings.overlay_appearance {
+        OverlayAppearance::Light => "light",
+        OverlayAppearance::Dark => "dark",
+        OverlayAppearance::Auto => match settings.theme {
+            ThemePreference::Light => "light",
+            ThemePreference::Dark => "dark",
+            ThemePreference::System => "system",
+        },
+    }
+    .to_string()
+}
 
 #[cfg(target_os = "macos")]
-const OVERLAY_BOTTOM_OFFSET: f64 = 15.0;
+const OVERLAY_TOP_OFFSET: f64 = 30.0;
+#[cfg(any(target_os = "windows", target_os = "linux"))]
+const OVERLAY_TOP_OFFSET: f64 = 0.0;
+
+#[cfg(target_os = "macos")]
+const OVERLAY_BOTTOM_OFFSET: f64 = 0.0;
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]
-const OVERLAY_BOTTOM_OFFSET: f64 = 40.0;
+const OVERLAY_BOTTOM_OFFSET: f64 = 24.0;
 
 #[cfg(target_os = "linux")]
 fn update_gtk_layer_shell_anchors(overlay_window: &tauri::webview::WebviewWindow) {
@@ -253,6 +314,12 @@ pub fn create_recording_overlay(app_handle: &AppHandle) {
                 }
             }
 
+            // The overlay has no interactive elements, and its window is much
+            // larger than the visible pill so the shadow has room. Without this
+            // the transparent margin would swallow clicks meant for whatever is
+            // underneath.
+            let _ = window.set_ignore_cursor_events(true);
+
             debug!("Recording overlay window created successfully (hidden)");
         }
         Err(e) => {
@@ -289,7 +356,11 @@ pub fn create_recording_overlay(app_handle: &AppHandle) {
             .build()
         {
             Ok(panel) => {
-                let _ = panel.hide();
+                panel.hide();
+                // Purely decorative surface — never intercept the pointer.
+                if let Some(window) = app_handle.get_webview_window("recording_overlay") {
+                    let _ = window.set_ignore_cursor_events(true);
+                }
             }
             Err(e) => {
                 log::error!("Failed to create recording overlay panel: {}", e);
@@ -298,26 +369,36 @@ pub fn create_recording_overlay(app_handle: &AppHandle) {
     }
 }
 
-fn create_overlay_payload(state: &str) -> OverlayPayload {
+fn create_overlay_payload(
+    settings: &settings::AppSettings,
+    state: &str,
+    detail_code: Option<&str>,
+    preview_text: Option<String>,
+) -> OverlayPayload {
     OverlayPayload {
         state: state.to_string(),
-        title: None,
-        detail: None,
-        preview_text: None,
+        theme: resolve_overlay_theme(settings),
+        detail_code: detail_code.map(str::to_string),
+        preview_text,
+        context_app: None,
+        context_style: None,
+        context_nearby: false,
+        mode: None,
+        locked: false,
+        position: match settings.overlay_position {
+            OverlayPosition::Top => "top",
+            OverlayPosition::Bottom | OverlayPosition::None => "bottom",
+        }
+        .to_string(),
         can_cancel: state == "recording",
     }
 }
 
 fn show_overlay_payload(app_handle: &AppHandle, payload: OverlayPayload) {
-    // Check if overlay should be shown based on position setting
-    let settings = settings::get_settings(app_handle);
-    if settings.overlay_position == OverlayPosition::None {
-        return;
-    }
-
     update_overlay_position(app_handle);
 
     if let Some(overlay_window) = app_handle.get_webview_window("recording_overlay") {
+        OVERLAY_GENERATION.fetch_add(1, Ordering::SeqCst);
         let _ = overlay_window.show();
 
         // On Windows, aggressively re-assert "topmost" in the native Z-order after showing
@@ -328,38 +409,123 @@ fn show_overlay_payload(app_handle: &AppHandle, payload: OverlayPayload) {
     }
 }
 
-fn show_overlay_state(app_handle: &AppHandle, state: &str) {
-    show_overlay_payload(app_handle, create_overlay_payload(state));
+fn show_overlay_state(
+    app_handle: &AppHandle,
+    state: &str,
+    detail_code: Option<&str>,
+    preview_text: Option<String>,
+) {
+    // Check if overlay should be shown based on position setting
+    let settings = settings::get_settings(app_handle);
+    if settings.overlay_position == OverlayPosition::None {
+        return;
+    }
+
+    let payload = create_overlay_payload(&settings, state, detail_code, preview_text);
+    show_overlay_payload(app_handle, payload);
 }
 
 /// Shows the recording overlay window with fade-in animation
 pub fn show_recording_overlay(app_handle: &AppHandle) {
-    show_overlay_state(app_handle, "recording");
+    show_overlay_state(app_handle, "recording", None, None);
 }
 
 /// Shows the transcribing overlay window
 pub fn show_transcribing_overlay(app_handle: &AppHandle) {
-    show_overlay_state(app_handle, "transcribing");
+    show_overlay_state(app_handle, "transcribing", None, None);
 }
 
 /// Shows the processing overlay window
 pub fn show_processing_overlay(app_handle: &AppHandle) {
-    show_overlay_state(app_handle, "processing");
+    show_overlay_state(app_handle, "processing", None, None);
 }
 
-/// Shows the success overlay window
-pub fn show_success_overlay(app_handle: &AppHandle) {
-    show_overlay_state(app_handle, "success");
+/// Shows the processing state with the app the text is going into and the
+/// style AI cleanup uses for it, e.g. "Slack · Casual".
+pub fn show_processing_overlay_for(
+    app_handle: &AppHandle,
+    app_name: &str,
+    style_code: &str,
+    nearby_text: bool,
+) {
+    let settings = settings::get_settings(app_handle);
+    if settings.overlay_position == OverlayPosition::None {
+        return;
+    }
+    let mut payload = create_overlay_payload(&settings, "processing", None, None);
+    payload.context_app = Some(app_name.to_string());
+    payload.context_style = Some(style_code.to_string());
+    payload.context_nearby = nearby_text;
+    show_overlay_payload(app_handle, payload);
 }
 
-/// Shows the error overlay window
-pub fn show_error_overlay(app_handle: &AppHandle) {
-    show_overlay_state(app_handle, "error");
+/// Shows the recording state for a spoken command.
+pub fn show_command_recording_overlay(app_handle: &AppHandle) {
+    let settings = settings::get_settings(app_handle);
+    if settings.overlay_position == OverlayPosition::None {
+        return;
+    }
+    let mut payload = create_overlay_payload(&settings, "recording", None, None);
+    payload.mode = Some("command".to_string());
+    show_overlay_payload(app_handle, payload);
+}
+
+/// Shows that a tap turned the recording hands-free.
+pub fn show_locked_recording_overlay(app_handle: &AppHandle, command: bool) {
+    let settings = settings::get_settings(app_handle);
+    if settings.overlay_position == OverlayPosition::None {
+        return;
+    }
+    let mut payload = create_overlay_payload(&settings, "recording", None, None);
+    payload.mode = command.then(|| "command".to_string());
+    payload.locked = true;
+    show_overlay_payload(app_handle, payload);
+}
+
+/// Shows a command running, with the instruction that was heard: "edit" when
+/// it rewrites a selection, "write" when it writes at the cursor.
+pub fn show_command_processing_overlay(app_handle: &AppHandle, instruction: &str, edit: bool) {
+    let settings = settings::get_settings(app_handle);
+    if settings.overlay_position == OverlayPosition::None {
+        return;
+    }
+    let mut payload =
+        create_overlay_payload(&settings, "processing", None, build_preview(instruction));
+    payload.mode = Some(if edit { "edit" } else { "write" }.to_string());
+    show_overlay_payload(app_handle, payload);
+}
+
+/// Shows the success overlay with an excerpt of the text that was delivered, so
+/// the user can confirm what landed without switching focus to the target app.
+pub fn show_success_overlay_with_preview(app_handle: &AppHandle, transcript: &str) {
+    show_overlay_state(app_handle, "success", None, build_preview(transcript));
+}
+
+/// Shows the success state with a notice in place of the excerpt, for deliveries
+/// the user should know about (e.g. the raw text went in because AI cleanup
+/// didn't run). `code` is a key suffix under `overlay.detail.*`.
+pub fn show_success_overlay_with_notice(app_handle: &AppHandle, code: &str) {
+    show_overlay_state(app_handle, "success", Some(code), None);
+}
+
+/// Shows the error overlay with a reason the webview will translate.
+///
+/// `code` is a key suffix under `overlay.detail.*` in the i18n bundle.
+pub fn show_error_overlay_with_reason(app_handle: &AppHandle, code: &str) {
+    show_overlay_state(app_handle, "error", Some(code), None);
 }
 
 /// Shows the cancelled overlay state.
 pub fn show_cancelled_overlay(app_handle: &AppHandle) {
-    show_overlay_state(app_handle, "cancelled");
+    show_overlay_state(app_handle, "cancelled", Some("cancelled"), None);
+}
+
+/// Shows the "nothing was captured" terminal state.
+///
+/// This path used to hide the overlay silently, which left the user unsure
+/// whether the app had heard them at all.
+pub fn show_empty_overlay(app_handle: &AppHandle) {
+    show_overlay_state(app_handle, "empty", Some("empty"), None);
 }
 
 /// Updates the overlay window position based on current settings
@@ -377,28 +543,55 @@ pub fn update_overlay_position(app_handle: &AppHandle) {
     }
 }
 
-fn hide_overlay_window_after(overlay_window: tauri::webview::WebviewWindow, delay_ms: u64) {
-    std::thread::spawn(move || {
-        std::thread::sleep(std::time::Duration::from_millis(delay_ms));
-        let _ = overlay_window.hide();
-    });
-}
+/// How long the pill's fade-out takes. Must match `--ss-duration-overlay-out`
+/// in `src/theme.css`, which `RecordingOverlay.css` uses for its exit.
+const OVERLAY_FADE_MS: u64 = 240;
 
-/// Hides the recording overlay window with fade-out animation
-pub fn hide_recording_overlay_after(app_handle: &AppHandle, delay_ms: u64) {
+/// Monotonic counter bumped on every show. A pending hide captures the value it
+/// was scheduled against and gives up if a newer show has happened since, so a
+/// fast stop -> start sequence can't have the old hide kill the new overlay.
+static OVERLAY_GENERATION: AtomicU64 = AtomicU64::new(0);
+
+/// Hides the recording overlay after `dwell_ms`.
+///
+/// `dwell_ms` is the *total* time from now until the window is gone: the pill
+/// stays fully visible for `dwell_ms - OVERLAY_FADE_MS`, then `hide-overlay`
+/// triggers the CSS fade, then the native window is hidden once it has played.
+///
+/// This previously emitted `hide-overlay` immediately and only deferred the
+/// native hide, which meant terminal states never faded — and, because the show
+/// handler happened to be async, `.is-visible` never toggled off, so the entry
+/// animation only ever played once per session.
+pub fn hide_recording_overlay_after(app_handle: &AppHandle, dwell_ms: u64) {
     // Always hide the overlay regardless of settings - if setting was changed while recording,
     // we still want to hide it properly
     if let Some(overlay_window) = app_handle.get_webview_window("recording_overlay") {
-        // Emit event to trigger fade-out animation
-        let _ = overlay_window.emit("hide-overlay", ());
-        // Hide the window after a short delay to allow animation to complete
-        hide_overlay_window_after(overlay_window, delay_ms);
+        let generation = OVERLAY_GENERATION.load(Ordering::SeqCst);
+        let visible_ms = dwell_ms.saturating_sub(OVERLAY_FADE_MS);
+
+        std::thread::spawn(move || {
+            if visible_ms > 0 {
+                std::thread::sleep(std::time::Duration::from_millis(visible_ms));
+            }
+
+            // A newer show has taken over; leave it alone.
+            if OVERLAY_GENERATION.load(Ordering::SeqCst) != generation {
+                return;
+            }
+
+            let _ = overlay_window.emit("hide-overlay", ());
+            std::thread::sleep(std::time::Duration::from_millis(OVERLAY_FADE_MS));
+
+            if OVERLAY_GENERATION.load(Ordering::SeqCst) == generation {
+                let _ = overlay_window.hide();
+            }
+        });
     }
 }
 
 /// Hides the recording overlay window with the default fade-out timing
 pub fn hide_recording_overlay(app_handle: &AppHandle) {
-    hide_recording_overlay_after(app_handle, 220);
+    hide_recording_overlay_after(app_handle, OVERLAY_FADE_MS);
 }
 
 pub fn emit_levels(app_handle: &AppHandle, levels: &Vec<f32>) {

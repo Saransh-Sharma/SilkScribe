@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import type { WaveformSceneController } from "./waveformScene";
+import type { WaveformSceneController, WaveformTheme } from "./waveformScene";
 import { shapeWaveformLevel, WAVEFORM_BUCKET_COUNT } from "./waveformConfig";
 
 type GpuWaveformStageProps = {
   initialLevels: number[];
   isActive: boolean;
+  theme: WaveformTheme;
   onReady?: (pushLevels: (levels: number[]) => void) => void;
   onTeardown?: () => void;
 };
@@ -25,6 +26,7 @@ const normalizeLevels = (levels: number[]) => {
 const GpuWaveformStage: React.FC<GpuWaveformStageProps> = ({
   initialLevels,
   isActive,
+  theme,
   onReady,
   onTeardown,
 }) => {
@@ -33,6 +35,7 @@ const GpuWaveformStage: React.FC<GpuWaveformStageProps> = ({
   const latestLevelsRef = useRef(normalizeLevels(initialLevels));
   const latestActiveRef = useRef(isActive);
   const reducedMotionRef = useRef(false);
+  const themeRef = useRef<WaveformTheme>(theme);
   const rendererModeRef = useRef<"pixi" | "fallback">("pixi");
   const retryTimerRef = useRef<number | null>(null);
   const retryAttemptsRef = useRef(0);
@@ -58,6 +61,11 @@ const GpuWaveformStage: React.FC<GpuWaveformStageProps> = ({
     reducedMotionRef.current = reducedMotion;
     sceneRef.current?.setReducedMotion(reducedMotion);
   }, [reducedMotion]);
+
+  useEffect(() => {
+    themeRef.current = theme;
+    sceneRef.current?.setTheme(theme);
+  }, [theme]);
 
   useEffect(() => {
     rendererModeRef.current = rendererMode;
@@ -152,6 +160,7 @@ const GpuWaveformStage: React.FC<GpuWaveformStageProps> = ({
           width: host.clientWidth || 272,
           height: host.clientHeight || 44,
           reducedMotion: reducedMotionRef.current,
+          theme: themeRef.current,
         });
 
         if (disposed) {
@@ -164,6 +173,7 @@ const GpuWaveformStage: React.FC<GpuWaveformStageProps> = ({
         sceneRef.current = scene;
         scene.updateLevels(latestLevelsRef.current);
         scene.setReducedMotion(reducedMotionRef.current);
+        scene.setTheme(themeRef.current);
         scene.setActive(latestActiveRef.current);
 
         resizeObserver = new ResizeObserver((entries) => {

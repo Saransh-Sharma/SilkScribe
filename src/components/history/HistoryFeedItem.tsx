@@ -63,7 +63,7 @@ export const HistoryFeedItem = ({
   };
 
   return (
-    <div className="grid gap-3 px-4 py-4 transition-[background-color,border-color,transform] duration-200 hover:bg-ss-bg-surface-alt/38 md:grid-cols-[92px_minmax(0,1fr)]">
+    <div className="ss-history-item grid gap-3 px-5 py-5 transition-[background-color,border-color,transform] duration-200 hover:bg-ss-bg-surface-alt/38 md:grid-cols-[92px_minmax(0,1fr)]">
       <p className="pt-1 text-xs font-semibold uppercase tracking-[0.16em] text-ss-text-tertiary md:text-right">
         {timestampLabel}
       </p>
@@ -82,11 +82,20 @@ export const HistoryFeedItem = ({
           <div className="flex flex-wrap items-center gap-1">
             <button
               type="button"
+              data-testid="history-copy-button"
               onClick={handleCopy}
               disabled={!hasTranscriptText}
               className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-transparent text-ss-text-tertiary transition-[background-color,border-color,color,transform] duration-150 hover:-translate-y-0.5 hover:border-ss-brand-secondary/25 hover:bg-ss-brand-secondary/10 hover:text-ss-brand-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/35"
-              title={t("settings.history.copyToClipboard")}
-              aria-label={t("settings.history.copyToClipboard")}
+              title={
+                showCopied
+                  ? t("settings.history.copySuccess")
+                  : t("settings.history.copyToClipboard")
+              }
+              aria-label={
+                showCopied
+                  ? t("settings.history.copySuccess")
+                  : t("settings.history.copyToClipboard")
+              }
             >
               {showCopied ? (
                 <Check width={18} height={18} />

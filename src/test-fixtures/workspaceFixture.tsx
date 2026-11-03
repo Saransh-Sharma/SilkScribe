@@ -1,0 +1,725 @@
+import React from "react";
+import { createRoot } from "react-dom/client";
+import i18next from "i18next";
+import { I18nextProvider, initReactI18next } from "react-i18next";
+import arabic from "@/i18n/locales/ar/translation.json";
+import translation from "@/i18n/locales/en/translation.json";
+import Workspace from "@/components/workspace/Workspace";
+import { api, type Document } from "@/components/workspace/api";
+import { Toaster } from "sonner";
+import { drafts, draftStorage } from "@/components/workspace/drafts";
+import { useSettingsStore } from "@/stores/settingsStore";
+import { commands, type AppSettings } from "@/bindings";
+import "@/theme.css";
+// The app's component styles (e.g. the button ripple), as App.tsx loads them.
+import "@/App.css";
+import "@fontsource/manrope/latin-400.css";
+import "@fontsource/manrope/latin-500.css";
+import "@fontsource/manrope/latin-600.css";
+import "@fontsource/manrope/latin-700.css";
+const i18n = i18next.createInstance();
+void i18n.use(initReactI18next).init({
+  lng: new URLSearchParams(location.search).get("lang") ?? "en",
+  fallbackLng: "en",
+  resources: { en: { translation }, ar: { translation: arabic } },
+  interpolation: { escapeValue: false },
+});
+const params = new URLSearchParams(location.search);
+Object.assign(window, {
+  __TAURI_OS_PLUGIN_INTERNALS__: {
+    os_type: "macos",
+    platform: "macos",
+    arch: "aarch64",
+    version: "15.0",
+  },
+});
+document.documentElement.dataset.theme = params.get("theme") ?? "light";
+document.documentElement.dir = params.get("dir") ?? "ltr";
+let docs: Document[] = [
+  {
+    id: "one",
+    title: "Product design review",
+    source: "meeting",
+    created_at: 1788900000,
+    duration: 1842,
+    stage: "complete",
+    progress: 1,
+    error: null,
+    failed_stage: null,
+    saved: true,
+    audio_path: null,
+    segments: [
+      {
+        id: "s0",
+        start: 2,
+        end: 8,
+        text: "Let’s make the first recording easier to start.",
+        original_text: "Let’s make the first recording easier to start.",
+        speaker: "p1",
+      },
+      {
+        id: "s1",
+        start: 9,
+        end: 17,
+        text: "I’ll bring the revised screens to our next review on Friday.",
+        original_text:
+          "I’ll bring the revised screens to our next review on Friday.",
+        speaker: "p2",
+      },
+    ],
+    speakers: [
+      { id: "p1", name: "Priya" },
+      { id: "p2", name: "Sam" },
+    ],
+    turns: [],
+    notes: {
+      summary: [
+        {
+          text: "The team discussed simplifying the first recording.",
+          evidence: [],
+          sources: ["s0"],
+        },
+      ],
+      decisions: [],
+      actions: [
+        {
+          text: "Bring revised screens to the next review.",
+          owner: "Sam",
+          due: "Friday",
+          evidence: [],
+          sources: ["s1"],
+          done: false,
+        },
+      ],
+      transcript_revision: 0,
+      reviewed: false,
+    },
+    options: {
+      model: "qwen3-asr",
+      language: "auto",
+      speakers: true,
+      notes_model: "qwen3.5-9b",
+    },
+    attempt_id: "fixture-attempt",
+    revision: 0,
+    history_id: null,
+    diarized: true,
+    stage_errors: [],
+  },
+  {
+    id: "two",
+    title: "Research interview — Elena",
+    source: "file",
+    created_at: 1788810000,
+    duration: 2167,
+    stage: "failed",
+    progress: 0,
+    error: "Download pyannote Community-1 to identify speakers.",
+    failed_stage: "diarizing",
+    saved: false,
+    audio_path: null,
+    segments: [],
+    speakers: [],
+    turns: [],
+    notes: null,
+    options: {
+      model: "qwen3-asr",
+      language: "auto",
+      speakers: true,
+      notes_model: null,
+    },
+    attempt_id: "fixture-attempt",
+    revision: 0,
+    history_id: null,
+    diarized: false,
+    stage_errors: [],
+  },
+];
+if (params.has("long")) {
+  docs[0].duration = 14400;
+  docs[0].segments = Array.from({ length: 6000 }, (_, index) => ({
+    id: `long-${index}`,
+    start: index * 2.4,
+    end: (index + 1) * 2.4,
+    text: `Turn ${index + 1}: The team reviewed the design and agreed to discuss the next steps.`,
+    original_text: `Turn ${index + 1}: The team reviewed the design and agreed to discuss the next steps.`,
+    speaker: index % 2 ? "p2" : "p1",
+  }));
+  docs[0].notes = null;
+}
+const audioFixture = params.get("audio");
+if (
+  audioFixture &&
+  ["wav", "mp3", "m4a", "flac", "ogg"].includes(audioFixture)
+) {
+  docs[0].audio_path = `/tests/fixtures/audio/tone.${audioFixture}`;
+  Object.defineProperty(window, "__TAURI_INTERNALS__", {
+    configurable: true,
+    value: { convertFileSrc: (path: string) => path },
+  });
+}
+if (params.has("candidate"))
+  docs[0].notes_candidate = {
+    summary: [
+      { text: "A fresh summary to review.", evidence: [], sources: ["s0"] },
+    ],
+    decisions: [],
+    actions: [],
+    transcript_revision: 0,
+    reviewed: false,
+  };
+for (const document of docs) {
+  for (const notes of [document.notes, document.notes_candidate]) {
+    if (!notes) continue;
+    for (const item of [
+      ...notes.summary,
+      ...notes.decisions,
+      ...notes.actions,
+    ]) {
+      item.evidence = item.sources.map((id) => {
+        const segment = document.segments.find((s) => s.id === id)!;
+        return {
+          segment_id: id,
+          text: segment.text,
+          start: segment.start,
+          end: segment.end,
+          transcript_revision: document.revision,
+        };
+      });
+    }
+  }
+}
+// ?template writes the first meeting's notes with the Standup template.
+if (params.has("template") && docs[0].notes) {
+  docs[0].options.notes_template = "standup";
+  docs[0].notes.template = "standup";
+  docs[0].notes.sections = [
+    {
+      id: "blockers",
+      title: "Blockers",
+      items: [
+        {
+          text: "Waiting on the final copy for the first screen.",
+          evidence: [],
+          sources: ["s0"],
+        },
+      ],
+    },
+  ];
+}
+// ?userNote adds a note the person wrote (no sources) to the first meeting.
+if (params.has("userNote"))
+  docs[0].notes?.summary.push({
+    text: "Check the empty state copy before Friday.",
+    evidence: [],
+    sources: [],
+    origin: "user",
+  });
+// ?consent: the meeting was recorded with Zoom's audio after a reminder.
+if (params.has("consent"))
+  docs[0].consent = {
+    capture: { kind: "app", bundle_id: "us.zoom.xos" },
+    reminder_shown_at: 1788950000,
+    heads_up_copied_at: [],
+  };
+if (params.has("empty")) docs = [];
+// ?dictation=ready|setup seeds the settings store (commands.* aren't mocked)
+// and a dictation document, so Home's dictation strip can be exercised.
+const dictation = params.get("dictation");
+if (dictation) {
+  useSettingsStore.setState({
+    isLoading: false,
+    settings: {
+      bindings: {
+        transcribe: {
+          id: "transcribe",
+          name: "Dictate",
+          description: "Start and stop dictation",
+          default_binding: "fn",
+          current_binding: "option+space",
+        },
+      },
+      push_to_talk: true,
+      // ?tapToLock: a quick tap goes hands-free.
+      tap_to_lock: params.has("tapToLock"),
+      app_language: "en",
+      // ?previewLanguages lists translations that haven't been reviewed.
+      preview_languages: params.has("previewLanguages"),
+      selected_model: "parakeet-tdt-0.6b-v3",
+      external_script_path: null,
+    } as AppSettings,
+  });
+  // ?cloudCleanup sends AI cleanup to a cloud provider.
+  if (params.has("cloudCleanup"))
+    useSettingsStore.setState((state) => ({
+      settings: {
+        ...state.settings!,
+        post_process_enabled: true,
+        post_process_provider_id: "openai",
+        post_process_providers: [
+          {
+            id: "openai",
+            label: "OpenAI",
+            base_url: "https://api.openai.com/v1",
+          },
+        ],
+        post_process_prompts: [],
+      },
+    }));
+  // ?cleanup turns AI cleanup on, with the Mac's command shortcut.
+  if (params.has("cleanup"))
+    useSettingsStore.setState((state) => ({
+      settings: {
+        ...state.settings!,
+        post_process_enabled: true,
+        post_process_provider_id: "apple_intelligence",
+        post_process_providers: [],
+        post_process_prompts: [],
+        bindings: {
+          ...state.settings!.bindings,
+          command: {
+            id: "command",
+            name: "Command",
+            description: "",
+            default_binding: "ctrl+shift+space",
+            current_binding: "ctrl+shift+space",
+          },
+        },
+      },
+    }));
+  docs.push({
+    ...structuredClone(docs[0] ?? ({} as Document)),
+    id: "dictation-7",
+    title: "Note to Sam",
+    source: "dictation",
+    created_at: 1788950000,
+    duration: 6,
+    saved: false,
+    audio_path: null,
+    segments: [
+      {
+        id: "legacy",
+        start: 0,
+        end: 6,
+        text: "Can you send the revised screens before Friday?",
+        original_text: "can you send the revised screens before friday",
+        speaker: null,
+      },
+    ],
+    speakers: [],
+    turns: [],
+    notes: null,
+    history_id: 7,
+    diarized: false,
+  });
+}
+api.list = async (query = "", filter = "all") =>
+  structuredClone(
+    docs
+      .filter(
+        (d) =>
+          (filter === "all" ||
+            filter === d.source ||
+            (filter === "saved" && d.saved) ||
+            (filter.startsWith("folder:") &&
+              d.folder === filter.slice("folder:".length)) ||
+            (filter === "attention" &&
+              (["failed", "interrupted"].includes(d.stage) ||
+                (d.stage === "complete" && !!d.stage_errors?.length)))) &&
+          `${d.title} ${d.segments.map((s) => s.text).join(" ")}`
+            .toLowerCase()
+            .includes(query.toLowerCase()),
+      )
+      .map((d) => ({
+        id: d.id,
+        attempt_id: d.attempt_id ?? "",
+        revision: d.revision,
+        title: d.title,
+        folder: d.folder ?? null,
+        source: d.source,
+        created_at: d.created_at,
+        duration: d.duration,
+        stage: d.stage,
+        progress: d.progress,
+        saved: d.saved,
+        stage_errors: d.stage_errors ?? [],
+        segment_count: d.segments.length,
+        speaker_count: d.speakers.length,
+        notes_available: !!d.notes,
+      })),
+  );
+draftStorage.get = async (id) =>
+  JSON.parse(localStorage.getItem(`fixture-db-draft-${id}`) || "null");
+draftStorage.put = async (doc) => {
+  localStorage.setItem(`fixture-db-draft-${doc.id}`, JSON.stringify(doc));
+  return null;
+};
+draftStorage.remove = async (id) => {
+  localStorage.removeItem(`fixture-db-draft-${id}`);
+  return null;
+};
+api.get = async (id) => {
+  await drafts.load(id);
+  return structuredClone(docs.find((d) => d.id === id)!);
+};
+api.edit = async (edit) =>
+  drafts.run(edit.id, async () => {
+    const d = docs.find((d) => d.id === edit.id)!;
+    if (edit.expected_revision !== d.revision) throw Error("Revision conflict");
+    if (params.has("delaySave")) await new Promise((r) => setTimeout(r, 800));
+    const changed =
+      JSON.stringify(d.segments) !== JSON.stringify(edit.segments) ||
+      JSON.stringify(d.speakers) !== JSON.stringify(edit.speakers);
+    Object.assign(d, edit, { revision: d.revision + 1 });
+    if (!changed) {
+      if (d.notes?.transcript_revision === edit.expected_revision)
+        d.notes.transcript_revision = d.revision;
+      if (d.notes_candidate?.transcript_revision === edit.expected_revision)
+        d.notes_candidate.transcript_revision = d.revision;
+    }
+    await draftStorage.remove(d.id);
+    return structuredClone(d);
+  });
+api.resolveNotes = async (id, accept, revision, section = null) => {
+  const d = docs.find((d) => d.id === id)!;
+  if (revision !== d.revision) throw Error("Revision conflict");
+  if (accept) {
+    section = d.notes_candidate?.generated_section ?? section;
+    if (section && d.notes)
+      d.notes = {
+        ...d.notes,
+        [section]: d.notes_candidate![section],
+        reviewed: false,
+      };
+    else d.notes = d.notes_candidate!;
+  }
+  d.notes_candidate = null;
+  d.revision += 1;
+  if (d.notes) d.notes.transcript_revision = d.revision;
+  return structuredClone(d);
+};
+api.remove = async (id, audioOnly) => {
+  if (!audioOnly) docs = docs.filter((d) => d.id !== id);
+  return null;
+};
+api.packs = async () => [];
+api.runtime = async () => {
+  if (new URLSearchParams(location.search).has("runtimeFailure")) {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    throw new Error("Speech runtime: dependency check failed");
+  }
+  return true;
+};
+api.assess = async () => ({
+  can_process: true,
+  issues: [],
+  languages: ["English", "French", "Japanese"],
+  timing: "aligned",
+  transcription_model: "qwen3-asr",
+  available_memory_bytes: 16000000000,
+  notes_observation: null,
+});
+api.playback = async () => (audioFixture ? docs[0].audio_path : null);
+api.storage = async () => ({
+  audio_bytes: 0,
+  model_bytes: 0,
+  free_bytes: 1e10,
+});
+let recordingId: string | null = null;
+api.status = async () => ({
+  document_id: recordingId,
+  paused: false,
+  seconds: 0,
+  microphone_level: 0,
+  system_level: 0,
+  error: null,
+});
+api.folders = async () =>
+  [
+    ...new Set(docs.map((d) => d.folder).filter((f): f is string => !!f)),
+  ].sort();
+api.setFolder = async (id, folder) => {
+  const doc = docs.find((item) => item.id === id);
+  if (doc) doc.folder = folder ?? undefined;
+  return null;
+};
+api.recordHeadsUp = async (id) => {
+  const doc = docs.find((item) => item.id === id);
+  if (!doc) return null;
+  doc.consent ??= {
+    capture: { kind: "all_audio" },
+    reminder_shown_at: null,
+    heads_up_copied_at: [],
+  };
+  doc.consent.heads_up_copied_at = [
+    ...(doc.consent.heads_up_copied_at ?? []),
+    Math.floor(Date.now() / 1000),
+  ];
+  return null;
+};
+// Starting a meeting adds a recording document with no transcript yet.
+api.start = async (options) => {
+  recordingId = "live-meeting";
+  docs = [
+    {
+      ...docs[0],
+      id: recordingId,
+      title: options.title || "New meeting",
+      created_at: Math.floor(Date.now() / 1000),
+      stage: "recording",
+      segments: [],
+      speakers: [],
+      turns: [],
+      notes: null,
+      live_segments: [],
+    },
+    ...docs,
+  ];
+  return api.status();
+};
+api.inspectFiles = async (paths) =>
+  paths.map((path) => ({ path, bytes: 1048576, duration: 90, error: null }));
+api.dictationReady = async () => dictation === "ready";
+api.onDeviceCleanupAvailable = async () => params.has("cleanupSuggestion");
+api.callApps = async () =>
+  params.has("callApp") ? [{ bundle_id: "us.zoom.xos", name: "Zoom" }] : [];
+api.dictationSummary = async () => ({
+  words_today: dictation ? 42 : 0,
+  dictations_today: dictation ? 3 : 0,
+  current_streak_days: dictation ? 4 : 0,
+  recent: dictation
+    ? [
+        {
+          id: 7,
+          file_name: "silkscribe-7.wav",
+          timestamp: 1788950000,
+          saved: false,
+          title: "Note to Sam",
+          transcription_text: "can you send the revised screens before friday",
+          post_processed_text:
+            "Can you send the revised screens before Friday?",
+          post_process_prompt: null,
+          post_process_requested: true,
+        },
+      ]
+    : [],
+});
+api.enableOnDeviceCleanup = async () => null;
+// ?calendar: a connected calendar with a meeting going on and one later.
+let calendarConnected = params.has("calendar");
+const calendarEvents = () => {
+  const now = Math.floor(Date.now() / 1000);
+  return [
+    {
+      id: "standup@1",
+      title: "Team standup",
+      start: now - 120,
+      end: now + 780,
+      all_day: false,
+      calendar: "Work",
+      attendees: 5,
+      join_url: "https://zoom.us/j/1",
+    },
+    {
+      id: "review@2",
+      title: "Design review",
+      start: now + 3600,
+      end: now + 5400,
+      all_day: false,
+      calendar: "Work",
+      attendees: 3,
+      join_url: null,
+    },
+  ];
+};
+api.calendarStatus = async () => ({
+  access: calendarConnected ? "granted" : "not_determined",
+  connected: calendarConnected,
+});
+api.connectCalendar = async () => {
+  calendarConnected = true;
+  return { access: "granted", connected: true };
+};
+api.disconnectCalendar = async () => {
+  calendarConnected = false;
+  return { access: "granted", connected: false };
+};
+api.upcomingMeetings = async () => (calendarConnected ? calendarEvents() : []);
+api.currentMeeting = async () =>
+  calendarConnected ? calendarEvents()[0] : null;
+api.openCalendarPrivacy = async () => null;
+commands.changeCalendarRemindersSetting = async () => ({
+  status: "ok",
+  data: null,
+});
+// Asking: questions about the screens are answered from the first meeting.
+api.ask = async (question) => {
+  localStorage.setItem("fixture-ask", question);
+  // ?askNoEngine: no notes engine is downloaded to answer with.
+  if (params.has("askNoEngine")) throw "ask:no-engine";
+  if (!/screen/i.test(question)) return { answer: "", sources: [] };
+  return {
+    answer: "Sam is bringing the revised screens to Friday’s review [p1].",
+    sources: [
+      {
+        id: "p1",
+        document_id: "one",
+        title: "Product design review",
+        created_at: 1788900000,
+        start: 9,
+        text: "I’ll bring the revised screens to our next review on Friday.",
+      },
+    ],
+  };
+};
+api.cancelAsk = async () => {};
+api.runRecipe = async (recipe, documentIds) => {
+  localStorage.setItem("fixture-recipe", JSON.stringify([recipe, documentIds]));
+  const doc = docs.find((item) => item.id === (documentIds[0] ?? "one"))!;
+  return {
+    answer:
+      recipe === "weekly_recap"
+        ? "This week the team agreed to simplify the first recording [p1]."
+        : "Thanks for the review.\n- Sam brings the revised screens [p1]",
+    // A busy week is more than the engine reads at once.
+    truncated: recipe === "weekly_recap",
+    sources: [
+      {
+        id: "p1",
+        document_id: doc.id,
+        title: doc.title,
+        created_at: doc.created_at,
+        start: 9,
+        text: "I’ll bring revised screens to the next review.",
+      },
+    ],
+  };
+};
+api.addToDictionary = async (heard, write) =>
+  heard && heard !== write ? "replacement" : "word";
+// Dictionary edits save without a backend.
+commands.updateCustomWords = async () => ({ status: "ok", data: null });
+commands.updateReplacements = async () => ({ status: "ok", data: null });
+commands.updateSnippets = async () => ({ status: "ok", data: null });
+commands.changeTapToLockSetting = async () => ({ status: "ok", data: null });
+commands.changePreviewLanguagesSetting = async () => ({
+  status: "ok",
+  data: null,
+});
+commands.changeAppLanguageSetting = async () => ({ status: "ok", data: null });
+commands.changeMcpEnabledSetting = async () => ({ status: "ok", data: null });
+commands.shareText = async (text) => {
+  localStorage.setItem("fixture-share", text);
+  return { status: "ok", data: null };
+};
+commands.mcpLaunchCommand = async () => ({
+  status: "ok",
+  data: {
+    command: "/Applications/SilkScribe.app/Contents/MacOS/silkscribe",
+    args: ["--mcp"],
+  },
+});
+commands.changePttSetting = async () => ({ status: "ok", data: null });
+api.dismissCleanupSuggestion = async () => null;
+// User notes persist across reloads, like the real store.
+api.userNotes = async (id) => localStorage.getItem(`fixture-notes-${id}`) ?? "";
+api.saveUserNotes = async (id, body) => {
+  localStorage.setItem(`fixture-notes-${id}`, body);
+  return null;
+};
+api.devices = async () => [{ id: "default", name: "Studio microphone" }];
+api.captureReadiness = async () => ({
+  supported: true,
+  microphone: !params.has("deniedCapture"),
+  system: !params.has("deniedCapture"),
+});
+api.requestCapturePermission = async () => {};
+api.exportPreview = async (id, format, content) => {
+  const d = docs.find((d) => d.id === id)!;
+  return JSON.stringify(
+    {
+      format,
+      segments: content.transcript
+        ? d.segments.map((s) => ({
+            ...s,
+            text: content.original_text ? s.original_text : s.text,
+          }))
+        : [],
+      notes: content.notes ? d.notes : null,
+    },
+    null,
+    2,
+  );
+};
+api.discardPartialImport = async () => null;
+api.importBatches = async () =>
+  params.has("unfinishedBatch")
+    ? [
+        {
+          request_id: "persisted-batch",
+          paths: ["/fixtures/recovered.wav"],
+          options: docs[0].options,
+          errors: [],
+        },
+      ]
+    : [];
+api.discardImportBatch = async () => null;
+api.import = async (paths) => ({
+  documents: paths.length > 1 ? [structuredClone(docs[0])] : [],
+  errors: ["The remaining file could not be copied."],
+  remaining_paths: paths.slice(-1),
+});
+api.configure = async (id, options) => {
+  docs.find((d) => d.id === id)!.options = options;
+  return null;
+};
+api.retry = async (
+  id,
+  notesOnly,
+  notesModel,
+  onlyStage,
+  notesSection,
+  notesTemplate,
+) => {
+  const d = docs.find((d) => d.id === id)!;
+  localStorage.setItem(
+    "fixture-retry",
+    JSON.stringify({
+      id,
+      notesOnly,
+      notesModel,
+      onlyStage,
+      notesSection,
+      notesTemplate,
+    }),
+  );
+  d.stage = "queued";
+  if (params.has("sectionGeneration") && notesSection) {
+    const item = {
+      text: "New section result",
+      sources: ["s0"],
+      evidence: d.notes?.summary[0]?.evidence ?? [],
+    };
+    d.notes_candidate = {
+      summary: [],
+      decisions: [],
+      actions: [],
+      transcript_revision: d.revision,
+      generated_section: notesSection,
+      reviewed: false,
+      [notesSection]: [
+        notesSection === "actions"
+          ? { ...item, owner: null, due: null, done: false }
+          : item,
+      ],
+    };
+    d.stage = "complete";
+  }
+  return null;
+};
+createRoot(document.getElementById("root")!).render(
+  <I18nextProvider i18n={i18n}>
+    <Toaster />
+    <Workspace renderSettings={() => null} onSetupDictation={() => {}} />
+  </I18nextProvider>,
+);

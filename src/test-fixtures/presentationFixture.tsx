@@ -1,0 +1,694 @@
+/* eslint-disable i18next/no-literal-string */
+import React, { useState } from "react";
+import ReactDOM from "react-dom/client";
+import "@fontsource/manrope/latin-400.css";
+import "@fontsource/manrope/latin-500.css";
+import "@fontsource/manrope/latin-600.css";
+import "@fontsource/manrope/latin-700.css";
+import i18next from "i18next";
+import { I18nextProvider, initReactI18next } from "react-i18next";
+import { CheckCircle2, Command, Mic2, ShieldCheck } from "lucide-react";
+import translation from "@/i18n/locales/en/translation.json";
+import type { HistoryEntry, ModelInfo } from "@/bindings";
+import {
+  AppPage,
+  Button,
+  ConfirmDialog,
+  Dropdown,
+  SettingContainer,
+  SettingsGroup,
+  ToggleSwitch,
+} from "@/components/ui";
+import ModelCard, {
+  type ModelCardStatus,
+} from "@/components/onboarding/ModelCard";
+import OnboardingShell from "@/components/onboarding/OnboardingShell";
+import Onboarding from "@/components/onboarding/Onboarding";
+import OnboardingShortcut from "@/components/onboarding/OnboardingShortcut";
+import { useSettingsStore } from "@/stores/settingsStore";
+import type { AppSettings } from "@/bindings";
+import { HistoryFeedItem } from "@/components/history/HistoryFeedItem";
+import SilkScribeWordmark from "@/components/icons/SilkScribeWordmark";
+import RecordingOverlay, {
+  type OverlayMode,
+  type OverlayState,
+} from "@/overlay/RecordingOverlay";
+import MeetingOrb, { type MeetingOrbPreview } from "@/meeting-orb/MeetingOrb";
+import "@/theme.css";
+import "@/App.css";
+
+const i18n = i18next.createInstance();
+void i18n.use(initReactI18next).init({
+  lng: "en",
+  fallbackLng: "en",
+  resources: { en: { translation } },
+  interpolation: { escapeValue: false },
+  react: { useSuspense: false },
+});
+
+const params = new URLSearchParams(window.location.search);
+// Components that format shortcuts ask Tauri's OS plugin for the platform.
+Object.assign(window, {
+  __TAURI_OS_PLUGIN_INTERNALS__: {
+    os_type: "macos",
+    platform: "macos",
+    arch: "aarch64",
+    version: "15.0",
+  },
+});
+const view = params.get("view") ?? "system";
+const theme = params.get("theme") === "dark" ? "dark" : "light";
+const direction = params.get("dir") === "rtl" ? "rtl" : "ltr";
+document.documentElement.dataset.theme = theme;
+document.documentElement.dir = direction;
+
+if (view === "overlay" || view === "overlay-sheet" || view === "meeting-orb") {
+  // Mirrors src/overlay/index.html: tags this document as the overlay so
+  // theme.css's blanket reduced-motion rule steps aside for it.
+  document.body.classList.add("ss-overlay-document");
+}
+
+const mockModel: ModelInfo = {
+  id: "parakeet-tdt-0.6b-v3",
+  name: "Parakeet TDT 0.6B v3",
+  description: "Fast, accurate local dictation for everyday writing.",
+  filename: "parakeet-v3",
+  url: null,
+  sha256: null,
+  size_mb: 642,
+  is_downloaded: true,
+  is_downloading: false,
+  partial_size: 0,
+  is_directory: true,
+  engine_type: "Parakeet",
+  accuracy_score: 0.91,
+  speed_score: 0.87,
+  supports_translation: false,
+  is_recommended: true,
+  supported_languages: ["en", "fr", "de"],
+  supports_language_selection: false,
+  is_custom: false,
+};
+
+const mockHistory: HistoryEntry = {
+  id: 42,
+  file_name: "2026-07-14-0918.wav",
+  timestamp: 1783991880,
+  saved: true,
+  title: "Project note",
+  transcription_text:
+    "Please move the design review to Thursday afternoon and include the revised onboarding screenshots.",
+  post_processed_text: null,
+  post_process_prompt: null,
+  post_process_requested: false,
+};
+
+const SidebarPreview = () => (
+  <aside className="ss-sidebar flex w-[248px] shrink-0 flex-col border-e border-ss-border-subtle p-4">
+    <div className="ss-sidebar-brand mb-5 rounded-[20px] px-2.5 py-2">
+      <SilkScribeWordmark height={38} className="text-[20px]" />
+    </div>
+    <nav aria-label="Preview navigation" className="space-y-1.5">
+      {["Home", "General", "Models", "Advanced", "History"].map(
+        (label, index) => (
+          <button
+            key={label}
+            type="button"
+            aria-current={index === 1 ? "page" : undefined}
+            className={`ss-nav-item relative flex min-h-11 w-full items-center gap-3 overflow-hidden rounded-[var(--ss-radius-md)] border px-3 text-[13px] font-semibold ${
+              index === 1
+                ? "is-active border-ss-brand-secondary/18 bg-ss-bg-elevated text-ss-text-primary shadow-[var(--ss-shadow-card)]"
+                : "border-transparent text-ss-text-secondary"
+            }`}
+          >
+            <span
+              className={`h-8 w-8 rounded-[12px] ${index === 1 ? "bg-ss-brand-secondary" : "bg-ss-bg-elevated"}`}
+            />
+            {label}
+          </button>
+        ),
+      )}
+    </nav>
+  </aside>
+);
+
+const SystemFixture = () => {
+  const [feedback, setFeedback] = useState(true);
+  return (
+    <div className="ss-app-shell ss-app-frame flex h-[100dvh] bg-ss-bg-canvas text-ss-text-primary">
+      <SidebarPreview />
+      <main className="ss-main-panel flex-1 overflow-y-auto p-7">
+        <div className="ss-content-container mx-auto max-w-[1060px]">
+          <AppPage
+            eyebrow="Everyday setup"
+            title="Keep SilkScribe ready to record"
+            description="Set the shortcut, choose your microphone, and keep the basics feeling automatic."
+          >
+            <SettingsGroup title="Recording">
+              <SettingContainer
+                title="Global shortcut"
+                description="Press this anywhere to start dictating."
+                descriptionMode="inline"
+                grouped
+              >
+                <Button variant="secondary">
+                  <Command className="h-4 w-4" />⌘ ⇧ Space
+                </Button>
+              </SettingContainer>
+              <SettingContainer
+                title="Microphone"
+                description="The input SilkScribe listens to."
+                descriptionMode="inline"
+                grouped
+              >
+                <Dropdown
+                  selectedValue="studio"
+                  options={[
+                    { value: "studio", label: "Studio Display Microphone" },
+                    { value: "mac", label: "MacBook Pro Microphone" },
+                  ]}
+                  onSelect={() => undefined}
+                />
+              </SettingContainer>
+            </SettingsGroup>
+            <SettingsGroup title="Feedback">
+              <ToggleSwitch
+                checked={feedback}
+                onChange={setFeedback}
+                label="Audio feedback"
+                description="Play a quiet cue when recording starts and stops."
+                descriptionMode="inline"
+                grouped
+              />
+            </SettingsGroup>
+          </AppPage>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+const HomeFixture = () => (
+  <div className="ss-app-shell min-h-[100dvh] bg-ss-bg-canvas p-7 text-ss-text-primary">
+    <section className="ss-home-hero mx-auto max-w-[1060px] overflow-hidden rounded-[var(--ss-radius-xl)] border border-ss-border-default bg-ss-bg-surface shadow-[var(--ss-shadow-lift)]">
+      <div className="ss-home-hero-main grid grid-cols-[minmax(0,1.15fr)_minmax(310px,.85fr)] items-center gap-8 px-8 py-8">
+        <div className="min-w-0">
+          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-ss-text-tertiary">
+            Ready to dictate
+          </p>
+          <h1 className="mt-5 max-w-[13ch] text-[3.1rem] font-semibold leading-[.98] tracking-[-0.058em]">
+            SilkScribe is ready
+          </h1>
+          <p className="mt-4 max-w-[52ch] text-[15px] leading-relaxed text-ss-text-secondary">
+            Your shortcut, microphone, local model, and permissions are all set.
+          </p>
+          <div className="mt-6 flex items-center gap-3">
+            <Button size="lg">Review recording setup</Button>
+            <div className="ss-shortcut-hint rounded-[18px] border border-ss-border-subtle bg-ss-bg-elevated/58 px-4 py-3 text-sm font-semibold">
+              ⌘ ⇧ Space
+            </div>
+          </div>
+        </div>
+        <div className="ss-voice-stage" aria-hidden="true">
+          <div className="ss-voice-aura" />
+          <div className="ss-voice-rings">
+            <div className="ss-voice-ring ss-voice-ring-outer" />
+            <div className="ss-voice-ring ss-voice-ring-middle" />
+            <div className="ss-voice-core">
+              <Mic2 className="h-7 w-7" />
+            </div>
+          </div>
+          <div className="ss-voice-bars">
+            {Array.from({ length: 15 }).map((_, index) => (
+              <span key={index} />
+            ))}
+          </div>
+          <div className="ss-voice-caption">
+            <span className="ss-voice-caption-dot" />
+            Parakeet v3
+          </div>
+        </div>
+      </div>
+      <div className="ss-readiness-dock grid grid-cols-4 border-t border-ss-border-subtle bg-ss-bg-surface-alt/34">
+        {[
+          [Command, "Shortcut", "⌘ ⇧ Space"],
+          [Mic2, "Microphone", "Studio Display"],
+          [CheckCircle2, "Model", "Parakeet v3"],
+          [ShieldCheck, "Permissions", "Granted"],
+        ].map(([Icon, label, value]) => {
+          const StatusIcon = Icon as React.ComponentType<{
+            className?: string;
+          }>;
+          return (
+            <div
+              key={String(label)}
+              className="border-s border-ss-border-subtle px-4 py-4 first:border-s-0"
+            >
+              <div className="flex items-center gap-2 text-xs font-semibold text-ss-text-tertiary">
+                <StatusIcon className="h-4 w-4 text-ss-brand-primary" />
+                {String(label)}
+              </div>
+              <p className="mt-2 ps-6 text-sm font-semibold">{String(value)}</p>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  </div>
+);
+
+const ModelFixture = () => {
+  const requestedState = params.get("state") ?? "active";
+  const state = (
+    requestedState === "installed" ? "available" : requestedState
+  ) as ModelCardStatus;
+  return (
+    <div className="min-h-[100dvh] bg-ss-bg-canvas p-8 text-ss-text-primary">
+      <div className="mx-auto max-w-[900px] space-y-3">
+        <AppPage
+          title="Local transcription models"
+          description="Models stay on this device and can be switched whenever you need."
+        >
+          <ModelCard
+            model={{ ...mockModel, is_downloaded: state !== "downloadable" }}
+            status={state}
+            onSelect={() => undefined}
+            onDownload={() => undefined}
+            onDelete={() => undefined}
+            onCancel={() => undefined}
+            downloadProgress={47.2}
+            downloadSpeed={18.4}
+            downloadBytes={{ downloaded: 318_000_000, total: 672_000_000 }}
+          />
+        </AppPage>
+      </div>
+    </div>
+  );
+};
+
+const HistoryFixture = () => (
+  <div className="min-h-[100dvh] bg-ss-bg-canvas p-8 text-ss-text-primary">
+    <div
+      data-testid="history-row"
+      className="mx-auto max-w-[960px] overflow-hidden rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface shadow-[var(--ss-shadow-card)]"
+    >
+      <HistoryFeedItem
+        entry={mockHistory}
+        onToggleSaved={() => undefined}
+        onCopyText={() => undefined}
+        onDelete={() => undefined}
+        onRetryTranscription={() => undefined}
+        getAudioUrl={async () => null}
+      />
+    </div>
+  </div>
+);
+
+/** The real welcome screen, as the first launch shows it (and the site's
+ * hero screenshot uses). */
+const WelcomeFixture = () => (
+  <Onboarding
+    onContinue={() => {}}
+    onOpenWorkspace={() => {}}
+    stepLabels={[
+      "Welcome",
+      "Microphone",
+      "Accessibility",
+      "Setup",
+      "Shortcut",
+      "Try it",
+    ]}
+    activeStep={0}
+  />
+);
+
+const ShortcutFixture = () => {
+  // Seed the store: commands.* isn't available outside the app.
+  useState(() =>
+    useSettingsStore.setState({
+      isLoading: false,
+      settings: {
+        bindings: {
+          transcribe: {
+            id: "transcribe",
+            name: "Dictate",
+            description: "Start and stop dictation",
+            default_binding: "fn",
+            current_binding: "option+space",
+          },
+        },
+        push_to_talk: true,
+        keyboard_implementation: "tauri",
+        external_script_path: null,
+      } as AppSettings,
+    }),
+  );
+  return (
+    <OnboardingShortcut
+      onContinue={() => {}}
+      stepLabels={[
+        "Welcome",
+        "Microphone",
+        "Accessibility",
+        "Setup",
+        "Shortcut",
+        "Try it",
+      ]}
+      activeStep={4}
+    />
+  );
+};
+
+const OnboardingFixture = () => (
+  <OnboardingShell
+    stepLabels={["Welcome", "Microphone", "Accessibility", "Setup", "Practice"]}
+    activeStep={2}
+    eyebrow="Private by design"
+    title="One permission keeps dictation effortless"
+    description="SilkScribe uses Accessibility only to paste the finished text into the app you are already using."
+    footer={
+      <div className="flex justify-end">
+        <Button>Open System Settings</Button>
+      </div>
+    }
+  >
+    <div className="grid h-full grid-cols-[0.9fr_1.1fr] gap-5">
+      <div className="p-5 text-sm leading-relaxed text-ss-text-secondary">
+        Follow the three short steps, then return here. SilkScribe checks the
+        permission automatically.
+      </div>
+      <div className="rounded-[var(--ss-radius-lg)] bg-ss-bg-surface-alt p-5 shadow-[var(--ss-shadow-hairline)]">
+        System Settings preview
+      </div>
+    </div>
+  </OnboardingShell>
+);
+
+const DialogFixture = () => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="flex min-h-[100dvh] items-center justify-center bg-ss-bg-canvas">
+      <Button onClick={() => setOpen(true)}>Open dialog</Button>
+      <ConfirmDialog
+        open={open}
+        title="Delete this local model?"
+        description="The model can be downloaded again later."
+        confirmLabel="Delete model"
+        cancelLabel="Cancel"
+        destructive
+        onConfirm={() => setOpen(false)}
+        onCancel={() => setOpen(false)}
+      />
+    </div>
+  );
+};
+
+const DropdownFixture = () => (
+  <div className="flex min-h-[100dvh] items-end justify-end bg-ss-bg-canvas p-5">
+    <Dropdown
+      selectedValue="native"
+      options={[
+        { value: "legacy", label: "Legacy shortcut", disabled: true },
+        { value: "tauri", label: "Tauri global shortcut" },
+        { value: "native", label: "Native Keys" },
+      ]}
+      onSelect={() => undefined}
+    />
+  </div>
+);
+
+const OVERLAY_STATES: OverlayState[] = [
+  "recording",
+  "transcribing",
+  "processing",
+  "success",
+  "error",
+  "cancelled",
+  "empty",
+];
+
+/* Sample detail lines so the two-row terminal layouts are inspectable without
+   a running backend. `success` gets a transcript excerpt (quoted, italic);
+   everything else gets its translated reason. */
+const SAMPLE_DETAIL: Partial<
+  Record<
+    OverlayState,
+    Partial<{
+      detailCode: string;
+      previewText: string;
+      contextApp: string;
+      contextStyle: string;
+      contextNearby: boolean;
+    }>
+  >
+> = {
+  processing: {
+    contextApp: "Slack",
+    contextStyle: "casual",
+    contextNearby: true,
+  },
+  success: {
+    previewText:
+      "The quarterly numbers came in ahead of what we forecast in March",
+  },
+  error: { detailCode: "pasteCopied" },
+  cancelled: { detailCode: "cancelled" },
+  empty: { detailCode: "empty" },
+};
+
+/* The pill floats over whatever the user has on screen, so it has to hold up
+   against a busy light surface — that is the worst case for the painted-frost
+   light variant. */
+const BACKDROPS: Record<string, string> = {
+  light: "#f5efe7",
+  dark: "#28231f",
+  busy: "",
+};
+
+const backdropStyle = (name: string): React.CSSProperties =>
+  name === "busy"
+    ? {
+        backgroundColor: "#c9b9a4",
+        backgroundImage:
+          "radial-gradient(circle at 18% 24%, #f6e7cf 0%, transparent 46%), radial-gradient(circle at 78% 68%, #7c93a8 0%, transparent 52%), linear-gradient(126deg, #d8c5ab 0%, #8f7f74 100%)",
+      }
+    : { backgroundColor: BACKDROPS[name] ?? BACKDROPS.dark };
+
+const OverlayFixture = () => {
+  const state = (params.get("state") ?? "recording") as OverlayState;
+  const withDetail = params.get("detail") === "1";
+  // A spoken command (`mode=command|edit|write`), with the instruction heard.
+  const mode = params.get("mode") as OverlayMode | null;
+  const commandPayload = mode
+    ? {
+        mode,
+        previewText:
+          state === "processing" ? "make this sound friendlier" : undefined,
+        detailCode: params.get("code") ?? undefined,
+      }
+    : {};
+  // `locked=1`: hands-free after a tap.
+  const locked = params.get("locked") === "1" ? { locked: true } : {};
+  return (
+    <div
+      className="h-[100dvh]"
+      style={backdropStyle(params.get("backdrop") ?? "dark")}
+    >
+      <RecordingOverlay
+        previewState={state}
+        previewVisible
+        previewTheme={params.get("theme") === "dark" ? "dark" : "light"}
+        previewPartial={params.get("partial") ?? undefined}
+        previewSilent={params.has("silent")}
+        previewPayload={{
+          canCancel: false,
+          ...(withDetail ? SAMPLE_DETAIL[state] : {}),
+          ...commandPayload,
+          ...locked,
+        }}
+      />
+    </div>
+  );
+};
+
+/* Contact sheet: every state, both themes, over all three backdrops on one
+   page. Seeing the family together is the only way to catch a state that has
+   drifted out of the set. */
+const OverlaySheetFixture = () => (
+  <div className="min-h-[100dvh] bg-ss-bg-canvas p-6">
+    {(["light", "dark"] as const).map((sheetTheme) => (
+      <section key={sheetTheme} className="mb-8">
+        <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-ss-text-tertiary">
+          {sheetTheme}
+        </h2>
+        {Object.keys(BACKDROPS).map((backdrop) => (
+          <div
+            key={backdrop}
+            className="mb-3 grid grid-cols-2 gap-2 rounded-[var(--ss-radius-lg)] p-3"
+            style={backdropStyle(backdrop)}
+          >
+            {OVERLAY_STATES.map((sheetState) =>
+              ([false, true] as const).map((detail) => (
+                <div
+                  key={`${sheetState}-${String(detail)}`}
+                  className="relative h-[120px] w-full"
+                >
+                  <RecordingOverlay
+                    previewState={sheetState}
+                    previewVisible
+                    previewTheme={sheetTheme}
+                    previewPayload={
+                      detail
+                        ? { canCancel: false, ...SAMPLE_DETAIL[sheetState] }
+                        : { canCancel: false }
+                    }
+                  />
+                </div>
+              )),
+            )}
+          </div>
+        ))}
+      </section>
+    ))}
+  </div>
+);
+
+/* Native panel sizes from src-tauri/src/meeting_orb.rs. */
+const ORB_PANEL = {
+  collapsed: { width: 64, height: 64 },
+  expanded: { width: 384, height: 520 },
+} as const;
+
+const ORB_SEGMENTS: MeetingOrbPreview["segments"] = [
+  {
+    id: "1",
+    source: "system",
+    start: 2,
+    end: 6,
+    text: "Thanks for joining. Let’s start with the launch checklist.",
+  },
+  {
+    id: "2",
+    source: "system",
+    start: 6,
+    end: 11,
+    text: "Design signed off yesterday, so we’re waiting on the pricing page.",
+  },
+  {
+    id: "3",
+    source: "mic",
+    start: 12,
+    end: 16,
+    text: "I can have pricing copy ready by Thursday.",
+  },
+  {
+    id: "4",
+    source: "mic",
+    start: 16,
+    end: 19,
+    text: "Legal wants one more pass on the terms.",
+  },
+  {
+    id: "5",
+    source: "system",
+    start: 20,
+    end: 26,
+    text: "Great. Let’s keep the launch date and check in on Friday.",
+  },
+];
+
+const ORB_STATES: Record<string, Omit<MeetingOrbPreview, "mode">> = {
+  recording: {
+    status: { seconds: 754, microphone_level: 0.42, system_level: 0.63 },
+    segments: ORB_SEGMENTS,
+  },
+  paused: {
+    status: { seconds: 754, paused: true },
+    segments: ORB_SEGMENTS,
+  },
+  gated: {
+    status: { seconds: 812, mic_gated: true, system_level: 0.4 },
+    segments: ORB_SEGMENTS,
+    pinned: true,
+  },
+  empty: { status: { seconds: 4, microphone_level: 0.2 } },
+  unavailable: { status: { seconds: 31 }, unavailable: true },
+  behind: {
+    status: { seconds: 1200, system_level: 0.5 },
+    segments: ORB_SEGMENTS,
+    behind: true,
+  },
+  prompt: { phase: "prompt", title: "Zoom" },
+  // A calendar meeting starting, with no call noticed yet.
+  reminder: {
+    phase: "prompt",
+    title: "Design review",
+    prompt: { app: null, title: "Design review" },
+  },
+  error: {
+    status: {
+      seconds: 402,
+      error:
+        "The microphone stopped sending audio. Check your input, then pause and resume.",
+    },
+    segments: ORB_SEGMENTS,
+  },
+};
+
+const MeetingOrbFixture = () => {
+  const mode = params.get("mode") === "expanded" ? "expanded" : "collapsed";
+  const state = params.get("state") ?? "recording";
+  const panel = ORB_PANEL[mode];
+  return (
+    <div
+      className="flex h-[100dvh] items-start justify-end p-4"
+      style={backdropStyle(params.get("backdrop") ?? "busy")}
+    >
+      <div
+        data-testid="orb-panel"
+        style={{ width: panel.width, height: panel.height, flex: "none" }}
+      >
+        <MeetingOrb
+          preview={{
+            title: "Weekly launch sync",
+            ...(ORB_STATES[state] ?? ORB_STATES.recording),
+            mode,
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
+const fixture =
+  view === "home" ? (
+    <HomeFixture />
+  ) : view === "model" ? (
+    <ModelFixture />
+  ) : view === "history" ? (
+    <HistoryFixture />
+  ) : view === "onboarding" ? (
+    <OnboardingFixture />
+  ) : view === "welcome" ? (
+    <WelcomeFixture />
+  ) : view === "shortcut" ? (
+    <ShortcutFixture />
+  ) : view === "dialog" ? (
+    <DialogFixture />
+  ) : view === "dropdown" ? (
+    <DropdownFixture />
+  ) : view === "overlay" ? (
+    <OverlayFixture />
+  ) : view === "overlay-sheet" ? (
+    <OverlaySheetFixture />
+  ) : view === "meeting-orb" ? (
+    <MeetingOrbFixture />
+  ) : (
+    <SystemFixture />
+  );
+
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+  <React.StrictMode>
+    <I18nextProvider i18n={i18n}>{fixture}</I18nextProvider>
+  </React.StrictMode>,
+);

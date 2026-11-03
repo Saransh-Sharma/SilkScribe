@@ -26,4 +26,9 @@ pub struct CliArgs {
     /// Enable debug mode with verbose logging
     #[arg(long)]
     pub debug: bool,
+
+    /// Serve the library to an AI app over the Model Context Protocol
+    /// (stdin/stdout) instead of starting the app
+    #[arg(long)]
+    pub mcp: bool,
 }

@@ -11,7 +11,7 @@ interface MicrophoneSelectorProps {
 }
 
 export const MicrophoneSelector: React.FC<MicrophoneSelectorProps> = React.memo(
-  ({ descriptionMode = "tooltip", grouped = false }) => {
+  ({ descriptionMode = "inline", grouped = false }) => {
     const { t } = useTranslation();
     const {
       getSetting,
@@ -38,13 +38,15 @@ export const MicrophoneSelector: React.FC<MicrophoneSelectorProps> = React.memo(
 
     const microphoneOptions = audioDevices.map((device) => ({
       value: device.name,
-      label: device.name,
+      label:
+        device.name === "Default"
+          ? t("workspace.defaultMicrophone")
+          : device.name,
     }));
 
     return (
       <SettingContainer
         title={t("settings.sound.microphone.title")}
-        description={t("settings.sound.microphone.description")}
         descriptionMode={descriptionMode}
         grouped={grouped}
       >

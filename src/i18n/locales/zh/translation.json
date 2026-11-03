@@ -1,30 +1,21 @@
 {
   "tray": {
-    "settings": "设置...",
-    "checkUpdates": "检查更新...",
+    "settings": "设置…",
+    "checkUpdates": "检查更新…",
     "copyLastTranscript": "复制最新转录",
-    "unloadModel": "卸载模型",
-    "quit": "退出",
-    "cancel": "取消"
-  },
-  "sidebar": {
-    "home": "Home",
-    "general": "通用",
-    "models": "模型",
-    "advanced": "高级",
-    "postProcessing": "后处理",
-    "history": "历史记录",
-    "debug": "调试",
-    "preferences": "偏好设置",
-    "developer": "开发者"
+    "copyLastOriginal": "拷贝上一条润色前的转录",
+    "unloadModel": "卸载引擎",
+    "quit": "退出 SilkScribe",
+    "cancel": "取消录音",
+    "meetingPause": "暂停会议",
+    "meetingResume": "继续会议",
+    "meetingStop": "停止并转录会议"
   },
   "onboarding": {
-    "subtitle": "请选择一个转录模型以开始使用",
     "recommended": "推荐",
     "download": "下载",
-    "downloading": "下载中...",
-    "customModelDescription": "非官方支持",
-    "downloadFailed": "下载失败。请重试。",
+    "downloading": "正在下载…",
+    "customModelDescription": "自定义引擎 · 非官方支持",
     "modelCard": {
       "accuracy": "准确度",
       "speed": "速度"
@@ -32,349 +23,256 @@
     "models": {
       "small": {
         "name": "Whisper Small",
-        "description": "快速且相当准确。"
+        "description": "快速轻巧"
       },
       "medium": {
         "name": "Whisper Medium",
-        "description": "准确度高，速度适中"
+        "description": "更准确，稍慢"
       },
       "turbo": {
         "name": "Whisper Turbo",
-        "description": "准确度和速度均衡。"
+        "description": "又快又准——全能之选"
       },
       "large": {
         "name": "Whisper Large",
-        "description": "准确度高，但速度较慢。"
+        "description": "最准确的 Whisper，但较慢"
       },
       "parakeet-tdt-0.6b-v2": {
         "name": "Parakeet V2",
-        "description": "仅支持英语。英语用户的最佳模型。"
+        "description": "最适合英语"
       },
       "parakeet-tdt-0.6b-v3": {
         "name": "Parakeet V3",
-        "description": "快速且准确"
+        "description": "又快又准 · 25 种欧洲语言"
       },
       "moonshine-base": {
         "name": "Moonshine Base",
-        "description": "非常快速，仅支持英语。口音处理良好。"
+        "description": "非常快 · 英语 · 能应对各种口音"
       },
       "moonshine-tiny-streaming-en": {
         "name": "Moonshine V2 Tiny",
-        "description": "超快速，仅支持英语"
+        "description": "最快 · 英语"
       },
       "moonshine-small-streaming-en": {
         "name": "Moonshine V2 Small",
-        "description": "快速，仅支持英语。速度与准确度的良好平衡。"
+        "description": "快速且均衡 · 英语"
       },
       "moonshine-medium-streaming-en": {
         "name": "Moonshine V2 Medium",
-        "description": "仅支持英语。高质量。"
+        "description": "Moonshine 最佳质量 · 英语"
       },
       "breeze-asr": {
         "name": "Breeze ASR",
-        "description": "针对台湾国语优化。支持语码转换。"
+        "description": "台湾普通话，夹杂英语"
       },
       "sense-voice-int8": {
         "name": "SenseVoice",
-        "description": "非常快速。支持中文、英语、日语、韩语、粤语。"
+        "description": "非常快 · 中文、英语、日语、韩语、粤语"
       }
     },
     "permissions": {
       "shared": {
-        "eyebrow": "权限",
-        "repairEyebrow": "需要权限",
-        "stepByStep": "操作步骤",
-        "statusLabel": "状态",
-        "openPrompt": "打开 macOS 提示",
-        "openingPrompt": "正在打开 macOS 提示…",
-        "iEnabledIt": "我已开启",
+        "repairEyebrow": "需要你的同意",
+        "openingPrompt": "正在打开…",
+        "iEnabledIt": "我已打开",
         "checkAgain": "再次检查",
         "continue": "继续",
-        "repairAction": "打开引导式修复",
         "appName": "SilkScribe",
-        "guidedHelper": "引导式帮助",
-        "privateLabel": "隐私优先设计",
         "statuses": {
-          "checking": "检查中",
-          "needed": "仍需开启",
-          "error": "需要注意",
-          "requesting": "正在打开 macOS",
+          "checking": "正在检查…",
+          "needed": "尚未允许",
+          "error": "无法检查",
+          "requesting": "正在等待 macOS…",
           "waiting_for_user": "等待你操作",
           "granted": "已允许"
         }
       },
       "microphone": {
-        "title": "让 SilkScribe 在录音时听到你。",
-        "description": "这样你的声音才能变成文字。只有在你开始听写时,SilkScribe 才会聆听。",
-        "primaryAction": "打开麦克风提示",
-        "needLabel": "聆听所需",
-        "whyItMattersTitle": "你的第一次听写从这里开始",
-        "whyItMattersBody": "麦克风权限让 SilkScribe 能通过你选择的快捷键捕捉你的声音。没有它,就没有内容可以转写。",
-        "breaksWithoutTitle": "缺少此权限时",
-        "breaksWithoutBody": "录音可以开始,但 SilkScribe 听不到你的声音。",
-        "afterGrantTitle": "允许之后",
-        "afterGrantBody": "SilkScribe 可以录下你的声音并继续设置。",
+        "title": "让 SilkScribe 听到你",
+        "description": "我们只在你听写时收听。",
+        "primaryAction": "允许使用麦克风",
         "steps": {
-          "step1": "点按“打开 macOS 提示”。",
-          "step2": "当 macOS 询问时,选择“允许”。",
-          "step3": "如果没有出现提示,请打开 系统设置 > 隐私与安全性 > 麦克风。",
-          "step4": "开启 SilkScribe,然后回到这里再次检查。"
+          "step1": "点按“允许使用麦克风”。",
+          "step2": "在 macOS 提示中选择“允许”。"
         },
-        "manualHint": "手动路径:系统设置 > 隐私与安全性 > 麦克风,然后开启 SilkScribe。",
-        "privateNote": "你的音频在这台 Mac 上处理。SilkScribe 无需云端即可聆听和转写。",
+        "manualHint": "没有看到提示？请前往“系统设置”→“隐私与安全性”→“麦克风”打开。",
+        "privateNote": "你的音频永远不会离开这台 Mac。",
         "guide": {
           "windowLabel": "macOS 提示",
-          "title": "当 macOS 询问时,请选择“允许”。",
-          "body": "真正的提示会出现在 SilkScribe 之外。此预览展示了继续设置的正确选择。",
-          "cue": "寻找“允许”",
+          "title": "选择“允许”",
+          "body": "提示会出现在此窗口之外。",
           "promptTitle": "“SilkScribe”想要访问麦克风",
-          "promptBody": "macOS 只会询问一次,以便 SilkScribe 在录音时听到你的听写。",
+          "promptBody": "SilkScribe 在这台 Mac 上把你的语音转为文字。它只在你听写或录音时收听。",
           "deny": "不允许",
           "allow": "允许",
           "allowed": "已允许",
-          "previewAlt": "macOS 麦克风权限请求示例，其中“允许”按钮被高亮。"
+          "previewAlt": "macOS 麦克风提示，“允许”已高亮"
         },
         "statusHelp": {
-          "checking": "正在检查麦克风权限是否已开启。",
-          "needed": "麦克风权限仍处于关闭状态。",
-          "error": "SilkScribe 暂时无法检查。请重试,或使用下方的手动路径。",
-          "requesting": "macOS 权限提示应该马上出现。",
-          "waiting_for_user": "请在 macOS 中完成后回到这里。",
-          "granted": "已开启。SilkScribe 可以继续。"
+          "checking": "只需一秒。",
+          "needed": "点按“允许使用麦克风”继续。",
+          "error": "请重试，或在“系统设置”中打开。",
+          "requesting": "请留意 macOS 的提示。",
+          "waiting_for_user": "在 macOS 中完成后再回到这里。",
+          "granted": "一切就绪。"
         }
       },
       "accessibility": {
-        "title": "让 SilkScribe 把文字放到光标所在的位置。",
-        "description": "macOS 会保护文本插入。此权限让 SilkScribe 能把完成的听写粘贴到你正在使用的应用中。",
-        "primaryAction": "打开“辅助功能”设置",
-        "needLabel": "插入文本所需",
-        "whyItMattersTitle": "它把听写连接到你的应用",
-        "whyItMattersBody": "转写完成后,SilkScribe 需要权限才能把文字放入备忘录、文档、浏览器和其他文本框。",
-        "breaksWithoutTitle": "缺少此权限时",
-        "breaksWithoutBody": "SilkScribe 可以转写,但无法可靠地把结果输入到你的应用中。",
-        "afterGrantTitle": "允许之后",
-        "afterGrantBody": "SilkScribe 可以在应用中输入文字并正常完成设置。",
+        "title": "让 SilkScribe 替你输入",
+        "description": "有了辅助功能权限，我们就能把你的话直接粘贴到光标处。",
+        "primaryAction": "打开辅助功能设置",
         "steps": {
-          "step1": "点按“打开 macOS 提示”。",
+          "step1": "点按“打开辅助功能设置”。",
           "step2": "如果 macOS 把你带到系统设置,请在那里继续。",
-          "step3": "打开 隐私与安全性 > 辅助功能,找到 SilkScribe。",
-          "step4": "开启 SilkScribe,然后回到这里再次检查。"
+          "step3": "回到这里。"
         },
-        "manualHint": "手动路径:系统设置 > 隐私与安全性 > 辅助功能,然后开启 SilkScribe。",
-        "privateNote": "文本访问只用于把转写结果放入当前输入框。你的语音和文字都保留在本地。",
+        "manualHint": "或前往“系统设置”→“隐私与安全性”→“辅助功能”。",
+        "privateNote": "我们只用它来粘贴你的听写内容。",
         "guide": {
           "windowLabel": "系统设置",
-          "title": "在“辅助功能”中开启 SilkScribe。",
-          "body": "macOS 可能会带你前往“隐私与安全性”。在列表中找到 SilkScribe,开启后回到这里。",
-          "cue": "开启 SilkScribe",
-          "rowHelp": "允许插入文本",
-          "promptTitle": "辅助功能",
-          "exampleApp1": "Finder",
-          "exampleApp2": "邮件",
-          "previewAlt": "已开启 SilkScribe 的 macOS 辅助功能列表示例。"
+          "title": "打开 SilkScribe",
+          "body": "在列表中找到 SilkScribe 并打开。",
+          "previewAlt": "已打开 SilkScribe 的 macOS 辅助功能设置"
         },
         "statusHelp": {
-          "checking": "正在检查辅助功能权限是否已开启。",
-          "needed": "辅助功能权限仍处于关闭状态。",
-          "error": "SilkScribe 暂时无法检查。请重试,或使用下方的手动路径。",
-          "requesting": "macOS 审批流程应该马上打开。",
-          "waiting_for_user": "请在 macOS 中完成后回到这里。",
-          "granted": "已开启。SilkScribe 可以继续。"
+          "checking": "只需一秒。",
+          "needed": "点按“打开辅助功能设置”继续。",
+          "error": "请重试，或在“系统设置”中打开。",
+          "requesting": "正在打开“系统设置”…",
+          "waiting_for_user": "打开 SilkScribe 后再回到这里。已经打开了？先关闭再重新打开。",
+          "granted": "一切就绪。"
         }
       }
     },
     "setup": {
-      "eyebrow": "Setting things up",
-      "title": "SilkScribe is getting ready.",
-      "description": "We’re preparing the best offline speech engine for {{language}}, then you’ll try a quick test.",
-      "defaultLanguage": "your language",
-      "autoLabel": "Automatic",
-      "engineTitle": "No setup choices needed",
-      "engineBody": "SilkScribe is choosing the best fit for {{language}} and setting it up locally.",
-      "progressLabel": "Progress",
-      "sizeLabel": "Download",
-      "speedLabel": "Speed",
-      "etaLabel": "ETA",
+      "title": "正在准备引擎",
+      "description": "正在为{{language}}设置最合适的引擎。",
+      "defaultLanguage": "你的语言",
+      "engineTitle": "我们已为你挑好",
+      "engineBody": "它最适合这台 Mac 和{{language}}。",
+      "progressLabel": "进度",
+      "sizeLabel": "大小",
+      "speedLabel": "速度",
+      "etaLabel": "剩余时间",
       "speedValue": "{{speed}} MB/s",
-      "notAvailable": "Not yet",
-      "preparingDetail": "Preparing…",
-      "shortcutTitle": "Your shortcut",
-      "shortcutBody": "Hold {{shortcut}} to speak. Release it to transcribe.",
-      "prepBadge": "Almost ready",
-      "prepTitle": "This should stay short and feel automatic",
-      "prepBody": "While setup runs, SilkScribe is downloading or loading the speech engine it picked for this machine. You can just wait here for the next step.",
-      "retry": "Try again",
-      "ready": "Everything is ready. Opening the practice step now.",
+      "notAvailable": "—",
+      "preparingDetail": "正在准备…",
+      "shortcutTitle": "你的快捷键",
+      "shortcutBody": "按住 {{shortcut}}，说话，然后松开。",
+      "retry": "重试",
+      "ready": "可以试试了。",
       "states": {
-        "resolving": "Choosing",
-        "downloading": "Downloading",
-        "preparing": "Preparing",
-        "ready": "Ready",
-        "error": "Needs attention"
-      },
-      "panelStates": {
-        "resolving": "Choosing the best engine",
-        "downloading": "Downloading files",
-        "preparing": "Preparing the engine",
-        "ready": "Ready to test",
-        "error": "Setup needs attention"
+        "resolving": "正在挑选引擎",
+        "downloading": "正在下载",
+        "preparing": "正在准备",
+        "ready": "已就绪",
+        "error": "未完成"
       },
       "panelHelp": {
-        "resolving": "SilkScribe is checking what’s available and choosing the best engine for this device.",
-        "downloading": "The required files are downloading now.",
-        "preparing": "The download is done. SilkScribe is loading everything locally.",
-        "ready": "Setup is done. Next: one quick real test.",
-        "error": "Setup didn’t finish. Try again."
+        "resolving": "正在为这台 Mac 寻找最合适的选择。",
+        "downloading": "只需下载一次。",
+        "preparing": "快好了。",
+        "error": "请检查网络连接后重试。"
       },
       "errors": {
-        "loadModels": "SilkScribe couldn’t load the available speech engines.",
-        "downloadModel": "SilkScribe couldn’t finish the download.",
-        "selectModel": "SilkScribe couldn’t prepare your speech engine."
-      },
-      "tipsBadge": "Helpful while you wait",
-      "previousCard": "Previous tip",
-      "nextCard": "Next tip",
-      "goToCard": "Go to tip {{index}}",
-      "tips": {
-        "cards": {
-          "shortcutHabit": {
-            "title": "One shortcut, one quick habit",
-            "description": "SilkScribe is built around a very simple rhythm: hold, speak, release.",
-            "point1": "Hold {{shortcut}} while you speak.",
-            "point2": "Release it when you are done talking.",
-            "point3": "SilkScribe turns that short burst into text right away."
-          },
-          "focusField": {
-            "title": "Always focus the place you want text to go",
-            "description": "SilkScribe sends the result into the field that is active when transcription finishes.",
-            "point1": "Click into the text box you want before you start talking.",
-            "point2": "Keep that field focused until the transcription finishes.",
-            "point3": "During onboarding, we provide a practice box for this exact reason."
-          },
-          "shortBursts": {
-            "title": "Short bursts feel fastest",
-            "description": "New users usually get the cleanest first results when they keep each recording brief.",
-            "point1": "Try one or two sentences at a time.",
-            "point2": "Pause naturally between ideas.",
-            "point3": "You can always record another burst immediately after."
-          },
-          "quietSpace": {
-            "title": "A quieter space makes the first win easier",
-            "description": "SilkScribe works best when your voice stands out clearly from the room around you.",
-            "point1": "Use the microphone you normally prefer if you have one.",
-            "point2": "Keep fans, speakers, or background chatter as low as you can.",
-            "point3": "Speak at a steady, normal pace."
-          },
-          "privacy": {
-            "title": "Your setup stays on the essentials",
-            "description": "This onboarding avoids extra configuration so you can get to a working first transcription faster.",
-            "point1": "Permissions come first because they are critical to the app working correctly.",
-            "point2": "The speech engine is chosen automatically in the background.",
-            "point3": "You can fine-tune settings later after you have the core workflow working."
-          },
-          "firstWin": {
-            "title": "The next screen is not a fake demo",
-            "description": "You are about to try a real push-to-talk transcription inside the actual app.",
-            "point1": "Keep the practice box focused.",
-            "point2": "Use your normal shortcut exactly the way you will use it later.",
-            "point3": "If text appears in the box, SilkScribe is ready for real work."
-          }
-        }
+        "loadModels": "无法载入引擎列表",
+        "downloadModel": "无法完成下载",
+        "selectModel": "无法准备引擎"
       }
     },
     "progress": {
-      "welcome": "Welcome",
-      "microphone": "Microphone",
-      "accessibility": "Text Access",
-      "setup": "Setup",
-      "practice": "Try It"
+      "welcome": "欢迎",
+      "microphone": "麦克风",
+      "accessibility": "辅助功能",
+      "setup": "设置",
+      "shortcut": "快捷键",
+      "practice": "试一试"
     },
     "welcome": {
-      "eyebrow": "Get set up",
-      "title": "Set up SilkScribe in a minute.",
-      "description": "We’ll turn on the permissions it needs, finish setup in the background, and let you try one real dictation.",
-      "badge": "Quick setup",
-      "features": {
-        "permissions": {
-          "title": "Clear permission help",
-          "description": "See exactly what to allow and why."
-        },
-        "engine": {
-          "title": "Automatic setup",
-          "description": "SilkScribe picks the right offline engine for this device."
-        },
-        "practice": {
-          "title": "One real test",
-          "description": "Make sure everything works before you start."
-        }
-      },
-      "outcomeLabel": "After setup",
-      "outcome": "Hold your shortcut, speak, and SilkScribe will place the text where you need it.",
-      "planLabel": "What happens",
+      "title": "欢迎使用 SilkScribe",
+      "description": "在任何应用中用说代替打字。设置大约只需一分钟。",
       "plan": {
         "step1": {
-          "title": "Allow the microphone",
-          "description": "So SilkScribe can hear you."
+          "title": "允许使用麦克风",
+          "description": "这样我们才能听到你。"
         },
         "step2": {
-          "title": "Allow text access",
-          "description": "So SilkScribe can type into your apps."
+          "title": "允许辅助功能",
+          "description": "这样我们才能在你的应用中输入。"
         },
         "step3": {
-          "title": "Try it once",
-          "description": "Setup finishes, then you run one quick test."
+          "title": "试一次",
+          "description": "快速试一下就完成了。"
+        },
+        "shortcut": {
+          "title": "选择快捷键",
+          "description": "按住说话，或按一下开始、再按一下停止。"
         }
       },
-      "permissionPromise": "These steps are required for SilkScribe to work properly.",
-      "continue": "Continue"
+      "continue": "开始"
     },
     "practice": {
-      "eyebrow": "Try it",
-      "title": "Try SilkScribe once",
-      "description": "Click the practice box, hold your shortcut, say a short sentence, then release.",
-      "badge": "Quick test",
-      "shortcutFallback": "Shortcut",
+      "title": "试一试",
+      "description": "点按文本框，按住 {{shortcut}}，然后说点什么。",
+      "shortcutFallback": "你的快捷键",
       "steps": {
         "step1": {
-          "title": "Focus the practice box",
-          "description": "Keep this box selected so SilkScribe knows where to place the text."
+          "title": "点按文本框"
         },
         "step2": {
-          "title": "Hold {{shortcut}} and speak",
-          "description": "Say one short sentence in a natural voice."
+          "title": "按住 {{shortcut}} 并说话",
+          "toggleTitle": "按下 {{shortcut}} 并说话"
         },
         "step3": {
-          "title": "Release to transcribe",
-          "description": "If the text appears here, SilkScribe is ready."
+          "title": "松开",
+          "toggleTitle": "再按一次"
         }
       },
-      "tipTitle": "Try this",
-      "tipBody": "Say: “SilkScribe is ready for my notes today.”",
-      "helperTitle": "Try here",
-      "helper": "Keep this box focused, then use your shortcut. Your words should appear here.",
-      "placeholder": "Hold your shortcut, speak, then release. Your text will appear here…",
-      "success": "That worked",
-      "readyToFinish": "Your test worked. You can start using SilkScribe.",
-      "prompt": "You can skip this for now and test it later.",
-      "finish": "Start using SilkScribe",
-      "skip": "Skip for now",
-      "finishing": "Finishing setup…",
-      "finishFailed": "SilkScribe couldn’t finish onboarding. Please try again."
+      "tipTitle": "试着说",
+      "tipBody": "“看看这个效果怎么样。”",
+      "placeholder": "你说的话会显示在这里",
+      "success": "成功了！",
+      "readyToFinish": "一切就绪。",
+      "readyToFinishTap": "一切就绪。轻点 {{shortcut}} 可免按住持续听写。",
+      "finish": "开始使用 SilkScribe",
+      "skip": "暂时跳过",
+      "finishing": "正在完成…",
+      "finishFailed": "无法完成设置。请重试。",
+      "descriptionToggle": "点按文本框，按下 {{shortcut}}，说点什么，然后再按一次。"
     },
     "shared": {
-      "stepCounter": "Step {{current}} / {{total}}"
+      "stepCounter": "第 {{current}} 步，共 {{total}} 步"
+    },
+    "shortcut": {
+      "title": "选择你的快捷键",
+      "description": "在任何应用中都能用它开始听写。",
+      "modeTitle": "使用方式",
+      "hold": {
+        "title": "按住说话",
+        "body": "说话时按住快捷键，说完松开。"
+      },
+      "toggle": {
+        "title": "按一下开始和停止",
+        "body": "按一下开始，说完再按一下。"
+      },
+      "cleanup": {
+        "label": "润色我的文字",
+        "description": "在这台 Mac 上用 Apple Intelligence 修正标点、去除口头禅。"
+      },
+      "continue": "继续",
+      "cleanupFailed": "无法打开 AI 润色"
     }
   },
   "modelSelector": {
     "custom": "自定义",
     "active": "活跃",
     "statusLabel": "模型状态：{{status}}",
-    "switching": "切换中...",
+    "switching": "正在切换…",
     "noModelsAvailable": "没有可用的模型",
     "extracting": "正在解压 {{modelName}}...",
     "extractingMultiple": "正在解压 {{count}} 个模型...",
-    "extractingGeneric": "解压中...",
-    "downloading": "下载中 {{percentage}}%",
+    "extractingGeneric": "正在解压…",
+    "downloading": "正在下载 · {{percentage}}%",
     "downloadingMultiple": "正在下载 {{count}} 个模型...",
     "modelReady": "模型已就绪",
     "loading": "正在加载 {{modelName}}...",
@@ -387,8 +285,8 @@
     "downloadSpeed": "{{speed}} MB/s",
     "cancel": "取消",
     "cancelDownload": "取消下载",
-    "retryDownload": "重试下载",
-    "downloadErrorTitle": "下载未能完成",
+    "retryDownload": "重试",
+    "downloadErrorTitle": "下载未完成",
     "downloadProgress": {
       "downloadedOf": "{{downloaded}} / {{total}}",
       "speed": "{{speed}}/秒",
@@ -399,29 +297,22 @@
       "unknownEta": "正在计算时间"
     },
     "capabilities": {
-      "languageSelection": "支持多种输入语言",
-      "singleLanguage": "仅支持此语言",
+      "languageSelection": "多种语言",
+      "singleLanguage": "单一语言",
       "multiLanguage": "多语言",
-      "languageOnly": "仅 {{language}}",
-      "translation": "可翻译为英语",
+      "languageOnly": "仅{{language}}",
+      "translation": "可译成英语",
       "translate": "翻译为英语"
     },
-    "diskSpaceCheckError": "SilkScribe 在下载前无法检查磁盘空间：{{error}}",
-    "insufficientSpace": "下载此模型需要 {{required}} 的可用空间。当前可用 {{available}}。",
-    "downloadFailed": "SilkScribe 无法下载该模型：{{error}}",
-    "extractionFailed": "SilkScribe 无法解压该模型：{{error}}",
     "downloadErrors": {
-      "preflightFailed": "SilkScribe 无法在下载前检查磁盘空间：{{detail}}",
-      "insufficientSpace": "SilkScribe 需要 {{required}} 可用空间才能下载此模型。当前可用 {{available}}。",
-      "downloadFailed": "SilkScribe 无法下载模型：{{detail}}",
-      "extractionFailed": "SilkScribe 无法解压模型：{{detail}}",
-      "unknown": "SilkScribe 无法完成下载。"
+      "unknown": "下载未完成。请检查网络连接后重试。",
+      "space": "空间不足：需要 {{required}}，可用 {{free}}。请释放空间后重试。",
+      "extraction": "下载已完成，但无法解压。请重试。"
     }
   },
   "settings": {
     "modelSettings": {
-      "title": "{{model}} 设置",
-      "noSettingsNeeded": "此模型自动运行，无需配置。"
+      "title": "{{model}} 设置"
     },
     "general": {
       "eyebrow": "日常设置",
@@ -435,33 +326,35 @@
         "app": "应用",
         "appDescription": "选择 SilkScribe 应用本身的使用感受。"
       },
-      "title": "通用",
       "shortcut": {
-        "title": "SilkScribe 快捷键",
-        "description": "配置启动语音转文字录制的键盘快捷键",
-        "loading": "加载快捷键中...",
-        "none": "未配置快捷键",
+        "title": "听写快捷键",
+        "loading": "正在载入…",
+        "none": "未设置快捷键",
         "notFound": "未找到快捷键",
-        "pressKeys": "请按键...",
-        "reset": "重置快捷键",
+        "pressKeys": "按下快捷键…",
+        "reset": "恢复默认",
         "bindings": {
           "transcribe": {
-            "name": "转录快捷键",
-            "description": "用于录制和转录语音的键盘快捷键。"
+            "name": "听写快捷键",
+            "description": "在任何应用中都可用。"
           },
           "cancel": {
             "name": "取消快捷键",
-            "description": "用于取消当前录制的键盘快捷键。"
+            "description": "停止且不转录。"
           },
           "transcribe_with_post_process": {
-            "name": "后处理快捷键",
-            "description": "可选：一个专用快捷键，始终对您的转录应用 AI 后处理。"
+            "name": "AI 润色快捷键",
+            "description": "听写并用 AI 整理文字。"
+          },
+          "command": {
+            "name": "指令快捷键",
+            "description": "选中文字后说出如何修改，或直接说出要写的内容。"
           }
         },
         "errors": {
-          "restore": "无法恢复原始快捷键",
-          "set": "无法设置快捷键: {{error}}",
-          "reset": "无法将快捷键重置为原始值"
+          "restore": "无法恢复之前的快捷键",
+          "set": "无法保存快捷键：{{error}}",
+          "reset": "无法重置快捷键"
         },
         "success": {
           "saved": "已保存快捷键",
@@ -469,20 +362,22 @@
         }
       },
       "language": {
-        "title": "语言",
-        "description": "选择语音识别的语言。自动将自动确定语言，选择特定语言可以提高该语言的准确度。",
-        "descriptionUnsupported": "Parakeet 模型会自动检测语言，无需手动选择。",
-        "searchPlaceholder": "搜索语言...",
-        "noResults": "未找到语言",
-        "auto": "自动"
+        "title": "说话语言",
+        "description": "选择你的语言以提高准确度，或让我们自动检测。",
+        "searchPlaceholder": "搜索语言",
+        "noResults": "无匹配结果",
+        "auto": "自动检测"
       },
       "pushToTalk": {
         "label": "按住说话",
-        "description": "按住录制，松开停止"
+        "description": "关闭后，按一下开始，再按一下停止。"
+      },
+      "tapToLock": {
+        "label": "轻点免按住",
+        "description": "轻点一下后会持续收听，直到你再次按下。"
       },
       "theme": {
-        "title": "外观",
-        "description": "跟随 macOS，或选择固定的浅色或深色界面。",
+        "title": "主题",
         "options": {
           "system": "系统",
           "light": "浅色",
@@ -491,105 +386,94 @@
       }
     },
     "models": {
-      "eyebrow": "语音引擎",
-      "pageTitle": "选择 SilkScribe 的聆听方式",
-      "pageDescription": "选择你希望 SilkScribe 使用的模型，整理已安装的模型，并在需要时下载更多。",
-      "title": "转录模型",
-      "description": "选择转录模型或下载其他模型。不同模型提供不同的准确度和速度。",
-      "currentModel": "当前模型",
-      "currentModelSettings": "当前模型设置",
-      "currentModelSettingsDescription": "这里仅显示当前活动模型的语言选项。",
-      "yourModels": "已下载的模型",
-      "availableModels": "可供下载",
-      "downloaded": "已下载",
-      "available": "可下载",
-      "noActiveModelTitle": "尚无活动模型。",
-      "noActiveModelDescription": "在下方下载模型，SilkScribe 将在你下次转录时使用它。",
-      "noExtraInstalled": "目前你只安装了当前模型。",
-      "deleteConfirm": "确定要删除 {{modelName}} 吗？您需要重新下载才能使用。",
-      "deleteActiveConfirm": "{{modelName}} 是您当前使用的模型。删除后将停止转录，直到您选择新的模型。确定要删除吗？",
-      "deleteTitle": "删除模型",
+      "currentModel": "当前引擎",
+      "currentModelSettings": "引擎设置",
+      "yourModels": "已安装",
+      "availableModels": "更多引擎",
+      "noActiveModelTitle": "还没有引擎",
+      "noActiveModelDescription": "在下方下载一个即可开始听写。",
+      "noExtraInstalled": "这是你唯一的引擎。",
+      "deleteConfirm": "要再次使用需要重新下载。",
+      "deleteActiveConfirm": "这是你当前的引擎，删除后听写会停止，直到你选择另一个。",
+      "deleteTitle": "删除 {{modelName}}？",
       "filters": {
-        "all": "全部",
-        "multiLanguage": "多语言",
-        "translation": "翻译",
         "allLanguages": "所有语言"
       },
-      "noModelsMatch": "没有符合此筛选条件的模型。",
-      "deleteConfirmAction": "删除模型"
+      "noModelsMatch": "没有匹配的引擎",
+      "deleteConfirmAction": "删除"
     },
     "sound": {
-      "title": "声音",
       "microphone": {
         "title": "麦克风",
-        "description": "选择您偏好的麦克风设备",
-        "placeholder": "选择麦克风...",
-        "loading": "加载中..."
+        "placeholder": "选择麦克风",
+        "loading": "正在载入…"
       },
       "audioFeedback": {
-        "label": "音频反馈",
-        "description": "录制开始和停止时播放声音"
+        "label": "音效",
+        "description": "听写开始和结束时播放提示音。"
       },
       "outputDevice": {
-        "title": "输出设备",
-        "description": "选择用于反馈声音的音频输出设备",
-        "placeholder": "选择输出设备...",
-        "loading": "加载中..."
+        "title": "播放声音的设备",
+        "placeholder": "选择输出设备",
+        "loading": "正在载入…"
       },
       "volume": {
-        "title": "音量",
-        "description": "调整音频反馈的音量"
+        "title": "音量"
       },
       "soundTheme": {
         "options": {
+          "silk": "Silk",
           "marimba": "马林巴",
           "pop": "流行",
           "custom": "自定义"
         },
-        "preview": "试听声音主题（先播放开始再播放停止）"
+        "preview": "试听声音主题（先播放开始再播放停止）",
+        "title": "声音主题",
+        "description": "录音和转录时播放的提示音集合。",
+        "cues": {
+          "start": "开始",
+          "transcribing": "正在转录",
+          "done": "完成",
+          "error": "错误",
+          "cancel": "取消"
+        }
       }
     },
     "advanced": {
       "eyebrow": "可选控制项",
       "pageTitle": "高级行为与支持",
       "pageDescription": "大多数人无需改动这些。当你需要 SilkScribe 在你的设备上有不同表现时再使用。",
-      "title": "高级",
       "groups": {
         "app": "应用",
-        "output": "输出",
+        "output": "粘贴",
         "transcription": "转录",
         "history": "历史",
-        "support": "支持",
-        "experimental": "实验性"
+        "support": "疑难解答",
+        "experimental": "实验性",
+        "runtime": "性能"
       },
       "groupDescriptions": {
-        "app": "应用本身的启动与悬浮窗行为。",
-        "output": "完成的文本如何放入你正在使用的应用。",
-        "transcription": "改变 SilkScribe 组织文本方式的细微调整。",
         "history": "转录和录音的保留与清理设置。",
-        "support": "有助于排查问题的维护工具和文件夹。",
-        "experimental": "仍在演进、可能会变化的功能。"
+        "experimental": "仍在开发中——可能会变化或出问题。"
       },
       "experimentalToggle": {
         "label": "实验性功能",
-        "description": "启用仍在开发中的实验性功能。"
+        "description": "试用我们仍在完善的功能。"
       },
       "lazyStreamClose": {
-        "label": "转写之间保持麦克风开启",
-        "description": "停止录音后短暂保持麦克风流开启，以减少连续转写的延迟。"
+        "label": "让麦克风短暂保持开启",
+        "description": "连续听写更快。可能降低蓝牙音质。"
       },
       "acceleration": {
         "whisper": {
           "title": "Whisper 加速",
-          "description": "为 Whisper 模型选择硬件加速。"
+          "description": "“自动”会在可用时使用 GPU。"
         },
         "ort": {
           "title": "ONNX 加速",
-          "description": "为 ONNX 模型选择硬件加速。"
+          "description": "部分选项仍是实验性的。"
         },
         "gpuDevice": {
-          "title": "GPU 设备",
-          "description": "选择 Whisper 推理使用的 GPU。",
           "auto": "自动"
         },
         "labels": {
@@ -601,58 +485,54 @@
         }
       },
       "startHidden": {
-        "label": "隐藏启动",
-        "description": "启动到系统托盘而不打开窗口。"
+        "label": "在后台启动",
+        "description": "启动后只在菜单栏中显示，不打开此窗口。"
       },
       "autostart": {
-        "label": "开机启动",
-        "description": "登录计算机时自动启动 SilkScribe。"
+        "label": "登录时打开"
       },
       "showTrayIcon": {
-        "label": "显示托盘图标",
-        "description": "在系统托盘中显示 SilkScribe 图标。"
+        "label": "在菜单栏中显示图标"
       },
       "overlay": {
-        "title": "悬浮窗位置",
-        "description": "在录制和转录期间显示可视反馈悬浮窗。在 Linux 上建议选择「无」。",
+        "title": "录音指示器",
+        "description": "听写时显示。",
         "options": {
-          "none": "无",
+          "none": "隐藏",
           "bottom": "底部",
           "top": "顶部"
         }
       },
       "pasteMethod": {
         "title": "粘贴方式",
-        "description": "选择文字插入方式。直接：通过系统输入模拟打字。无：跳过粘贴，仅更新历史记录/剪贴板。",
+        "description": "“粘贴”一次放入全部文字，“逐键输入”则逐个按键输入。",
         "options": {
-          "clipboard": "剪贴板 ({{modifier}}+V)",
-          "clipboardCtrlShiftV": "剪贴板 (Ctrl+Shift+V)",
-          "clipboardShiftInsert": "剪贴板 (Shift+Insert)",
-          "direct": "直接",
-          "none": "无",
-          "externalScript": "外部脚本"
+          "clipboard": "粘贴（{{modifier}}+V）",
+          "clipboardCtrlShiftV": "粘贴（Ctrl+Shift+V）",
+          "clipboardShiftInsert": "粘贴（Shift+Insert）",
+          "direct": "逐键输入",
+          "none": "不粘贴（仅拷贝）",
+          "externalScript": "自定脚本"
         },
         "externalScriptPlaceholder": "/path/to/your/script.sh"
       },
       "typingTool": {
         "title": "输入工具",
-        "description": "选择在直接粘贴方式下使用的 Linux 输入工具。Auto 会自动检测并使用系统中可用的最佳工具。",
+        "description": "供“逐键输入”使用。",
         "options": {
-          "auto": "Auto（推荐）"
+          "auto": "自动（推荐）"
         }
       },
       "clipboardHandling": {
-        "title": "剪贴板处理",
-        "description": "不修改剪贴板将在转录后保留当前剪贴板内容。复制到剪贴板将在粘贴后将转录结果留在剪贴板中。",
+        "title": "粘贴后",
         "options": {
-          "dontModify": "不修改剪贴板",
-          "copyToClipboard": "复制到剪贴板"
-        },
-        "directInsertHint": "SilkScribe will insert text directly here so your clipboard stays unchanged."
+          "dontModify": "恢复剪贴板原来的内容",
+          "copyToClipboard": "把文字保留在剪贴板"
+        }
       },
       "autoSubmit": {
-        "title": "自动提交",
-        "description": "在文本插入后自动发送所选的按键组合。macOS 上使用 Cmd+Enter，Windows/Linux 上使用 Super+Enter。",
+        "title": "粘贴后发送",
+        "description": "方便发送聊天消息。",
         "options": {
           "off": "关闭",
           "enter": "Enter",
@@ -663,12 +543,11 @@
       },
       "translateToEnglish": {
         "label": "翻译为英语",
-        "description": "在转录过程中自动将其他语言的语音翻译为英语。",
-        "descriptionUnsupported": "{{model}} 模型不支持翻译功能。"
+        "description": "说任何语言，都得到英文文本。"
       },
       "modelUnload": {
-        "title": "卸载模型",
-        "description": "当模型在指定时间内未使用时自动释放 GPU/CPU 内存",
+        "title": "闲置时卸载引擎",
+        "description": "释放内存。下一次听写会稍慢启动。",
         "options": {
           "never": "从不",
           "immediately": "立即",
@@ -681,220 +560,277 @@
         }
       },
       "customWords": {
-        "title": "自定义词汇",
-        "description": "添加经常被误听或拼写错误的词汇。系统将自动将发音相似的词汇修正为您列表中的词汇。",
-        "placeholder": "添加词汇",
+        "title": "词汇",
+        "description": "需要按你的写法拼写的名字和术语。",
+        "placeholder": "添加词语或名字",
         "add": "添加",
         "remove": "删除 {{word}}",
-        "duplicate": "\"{{word}}\" 已存在"
+        "duplicate": "“{{word}}”已在你的列表中"
+      },
+      "overlayAppearance": {
+        "title": "指示器主题",
+        "options": {
+          "auto": "跟随应用",
+          "light": "浅色",
+          "dark": "深色"
+        }
+      },
+      "liveText": {
+        "label": "听写时实时显示文字",
+        "description": "使用快速引擎时，边说边显示文字。最终文字可能会稍晚出现。"
       }
     },
     "postProcessing": {
-      "title": "后处理",
       "hotkey": {
         "title": "快捷键"
       },
       "api": {
-        "title": "API（兼容 OpenAI）",
+        "title": "连接",
         "provider": {
           "title": "提供商",
-          "description": "选择一个兼容 OpenAI 的提供商。"
+          "description": "任何兼容 OpenAI 的 API 都可以使用。",
+          "custom": "自定"
         },
         "appleIntelligence": {
-          "title": "Apple Intelligence",
-          "description": "完全在设备上运行。无需 API 密钥或网络访问。",
-          "requirements": "需要运行 macOS Tahoe（26.0）或更高版本的 Apple Silicon Mac。必须在系统设置中启用 Apple Intelligence。",
-          "unavailable": "Apple Intelligence 在此设备上不可用。需要运行 macOS Tahoe（26.0）或更高版本的 Apple Silicon Mac，并在系统设置中启用 Apple Intelligence。"
+          "unavailable": "这台 Mac 无法使用 Apple Intelligence。需要 Apple 芯片、macOS Tahoe 26 或更高版本，并已打开 Apple Intelligence。"
         },
         "baseUrl": {
           "title": "基础 URL",
-          "description": "所选提供商的 API 基础 URL。仅自定义提供商可编辑。",
-          "placeholder": "https://api.openai.com/v1"
+          "description": "仅“自定”时可编辑。",
+          "placeholder": "https://api.openai.com/v1",
+          "managed": "由提供方设定"
         },
         "apiKey": {
           "title": "API 密钥",
-          "description": "所选提供商的 API 密钥。",
           "placeholder": "sk-..."
         },
         "model": {
           "title": "模型",
-          "descriptionApple": "提供可选的数字令牌限制或保持默认的设备预设。",
-          "descriptionCustom": "提供自定义端点期望的模型标识符。",
-          "descriptionDefault": "选择所选提供商提供的模型。",
-          "placeholderApple": "Apple Intelligence",
-          "placeholderWithOptions": "搜索或选择模型",
+          "descriptionCustom": "你的接口所需的模型名称。",
+          "placeholderWithOptions": "搜索模型",
           "placeholderNoOptions": "输入模型名称",
-          "refreshModels": "刷新模型"
+          "refreshModels": "刷新"
         }
       },
       "prompts": {
         "title": "提示词",
         "selectedPrompt": {
-          "title": "已选提示词",
-          "description": "选择用于优化转录的模板或创建新模板。在提示词文本中使用 ${output} 来引用捕获的转录。"
+          "title": "提示词"
         },
-        "noPrompts": "没有可用的提示词",
+        "noPrompts": "还没有提示词",
         "selectPrompt": "选择提示词",
-        "createNew": "创建新提示词",
-        "promptLabel": "提示词名称",
-        "promptLabelPlaceholder": "输入提示词名称",
-        "promptInstructions": "提示词指令",
-        "promptInstructionsPlaceholder": "编写转录后要执行的指令。示例：改进以下文本的语法和清晰度: ${output}",
-        "promptTip": "提示：使用 <code>${output}</code> 将转录文本插入到您的提示词中。",
-        "updatePrompt": "更新提示词",
+        "createNew": "新建提示词",
+        "promptLabel": "名称",
+        "promptLabelPlaceholder": "例如：修正语法",
+        "promptInstructions": "指令",
+        "promptInstructionsPlaceholder": "修正以下内容的语法和标点：${output}",
+        "promptTip": "在转录内容应出现的位置使用 <code>${output}</code>。",
+        "updatePrompt": "保存更改",
         "deletePrompt": "删除提示词",
         "createPrompt": "创建提示词",
         "cancel": "取消",
-        "selectToEdit": "选择上方的提示词以查看和编辑其详细信息。",
-        "createFirst": "点击上方的「创建新提示词」来创建您的第一个后处理提示词。"
+        "selectToEdit": "选择一个提示词进行编辑。",
+        "createFirst": "创建一个提示词，自动整理你的听写内容。"
       }
     },
     "history": {
-      "eyebrow": "转录归档",
-      "pageTitle": "查看你的近期转录",
-      "pageDescription": "浏览 SilkScribe 捕捉的内容，回放音频，并保存任何你想留存的内容。",
-      "title": "历史记录",
-      "openFolder": "打开录音文件夹",
-      "exportMarkdown": "导出 Markdown",
-      "exportJson": "导出 JSON",
-      "exportTitle": "导出历史",
-      "exportEmpty": "没有可导出的历史。",
-      "exportSuccess": "已导出历史",
-      "exportError": "SilkScribe 无法导出历史。",
-      "loading": "加载历史记录中...",
-      "empty": "还没有转录记录。开始录制以建立您的历史记录！",
-      "emptyDescription": "你保存的转录和录音将在首次听写后显示在这里。",
-      "emptyFiltered": "没有匹配的转录。",
-      "emptyFilteredDescription": "尝试其他搜索，或切换回“全部”。",
-      "searchPlaceholder": "搜索历史",
-      "filters": {
-        "all": "全部",
-        "saved": "已保存",
-        "failed": "失败"
-      },
       "copyToClipboard": "复制转录到剪贴板",
       "copyAsMarkdown": "将转录复制为 Markdown",
       "copySuccess": "已复制到剪贴板",
-      "copyError": "SilkScribe 无法复制此转录。",
       "save": "保存转录",
       "unsave": "从已保存中移除",
       "delete": "删除条目",
-      "deleteError": "删除条目失败，请重试。",
-      "deleteQueued": "已删除条目",
-      "deleteUndoDescription": "你可以在几秒内撤销。",
-      "undoDelete": "撤销",
-      "loadError": "暂时无法加载历史记录。请再试一次。",
-      "loadMore": "加载更多",
-      "loadingMore": "加载中...",
       "retryableEmpty": "转写失败。录音可重试。",
-      "retryTranscription": "重试转写",
-      "retryTranscriptionError": "重试转写失败。请再试一次。",
-      "retry": "重试"
+      "retryTranscription": "重试转写"
     },
     "debug": {
-      "title": "调试",
       "logDirectory": {
-        "title": "日志目录",
-        "description": "日志文件的存储位置"
+        "title": "日志文件夹"
       },
       "logLevel": {
-        "title": "日志级别",
-        "description": "设置日志的详细程度"
+        "title": "日志级别"
       },
       "updateChecks": {
-        "label": "检查更新",
-        "description": "自动检查 SilkScribe 的新版本"
-      },
-      "soundTheme": {
-        "label": "声音主题",
-        "description": "选择录制开始和停止反馈的声音主题"
+        "label": "自动检查更新"
       },
       "wordCorrectionThreshold": {
-        "title": "词汇修正阈值",
-        "description": "自定义词汇修正的灵敏度"
+        "title": "词汇匹配",
+        "description": "数值越高能匹配更多词语，但可能过度纠正。"
       },
       "historyLimit": {
-        "title": "历史记录上限",
-        "description": "保留的最大历史条目数",
-        "entries": "条"
+        "title": "最多保留",
+        "entries": "条听写"
       },
       "recordingRetention": {
-        "title": "自动删除录音",
-        "description": "自动删除旧录音以节省空间",
+        "title": "删除听写音频",
+        "description": "只删除音频，转录会保留。",
         "never": "从不",
         "preserveLimit": "保留最新 {{count}} 条",
         "days3": "3 天后",
         "weeks2": "2 周后",
         "months3": "3 个月后",
-        "placeholder": "选择保留期限..."
+        "placeholder": "选择…"
       },
       "alwaysOnMicrophone": {
-        "label": "麦克风常开",
-        "description": "保持麦克风活跃以获得更快的响应"
+        "label": "麦克风始终开启",
+        "description": "启动更快，但麦克风会一直处于活跃状态。"
       },
       "clamshellMicrophone": {
-        "title": "合盖麦克风",
-        "description": "笔记本电脑盖子关闭时使用的麦克风"
+        "title": "合盖时使用的麦克风"
       },
       "postProcessingToggle": {
-        "label": "后处理",
-        "description": "启用转录后的 AI 文本优化"
+        "label": "使用 AI 润色",
+        "description": "粘贴前用语言模型修正标点、去除口头禅。"
       },
       "muteWhileRecording": {
-        "label": "录制时静音",
-        "description": "录制期间静音系统音频"
+        "label": "静音其他音频",
+        "description": "听写时将其他应用静音，会议期间除外。"
       },
       "appendTrailingSpace": {
-        "label": "追加尾部空格",
-        "description": "在粘贴的转录后添加空格"
+        "label": "粘贴后添加空格"
       },
       "keyboardImplementation": {
-        "title": "Keyboard Implementation",
-        "description": "Choose the keyboard shortcut backend.",
-        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
+        "title": "快捷键后端",
+        "bindingsReset": "你的快捷键不兼容，已为你重置。",
         "backends": {
-          "tauri": "Tauri 全局快捷键",
+          "tauri": "标准",
           "nativeKeys": "原生按键"
-        }
-      },
-      "paths": {
-        "appData": "应用数据:",
-        "models": "模型:",
-        "settings": "设置:"
+        },
+        "error": "无法切换快捷键后端"
       },
       "pasteDelay": {
         "title": "粘贴延迟",
-        "description": "发送粘贴按键前的延迟（毫秒）。如果粘贴了错误的文本，请增加此值。"
+        "description": "粘贴前等待的时间（毫秒）。如果粘贴内容被截断，请调高。"
       },
       "recordingBuffer": {
-        "title": "额外录音缓冲",
-        "description": "松开按键后继续短暂录音。"
+        "title": "松开后继续录音",
+        "description": "录下最后一个词的结尾。"
       }
     },
     "about": {
-      "title": "关于",
-      "version": {
-        "title": "版本",
-        "description": "SilkScribe 的当前版本"
-      },
       "appDataDirectory": {
-        "title": "应用数据目录",
-        "description": "SilkScribe 存储数据的位置"
+        "title": "数据文件夹"
       }
+    },
+    "aiCleanup": {
+      "title": "AI 润色",
+      "everyDictation": {
+        "label": "润色每次听写",
+        "description": "主快捷键也会进行 AI 润色，不只是下面那个。"
+      },
+      "level": {
+        "title": "润色风格"
+      },
+      "levels": {
+        "light": "轻度",
+        "standard": "润色",
+        "rewrite": "改写"
+      },
+      "levelHelp": {
+        "light": "只处理标点、大小写和数字。",
+        "standard": "还会去除口头禅和结巴。",
+        "rewrite": "为清晰和条理进行改写。",
+        "custom": "使用你自己的提示词。"
+      },
+      "onDevice": "在这台 Mac 上运行。你的文字不会上传。",
+      "cloud": "你听写的文字会发送给 {{provider}} 进行润色。",
+      "prompts": "提示词",
+      "nearbyText": {
+        "label": "使用附近的文字",
+        "description": "读取光标周围的文字，以便正确拼写名字和术语。文字保留在这台 Mac 上，且从不读取密码栏。",
+        "descriptionCloud": "当润色在这台 Mac 上运行时，读取光标周围的文字以正确拼写名字。从不读取密码栏。"
+      },
+      "shareNearbyText": {
+        "label": "将附近的文字发送给 {{provider}}",
+        "description": "默认关闭：光标周围的文字保留在这台 Mac 上。"
+      }
+    },
+    "styles": {
+      "title": "风格",
+      "enable": {
+        "label": "匹配当前应用",
+        "description": "AI 润色在聊天中写得随意，在邮件中写得正式，代码则保持原样。"
+      },
+      "categories": {
+        "messaging": "消息和聊天",
+        "email": "邮件",
+        "documents": "文稿和备忘",
+        "code": "代码和终端",
+        "ai_chat": "AI 助手",
+        "other": "其他"
+      },
+      "tones": {
+        "casual": "随意",
+        "neutral": "中性",
+        "formal": "正式"
+      },
+      "fixed": {
+        "code": "代码和命令保持你说的样子",
+        "ai_chat": "把你的请求整理成清晰的提示词"
+      },
+      "apps": {
+        "title": "你听写过的应用",
+        "description": "如果某个应用处理得不对，可以把它改成别的类型。",
+        "builtIn": "内置"
+      },
+      "needsCleanup": "开启 AI 润色后，会按各应用的风格书写。"
+    },
+    "dictionary": {
+      "title": "词典",
+      "remove": "移除 {{phrase}}",
+      "replacements": {
+        "title": "替换",
+        "description": "总是按你的方式书写某个词或短语。",
+        "said": "当我说",
+        "saidExample": "例如：酱紫",
+        "written": "写成",
+        "writtenExample": "例如：这样子",
+        "add": "添加替换"
+      },
+      "snippets": {
+        "title": "文本片段",
+        "description": "说一个短语，插入一段更长的文字，比如你的地址。",
+        "trigger": "触发短语",
+        "triggerExample": "例如：我的地址",
+        "text": "片段内容",
+        "textExample": "要插入的文字",
+        "add": "添加片段"
+      },
+      "file": {
+        "title": "备份或迁移",
+        "description": "导入词语列表或词典文件，或导出你的词典。",
+        "import": "导入…",
+        "export": "导出…",
+        "kind": "词典",
+        "defaultName": "SilkScribe 词典.json",
+        "imported_other": "已添加 {{count}} 个条目",
+        "exported": "词典已导出",
+        "importFailed": "无法导入词典",
+        "exportFailed": "无法导出词典"
+      }
+    },
+    "mcp": {
+      "title": "AI 应用",
+      "label": "允许 AI 应用读取你的资料库",
+      "description": "Claude、Cursor 等支持 MCP 的应用可以搜索并读取你的转写稿、笔记和听写内容。它们读取的内容会发送给它们使用的 AI。",
+      "setup": "将此内容添加到该应用的 MCP 设置中（Claude Desktop：设置 → 开发者 → 编辑配置），然后重启该应用。",
+      "copy": "复制设置",
+      "copied": "已复制设置",
+      "copyFailed": "无法复制设置"
     }
   },
   "footer": {
-    "downloadingModel": "正在下载 {{model}}...",
-    "checkingUpdates": "检查更新中...",
+    "downloadingModel": "正在下载 {{model}}…",
+    "checkingUpdates": "检查更新中…",
     "updateAvailable": "有可用更新: {{version}}",
     "updateAvailableShort": "有可用更新",
     "upToDate": "已是最新版本",
     "downloadUpdate": "下载更新",
     "restart": "重启",
     "updateCheckingDisabled": "更新检查已禁用",
-    "downloading": "下载中... {{progress}}%",
-    "installing": "安装中...",
-    "preparing": "准备中...",
+    "downloading": "下载中… {{progress}}%",
+    "installing": "安装中…",
+    "preparing": "准备中…",
     "checkForUpdates": "检查更新",
     "support": {
       "label": "支持",
@@ -903,127 +839,616 @@
     }
   },
   "common": {
-    "loading": "加载中...",
-    "versionLabel": "v{{version}}",
-    "save": "保存",
+    "loading": "正在载入…",
     "cancel": "取消",
-    "reset": "重置",
-    "add": "添加",
-    "remove": "移除",
     "delete": "删除",
-    "edit": "编辑",
-    "create": "创建",
-    "update": "更新",
-    "close": "关闭",
     "open": "打开",
     "default": "默认",
-    "enabled": "已启用",
-    "disabled": "已禁用",
-    "on": "开",
-    "off": "关",
-    "yes": "是",
-    "no": "否",
-    "noOptionsFound": "未找到选项",
+    "noOptionsFound": "无匹配结果",
     "moreInformation": "更多信息",
     "errorBoundary": {
-      "description": "SilkScribe 无法渲染此视图。你的设置和录音仍保存在本地。",
+      "description": "此页面无法载入。你的设置和录音都安然无恙。",
       "reload": "重新加载",
-      "openLogs": "打开日志"
-    }
+      "openLogs": "打开日志",
+      "title": "出了点问题"
+    },
+    "choose": "选择…"
   },
   "errors": {
-    "loadDirectory": "加载目录时出错: {{error}}"
+    "loadDirectory": "无法打开此文件夹：{{error}}"
   },
   "appLanguage": {
     "title": "应用语言",
-    "description": "更改 SilkScribe 界面的语言"
+    "previewOption": "{{nativeName}}（{{name}}）· 预览",
+    "preview": {
+      "label": "预览语言",
+      "description": "显示尚未经母语者审校的翻译，部分措辞可能不够准确。"
+    }
   },
   "overlay": {
-    "listening": "录音中",
+    "listening": "正在听",
     "transcribing": "转写中",
-    "processing": "处理中",
+    "processing": "正在润色",
     "success": "完成",
-    "failed": "失败",
+    "failed": "未成功",
     "cancelled": "已取消",
-    "cancelledDetail": "由你停止"
+    "empty": "没听清",
+    "detail": {
+      "cancelled": "未粘贴任何内容",
+      "empty": "未检测到语音",
+      "pasteCopied": "已改为拷贝——请自行粘贴",
+      "pasteFailed": "无法粘贴或拷贝",
+      "cleanupSkipped": "已粘贴，未经 AI 润色",
+      "transcriptionFailed": "转录未完成",
+      "recordingFailed": "无法开始录音",
+      "commandNeedsSetup": "请先设置 AI 润色",
+      "commandFailed": "没有任何更改",
+      "commandTimedOut": "已超时，没有任何更改",
+      "commandTooLong": "请少选一些文字",
+      "commandPassword": "不可用于密码栏",
+      "commandNotText": "请选中一些文字",
+      "commandKeysHeld": "请先松开按键"
+    },
+    "style": {
+      "casual": "随意",
+      "neutral": "中性",
+      "formal": "正式",
+      "code": "代码",
+      "ai_chat": "AI 提示词"
+    },
+    "nearbyText": "附近的文字",
+    "command": {
+      "listening": "正在等待指令",
+      "tag": "指令",
+      "editing": "正在修改",
+      "writing": "正在撰写"
+    },
+    "handsFree": {
+      "listening": "正在免按住收听。再按一次快捷键结束，或按 Esc 取消。",
+      "tag": "免按住"
+    },
+    "silent": "听不到任何声音。请检查麦克风。"
+  },
+  "meetingOrb": {
+    "orbLabel": "会议录音，{{state}}",
+    "pinHint": "点按以保持展开。拖移以移动。",
+    "cardLabel": "会议实时转录",
+    "transcriptLabel": "目前的转录",
+    "untitled": "未命名会议",
+    "recording": "正在录音",
+    "paused": "已暂停",
+    "finishing": "正在完成…",
+    "needsAttention": "需要处理",
+    "microphone": "你的麦克风",
+    "computerAudio": "电脑音频",
+    "micGated": "你听写时，你的麦克风不会录入会议",
+    "you": "你",
+    "others": "其他人",
+    "listening": "正在听…",
+    "listeningBody": "大家说话时，文字会显示在这里。",
+    "unavailableTitle": "没有实时转录",
+    "unavailableBody": "下载一个听写引擎即可在大家说话时看到文字。录音照常进行。",
+    "catchingUp": "正在追上…",
+    "jumpToLatest": "跳到最新",
+    "pause": "暂停",
+    "resume": "继续",
+    "stop": "停止并转录",
+    "open": "打开笔记",
+    "letPeopleKnow": "告知与会者",
+    "prompt": {
+      "title": "为这次 {{app}} 通话记笔记？",
+      "titleEvent": "为“{{title}}”记笔记？",
+      "body": "SilkScribe 会在这台 Mac 上录下你的麦克风和 {{app}}。不会上传任何内容。",
+      "bodyEvent": "SilkScribe 会在这台 Mac 上录下你的麦克风和电脑音频。不会上传任何内容。",
+      "start": "开始记笔记",
+      "notNow": "以后再说"
+    }
   },
   "feedback": {
     "pasteFailed": {
       "copiedTitle": "已复制到剪贴板",
-      "copiedDescription": "SilkScribe 无法粘贴到当前应用。",
-      "failedTitle": "SilkScribe 无法粘贴",
-      "failedDescription": "文本无法粘贴，也无法复制。",
-      "copyFailedTitle": "SilkScribe 无法复制文本",
-      "copyFailedDescription": "粘贴失败，备用复制也未完成。"
+      "copiedDescription": "这里无法粘贴，内容已准备好，可自行粘贴。",
+      "copyFailedTitle": "无法粘贴或拷贝",
+      "copyFailedDescription": "请重试，或在资料库中找到它。"
+    },
+    "dictationOff": {
+      "title": "听写已关闭",
+      "description": "允许麦克风和辅助功能访问后即可使用快捷键。",
+      "action": "修复"
     }
   },
-  "home": {
-    "title": "欢迎回来",
-    "subtitle": "你近期的听写活动和回放记录。",
-    "welcome": {
-      "eyebrow": "主页",
-      "title": "欢迎回来。",
-      "firstRunTitle": "欢迎使用 SilkScribe。",
-      "readyDescription": "看起来一切就绪。按住快捷键自然地说话，SilkScribe 会把文字放到你需要的地方。",
-      "setupDescription": "把基础项一次性设好，之后 SilkScribe 就不会打扰你，随时可用于快速听写。",
-      "primaryReady": "检查录音设置",
-      "primarySetup": "完成设置",
-      "secondaryAction": "浏览模型"
+  "workspace": {
+    "home": "主页",
+    "library": "资料库",
+    "settings": "设置",
+    "navigation": "主导航",
+    "recordMeeting": "录制会议",
+    "importAudio": "导入音频",
+    "localOnly": "所有内容均保留在此设备上",
+    "onDevice": "在你的设备上运行",
+    "homeTitle": "随时待命",
+    "homeDescription": "录制会议、导入音频，或从上次停下的地方继续。",
+    "libraryDescription": "每次听写、会议和文件——全部可搜索。",
+    "meetingShort": "你的麦克风和电脑音频",
+    "importShort": "把音频文件转成文字稿",
+    "dictation": "口述",
+    "dictationHelp": "尚未设置 · 完成设置",
+    "inProgress": "进行中",
+    "recent": "最近",
+    "viewLibrary": "查看全部",
+    "transcripts": "转录",
+    "searchLibrary": "搜索文字稿",
+    "clearSearch": "清除搜索",
+    "loading": "正在加载您的转录……",
+    "emptyTitle": "这里还什么都没有",
+    "emptyDescription": "录制一场会议或拖入音频文件即可开始。",
+    "noResults": "无匹配结果",
+    "trySearch": "尝试不同的搜索或筛选条件。",
+    "loadMore": "加载更多",
+    "back": "返回",
+    "title": "标题",
+    "saved": "已保存",
+    "saving": "保存中…",
+    "saveFailed": "无法存储更改",
+    "export": "导出",
+    "exported": "已导出",
+    "delete": "删除转录",
+    "deleteHelp": "它的笔记和音频也会一并删除。你的原始文件不受影响。",
+    "deleteAudio": "删除音频",
+    "deleteAudioHelp": "文字稿和笔记会保留，但将无法回放。",
+    "cancel": "取消",
+    "retry": "重试",
+    "speed": "速度",
+    "documentViews": "视图",
+    "transcript": "转录",
+    "notes": "笔记",
+    "speakers": "发言人",
+    "searchTranscript": "查找",
+    "transcriptPending": "文字稿准备好后会显示在这里。",
+    "speaker": "发言人",
+    "unknownSpeaker": "未知",
+    "segment": "转录位置",
+    "restoreOriginal": "恢复原文",
+    "speakerHelp": "名字只适用于这段录音。",
+    "noSpeakers": "这段录音中没有找到说话人。",
+    "speakerName": "发言人姓名",
+    "mergeSpeaker": "合并为…",
+    "notesStale": "你已编辑文字稿。重新生成以纳入你的更改。",
+    "noNotes": "还没有笔记。",
+    "regenerate": "重新生成",
+    "summary": "摘要",
+    "decisions": "决策",
+    "actions": "待办事项",
+    "action": "待办事项",
+    "done": "完成",
+    "owner": "负责人",
+    "due": "截止",
+    "audioFiles": "音频",
+    "cancelJob": "取消 {{title}}",
+    "transcriptionModel": "引擎",
+    "currentDictationModel": "与听写相同",
+    "language": "语言",
+    "autoLanguage": "自动检测",
+    "detectSpeakers": "识别说话人",
+    "localNotes": "AI 笔记",
+    "noAutomaticNotes": "不生成笔记",
+    "microphoneLevel": "麦克风音量",
+    "systemLevel": "系统音量",
+    "resume": "继续",
+    "pause": "暂停",
+    "stopTranscribe": "停止并转录",
+    "meetingHelp": "我们会录下双方声音，停止后再转录。",
+    "importHelp": "选择文件及处理方式。转录期间你可以继续工作。",
+    "meetingTitle": "未命名会议",
+    "microphone": "麦克风",
+    "defaultMicrophone": "系统默认",
+    "computerAudio": "包含电脑音频",
+    "systemPermission": "macOS 会请求“录屏与系统录音”权限。",
+    "removeFile": "移除",
+    "chooseFiles": "选择文件…",
+    "processing": "处理",
+    "setupNeeded": "部分引擎尚未设置。现在录音，稍后处理。",
+    "modelSetup": "设置引擎",
+    "working": "处理中…",
+    "startRecording": "开始录制",
+    "startTranscription": "转录",
+    "localIntelligence": "引擎",
+    "localModelsHelp": "只下载你需要的。所有内容都在这台 Mac 上运行——较大的引擎需要更多内存。",
+    "runtimeReady": "可在这台 Mac 上运行。",
+    "runtimeMissing": "此版本暂时无法运行这些引擎。听写仍可使用。",
+    "unpublished": "尚未推出",
+    "downloading": "正在下载…",
+    "installed": "已安装",
+    "download": "下载",
+    "dropAudio": "拖放以转录",
+    "workspaceFirst": "只转录文件",
+    "workspaceFirstHelp": "不需要麦克风或辅助功能权限。",
+    "source": {
+      "dictation": "听写",
+      "meeting": "会议",
+      "file": "音频文件"
     },
-    "setup": {
-      "title": "还有一些基础项需要处理。",
-      "description": "当快捷键、模型和权限都就绪后，SilkScribe 即可用于日常听写。",
-      "modelAction": "选择模型",
-      "generalAction": "打开常规设置"
+    "filter": {
+      "all": "全部",
+      "dictation": "听写",
+      "meeting": "会议",
+      "file": "文件",
+      "saved": "已保存"
     },
+    "purpose": {
+      "asr": "转录",
+      "alignment": "逐词时间",
+      "speakers": "说话人",
+      "notes": "摘要与待办事项"
+    },
+    "stage": {
+      "recording": "录音中",
+      "paused": "已暂停",
+      "queued": "已排队",
+      "preparing": "正在准备",
+      "transcribing": "正在转录",
+      "diarizing": "正在识别说话人",
+      "notes": "撰写笔记",
+      "complete": "已完成",
+      "failed": "需要处理",
+      "cancelled": "已取消",
+      "interrupted": "已中断"
+    },
+    "audio": "音频",
+    "appearance": "外观",
+    "debug": "开发者",
+    "retentionHelp": "会议和导入的内容会一直保留，直到你删除。这些设置只影响听写音频。",
+    "dictationRetention": "听写音频",
+    "skipToContent": "跳转到内容",
+    "memoryGuidance": "需要约 {{gb}} GB 内存",
+    "notesModel9": "标准 · 9B",
+    "notesModel27": "深入 · 27B，需要更多内存",
+    "draftConflict": "我们找到一份来自旧版本的未存储草稿。",
+    "recoverDraft": "恢复草稿",
+    "keepSaved": "保留已存储的版本",
+    "transcriptReadyWarning": "文字稿已就绪 · 部分步骤未完成",
+    "retryEnhancement": "重试",
+    "withoutEnhancements": "跳过说话人和笔记",
+    "recordForLater": "现在录音，稍后转录",
+    "returnToSetup": "返回设置",
+    "activity": "活动",
+    "close": "关闭",
+    "noActiveJobs": "没有正在处理的内容",
+    "presetFast": "快速转录",
+    "presetDetailed": "详细转录",
+    "presetNotes": "转录 + 笔记",
+    "processingDetails": "引擎和选项",
+    "stopSave": "停止并保存音频",
+    "finishEditing": "完成",
+    "editTranscript": "编辑转录文本",
+    "followPlayback": "跟随播放",
+    "previous": "上一项",
+    "next": "下一步",
+    "undoMerge": "撤销合并",
+    "evidence": "来自文字稿",
+    "playEvidence": "播放",
+    "pauseDownload": "暂停",
+    "removeModel": "移除引擎",
+    "removeModelHelp": "你的文字稿会保留。随时可以重新下载。",
+    "storageUsage": "存储空间",
+    "audioStorage": "录音",
+    "modelStorage": "引擎",
+    "freeStorage": "可用空间",
+    "setupModels": "设置引擎",
+    "skipEnhancement": "跳过",
+    "generateNotes": "生成笔记",
+    "addItem": "添加项目",
+    "removeItem": "移除项目",
+    "newSpeaker": "添加说话人",
+    "speakerSample": "播放样本",
+    "exportPreview": "导出",
+    "confirmExport": "选择存储位置…",
     "readiness": {
-      "shortcut": {
-        "label": "快捷键",
-        "missingValue": "设置你的录音快捷键",
-        "action": "编辑"
-      },
-      "microphone": {
-        "label": "麦克风",
-        "action": "更改"
-      },
-      "model": {
-        "label": "模型",
-        "missingValue": "选择语音模型",
-        "action": "管理"
-      },
-      "permissions": {
-        "label": "权限",
-        "ready": "已可向你的应用输入文字",
-        "needsAttention": "需处理后才能完成听写",
-        "action": "查看"
+      "download": "下载 {{model}} 即可使用。",
+      "unpublished": "{{model}} 尚未推出。",
+      "unavailable": "此版本未包含 {{model}}。",
+      "native_download": "下载 {{model}}，或选择其他听写引擎。",
+      "runtime": "此版本缺少所需的组件。",
+      "fallback_download": "对某些语言，自动检测需要 Whisper large-v3。请下载它，或选择一种语言。",
+      "language": "此引擎不支持该语言。请选择其他语言或引擎。",
+      "memory": "可用内存不足以运行 {{model}}。请关闭一些应用，或选择较小的笔记引擎。"
+    },
+    "newNotesReview": "新笔记",
+    "newNotesHelp": "你当前的笔记在下方。替换前请先比较。",
+    "replaceNotes": "替换笔记",
+    "keepCurrentNotes": "保留当前笔记",
+    "speakerCount_one": "{{count}} 位演讲者",
+    "speakerCount_other": "{{count}} 位演讲者",
+    "timing": {
+      "aligned": "逐词时间戳",
+      "aligned_or_segments": "支持时为逐词时间戳，否则为逐句",
+      "segments": "逐句时间戳"
+    },
+    "memoryAvailable": "约 {{gb}} GB 可用",
+    "memoryObserved": "在此最多用过 {{gb}} GB。更长的音频可能需要更多。",
+    "memoryUnmeasured": "尚未在这台 Mac 上测量",
+    "checkingFiles": "正在检查文件…",
+    "durationUnknown": "时长未知",
+    "importProblems": "部分文件无法导入",
+    "dismiss": "关闭",
+    "verifyModel": "验证文件",
+    "modelVerified": "文件完好",
+    "modelDamaged": "文件已损坏 · 重新下载",
+    "finishingAudio": "正在完成…",
+    "selectPage": "选择本页全部",
+    "clearSelection": "清除选择",
+    "selectedTurns": "已选发言",
+    "assignSelectedSpeaker": "指定说话人",
+    "selectTurn": "在 {{time}} 处选择发言",
+    "exportOriginalText": "导出原文",
+    "notesReviewed": "我已对照文字稿核对过这些笔记",
+    "unfinishedImports": "未完成的导入",
+    "resumeImport": "继续导入",
+    "discardImport": "放弃",
+    "captureUnsupported": "目前只能在 Mac 上录制会议。你仍然可以导入音频。",
+    "microphoneReady": "已允许麦克风",
+    "microphonePermissionNeeded": "允许使用麦克风以录下你的声音。",
+    "allowMicrophone": "允许使用麦克风",
+    "computerAudioReady": "已允许电脑音频",
+    "computerPermissionNeeded": "允许“录屏与系统录音”以录下电脑音频。",
+    "allowComputerAudio": "允许电脑音频",
+    "microphoneUnavailable": "该麦克风不可用。请选择其他麦克风。",
+    "replaceOnlySection": "只替换这一部分",
+    "sectionReplacementHelp": "你的其他笔记保持不变。",
+    "deleteTitle": "删除这份文字稿？",
+    "deleteAudioTitle": "删除音频？",
+    "matchCount_other": "{{count}} 个结果",
+    "mergeTitle": "合并说话人？",
+    "merge": "合并",
+    "mergePreview_other": "将 {{count}} 段发言从 {{from}} 移给 {{to}}。可以撤销。",
+    "remove": "移除",
+    "removeModelTitle": "移除 {{name}}？",
+    "activeCount_other": "{{count}} 个正在进行",
+    "errors": {
+      "addFiles": "无法添加这些文件",
+      "loadDevices": "无法载入麦克风",
+      "startImport": "无法开始导入",
+      "controlRecording": "无法更新录音",
+      "openTranscript": "无法打开这份文字稿",
+      "cancelJob": "无法取消",
+      "removeEngine": "无法移除引擎",
+      "discardImport": "无法放弃导入",
+      "requestAccess": "无法请求访问权限",
+      "removeFile": "无法移除文件",
+      "installEngine": "无法下载引擎",
+      "verifyEngine": "无法检查文件",
+      "loadMore": "无法载入更多文字稿",
+      "loadLibrary": "无法载入你的文字稿",
+      "saveTranscript": "无法存储更改",
+      "exportTranscript": "无法导出",
+      "updateNotes": "无法更新笔记",
+      "generateNotes": "无法生成笔记",
+      "discardDraft": "无法放弃草稿",
+      "startProcessing": "无法开始处理",
+      "deleteTranscript": "无法删除",
+      "enableCleanup": "无法打开 AI 润色",
+      "copyOriginal": "无法拷贝原文",
+      "loadNotes": "无法载入你的笔记",
+      "saveNotes": "无法存储你的笔记",
+      "copyMessage": "无法拷贝消息",
+      "copyText": "无法拷贝文字",
+      "saveStyle": "无法存储风格",
+      "startMeeting": "无法开始会议",
+      "addToDictionary": "无法添加到你的词典",
+      "connectCalendar": "无法连接你的日历",
+      "details": "详细信息",
+      "runtimeCheck": "本地引擎无法启动。请确认 SilkScribe 已是最新版本，然后重试。",
+      "inspectFiles": "部分文件无法读取。请确认它们是音频文件，然后重试。",
+      "disconnectCalendar": "无法断开日历连接",
+      "captureCheck": "无法检查录音权限。请重试，或重新启动 SilkScribe。"
+    },
+    "liveTranscript": "实时转录",
+    "liveTranscriptNote": "处理完成后，会有更准确的文字稿替换它。",
+    "cleanupCard": {
+      "title": "润色每次听写",
+      "body": "用 Apple Intelligence 修正标点、去除口头禅。在这台 Mac 上运行。",
+      "turnOn": "打开",
+      "notNow": "以后再说"
+    },
+    "showOriginal": "显示原文",
+    "hideOriginal": "隐藏原文",
+    "copyOriginal": "拷贝原文",
+    "copiedOriginal": "已拷贝原文",
+    "originalLabel": "AI 润色前的文字",
+    "yourNotes": "你的笔记",
+    "yourNotesPlaceholder": "边听边记下重点。行首输入 - 即可创建列表。",
+    "consent": {
+      "reminder": "告诉大家你正在记笔记。",
+      "copy": "拷贝告知消息",
+      "copied": "已拷贝消息",
+      "message": "提醒一下：我正在用 SilkScribe 记笔记。它在我的 Mac 上运行，不会上传任何内容。",
+      "setting": "提醒我告知大家",
+      "settingHint": "开始录音时显示提醒。"
+    },
+    "holdToTalk": "按住说话",
+    "holdOrTap": "按住说话，或轻点免按住",
+    "pressToTalk": "按一下开始和停止",
+    "recentDictation": "最近听写",
+    "wordsToday": "今日字数",
+    "streak": "连续天数",
+    "streakDays_other": "{{count}} 天",
+    "copy": "拷贝",
+    "copied": "已拷贝",
+    "enhanceNotes": "完善笔记",
+    "youWrote": "这是你写的",
+    "callTitle": "{{app}} 通话",
+    "captureFrom": {
+      "label": "录制音频来源",
+      "allApps": "所有应用"
+    },
+    "suggestNotes": {
+      "label": "通话时提议记笔记",
+      "hint": "当 Zoom、Teams、FaceTime 或其他通话应用开始使用麦克风时显示提示。"
+    },
+    "dictionary": {
+      "add": "添加到词典",
+      "heard": "听成",
+      "heardHelp": "留空则只教写法",
+      "write": "写成",
+      "writeHelp": "它应始终显示的样子",
+      "save": "添加",
+      "added": {
+        "word": "已添加到你的词汇",
+        "replacement": "已添加为替换"
       }
     },
-    "firstUse": {
-      "title": "你的第一条转录将显示在这里。",
-      "description": "点击文本框，按住快捷键，说一句话，然后松开。SilkScribe 会把结果保存在这里，方便你以后查看。",
-      "generalAction": "检查基础设置",
-      "modelsAction": "选择模型"
+    "templates": {
+      "label": "笔记模板",
+      "names": {
+        "general": "通用",
+        "one_on_one": "一对一",
+        "standup": "站会",
+        "customer_call": "客户通话",
+        "interview": "面试",
+        "lecture": "讲座"
+      },
+      "sections": {
+        "updates": "近况",
+        "feedback": "反馈",
+        "blockers": "阻碍",
+        "done": "已完成",
+        "next": "下一步",
+        "context": "客户背景",
+        "pain_points": "痛点",
+        "requests": "需求",
+        "background": "背景经历",
+        "strengths": "优势",
+        "concerns": "顾虑",
+        "concepts": "核心概念",
+        "definitions": "定义",
+        "questions": "问题"
+      }
     },
-    "activityTitle": "近期活动",
-    "loadMore": "加载更多",
-    "loadingMore": "加载中...",
-    "stats": {
-      "streak": "当前连续天数",
-      "words": "已转录字数",
-      "wpm": "平均每分钟字数"
+    "upcoming": {
+      "title": "即将开始",
+      "now": "现在",
+      "tomorrow": "明天 {{time}}",
+      "takeNotes": "记笔记"
     },
-    "empty": {
-      "title": "暂无近期转录。",
-      "description": "只要你录制内容，SilkScribe 就会自动在此保存转录和音频。"
+    "calendarCard": {
+      "title": "在这里查看接下来的会议",
+      "body": "连接日历后，笔记会以会议命名，会议开始时还会提醒你。日历保留在这台 Mac 上。"
     },
-    "error": {
-      "title": "无法加载你的仪表板。",
-      "description": "请重试以刷新你的近期活动。",
-      "retry": "重试"
+    "calendar": {
+      "title": "日历",
+      "description": "在首页显示即将开始的会议，并用会议名称命名笔记。你的日历保留在这台 Mac 上。",
+      "connect": "连接日历",
+      "disconnect": "断开日历",
+      "reminders": "会议开始前提醒我",
+      "remindersHint": "提前一分钟提议记笔记",
+      "denied": "日历访问已关闭。请在“系统设置”→“隐私与安全性”→“日历”中打开。",
+      "openSettings": "打开“系统设置”"
     },
-    "days": {
-      "today": "今天",
-      "yesterday": "昨天"
+    "ask": {
+      "title": "向会议提问",
+      "label": "就你的会议提问",
+      "placeholder": "就你的会议和笔记提问…",
+      "submit": "提问",
+      "thinking": "正在阅读你的会议… 第一个问题可能需要一分钟，因为要载入笔记引擎。",
+      "nothingFound": "资料库中没有相关内容。",
+      "checkSources": "答案来自你的文字稿。请先核对来源再采用。",
+      "yourNotes": "你的笔记",
+      "openSource": "打开 {{source}}",
+      "shortcut": "⌘K",
+      "titleAll": "向资料库提问",
+      "labelAll": "询问你的听写内容",
+      "placeholderAll": "询问你的听写内容…",
+      "shortcutOther": "Ctrl+K",
+      "errors": {
+        "busy": "正在处理一场会议，处理完后再提问。",
+        "noEngine": "回答由笔记引擎生成，但它尚未下载。",
+        "getEngine": "下载笔记引擎",
+        "timeout": "回答耗时过长，请尝试更具体的问题。",
+        "other": "无法回答：{{error}}"
+      }
+    },
+    "cleanupUses": "AI 润色使用 {{provider}}",
+    "openNotes": "打开笔记",
+    "settingsTabs": {
+      "general": "通用",
+      "dictation": "听写",
+      "ai": "AI 写作",
+      "dictionary": "词典",
+      "meetings": "会议与笔记",
+      "audio": "音频",
+      "models": "引擎",
+      "history": "隐私与存储"
+    },
+    "about": "关于",
+    "version": "版本 {{version}}",
+    "notesEnginesHelp": "负责撰写笔记并回答会议相关问题的引擎。",
+    "privacy": {
+      "title": "哪些内容会离开此设备",
+      "local": "录音、转写稿、会议笔记和你的词典都保留在此设备上。",
+      "noCloud": "听写内容也保留在此设备上。",
+      "cloud": "听写内容会发送到 {{provider}} 进行 AI 润色。可在“AI 写作”中更改。",
+      "mcp": "你连接的 AI 应用可以读取你的资料库，并把读取的内容发送给它们使用的 AI。"
+    },
+    "notesEngine": "引擎",
+    "meetingEngines": {
+      "accurate": "最准确 · Qwen3 ASR",
+      "large": "准确、较慢 · Whisper large",
+      "balanced": "均衡 · Whisper turbo",
+      "fastest": "最快 · Parakeet"
+    },
+    "speakersHint": "在此设备上区分不同说话人",
+    "consentRecord": {
+      "microphone": "仅录制了你的麦克风",
+      "allAudio": "录制了麦克风和电脑音频",
+      "app": "录制了麦克风和 {{app}}",
+      "reminder": "已显示告知他人的提醒",
+      "headsUp": "已于 {{time}} 复制提醒消息"
+    },
+    "recipes": {
+      "title": "根据此会议撰写",
+      "label": "模板",
+      "write": "撰写",
+      "writing": "正在撰写… 首次可能需要一分钟来加载笔记引擎。",
+      "nothing": "此会议中没有适合该模板的内容。",
+      "copy": "复制",
+      "copied": "已复制",
+      "copyFailed": "无法复制",
+      "customLabel": "要写什么",
+      "customPlaceholder": "例如：给团队频道的摘要",
+      "weekly": "总结我的一周",
+      "names": {
+        "follow_up_email": "跟进邮件",
+        "action_items": "待办事项",
+        "customer_notes": "客户笔记",
+        "interview_summary": "面试总结",
+        "custom": "其他…"
+      },
+      "errors": {
+        "empty": "过去一周没有带转写稿的会议。",
+        "emptyMeeting": "此会议还没有转写稿。"
+      },
+      "partial": "这只涵盖所选内容的一部分：其余内容太长，无法一次读完。"
+    },
+    "share": {
+      "label": "共享…",
+      "notes": "共享笔记…",
+      "failed": "无法打开共享菜单"
+    },
+    "folders": {
+      "label": "文件夹",
+      "none": "无文件夹",
+      "new": "新建文件夹…",
+      "name": "文件夹名称",
+      "file": "归档",
+      "all": "所有文件夹",
+      "failed": "无法归档"
     }
+  },
+  "audioPlayer": {
+    "play": "播放",
+    "pause": "暂停",
+    "seek": "播放位置",
+    "error": "无法播放此音频。",
+    "retry": "重试"
   }
 }

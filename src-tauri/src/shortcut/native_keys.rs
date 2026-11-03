@@ -412,7 +412,7 @@ fn modifiers_to_strings(modifiers: native_keys::Modifiers) -> Vec<String> {
 /// NativeKeys is more permissive: allows modifier-only combos and the fn key.
 pub fn validate_shortcut(raw: &str) -> Result<(), String> {
     if raw.trim().is_empty() {
-        return Err("Shortcut cannot be empty".into());
+        return Err("Press a shortcut first.".into());
     }
     // NativeKeys accepts modifier-only, key-only, and modifier+key combos
     // Just verify the string is parseable
@@ -502,11 +502,16 @@ pub fn unregister_cancel_shortcut(app: &AppHandle) {
     }
 }
 
+/// Shown when the shortcut listener was never started, which on macOS means
+/// Accessibility access hasn't been granted to this build yet.
+const SHORTCUTS_NOT_RUNNING: &str =
+    "Your shortcut isn't active yet. Allow Accessibility access, then try again.";
+
 /// Register a shortcut
 pub fn register_shortcut(app: &AppHandle, binding: ShortcutBinding) -> Result<(), String> {
     let state = app
         .try_state::<NativeKeysState>()
-        .ok_or("NativeKeysState not initialized")?;
+        .ok_or(SHORTCUTS_NOT_RUNNING)?;
     state.register(&binding)
 }
 
@@ -514,7 +519,7 @@ pub fn register_shortcut(app: &AppHandle, binding: ShortcutBinding) -> Result<()
 pub fn unregister_shortcut(app: &AppHandle, binding: ShortcutBinding) -> Result<(), String> {
     let state = app
         .try_state::<NativeKeysState>()
-        .ok_or("NativeKeysState not initialized")?;
+        .ok_or(SHORTCUTS_NOT_RUNNING)?;
     state.unregister(&binding)
 }
 
@@ -529,7 +534,7 @@ pub fn start_native_keys_recording(app: AppHandle, binding_id: String) -> Result
 
     let state = app
         .try_state::<NativeKeysState>()
-        .ok_or("NativeKeysState not initialized")?;
+        .ok_or(SHORTCUTS_NOT_RUNNING)?;
     state.start_recording(&app, binding_id)
 }
 
@@ -544,6 +549,6 @@ pub fn stop_native_keys_recording(app: AppHandle) -> Result<(), String> {
 
     let state = app
         .try_state::<NativeKeysState>()
-        .ok_or("NativeKeysState not initialized")?;
+        .ok_or(SHORTCUTS_NOT_RUNNING)?;
     state.stop_recording()
 }

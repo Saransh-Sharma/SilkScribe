@@ -1,7 +1,7 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import { locale } from "@tauri-apps/plugin-os";
-import { LANGUAGE_METADATA } from "./languages";
+import { LANGUAGE_METADATA, isReviewedLanguage } from "./languages";
 import { commands } from "@/bindings";
 import {
   getLanguageDirection,
@@ -30,13 +30,20 @@ export const SUPPORTED_LANGUAGES = Object.keys(resources)
     const meta = LANGUAGE_METADATA[code];
     if (!meta) {
       console.warn(`Missing metadata for locale "${code}" in languages.ts`);
-      return { code, name: code, nativeName: code, priority: undefined };
+      return {
+        code,
+        name: code,
+        nativeName: code,
+        priority: undefined,
+        reviewed: isReviewedLanguage(code),
+      };
     }
     return {
       code,
       name: meta.name,
       nativeName: meta.nativeName,
       priority: meta.priority,
+      reviewed: isReviewedLanguage(code),
     };
   })
   .sort((a, b) => {
@@ -107,22 +114,39 @@ i18n.use(initReactI18next).init({
   },
 });
 
+/**
+ * The locale to show for a chosen language: the matching supported locale
+ * when it's reviewed or preview languages are on, otherwise English.
+ */
+export const resolveAppLanguage = (
+  language: string | null | undefined,
+  previewLanguages: boolean,
+): SupportedLanguageCode => {
+  const supported = getSupportedLanguage(language);
+  if (!supported) return "en";
+  return previewLanguages || isReviewedLanguage(supported) ? supported : "en";
+};
+
+const applyLanguage = async (code: SupportedLanguageCode) => {
+  if (code !== i18n.language) {
+    await i18n.changeLanguage(code);
+  }
+};
+
 // Sync language from app settings
 export const syncLanguageFromSettings = async () => {
   try {
     const result = await commands.getAppSettings();
     if (result.status === "ok" && result.data.app_language) {
-      const supported = getSupportedLanguage(result.data.app_language);
-      if (supported && supported !== i18n.language) {
-        await i18n.changeLanguage(supported);
-      }
+      await applyLanguage(
+        resolveAppLanguage(
+          result.data.app_language,
+          result.data.preview_languages ?? false,
+        ),
+      );
     } else {
       // Fall back to system locale detection if no saved preference
-      const systemLocale = await locale();
-      const supported = getSupportedLanguage(systemLocale);
-      if (supported && supported !== i18n.language) {
-        await i18n.changeLanguage(supported);
-      }
+      await applyLanguage(resolveAppLanguage(await locale(), false));
     }
   } catch (e) {
     console.warn("Failed to sync language from settings:", e);

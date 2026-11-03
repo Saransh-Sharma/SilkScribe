@@ -1,5 +1,5 @@
 import { ChevronDown } from "lucide-react";
-import { useId, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 
 interface DisclosureSectionProps {
   title: string;
@@ -18,6 +18,12 @@ export const DisclosureSection = ({
 }: DisclosureSectionProps) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const panelId = useId();
+  // Collapsed, its controls are out of view; keep them out of the tab order
+  // and the accessibility tree too. (React 18 has no `inert` prop.)
+  const panel = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (panel.current) panel.current.inert = !isOpen;
+  }, [isOpen]);
 
   const toneClasses =
     tone === "caution"
@@ -26,7 +32,7 @@ export const DisclosureSection = ({
 
   return (
     <section
-      className={`overflow-hidden rounded-[var(--ss-radius-lg)] border shadow-[var(--ss-shadow-card)] ${toneClasses}`}
+      className={`overflow-hidden rounded-[var(--ss-radius-lg)] border shadow-[var(--ss-shadow-hairline)] ${toneClasses}`}
     >
       <button
         type="button"
@@ -54,10 +60,15 @@ export const DisclosureSection = ({
         </span>
       </button>
       <div
-        className="grid transition-[grid-template-rows] duration-300 ease-out"
+        className="grid transition-[grid-template-rows] duration-[var(--ss-duration-panel)] ease-[var(--ss-ease-out-quint)]"
         style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
       >
-        <div id={panelId} className="overflow-hidden">
+        <div
+          ref={panel}
+          id={panelId}
+          className="overflow-hidden"
+          aria-hidden={!isOpen}
+        >
           <div className="border-t border-ss-border-subtle/80 px-3 pb-3 pt-1">
             {children}
           </div>

@@ -3,7 +3,8 @@ import { useTranslation } from "react-i18next";
 import { Dropdown } from "../ui/Dropdown";
 import { SettingContainer } from "../ui/SettingContainer";
 import { useSettings } from "../../hooks/useSettings";
-import type { ClipboardHandling, PasteMethod } from "@/bindings";
+import { useOsType } from "../../hooks/useOsType";
+import type { ClipboardHandling } from "@/bindings";
 
 interface ClipboardHandlingProps {
   descriptionMode?: "inline" | "tooltip";
@@ -11,55 +12,50 @@ interface ClipboardHandlingProps {
 }
 
 export const ClipboardHandlingSetting: React.FC<ClipboardHandlingProps> =
-  React.memo(({ descriptionMode = "tooltip", grouped = false }) => {
+  React.memo(({ descriptionMode = "inline", grouped = false }) => {
     const { t } = useTranslation();
     const { getSetting, updateSetting, isUpdating } = useSettings();
+    // Only macOS can put the old clipboard back after pasting; elsewhere a
+    // clipboard paste always leaves the text on it.
+    const canRestore = useOsType() === "macos";
 
     const clipboardHandlingOptions = [
-      {
-        value: "dont_modify",
-        label: t("settings.advanced.clipboardHandling.options.dontModify"),
-      },
+      ...(canRestore
+        ? [
+            {
+              value: "dont_modify",
+              label: t(
+                "settings.advanced.clipboardHandling.options.dontModify",
+              ),
+            },
+          ]
+        : []),
       {
         value: "copy_to_clipboard",
         label: t("settings.advanced.clipboardHandling.options.copyToClipboard"),
       },
     ];
 
-    const selectedHandling = (getSetting("clipboard_handling") ||
-      "dont_modify") as ClipboardHandling;
-    const selectedPasteMethod = getSetting("paste_method") as
-      | PasteMethod
-      | undefined;
-    const usesClipboardHotkey =
-      selectedPasteMethod === "ctrl_v" ||
-      selectedPasteMethod === "ctrl_shift_v" ||
-      selectedPasteMethod === "shift_insert";
-    const showDirectInsertHint =
-      selectedHandling === "dont_modify" && usesClipboardHotkey;
+    const selectedHandling = (
+      canRestore
+        ? getSetting("clipboard_handling") || "dont_modify"
+        : "copy_to_clipboard"
+    ) as ClipboardHandling;
 
     return (
       <SettingContainer
         title={t("settings.advanced.clipboardHandling.title")}
-        description={t("settings.advanced.clipboardHandling.description")}
         descriptionMode={descriptionMode}
         grouped={grouped}
       >
-        <div className="flex flex-col items-end gap-2">
-          <Dropdown
-            options={clipboardHandlingOptions}
-            selectedValue={selectedHandling}
-            onSelect={(value) =>
-              updateSetting("clipboard_handling", value as ClipboardHandling)
-            }
-            disabled={isUpdating("clipboard_handling")}
-          />
-          {showDirectInsertHint && (
-            <p className="max-w-64 text-right text-[11px] leading-relaxed text-ss-text-tertiary">
-              {t("settings.advanced.clipboardHandling.directInsertHint")}
-            </p>
-          )}
-        </div>
+        <Dropdown
+          options={clipboardHandlingOptions}
+          selectedValue={selectedHandling}
+          onSelect={(value) =>
+            updateSetting("clipboard_handling", value as ClipboardHandling)
+          }
+          disabled={isUpdating("clipboard_handling") || !canRestore}
+        />
       </SettingContainer>
     );
   });

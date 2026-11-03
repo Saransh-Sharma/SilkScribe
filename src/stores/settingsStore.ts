@@ -1,7 +1,15 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import type { AppSettings as Settings, AudioDevice } from "@/bindings";
+import type {
+  AppSettings as Settings,
+  AudioDevice,
+  Replacement,
+  Snippet,
+} from "@/bindings";
 import { commands } from "@/bindings";
+
+/** The five feedback cues a sound theme can provide. */
+export type SoundCue = "start" | "transcribing" | "done" | "error" | "cancel";
 
 interface SettingsStore {
   settings: Settings | null;
@@ -28,7 +36,7 @@ interface SettingsStore {
   resetBinding: (id: string) => Promise<void>;
   getSetting: <K extends keyof Settings>(key: K) => Settings[K] | undefined;
   isUpdatingKey: (key: string) => boolean;
-  playTestSound: (soundType: "start" | "stop") => Promise<void>;
+  playTestSound: (soundType: SoundCue) => Promise<void>;
   checkCustomSounds: () => Promise<void>;
   setPostProcessProvider: (providerId: string) => Promise<void>;
   updatePostProcessSetting: (
@@ -83,6 +91,11 @@ const settingUpdaters: {
   update_checks_enabled: (value) =>
     commands.changeUpdateChecksSetting(value as boolean),
   push_to_talk: (value) => commands.changePttSetting(value as boolean),
+  tap_to_lock: (value) => commands.changeTapToLockSetting(value as boolean),
+  live_text_preview: (value) =>
+    commands.changeLiveTextPreviewSetting(value as boolean),
+  calendar_reminders: (value) =>
+    commands.changeCalendarRemindersSetting(value as boolean),
   selected_microphone: (value) =>
     commands.setSelectedMicrophone(
       (value as string) === "Default" || value === null
@@ -107,8 +120,12 @@ const settingUpdaters: {
     commands.changeSelectedLanguageSetting(value as string),
   overlay_position: (value) =>
     commands.changeOverlayPositionSetting(value as string),
+  overlay_appearance: (value) =>
+    commands.changeOverlayAppearanceSetting(value as string),
   debug_mode: (value) => commands.changeDebugModeSetting(value as boolean),
   custom_words: (value) => commands.updateCustomWords(value as string[]),
+  replacements: (value) => commands.updateReplacements(value as Replacement[]),
+  snippets: (value) => commands.updateSnippets(value as Snippet[]),
   word_correction_threshold: (value) =>
     commands.changeWordCorrectionThresholdSetting(value as number),
   paste_method: (value) => commands.changePasteMethodSetting(value as string),
@@ -125,12 +142,28 @@ const settingUpdaters: {
     commands.changePostProcessEnabledSetting(value as boolean),
   post_process_selected_prompt_id: (value) =>
     commands.setPostProcessSelectedPrompt(value as string),
+  ai_cleanup_on_main: (value) =>
+    commands.changeAiCleanupOnMainSetting(value as boolean),
+  ai_cleanup_card_dismissed: () => commands.dismissAiCleanupCard(),
+  nearby_text_context: (value) =>
+    commands.changeNearbyTextContextSetting(value as boolean),
+  share_context_with_cloud: (value) =>
+    commands.changeShareContextWithCloudSetting(value as boolean),
+  per_app_styles: (value) =>
+    commands.changePerAppStylesSetting(value as boolean),
+  suggest_meeting_notes: (value) =>
+    commands.changeSuggestMeetingNotesSetting(value as boolean),
+  meeting_consent_reminder: (value) =>
+    commands.changeMeetingConsentReminderSetting(value as boolean),
   mute_while_recording: (value) =>
     commands.changeMuteWhileRecordingSetting(value as boolean),
   append_trailing_space: (value) =>
     commands.changeAppendTrailingSpaceSetting(value as boolean),
   log_level: (value) => commands.setLogLevel(value as any),
   app_language: (value) => commands.changeAppLanguageSetting(value as string),
+  preview_languages: (value) =>
+    commands.changePreviewLanguagesSetting(value as boolean),
+  mcp_enabled: (value) => commands.changeMcpEnabledSetting(value as boolean),
   theme: (value) => commands.changeThemeSetting(value as string),
   experimental_enabled: (value) =>
     commands.changeExperimentalEnabledSetting(value as boolean),
@@ -140,6 +173,7 @@ const settingUpdaters: {
     commands.changeLazyStreamCloseSetting(value as boolean),
   extra_recording_buffer_ms: (value) =>
     commands.changeExtraRecordingBufferSetting(value as number),
+  paste_delay_ms: (value) => commands.changePasteDelaySetting(value as number),
   whisper_accelerator: (value) =>
     commands.changeWhisperAcceleratorSetting(value as any),
   ort_accelerator: (value) =>
@@ -244,7 +278,7 @@ export const useSettingsStore = create<SettingsStore>()(
     },
 
     // Play a test sound
-    playTestSound: async (soundType: "start" | "stop") => {
+    playTestSound: async (soundType: SoundCue) => {
       try {
         await commands.playTestSound(soundType);
       } catch (error) {

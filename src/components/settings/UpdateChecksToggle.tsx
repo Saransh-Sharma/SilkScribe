@@ -10,7 +10,7 @@ interface UpdateChecksToggleProps {
 }
 
 export const UpdateChecksToggle: React.FC<UpdateChecksToggleProps> = ({
-  descriptionMode = "tooltip",
+  descriptionMode = "inline",
   grouped = false,
 }) => {
   const { t } = useTranslation();
@@ -28,7 +28,6 @@ export const UpdateChecksToggle: React.FC<UpdateChecksToggleProps> = ({
       onChange={(enabled) => updateSetting("update_checks_enabled", enabled)}
       isUpdating={isUpdating("update_checks_enabled")}
       label={t("settings.debug.updateChecks.label")}
-      description={t("settings.debug.updateChecks.description")}
       descriptionMode={descriptionMode}
       grouped={grouped}
     />

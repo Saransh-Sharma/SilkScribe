@@ -28,9 +28,7 @@ export const AppDataDirectory: React.FC<AppDataDirectoryProps> = ({
           setError(result.error);
         }
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to load app directory",
-        );
+        setError(err instanceof Error ? err.message : String(err));
       } finally {
         setLoading(false);
       }
@@ -52,7 +50,6 @@ export const AppDataDirectory: React.FC<AppDataDirectoryProps> = ({
     return (
       <SettingContainer
         title={t("settings.about.appDataDirectory.title")}
-        description={t("settings.about.appDataDirectory.description")}
         descriptionMode={descriptionMode}
         grouped={grouped}
         layout="stacked"
@@ -69,7 +66,6 @@ export const AppDataDirectory: React.FC<AppDataDirectoryProps> = ({
     return (
       <SettingContainer
         title={t("settings.about.appDataDirectory.title")}
-        description={t("settings.about.appDataDirectory.description")}
         descriptionMode={descriptionMode}
         grouped={grouped}
         layout="stacked"
@@ -84,7 +80,6 @@ export const AppDataDirectory: React.FC<AppDataDirectoryProps> = ({
   return (
     <SettingContainer
       title={t("settings.about.appDataDirectory.title")}
-      description={t("settings.about.appDataDirectory.description")}
       descriptionMode={descriptionMode}
       grouped={grouped}
       layout="stacked"

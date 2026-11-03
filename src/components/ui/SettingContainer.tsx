@@ -5,7 +5,7 @@ import { Tooltip } from "./Tooltip";
 
 interface SettingContainerProps {
   title: string;
-  description: string;
+  description?: string;
   children: React.ReactNode;
   descriptionMode?: "inline" | "tooltip";
   grouped?: boolean;
@@ -18,7 +18,7 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
   title,
   description,
   children,
-  descriptionMode = "tooltip",
+  descriptionMode = "inline",
   grouped = false,
   layout = "horizontal",
   disabled = false,
@@ -52,8 +52,8 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
   };
 
   const containerClasses = grouped
-    ? "px-[14px] py-3"
-    : "rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface px-[14px] py-3 shadow-[var(--ss-shadow-card)]";
+    ? "ss-setting-row px-5 py-4"
+    : "ss-setting-row rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface px-5 py-4 shadow-[var(--ss-shadow-card)]";
 
   const titleBlockClasses = disabled ? "opacity-60" : "";
   const titleClasses = "text-sm font-semibold leading-5 text-ss-text-primary";
@@ -95,7 +95,7 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
         <div className={containerClasses}>
           <div className={`mb-3 flex items-center gap-2 ${titleBlockClasses}`}>
             <h3 className={titleClasses}>{title}</h3>
-            {tooltipTrigger}
+            {description ? tooltipTrigger : null}
           </div>
           <div className="w-full text-ss-text-primary">{children}</div>
         </div>
@@ -106,7 +106,9 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
       <div className={containerClasses}>
         <div className={`mb-3 ${titleBlockClasses}`}>
           <h3 className={titleClasses}>{title}</h3>
-          <p className={`mt-1 ${descriptionClasses}`}>{description}</p>
+          {description ? (
+            <p className={`mt-1 ${descriptionClasses}`}>{description}</p>
+          ) : null}
         </div>
         <div className="w-full text-ss-text-primary">{children}</div>
       </div>
@@ -114,8 +116,8 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
   }
 
   const horizontalContainerClasses = grouped
-    ? "flex min-h-12 items-center justify-between gap-4 px-[14px] py-3"
-    : "flex min-h-12 items-center justify-between gap-4 rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface px-[14px] py-3 shadow-[var(--ss-shadow-card)]";
+    ? "ss-setting-row grid min-h-14 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-6 gap-y-3 px-5 py-4 max-[760px]:grid-cols-1"
+    : "ss-setting-row grid min-h-14 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-6 gap-y-3 rounded-[var(--ss-radius-lg)] border border-ss-border-subtle bg-ss-bg-surface px-5 py-4 shadow-[var(--ss-shadow-hairline)] max-[760px]:grid-cols-1";
 
   if (descriptionMode === "tooltip") {
     return (
@@ -123,10 +125,12 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
         <div className={`min-w-0 flex-1 ${titleBlockClasses}`}>
           <div className="flex items-center gap-2">
             <h3 className={titleClasses}>{title}</h3>
-            {tooltipTrigger}
+            {description ? tooltipTrigger : null}
           </div>
         </div>
-        <div className="relative shrink-0 text-ss-text-primary">{children}</div>
+        <div className="relative min-w-0 justify-self-end text-ss-text-primary max-[760px]:w-full max-[760px]:justify-self-stretch">
+          {children}
+        </div>
       </div>
     );
   }
@@ -135,9 +139,13 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
     <div className={horizontalContainerClasses}>
       <div className={`min-w-0 flex-1 ${titleBlockClasses}`}>
         <h3 className={titleClasses}>{title}</h3>
-        <p className={`mt-1 ${descriptionClasses}`}>{description}</p>
+        {description ? (
+          <p className={`mt-1 ${descriptionClasses}`}>{description}</p>
+        ) : null}
       </div>
-      <div className="relative shrink-0 text-ss-text-primary">{children}</div>
+      <div className="relative min-w-0 justify-self-end text-ss-text-primary max-[760px]:w-full max-[760px]:justify-self-stretch">
+        {children}
+      </div>
     </div>
   );
 };

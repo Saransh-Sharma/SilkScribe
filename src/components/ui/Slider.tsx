@@ -9,7 +9,7 @@ interface SliderProps {
   step?: number;
   disabled?: boolean;
   label: string;
-  description: string;
+  description?: string;
   descriptionMode?: "inline" | "tooltip";
   grouped?: boolean;
   showValue?: boolean;
@@ -25,7 +25,7 @@ export const Slider: React.FC<SliderProps> = ({
   disabled = false,
   label,
   description,
-  descriptionMode = "tooltip",
+  descriptionMode = "inline",
   grouped = false,
   showValue = true,
   formatValue = (v) => v.toFixed(2),

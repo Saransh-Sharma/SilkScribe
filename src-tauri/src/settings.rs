@@ -3,6 +3,8 @@ use serde::de::{self, Visitor};
 use serde::{Deserialize, Deserializer, Serialize};
 use specta::Type;
 use std::collections::HashMap;
+
+use crate::app_context::{AppCategory, DictationStyle};
 use tauri::AppHandle;
 use tauri_plugin_store::StoreExt;
 
@@ -76,6 +78,21 @@ impl From<LogLevel> for tauri_plugin_log::LogLevel {
     }
 }
 
+/// A word or phrase that's always written another way, e.g. "gonna" as
+/// "going to" or "ss" as "SilkScribe".
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Type)]
+pub struct Replacement {
+    pub from: String,
+    pub to: String,
+}
+
+/// A short spoken phrase that expands into longer text, like an address.
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Type)]
+pub struct Snippet {
+    pub trigger: String,
+    pub text: String,
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, Type)]
 pub struct ShortcutBinding {
     pub id: String,
@@ -113,9 +130,24 @@ pub enum OverlayPosition {
     Bottom,
 }
 
+/// How the recording overlay picks between its light and dark treatments.
+///
+/// `Auto` defers to the app-wide `theme` preference (which may itself be
+/// `System`); `Light` and `Dark` pin the overlay regardless of the app theme,
+/// for people who want it to stay legible against a fixed backdrop.
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Type)]
+#[serde(rename_all = "lowercase")]
+pub enum OverlayAppearance {
+    Auto,
+    Light,
+    Dark,
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Type)]
 #[serde(rename_all = "snake_case")]
+#[derive(Default)]
 pub enum ModelUnloadTimeout {
+    #[default]
     Never,
     Immediately,
     Min2,
@@ -147,14 +179,18 @@ pub fn normalize_paste_method_for_platform(method: PasteMethod) -> PasteMethod {
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Type)]
 #[serde(rename_all = "snake_case")]
+#[derive(Default)]
 pub enum ClipboardHandling {
+    #[default]
     DontModify,
     CopyToClipboard,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Type)]
 #[serde(rename_all = "snake_case")]
+#[derive(Default)]
 pub enum AutoSubmitKey {
+    #[default]
     Enter,
     CtrlEnter,
     CmdEnter,
@@ -197,31 +233,14 @@ impl Default for KeyboardImplementation {
     }
 }
 
-impl Default for ModelUnloadTimeout {
-    fn default() -> Self {
-        ModelUnloadTimeout::Never
-    }
-}
-
 impl Default for PasteMethod {
     fn default() -> Self {
-        // Default to CtrlV for macOS and Windows, Direct for Linux
-        #[cfg(target_os = "linux")]
-        return PasteMethod::Direct;
-        #[cfg(not(target_os = "linux"))]
+        // macOS pastes and then restores the clipboard. Elsewhere a clipboard
+        // paste would leave the text on it, so type it out by default.
+        #[cfg(target_os = "macos")]
         return PasteMethod::CtrlV;
-    }
-}
-
-impl Default for ClipboardHandling {
-    fn default() -> Self {
-        ClipboardHandling::DontModify
-    }
-}
-
-impl Default for AutoSubmitKey {
-    fn default() -> Self {
-        AutoSubmitKey::Enter
+        #[cfg(not(target_os = "macos"))]
+        return PasteMethod::Direct;
     }
 }
 
@@ -252,32 +271,45 @@ impl ModelUnloadTimeout {
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Type)]
 #[serde(rename_all = "snake_case")]
 pub enum SoundTheme {
+    Silk,
     Marimba,
     Pop,
     Custom,
 }
 
 impl SoundTheme {
-    fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &'static str {
         match self {
+            SoundTheme::Silk => "silk",
             SoundTheme::Marimba => "marimba",
             SoundTheme::Pop => "pop",
             SoundTheme::Custom => "custom",
         }
     }
 
-    pub fn to_start_path(&self) -> String {
-        format!("resources/{}_start.wav", self.as_str())
-    }
-
-    pub fn to_stop_path(&self) -> String {
-        format!("resources/{}_stop.wav", self.as_str())
+    /// File path for one cue, relative to the theme's base directory.
+    ///
+    /// Bundled themes resolve against the resource dir, e.g.
+    /// `resources/silk_done.wav`. `Custom` resolves against the app data dir,
+    /// where the user's files sit at the top level, e.g. `custom_start.wav`.
+    ///
+    /// Only `Silk` ships the full cue set. Marimba and Pop provide `start` and
+    /// `stop` only, and `Custom` provides whatever the user dropped in; callers
+    /// are expected to fall back to `Silk` when a cue is missing (see
+    /// `audio_feedback::resolve_sound_path`).
+    pub fn sound_file(&self, cue: &str) -> String {
+        match self {
+            SoundTheme::Custom => format!("custom_{}.wav", cue),
+            _ => format!("resources/{}_{}.wav", self.as_str(), cue),
+        }
     }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Type)]
 #[serde(rename_all = "snake_case")]
+#[derive(Default)]
 pub enum TypingTool {
+    #[default]
     Auto,
     Wtype,
     Kwtype,
@@ -286,29 +318,21 @@ pub enum TypingTool {
     Xdotool,
 }
 
-impl Default for TypingTool {
-    fn default() -> Self {
-        TypingTool::Auto
-    }
-}
-
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Type)]
 #[serde(rename_all = "snake_case")]
+#[derive(Default)]
 pub enum WhisperAcceleratorSetting {
+    #[default]
     Auto,
     Cpu,
     Gpu,
 }
 
-impl Default for WhisperAcceleratorSetting {
-    fn default() -> Self {
-        WhisperAcceleratorSetting::Auto
-    }
-}
-
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Type)]
 #[serde(rename_all = "snake_case")]
+#[derive(Default)]
 pub enum OrtAcceleratorSetting {
+    #[default]
     Auto,
     Cpu,
     Cuda,
@@ -317,17 +341,19 @@ pub enum OrtAcceleratorSetting {
     Rocm,
 }
 
-impl Default for OrtAcceleratorSetting {
-    fn default() -> Self {
-        OrtAcceleratorSetting::Auto
-    }
-}
-
 /* still silkscribe for composing the initial JSON in the store ------------- */
 #[derive(Serialize, Deserialize, Debug, Clone, Type)]
 pub struct AppSettings {
     pub bindings: HashMap<String, ShortcutBinding>,
     pub push_to_talk: bool,
+    /// With push-to-talk, a quick tap keeps recording hands-free until the
+    /// next press. On for new installs; existing ones opt in (see migration 3).
+    #[serde(default = "default_tap_to_lock")]
+    pub tap_to_lock: bool,
+    /// Experimental: show text in the recording indicator while dictating.
+    #[serde(default)]
+    pub live_text_preview: bool,
+    #[serde(default = "default_audio_feedback")]
     pub audio_feedback: bool,
     #[serde(default = "default_audio_feedback_volume")]
     pub audio_feedback_volume: f32,
@@ -357,12 +383,24 @@ pub struct AppSettings {
     pub selected_language: String,
     #[serde(default = "default_overlay_position")]
     pub overlay_position: OverlayPosition,
+    #[serde(default = "default_overlay_appearance")]
+    pub overlay_appearance: OverlayAppearance,
     #[serde(default = "default_debug_mode")]
     pub debug_mode: bool,
     #[serde(default = "default_log_level")]
     pub log_level: LogLevel,
     #[serde(default)]
     pub custom_words: Vec<String>,
+    /// The person connected their calendar (macOS access is checked too).
+    #[serde(default)]
+    pub calendar_connected: bool,
+    /// Offer to take notes as a calendar meeting starts.
+    #[serde(default = "default_true")]
+    pub calendar_reminders: bool,
+    #[serde(default)]
+    pub replacements: Vec<Replacement>,
+    #[serde(default)]
+    pub snippets: Vec<Snippet>,
     #[serde(default)]
     pub model_unload_timeout: ModelUnloadTimeout,
     #[serde(default = "default_word_correction_threshold")]
@@ -393,12 +431,48 @@ pub struct AppSettings {
     pub post_process_prompts: Vec<LLMPrompt>,
     #[serde(default)]
     pub post_process_selected_prompt_id: Option<String>,
+    /// Run AI cleanup on the main dictation shortcut too, not only on the
+    /// "Dictate with AI cleanup" shortcut. Needs `post_process_enabled`.
+    #[serde(default)]
+    pub ai_cleanup_on_main: bool,
+    /// The Home suggestion to clean up every dictation on device was dismissed.
+    #[serde(default)]
+    pub ai_cleanup_card_dismissed: bool,
+    /// Remind the user to tell people a meeting is being recorded.
+    #[serde(default = "default_true")]
+    pub meeting_consent_reminder: bool,
+    /// Offer to take notes when a call starts in a call app.
+    #[serde(default = "default_true")]
+    pub suggest_meeting_notes: bool,
+    /// Adjust AI cleanup to the app being dictated into.
+    #[serde(default = "default_true")]
+    pub per_app_styles: bool,
+    /// Chosen tone per kind of app; missing entries use the defaults.
+    #[serde(default)]
+    pub app_styles: HashMap<AppCategory, DictationStyle>,
+    /// Apps the person moved to another category, by bundle identifier.
+    #[serde(default)]
+    pub app_category_overrides: HashMap<String, AppCategory>,
+    /// Let AI cleanup read the text around the cursor to spell names right.
+    #[serde(default = "default_true")]
+    pub nearby_text_context: bool,
+    /// Also send that text to a cloud cleanup provider (off: on-device only).
+    #[serde(default)]
+    pub share_context_with_cloud: bool,
     #[serde(default)]
     pub mute_while_recording: bool,
     #[serde(default)]
     pub append_trailing_space: bool,
     #[serde(default = "default_app_language")]
     pub app_language: String,
+    /// Show languages whose translation a native speaker hasn't reviewed yet.
+    /// Off means the app uses English in place of an unreviewed language.
+    #[serde(default)]
+    pub preview_languages: bool,
+    /// Let AI apps read the library through `silkscribe --mcp`. Off until
+    /// the person turns it on.
+    #[serde(default)]
+    pub mcp_enabled: bool,
     #[serde(default)]
     pub experimental_enabled: bool,
     #[serde(default)]
@@ -424,6 +498,61 @@ pub struct AppSettings {
     pub whisper_gpu_device: i32,
     #[serde(default)]
     pub extra_recording_buffer_ms: u64,
+    /// Where the meeting orb sits on the right screen edge, as a fraction of the
+    /// usable height from the top (its centre).
+    #[serde(default = "default_meeting_orb_y")]
+    pub meeting_orb_y: f64,
+    /// Schema version for one-time migrations. Stores written before this field
+    /// existed read as 0; new installs start at `CURRENT_SETTINGS_VERSION`.
+    #[serde(default)]
+    pub settings_version: u32,
+}
+
+/// Bump when adding a one-time migration to `apply_settings_migrations`.
+///
+/// 1: raised the default history limit from 5 to `default_history_limit()`.
+/// 2: outside macOS, "paste and keep my clipboard" (which typed the text) is
+///    now spelled out as "type it out".
+/// 3: tap-to-lock stays off for existing installs.
+/// 4: existing installs already showing an unreviewed language keep it.
+const CURRENT_SETTINGS_VERSION: u32 = 4;
+
+/// Languages whose translation a native speaker has reviewed. Shared with the
+/// frontend so both sides agree on what "preview" means.
+static REVIEWED_LANGUAGES: once_cell::sync::Lazy<Vec<String>> = once_cell::sync::Lazy::new(|| {
+    serde_json::from_str(include_str!("../../src/i18n/reviewed-languages.json"))
+        .unwrap_or_else(|_| vec!["en".to_string()])
+});
+
+/// Whether `language` (a locale such as "en-US" or "zh-TW") has a reviewed
+/// translation. Matches the full code first, then the language alone.
+pub fn is_reviewed_language(language: &str) -> bool {
+    let normalized = language.replace('_', "-").to_lowercase();
+    let base = normalized.split('-').next().unwrap_or("");
+    REVIEWED_LANGUAGES
+        .iter()
+        .any(|code| code.to_lowercase() == normalized || code.to_lowercase() == base)
+}
+
+/// The language the app should show: the chosen one when it's reviewed or
+/// preview languages are on, otherwise English.
+pub fn effective_app_language(settings: &AppSettings) -> String {
+    if settings.preview_languages || is_reviewed_language(&settings.app_language) {
+        settings.app_language.clone()
+    } else {
+        "en".to_string()
+    }
+}
+
+fn default_tap_to_lock() -> bool {
+    true
+}
+
+/// The history limit every install shipped with before version 1.
+const LEGACY_DEFAULT_HISTORY_LIMIT: usize = 5;
+
+fn default_true() -> bool {
+    true
 }
 
 fn default_model() -> String {
@@ -465,6 +594,10 @@ fn default_overlay_position() -> OverlayPosition {
     return OverlayPosition::Bottom;
 }
 
+fn default_overlay_appearance() -> OverlayAppearance {
+    OverlayAppearance::Auto
+}
+
 fn default_debug_mode() -> bool {
     false
 }
@@ -481,16 +614,26 @@ fn default_paste_delay_ms() -> u64 {
     60
 }
 
+fn default_meeting_orb_y() -> f64 {
+    0.35
+}
+
 fn default_auto_submit() -> bool {
     false
 }
 
+/// Unsaved dictations kept before the oldest are deleted. Recordings are 16 kHz
+/// mono, so this caps audio at roughly 150 MB for typical 10 s dictations.
 fn default_history_limit() -> usize {
-    5
+    500
 }
 
 fn default_recording_retention_period() -> RecordingRetentionPeriod {
     RecordingRetentionPeriod::PreserveLimit
+}
+
+fn default_audio_feedback() -> bool {
+    true
 }
 
 fn default_audio_feedback_volume() -> f32 {
@@ -498,7 +641,7 @@ fn default_audio_feedback_volume() -> f32 {
 }
 
 fn default_sound_theme() -> SoundTheme {
-    SoundTheme::Marimba
+    SoundTheme::Silk
 }
 
 fn default_post_process_enabled() -> bool {
@@ -626,12 +769,77 @@ fn default_post_process_models() -> HashMap<String, String> {
     map
 }
 
+/// The cleanup prompt new installs use ("Standard" in Settings).
+pub const STANDARD_PROMPT_ID: &str = "default_improve_transcriptions";
+/// The built-in cleanup levels. They can be edited but not deleted, and are
+/// added back to stores written before they existed.
+pub const BUILTIN_PROMPT_IDS: [&str; 3] = ["builtin_light", STANDARD_PROMPT_ID, "builtin_rewrite"];
+
 fn default_post_process_prompts() -> Vec<LLMPrompt> {
-    vec![LLMPrompt {
-        id: "default_improve_transcriptions".to_string(),
-        name: "Improve Transcriptions".to_string(),
-        prompt: "Clean this transcript:\n1. Fix spelling, capitalization, and punctuation errors\n2. Convert number words to digits (twenty-five → 25, ten percent → 10%, five dollars → $5)\n3. Replace spoken punctuation with symbols (period → ., comma → ,, question mark → ?)\n4. Remove filler words (um, uh, like as filler)\n5. Keep the language in the original version (if it was french, keep it in french for example)\n\nPreserve exact meaning and word order. Do not paraphrase or reorder content.\n\nReturn only the cleaned transcript.\n\nTranscript:\n${output}".to_string(),
-    }]
+    // The first prompt is the default selection, so Standard leads.
+    vec![
+        LLMPrompt {
+            id: STANDARD_PROMPT_ID.to_string(),
+            name: "Clean up".to_string(),
+            prompt: "Clean this transcript:\n1. Fix spelling, capitalization, and punctuation errors\n2. Convert number words to digits (twenty-five → 25, ten percent → 10%, five dollars → $5)\n3. Replace spoken punctuation with symbols (period → ., comma → ,, question mark → ?)\n4. Remove filler words (um, uh, like as filler)\n5. Keep the language in the original version (if it was french, keep it in french for example)\n\nPreserve exact meaning and word order. Do not paraphrase or reorder content.\n\nReturn only the cleaned transcript.\n\nTranscript:\n${output}".to_string(),
+        },
+        LLMPrompt {
+            id: "builtin_light".to_string(),
+            name: "Light".to_string(),
+            prompt: "Fix this transcript's punctuation and capitalization:\n1. Add punctuation and capital letters where they belong\n2. Convert number words to digits (twenty-five → 25, ten percent → 10%)\n3. Replace spoken punctuation with symbols (period → ., comma → ,)\n4. Fix obvious spelling mistakes\n\nDon't remove, add, reorder, or reword anything else. Keep the original language.\n\nReturn only the corrected transcript.\n\nTranscript:\n${output}".to_string(),
+        },
+        LLMPrompt {
+            id: "builtin_rewrite".to_string(),
+            name: "Rewrite".to_string(),
+            prompt: "Rewrite this transcript as clear written text:\n1. Remove filler words, false starts, and repeated words\n2. Fix grammar, punctuation, and capitalization; write numbers as digits\n3. Split run-on sentences; use a short list when the speaker lists things\n4. Keep the speaker's meaning, tone, and language. Don't add facts or answer questions in the text\n\nReturn only the rewritten text.\n\nTranscript:\n${output}".to_string(),
+        },
+    ]
+}
+
+/// Adds built-in cleanup prompts missing from older stores.
+fn ensure_builtin_prompts(settings: &mut AppSettings) -> bool {
+    let mut changed = false;
+    for prompt in default_post_process_prompts() {
+        if !settings
+            .post_process_prompts
+            .iter()
+            .any(|p| p.id == prompt.id)
+        {
+            settings.post_process_prompts.push(prompt);
+            changed = true;
+        }
+    }
+    changed
+}
+
+fn default_post_process_selected_prompt_id() -> Option<String> {
+    default_post_process_prompts()
+        .first()
+        .map(|prompt| prompt.id.clone())
+}
+
+/// AI cleanup is skipped when no prompt is selected, and nothing ever selected
+/// one by default — so the AI cleanup shortcut pasted raw text until the user
+/// found the prompt picker. Point a missing or dangling selection at the first
+/// prompt; with no prompts left there is nothing to select.
+fn ensure_selected_prompt(settings: &mut AppSettings) -> bool {
+    let selection_is_valid = settings
+        .post_process_selected_prompt_id
+        .as_ref()
+        .is_some_and(|id| settings.post_process_prompts.iter().any(|p| &p.id == id));
+    if selection_is_valid {
+        return false;
+    }
+
+    let fallback = settings
+        .post_process_prompts
+        .first()
+        .map(|prompt| prompt.id.clone());
+    if settings.post_process_selected_prompt_id == fallback {
+        return false;
+    }
+    settings.post_process_selected_prompt_id = fallback;
+    true
 }
 
 fn default_typing_tool() -> TypingTool {
@@ -717,6 +925,57 @@ fn apply_settings_migrations(
         updated = true;
     }
 
+    if ensure_builtin_prompts(settings) {
+        updated = true;
+    }
+
+    if ensure_selected_prompt(settings) {
+        updated = true;
+    }
+
+    if settings.settings_version < 1 {
+        // The limit was only adjustable from Debug, so 5 is almost always the
+        // untouched default rather than a deliberate choice.
+        if settings.history_limit == LEGACY_DEFAULT_HISTORY_LIMIT {
+            settings.history_limit = default_history_limit();
+        }
+        settings.settings_version = 1;
+        updated = true;
+    }
+
+    if settings.settings_version < 2 {
+        #[cfg(not(target_os = "macos"))]
+        if settings.clipboard_handling == ClipboardHandling::DontModify
+            && matches!(
+                settings.paste_method,
+                PasteMethod::CtrlV | PasteMethod::CtrlShiftV | PasteMethod::ShiftInsert
+            )
+        {
+            settings.paste_method = PasteMethod::Direct;
+        }
+        settings.settings_version = 2;
+        updated = true;
+    }
+
+    if settings.settings_version < 3 {
+        // A tap used to start and stop at once. Locking the mic on instead
+        // would surprise someone who never asked for it, so existing installs
+        // keep the old behaviour until they turn it on.
+        settings.tap_to_lock = false;
+        settings.settings_version = 3;
+        updated = true;
+    }
+
+    if settings.settings_version < 4 {
+        // Unreviewed translations are now hidden by default. Someone already
+        // using one keeps it rather than finding the app in English.
+        if !is_reviewed_language(&settings.app_language) {
+            settings.preview_languages = true;
+        }
+        settings.settings_version = 4;
+        updated = true;
+    }
+
     let normalized_paste_method = normalize_paste_method_for_platform(settings.paste_method);
     if settings.paste_method != normalized_paste_method {
         settings.paste_method = normalized_paste_method;
@@ -741,8 +1000,8 @@ pub fn get_default_settings() -> AppSettings {
         "transcribe".to_string(),
         ShortcutBinding {
             id: "transcribe".to_string(),
-            name: "Transcribe".to_string(),
-            description: "Converts your speech into text.".to_string(),
+            name: "Dictate".to_string(),
+            description: "Start and stop dictation".to_string(),
             default_binding: default_shortcut.to_string(),
             current_binding: default_shortcut.to_string(),
         },
@@ -760,11 +1019,24 @@ pub fn get_default_settings() -> AppSettings {
         "transcribe_with_post_process".to_string(),
         ShortcutBinding {
             id: "transcribe_with_post_process".to_string(),
-            name: "Transcribe with Post-Processing".to_string(),
-            description: "Converts your speech into text and applies AI post-processing."
-                .to_string(),
+            name: "Dictate with AI cleanup".to_string(),
+            description: "Always runs AI cleanup on the result".to_string(),
             default_binding: default_post_process_shortcut.to_string(),
             current_binding: default_post_process_shortcut.to_string(),
+        },
+    );
+    // Command mode reads the selection through the Accessibility API, which
+    // only the Mac build has. ⌃⌥Space would clash with macOS's input-source
+    // switcher, so it's ⌃⇧Space.
+    #[cfg(target_os = "macos")]
+    bindings.insert(
+        "command".to_string(),
+        ShortcutBinding {
+            id: "command".to_string(),
+            name: "Command".to_string(),
+            description: "Say how to change the selected text, or what to write".to_string(),
+            default_binding: "ctrl+shift+space".to_string(),
+            current_binding: "ctrl+shift+space".to_string(),
         },
     );
     bindings.insert(
@@ -772,7 +1044,7 @@ pub fn get_default_settings() -> AppSettings {
         ShortcutBinding {
             id: "cancel".to_string(),
             name: "Cancel".to_string(),
-            description: "Cancels the current recording.".to_string(),
+            description: "Stop without transcribing".to_string(),
             default_binding: "escape".to_string(),
             current_binding: "escape".to_string(),
         },
@@ -781,7 +1053,9 @@ pub fn get_default_settings() -> AppSettings {
     AppSettings {
         bindings,
         push_to_talk: true,
-        audio_feedback: false,
+        tap_to_lock: default_tap_to_lock(),
+        live_text_preview: false,
+        audio_feedback: true,
         audio_feedback_volume: default_audio_feedback_volume(),
         sound_theme: default_sound_theme(),
         start_hidden: default_start_hidden(),
@@ -796,9 +1070,14 @@ pub fn get_default_settings() -> AppSettings {
         translate_to_english: false,
         selected_language: "auto".to_string(),
         overlay_position: default_overlay_position(),
+        overlay_appearance: default_overlay_appearance(),
         debug_mode: false,
         log_level: default_log_level(),
         custom_words: Vec::new(),
+        calendar_connected: false,
+        calendar_reminders: true,
+        replacements: Vec::new(),
+        snippets: Vec::new(),
         model_unload_timeout: ModelUnloadTimeout::Never,
         word_correction_threshold: default_word_correction_threshold(),
         history_limit: default_history_limit(),
@@ -813,10 +1092,21 @@ pub fn get_default_settings() -> AppSettings {
         post_process_api_keys: default_post_process_api_keys(),
         post_process_models: default_post_process_models(),
         post_process_prompts: default_post_process_prompts(),
-        post_process_selected_prompt_id: None,
+        post_process_selected_prompt_id: default_post_process_selected_prompt_id(),
+        ai_cleanup_on_main: false,
+        ai_cleanup_card_dismissed: false,
+        meeting_consent_reminder: true,
+        suggest_meeting_notes: true,
+        per_app_styles: true,
+        app_styles: HashMap::new(),
+        app_category_overrides: HashMap::new(),
+        nearby_text_context: true,
+        share_context_with_cloud: false,
         mute_while_recording: false,
         append_trailing_space: false,
         app_language: default_app_language(),
+        preview_languages: false,
+        mcp_enabled: false,
         experimental_enabled: false,
         lazy_stream_close: false,
         keyboard_implementation: KeyboardImplementation::default(),
@@ -830,6 +1120,8 @@ pub fn get_default_settings() -> AppSettings {
         ort_accelerator: OrtAcceleratorSetting::default(),
         whisper_gpu_device: default_whisper_gpu_device(),
         extra_recording_buffer_ms: 0,
+        meeting_orb_y: default_meeting_orb_y(),
+        settings_version: CURRENT_SETTINGS_VERSION,
     }
 }
 
@@ -856,6 +1148,39 @@ impl AppSettings {
     }
 }
 
+/// Adds default bindings that `bindings` lacks (a shortcut added in an
+/// update). A new default that's already taken by another binding is added
+/// unassigned, so it can't steal a shortcut the person relies on. Returns
+/// whether anything was added.
+fn merge_missing_bindings(
+    bindings: &mut HashMap<String, ShortcutBinding>,
+    defaults: HashMap<String, ShortcutBinding>,
+) -> bool {
+    let mut added = false;
+    for (key, mut value) in defaults {
+        if bindings.contains_key(&key) {
+            continue;
+        }
+        let taken = !value.current_binding.trim().is_empty()
+            && bindings.values().any(|existing| {
+                existing
+                    .current_binding
+                    .eq_ignore_ascii_case(&value.current_binding)
+            });
+        if taken {
+            warn!(
+                "New shortcut '{}' ({}) is already in use; leaving it unassigned",
+                key, value.current_binding
+            );
+            value.current_binding = String::new();
+        }
+        debug!("Adding missing binding: {}", key);
+        bindings.insert(key, value);
+        added = true;
+    }
+    added
+}
+
 pub fn load_or_create_app_settings(app: &AppHandle) -> AppSettings {
     // Initialize store
     let store = app
@@ -872,12 +1197,8 @@ pub fn load_or_create_app_settings(app: &AppHandle) -> AppSettings {
                 let mut updated = false;
 
                 // Merge default bindings into existing settings
-                for (key, value) in default_settings.bindings {
-                    if !settings.bindings.contains_key(&key) {
-                        debug!("Adding missing binding: {}", key);
-                        settings.bindings.insert(key, value);
-                        updated = true;
-                    }
+                if merge_missing_bindings(&mut settings.bindings, default_settings.bindings) {
+                    updated = true;
                 }
 
                 if needs_onboarding_migration {
@@ -974,9 +1295,232 @@ mod tests {
     use super::*;
 
     #[test]
+    fn custom_sound_files_sit_at_the_app_data_root() {
+        assert_eq!(SoundTheme::Custom.sound_file("start"), "custom_start.wav");
+        assert_eq!(SoundTheme::Custom.sound_file("stop"), "custom_stop.wav");
+        assert_eq!(
+            SoundTheme::Silk.sound_file("done"),
+            "resources/silk_done.wav"
+        );
+    }
+
+    fn binding(id: &str, keys: &str) -> ShortcutBinding {
+        ShortcutBinding {
+            id: id.into(),
+            name: id.into(),
+            description: String::new(),
+            default_binding: keys.into(),
+            current_binding: keys.into(),
+        }
+    }
+
+    #[test]
+    fn a_new_default_binding_does_not_take_a_shortcut_in_use() {
+        let mut bindings = HashMap::from([
+            (
+                "transcribe".to_string(),
+                binding("transcribe", "Ctrl+Shift+Space"),
+            ),
+            ("cancel".to_string(), binding("cancel", "escape")),
+        ]);
+        let defaults = HashMap::from([
+            ("transcribe".to_string(), binding("transcribe", "alt+space")),
+            (
+                "command".to_string(),
+                binding("command", "ctrl+shift+space"),
+            ),
+            (
+                "paste_last".to_string(),
+                binding("paste_last", "alt+shift+v"),
+            ),
+        ]);
+        assert!(merge_missing_bindings(&mut bindings, defaults));
+        // The person's own shortcut is kept.
+        assert_eq!(bindings["transcribe"].current_binding, "Ctrl+Shift+Space");
+        // The clashing new one is added unassigned; a free one as shipped.
+        assert_eq!(bindings["command"].current_binding, "");
+        assert_eq!(bindings["command"].default_binding, "ctrl+shift+space");
+        assert_eq!(bindings["paste_last"].current_binding, "alt+shift+v");
+        // Nothing more to add the second time.
+        let defaults = HashMap::from([("command".to_string(), binding("command", "x"))]);
+        assert!(!merge_missing_bindings(&mut bindings, defaults));
+    }
+
+    #[test]
     fn default_settings_disable_auto_submit() {
         let settings = get_default_settings();
         assert!(!settings.auto_submit);
         assert_eq!(settings.auto_submit_key, AutoSubmitKey::Enter);
+    }
+
+    #[test]
+    fn default_settings_select_the_cleanup_prompt() {
+        let settings = get_default_settings();
+        assert_eq!(
+            settings.post_process_selected_prompt_id.as_deref(),
+            Some("default_improve_transcriptions")
+        );
+    }
+
+    #[test]
+    fn default_settings_need_no_migration() {
+        let mut settings = get_default_settings();
+        assert!(!apply_settings_migrations(&mut settings, None));
+        assert_eq!(settings.history_limit, default_history_limit());
+    }
+
+    #[test]
+    fn migration_selects_a_prompt_when_none_is_selected() {
+        let mut settings = get_default_settings();
+        settings.post_process_selected_prompt_id = None;
+        assert!(apply_settings_migrations(&mut settings, None));
+        assert_eq!(
+            settings.post_process_selected_prompt_id.as_deref(),
+            Some("default_improve_transcriptions")
+        );
+    }
+
+    #[test]
+    fn migration_repairs_a_dangling_prompt_selection() {
+        let mut settings = get_default_settings();
+        settings.post_process_selected_prompt_id = Some("deleted".into());
+        apply_settings_migrations(&mut settings, None);
+        assert_eq!(
+            settings.post_process_selected_prompt_id.as_deref(),
+            Some("default_improve_transcriptions")
+        );
+    }
+
+    #[test]
+    fn migration_keeps_a_valid_prompt_selection() {
+        let mut settings = get_default_settings();
+        settings.post_process_prompts.push(LLMPrompt {
+            id: "mine".into(),
+            name: "Mine".into(),
+            prompt: "${output}".into(),
+        });
+        settings.post_process_selected_prompt_id = Some("mine".into());
+        apply_settings_migrations(&mut settings, None);
+        assert_eq!(
+            settings.post_process_selected_prompt_id.as_deref(),
+            Some("mine")
+        );
+    }
+
+    #[test]
+    fn migration_adds_missing_builtin_prompts_and_keeps_custom_ones() {
+        let mut settings = get_default_settings();
+        settings
+            .post_process_prompts
+            .retain(|p| p.id == STANDARD_PROMPT_ID);
+        settings.post_process_prompts.push(LLMPrompt {
+            id: "mine".into(),
+            name: "Mine".into(),
+            prompt: "${output}".into(),
+        });
+        assert!(apply_settings_migrations(&mut settings, None));
+        for id in BUILTIN_PROMPT_IDS {
+            assert!(settings.post_process_prompts.iter().any(|p| p.id == id));
+        }
+        assert!(settings.post_process_prompts.iter().any(|p| p.id == "mine"));
+        assert_eq!(
+            settings.post_process_selected_prompt_id.as_deref(),
+            Some(STANDARD_PROMPT_ID)
+        );
+    }
+
+    /// A store written before `settings_version` existed, as JSON.
+    fn legacy_settings(history_limit: usize) -> AppSettings {
+        let mut value = serde_json::to_value(get_default_settings()).unwrap();
+        let object = value.as_object_mut().unwrap();
+        object.remove("settings_version");
+        object.insert("history_limit".into(), history_limit.into());
+        serde_json::from_value(value).unwrap()
+    }
+
+    #[test]
+    fn migration_raises_the_legacy_default_history_limit_once() {
+        let mut settings = legacy_settings(LEGACY_DEFAULT_HISTORY_LIMIT);
+        assert_eq!(settings.settings_version, 0);
+
+        assert!(apply_settings_migrations(&mut settings, None));
+        assert_eq!(settings.history_limit, default_history_limit());
+        assert_eq!(settings.settings_version, CURRENT_SETTINGS_VERSION);
+
+        // A user who deliberately goes back to 5 afterwards keeps it.
+        settings.history_limit = LEGACY_DEFAULT_HISTORY_LIMIT;
+        assert!(!apply_settings_migrations(&mut settings, None));
+        assert_eq!(settings.history_limit, LEGACY_DEFAULT_HISTORY_LIMIT);
+    }
+
+    #[test]
+    fn migration_spells_out_typing_outside_macos() {
+        let mut settings = legacy_settings(500);
+        settings.paste_method = PasteMethod::CtrlV;
+        settings.clipboard_handling = ClipboardHandling::DontModify;
+        apply_settings_migrations(&mut settings, None);
+        #[cfg(target_os = "macos")]
+        assert_eq!(settings.paste_method, PasteMethod::CtrlV);
+        #[cfg(not(target_os = "macos"))]
+        assert_eq!(settings.paste_method, PasteMethod::Direct);
+        assert_eq!(settings.settings_version, CURRENT_SETTINGS_VERSION);
+    }
+
+    #[test]
+    fn tap_to_lock_is_new_installs_only() {
+        assert!(get_default_settings().tap_to_lock);
+        let mut existing = legacy_settings(500);
+        assert!(existing.tap_to_lock, "serde default before migrating");
+        apply_settings_migrations(&mut existing, None);
+        assert!(!existing.tap_to_lock);
+        // Turning it on afterwards sticks.
+        existing.tap_to_lock = true;
+        apply_settings_migrations(&mut existing, None);
+        assert!(existing.tap_to_lock);
+        let mut fresh = get_default_settings();
+        assert!(!apply_settings_migrations(&mut fresh, None) || fresh.tap_to_lock);
+        assert!(fresh.tap_to_lock);
+    }
+
+    #[test]
+    fn unreviewed_languages_fall_back_to_english_unless_previewed() {
+        assert!(is_reviewed_language("en"));
+        assert!(is_reviewed_language("en-GB"));
+        assert!(is_reviewed_language("en_US"));
+        assert!(!is_reviewed_language("ja"));
+
+        let mut settings = get_default_settings();
+        settings.app_language = "ja".into();
+        assert_eq!(effective_app_language(&settings), "en");
+        settings.preview_languages = true;
+        assert_eq!(effective_app_language(&settings), "ja");
+    }
+
+    #[test]
+    fn existing_installs_keep_an_unreviewed_language() {
+        let mut existing = legacy_settings(500);
+        existing.app_language = "de".into();
+        apply_settings_migrations(&mut existing, None);
+        assert!(existing.preview_languages);
+        assert_eq!(effective_app_language(&existing), "de");
+
+        let mut english = legacy_settings(500);
+        english.app_language = "en-US".into();
+        apply_settings_migrations(&mut english, None);
+        assert!(!english.preview_languages);
+
+        // New installs don't preview, whatever the system language.
+        let mut fresh = get_default_settings();
+        fresh.app_language = "de".into();
+        apply_settings_migrations(&mut fresh, None);
+        assert!(!fresh.preview_languages);
+    }
+
+    #[test]
+    fn migration_keeps_a_custom_history_limit() {
+        let mut settings = legacy_settings(42);
+        apply_settings_migrations(&mut settings, None);
+        assert_eq!(settings.history_limit, 42);
+        assert_eq!(settings.settings_version, CURRENT_SETTINGS_VERSION);
     }
 }

@@ -21,6 +21,7 @@ pub fn cancel_current_operation(app: &AppHandle) {
     shortcut::unregister_cancel_shortcut(app);
 
     // Cancel any ongoing recording
+    crate::live_preview::stop();
     let audio_manager = app.state::<Arc<AudioRecordingManager>>();
     let recording_was_active = audio_manager.is_recording();
     audio_manager.cancel_recording();
@@ -28,8 +29,14 @@ pub fn cancel_current_operation(app: &AppHandle) {
     // Update tray icon and give the overlay a distinct cancelled state.
     change_tray_icon(app, crate::tray::TrayIconState::Idle);
     if recording_was_active {
+        // `cancel_recording` does not undo `apply_mute` the way the normal stop
+        // path does, so without this the user's system output stays muted after
+        // a cancel — and the cue below would be inaudible.
+        audio_manager.remove_mute();
+
         show_cancelled_overlay(app);
-        hide_recording_overlay_after(app, 900);
+        crate::audio_feedback::play_feedback_sound(app, crate::audio_feedback::SoundType::Cancel);
+        hide_recording_overlay_after(app, 1200);
     } else {
         hide_recording_overlay(app);
     }

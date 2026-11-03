@@ -16,7 +16,7 @@ export const HistoryLimit: React.FC<HistoryLimitProps> = ({
   const { t } = useTranslation();
   const { getSetting, updateSetting, isUpdating } = useSettings();
 
-  const historyLimit = getSetting("history_limit") ?? 5;
+  const historyLimit = getSetting("history_limit") ?? 500;
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value, 10);
@@ -28,7 +28,6 @@ export const HistoryLimit: React.FC<HistoryLimitProps> = ({
   return (
     <SettingContainer
       title={t("settings.debug.historyLimit.title")}
-      description={t("settings.debug.historyLimit.description")}
       descriptionMode={descriptionMode}
       grouped={grouped}
       layout="horizontal"

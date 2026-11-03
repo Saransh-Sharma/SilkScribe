@@ -21,8 +21,8 @@ use tauri_plugin_autostart::ManagerExt;
 
 use crate::settings::{
     self, get_settings, AutoSubmitKey, ClipboardHandling, KeyboardImplementation, LLMPrompt,
-    OverlayPosition, PasteMethod, ShortcutBinding, SoundTheme, ThemePreference, TypingTool,
-    APPLE_INTELLIGENCE_DEFAULT_MODEL_ID, APPLE_INTELLIGENCE_PROVIDER_ID,
+    OverlayAppearance, OverlayPosition, PasteMethod, ShortcutBinding, SoundTheme, ThemePreference,
+    TypingTool, APPLE_INTELLIGENCE_DEFAULT_MODEL_ID, APPLE_INTELLIGENCE_PROVIDER_ID,
 };
 use crate::tray;
 
@@ -176,12 +176,12 @@ pub fn change_binding(
 
     // Register the new binding
     if let Err(e) = register_shortcut(&app, updated_binding.clone()) {
-        let error_msg = format!("Failed to register shortcut: {}", e);
-        error!("change_binding error: {}", error_msg);
+        error!("change_binding error: Failed to register shortcut: {}", e);
+        // The UI already says "Couldn't save shortcut", so pass on only the reason.
         return Ok(BindingResponse {
             success: false,
             binding: None,
-            error: Some(error_msg),
+            error: Some(e),
         });
     }
 
@@ -284,14 +284,13 @@ pub fn change_keyboard_implementation_setting(
     settings::write_settings(&app, settings);
 
     // Initialize new implementation if needed (NativeKeys needs state)
-    if new_impl == KeyboardImplementation::NativeKeys {
-        if initialize_native_keys_with_rollback(&app)? {
-            // Shortcuts already registered during init
-            return Ok(ImplementationChangeResult {
-                success: true,
-                reset_bindings: vec![],
-            });
-        }
+    if new_impl == KeyboardImplementation::NativeKeys && initialize_native_keys_with_rollback(&app)?
+    {
+        // Shortcuts already registered during init
+        return Ok(ImplementationChangeResult {
+            success: true,
+            reset_bindings: vec![],
+        });
     }
 
     // Register all shortcuts with new implementation, resetting invalid ones
@@ -424,6 +423,12 @@ fn register_all_shortcuts_for_implementation(
             .cloned()
             .unwrap_or_else(|| default_binding.clone());
 
+        // An empty binding is deliberately unbound (e.g. a new default that
+        // clashed with a shortcut already in use); don't reset it.
+        if binding.current_binding.is_empty() {
+            continue;
+        }
+
         // Validate the shortcut for the target implementation
         if let Err(e) =
             validate_shortcut_for_implementation(&binding.current_binding, implementation)
@@ -481,7 +486,7 @@ fn initialize_native_keys_with_rollback(app: &AppHandle) -> Result<bool, String>
         settings::write_settings(app, settings);
         tauri_impl::init_shortcuts(app);
         return Err(format!(
-            "Failed to initialize NativeKeys: {}. Reverted to Tauri.",
+            "Native Keys couldn't start, so we switched back to the default. ({})",
             e
         ));
     }
@@ -499,6 +504,24 @@ fn initialize_native_keys_with_rollback(app: &AppHandle) -> Result<bool, String>
 pub fn change_ptt_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
     let mut settings = settings::get_settings(&app);
     settings.push_to_talk = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_live_text_preview_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.live_text_preview = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_tap_to_lock_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.tap_to_lock = enabled;
     settings::write_settings(&app, settings);
     Ok(())
 }
@@ -575,6 +598,25 @@ pub fn change_overlay_position_setting(app: AppHandle, position: String) -> Resu
 
     // Update overlay position without recreating window
     crate::utils::update_overlay_position(&app);
+
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_overlay_appearance_setting(app: AppHandle, appearance: String) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    let parsed = match appearance.as_str() {
+        "auto" => OverlayAppearance::Auto,
+        "light" => OverlayAppearance::Light,
+        "dark" => OverlayAppearance::Dark,
+        other => {
+            warn!("Invalid overlay appearance '{}', defaulting to auto", other);
+            OverlayAppearance::Auto
+        }
+    };
+    settings.overlay_appearance = parsed;
+    settings::write_settings(&app, settings);
 
     Ok(())
 }
@@ -821,6 +863,134 @@ pub fn change_auto_submit_key_setting(app: AppHandle, key: String) -> Result<(),
     Ok(())
 }
 
+/// Run AI cleanup on every dictation, not only the "Dictate with AI cleanup"
+/// shortcut.
+#[tauri::command]
+#[specta::specta]
+pub fn change_ai_cleanup_on_main_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.ai_cleanup_on_main = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// Remind the user to tell people when a meeting starts recording.
+#[tauri::command]
+#[specta::specta]
+pub fn change_meeting_consent_reminder_setting(
+    app: AppHandle,
+    enabled: bool,
+) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.meeting_consent_reminder = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// Adjust AI cleanup to the app being dictated into.
+#[tauri::command]
+#[specta::specta]
+pub fn change_per_app_styles_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.per_app_styles = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// The tone AI cleanup uses for a kind of app.
+#[tauri::command]
+#[specta::specta]
+pub fn change_app_style_setting(
+    app: AppHandle,
+    category: crate::app_context::AppCategory,
+    style: crate::app_context::DictationStyle,
+) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.app_styles.insert(category, style);
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// Treat an app as another kind of app, or go back to its built-in kind.
+#[tauri::command]
+#[specta::specta]
+pub fn change_app_category_override(
+    app: AppHandle,
+    bundle_id: String,
+    category: Option<crate::app_context::AppCategory>,
+) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    match category {
+        Some(category) => {
+            settings.app_category_overrides.insert(bundle_id, category);
+        }
+        None => {
+            settings.app_category_overrides.remove(&bundle_id);
+        }
+    }
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// Let AI cleanup read the text around the cursor.
+#[tauri::command]
+#[specta::specta]
+pub fn change_nearby_text_context_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.nearby_text_context = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// Also send the text around the cursor to a cloud cleanup provider.
+#[tauri::command]
+#[specta::specta]
+pub fn change_share_context_with_cloud_setting(
+    app: AppHandle,
+    enabled: bool,
+) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.share_context_with_cloud = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// Offer to take notes when a call starts.
+#[tauri::command]
+#[specta::specta]
+pub fn change_suggest_meeting_notes_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.suggest_meeting_notes = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// Hide the Home suggestion to clean up every dictation on device.
+#[tauri::command]
+#[specta::specta]
+pub fn dismiss_ai_cleanup_card(app: AppHandle) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.ai_cleanup_card_dismissed = true;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// Turn on AI cleanup for every dictation with Apple Intelligence, which runs
+/// on this Mac. Used by onboarding and the Home suggestion.
+#[tauri::command]
+#[specta::specta]
+pub fn enable_on_device_cleanup(app: AppHandle) -> Result<(), String> {
+    if !crate::commands::check_apple_intelligence_available() {
+        return Err("Apple Intelligence isn't available on this Mac.".to_string());
+    }
+    let mut settings = settings::get_settings(&app);
+    settings.post_process_provider_id = settings::APPLE_INTELLIGENCE_PROVIDER_ID.to_string();
+    settings.ai_cleanup_on_main = true;
+    settings.ai_cleanup_card_dismissed = true;
+    settings::write_settings(&app, settings);
+    change_post_process_enabled_setting(app, true)
+}
+
 #[tauri::command]
 #[specta::specta]
 pub fn change_post_process_enabled_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
@@ -988,9 +1158,13 @@ pub fn update_post_process_prompt(
 pub fn delete_post_process_prompt(app: AppHandle, id: String) -> Result<(), String> {
     let mut settings = settings::get_settings(&app);
 
+    if settings::BUILTIN_PROMPT_IDS.contains(&id.as_str()) {
+        return Err("Built-in cleanup levels can't be deleted.".to_string());
+    }
+
     // Don't allow deleting the last prompt
     if settings.post_process_prompts.len() <= 1 {
-        return Err("Cannot delete the last prompt".to_string());
+        return Err("You need at least one prompt.".to_string());
     }
 
     // Find and remove the prompt
@@ -1034,7 +1208,10 @@ pub async fn fetch_post_process_models(
 
         #[cfg(not(all(target_os = "macos", target_arch = "aarch64")))]
         {
-            return Err("Apple Intelligence is only available on Apple silicon Macs running macOS 15 or later.".to_string());
+            return Err(
+                "Apple Intelligence needs a Mac with Apple silicon running macOS 26 or later."
+                    .to_string(),
+            );
         }
     }
 
@@ -1048,7 +1225,7 @@ pub async fn fetch_post_process_models(
     // Skip fetching if no API key for providers that typically need one
     if api_key.trim().is_empty() && provider.id != "custom" {
         return Err(format!(
-            "API key is required for {}. Please add an API key to list available models.",
+            "Add an API key for {} to see its models.",
             provider.label
         ));
     }
@@ -1093,13 +1270,49 @@ pub fn change_append_trailing_space_setting(app: AppHandle, enabled: bool) -> Re
 #[specta::specta]
 pub fn change_app_language_setting(app: AppHandle, language: String) -> Result<(), String> {
     let mut settings = settings::get_settings(&app);
-    settings.app_language = language.clone();
+    settings.app_language = language;
     settings::write_settings(&app, settings);
 
     // Refresh the tray menu with the new language
-    tray::update_tray_menu(&app, &tray::TrayIconState::Idle, Some(&language));
+    tray::refresh_tray(&app);
 
     Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_preview_languages_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.preview_languages = enabled;
+    settings::write_settings(&app, settings);
+    tray::refresh_tray(&app);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_mcp_enabled_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.mcp_enabled = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// How an AI app starts SilkScribe's MCP server: this executable, `--mcp`.
+#[derive(serde::Serialize, specta::Type)]
+pub struct McpLaunch {
+    pub command: String,
+    pub args: Vec<String>,
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn mcp_launch_command() -> Result<McpLaunch, String> {
+    let command = std::env::current_exe().map_err(|e| e.to_string())?;
+    Ok(McpLaunch {
+        command: command.to_string_lossy().into_owned(),
+        args: vec!["--mcp".to_string()],
+    })
 }
 
 #[tauri::command]
@@ -1160,6 +1373,16 @@ pub fn change_lazy_stream_close_setting(app: AppHandle, enabled: bool) -> Result
 pub fn change_extra_recording_buffer_setting(app: AppHandle, ms: u64) -> Result<(), String> {
     let mut settings = settings::get_settings(&app);
     settings.extra_recording_buffer_ms = ms.clamp(0, 1500);
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+/// How long to wait after writing the clipboard before sending the paste keys.
+#[tauri::command]
+#[specta::specta]
+pub fn change_paste_delay_setting(app: AppHandle, ms: u64) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.paste_delay_ms = ms.clamp(10, 1000);
     settings::write_settings(&app, settings);
     Ok(())
 }

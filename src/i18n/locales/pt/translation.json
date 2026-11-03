@@ -1,30 +1,21 @@
 {
   "tray": {
-    "settings": "Configurações...",
-    "checkUpdates": "Verificar Atualizações...",
+    "settings": "Configurações…",
+    "checkUpdates": "Procurar Atualizações…",
     "copyLastTranscript": "Copiar última transcrição",
-    "unloadModel": "Descarregar modelo",
-    "quit": "Sair",
-    "cancel": "Cancelar"
-  },
-  "sidebar": {
-    "home": "Início",
-    "general": "Geral",
-    "models": "Modelos",
-    "advanced": "Avançado",
-    "postProcessing": "Pós-Processamento",
-    "history": "Histórico",
-    "debug": "Depuração",
-    "preferences": "Preferências",
-    "developer": "Desenvolvedor"
+    "copyLastOriginal": "Copiar Última Transcrição Antes da Limpeza",
+    "unloadModel": "Descarregar Mecanismo",
+    "quit": "Encerrar o SilkScribe",
+    "cancel": "Cancelar Gravação",
+    "meetingPause": "Pausar Reunião",
+    "meetingResume": "Retomar Reunião",
+    "meetingStop": "Parar e Transcrever Reunião"
   },
   "onboarding": {
-    "subtitle": "Para começar, escolha um modelo de transcrição",
     "recommended": "Recomendado",
     "download": "Baixar",
-    "downloading": "Baixando...",
-    "customModelDescription": "Não suportado oficialmente",
-    "downloadFailed": "Falha no download. Por favor, tente novamente.",
+    "downloading": "Baixando…",
+    "customModelDescription": "Mecanismo personalizado · sem suporte oficial",
     "modelCard": {
       "accuracy": "precisão",
       "speed": "velocidade"
@@ -32,349 +23,256 @@
     "models": {
       "small": {
         "name": "Whisper Small",
-        "description": "Rápido e razoavelmente preciso."
+        "description": "Rápido e leve"
       },
       "medium": {
         "name": "Whisper Medium",
-        "description": "Boa precisão, velocidade média"
+        "description": "Mais preciso, um pouco mais lento"
       },
       "turbo": {
         "name": "Whisper Turbo",
-        "description": "Precisão e velocidade balanceadas."
+        "description": "Rápido e preciso — ótimo para tudo"
       },
       "large": {
         "name": "Whisper Large",
-        "description": "Boa precisão, mas lento."
+        "description": "O Whisper mais preciso, mas lento"
       },
       "parakeet-tdt-0.6b-v2": {
         "name": "Parakeet V2",
-        "description": "Apenas inglês. O melhor modelo para falantes de inglês."
+        "description": "Melhor para inglês"
       },
       "parakeet-tdt-0.6b-v3": {
         "name": "Parakeet V3",
-        "description": "Rápido e preciso"
+        "description": "Rápido e preciso · 25 idiomas europeus"
       },
       "moonshine-base": {
         "name": "Moonshine Base",
-        "description": "Muito rápido, apenas inglês. Lida bem com sotaques."
+        "description": "Muito rápido · inglês · ótimo com sotaques"
       },
       "moonshine-tiny-streaming-en": {
         "name": "Moonshine V2 Tiny",
-        "description": "Ultrarrápido, apenas inglês"
+        "description": "O mais rápido · inglês"
       },
       "moonshine-small-streaming-en": {
         "name": "Moonshine V2 Small",
-        "description": "Rápido, apenas inglês. Bom equilíbrio entre velocidade e precisão."
+        "description": "Rápido e equilibrado · inglês"
       },
       "moonshine-medium-streaming-en": {
         "name": "Moonshine V2 Medium",
-        "description": "Apenas inglês. Alta qualidade."
+        "description": "A melhor qualidade do Moonshine · inglês"
       },
       "breeze-asr": {
         "name": "Breeze ASR",
-        "description": "Otimizado para mandarim taiwanês. Suporte para alternância de código."
+        "description": "Mandarim de Taiwan, misturado com inglês"
       },
       "sense-voice-int8": {
         "name": "SenseVoice",
-        "description": "Muito rápido. Chinês, inglês, japonês, coreano, cantonês."
+        "description": "Muito rápido · chinês, inglês, japonês, coreano, cantonês"
       }
     },
     "permissions": {
       "shared": {
-        "eyebrow": "Permissões",
-        "repairEyebrow": "Permissão necessária",
-        "stepByStep": "O que fazer",
-        "statusLabel": "Estado",
-        "openPrompt": "Abrir aviso do macOS",
-        "openingPrompt": "A abrir o aviso do macOS…",
+        "repairEyebrow": "Precisa da sua autorização",
+        "openingPrompt": "Abrindo…",
         "iEnabledIt": "Já ativei",
         "checkAgain": "Verificar novamente",
         "continue": "Continuar",
-        "repairAction": "Abrir reparo guiado",
         "appName": "SilkScribe",
-        "guidedHelper": "Ajuda guiada",
-        "privateLabel": "Privado por design",
         "statuses": {
-          "checking": "A verificar",
-          "needed": "Ainda necessário",
-          "error": "Precisa de atenção",
-          "requesting": "A abrir o macOS",
+          "checking": "Verificando…",
+          "needed": "Ainda não permitido",
+          "error": "Não foi possível verificar",
+          "requesting": "Aguardando o macOS…",
           "waiting_for_user": "À tua espera",
           "granted": "Permitido"
         }
       },
       "microphone": {
-        "title": "Deixe o SilkScribe ouvir você enquanto grava.",
-        "description": "É assim que sua voz vira texto. O SilkScribe só escuta quando você inicia um ditado.",
-        "primaryAction": "Abrir aviso do microfone",
-        "needLabel": "Necessário para ouvir",
-        "whyItMattersTitle": "Seu primeiro ditado começa aqui",
-        "whyItMattersBody": "O acesso ao microfone permite que o SilkScribe capture sua voz com o atalho que você escolher. Sem ele, não há nada para transcrever.",
-        "breaksWithoutTitle": "Sem isto",
-        "breaksWithoutBody": "A gravação pode começar, mas o SilkScribe não consegue ouvir a tua voz.",
-        "afterGrantTitle": "Depois de permitires",
-        "afterGrantBody": "O SilkScribe pode gravar a tua voz e continuar a configuração.",
+        "title": "Deixe o SilkScribe ouvir você",
+        "description": "Só ouvimos enquanto você está ditando.",
+        "primaryAction": "Permitir microfone",
         "steps": {
-          "step1": "Clica em “Abrir aviso do macOS”.",
-          "step2": "Quando o macOS perguntar, escolhe “Permitir”.",
-          "step3": "Se não aparecer nenhum aviso, abre Definições do Sistema > Privacidade e segurança > Microfone.",
-          "step4": "Ativa o SilkScribe, volta aqui e verifica novamente."
+          "step1": "Clique em “Permitir microfone”.",
+          "step2": "Escolha “Permitir” no aviso do macOS."
         },
-        "manualHint": "Caminho manual: Ajustes do Sistema > Privacidade e Segurança > Microfone e ative o SilkScribe.",
-        "privateNote": "Seu áudio é processado neste Mac. O SilkScribe não precisa da nuvem para ouvir ou transcrever.",
+        "manualHint": "Nenhum aviso? Ative em Ajustes do Sistema → Privacidade e Segurança → Microfone.",
+        "privateNote": "Seu áudio nunca sai deste Mac.",
         "guide": {
           "windowLabel": "Aviso do macOS",
-          "title": "Escolha Permitir quando o macOS perguntar.",
-          "body": "O aviso real aparece fora do SilkScribe. Esta prévia mostra a escolha certa para continuar a configuração.",
-          "cue": "Procure por “Permitir”",
+          "title": "Escolha “Permitir”",
+          "body": "O aviso aparece fora desta janela.",
           "promptTitle": "“SilkScribe” deseja acessar o microfone",
-          "promptBody": "O macOS pergunta isso uma vez para que o SilkScribe possa ouvir seu ditado durante a gravação.",
+          "promptBody": "O SilkScribe transforma sua voz em texto neste Mac. Ele só ouve enquanto você dita ou grava.",
           "deny": "Não Permitir",
           "allow": "Permitir",
           "allowed": "Permitido",
-          "previewAlt": "Exemplo da solicitação de permissão de microfone do macOS com o botão Permitir destacado."
+          "previewAlt": "O aviso de microfone do macOS com “Permitir” em destaque"
         },
         "statusHelp": {
-          "checking": "A verificar se o acesso ao microfone já está ativo.",
-          "needed": "O acesso ao microfone ainda está desligado.",
-          "error": "O SilkScribe ainda não conseguiu verificar. Tente de novo ou use o caminho manual abaixo.",
-          "requesting": "O aviso de permissão do macOS deve aparecer agora.",
-          "waiting_for_user": "Conclua isso no macOS e depois volte aqui.",
-          "granted": "Pronto. O SilkScribe pode continuar."
+          "checking": "Isso leva só um segundo.",
+          "needed": "Clique em “Permitir microfone” para continuar.",
+          "error": "Tente de novo ou ative em Ajustes do Sistema.",
+          "requesting": "Procure o aviso do macOS.",
+          "waiting_for_user": "Conclua no macOS e depois volte aqui.",
+          "granted": "Tudo pronto."
         }
       },
       "accessibility": {
-        "title": "Deixe o SilkScribe inserir texto onde está o cursor.",
-        "description": "O macOS protege a inserção de texto. Esta permissão deixa o SilkScribe colar o ditado finalizado no app que você está usando.",
+        "title": "Deixe o SilkScribe digitar por você",
+        "description": "A Acessibilidade permite colar suas palavras direto no cursor.",
         "primaryAction": "Abrir ajustes de Acessibilidade",
-        "needLabel": "Necessário para inserir texto",
-        "whyItMattersTitle": "Isso conecta o ditado aos seus apps",
-        "whyItMattersBody": "Após a transcrição, o SilkScribe precisa de permissão para colocar o texto em notas, documentos, navegadores e outros campos de texto.",
-        "breaksWithoutTitle": "Sem isto",
-        "breaksWithoutBody": "O SilkScribe pode transcrever, mas não consegue escrever o resultado nas tuas apps de forma fiável.",
-        "afterGrantTitle": "Depois de permitires",
-        "afterGrantBody": "O SilkScribe pode escrever nas apps e terminar a configuração normalmente.",
         "steps": {
-          "step1": "Clica em “Abrir aviso do macOS”.",
+          "step1": "Clique em “Abrir ajustes de Acessibilidade”.",
           "step2": "Se o macOS te levar às Definições do Sistema, continua por lá.",
-          "step3": "Abre Privacidade e segurança > Acessibilidade e encontra o SilkScribe.",
-          "step4": "Ativa o SilkScribe, volta aqui e verifica novamente."
+          "step3": "Volte aqui."
         },
-        "manualHint": "Caminho manual: Ajustes do Sistema > Privacidade e Segurança > Acessibilidade e ative o SilkScribe.",
-        "privateNote": "O acesso ao texto serve para colocar sua transcrição no campo ativo. Sua voz e seu texto permanecem locais.",
+        "manualHint": "Ou vá em Ajustes do Sistema → Privacidade e Segurança → Acessibilidade.",
+        "privateNote": "Só usamos isso para colar seu ditado.",
         "guide": {
           "windowLabel": "Ajustes do Sistema",
-          "title": "Ative o SilkScribe em Acessibilidade.",
-          "body": "O macOS pode levar você a Privacidade e Segurança. Encontre o SilkScribe na lista, ative-o e volte aqui.",
-          "cue": "Ative o SilkScribe",
-          "rowHelp": "Permitir inserção de texto",
-          "promptTitle": "Acessibilidade",
-          "exampleApp1": "Finder",
-          "exampleApp2": "Mail",
-          "previewAlt": "Exemplo da lista de Acessibilidade do macOS com o SilkScribe ativado."
+          "title": "Ative o SilkScribe",
+          "body": "Encontre o SilkScribe na lista e ative-o.",
+          "previewAlt": "Ajustes de Acessibilidade do macOS com o SilkScribe ativado"
         },
         "statusHelp": {
-          "checking": "A verificar se o acesso de Acessibilidade já está ativo.",
-          "needed": "O acesso de Acessibilidade ainda está desligado.",
-          "error": "O SilkScribe ainda não conseguiu verificar. Tente de novo ou use o caminho manual abaixo.",
-          "requesting": "O fluxo de aprovação do macOS deve abrir agora.",
-          "waiting_for_user": "Conclua isso no macOS e depois volte aqui.",
-          "granted": "Pronto. O SilkScribe pode continuar."
+          "checking": "Isso leva só um segundo.",
+          "needed": "Clique em “Abrir ajustes de Acessibilidade” para continuar.",
+          "error": "Tente de novo ou ative em Ajustes do Sistema.",
+          "requesting": "Abrindo Ajustes do Sistema…",
+          "waiting_for_user": "Ative o SilkScribe e depois volte aqui. Já está ativado? Desative e ative de novo.",
+          "granted": "Tudo pronto."
         }
       }
     },
     "setup": {
-      "eyebrow": "A configurar",
-      "title": "O SilkScribe está a preparar-se.",
-      "description": "Estamos a preparar o melhor motor de fala offline para {{language}} e depois farás um teste rápido.",
+      "title": "Preparando seu mecanismo",
+      "description": "Configurando o melhor mecanismo para {{language}}.",
       "defaultLanguage": "o teu idioma",
-      "autoLabel": "Automático",
-      "engineTitle": "Não são necessárias escolhas de configuração",
-      "engineBody": "O SilkScribe está a escolher a melhor opção para {{language}} e a configurá-la localmente.",
+      "engineTitle": "Escolhemos para você",
+      "engineBody": "É o mais adequado para este Mac e para {{language}}.",
       "progressLabel": "Progresso",
-      "sizeLabel": "Transferência",
+      "sizeLabel": "Tamanho",
       "speedLabel": "Velocidade",
       "etaLabel": "Tempo restante",
       "speedValue": "{{speed}} MB/s",
-      "notAvailable": "Ainda não",
-      "preparingDetail": "A preparar…",
+      "notAvailable": "—",
+      "preparingDetail": "Preparando…",
       "shortcutTitle": "A tua tecla de atalho",
-      "shortcutBody": "Mantém {{shortcut}} premido para falar. Solta para transcrever.",
-      "prepBadge": "Quase pronto",
-      "prepTitle": "Isto deve ser rápido e parecer automático",
-      "prepBody": "Enquanto a configuração decorre, o SilkScribe está a transferir ou a carregar o motor de fala escolhido para esta máquina. Podes simplesmente esperar aqui pelo passo seguinte.",
+      "shortcutBody": "Mantenha {{shortcut}} pressionado, fale e depois solte.",
       "retry": "Tentar novamente",
-      "ready": "Está tudo pronto. A abrir agora o passo de teste.",
+      "ready": "Pronto para testar.",
       "states": {
-        "resolving": "A escolher",
+        "resolving": "Escolhendo seu mecanismo",
         "downloading": "A transferir",
         "preparing": "A preparar",
         "ready": "Pronto",
-        "error": "Precisa de atenção"
-      },
-      "panelStates": {
-        "resolving": "A escolher o melhor motor",
-        "downloading": "A transferir ficheiros",
-        "preparing": "A preparar o motor",
-        "ready": "Pronto para testar",
-        "error": "A configuração precisa de atenção"
+        "error": "Não terminou"
       },
       "panelHelp": {
-        "resolving": "O SilkScribe está a verificar o que está disponível e a escolher o melhor motor para este dispositivo.",
-        "downloading": "Os ficheiros necessários estão a ser transferidos agora.",
-        "preparing": "A transferência terminou. O SilkScribe está a carregar tudo localmente.",
-        "ready": "A configuração terminou. A seguir: um teste real e rápido.",
-        "error": "A configuração não foi concluída. Tenta novamente."
+        "resolving": "Procurando a melhor opção para este Mac.",
+        "downloading": "Isso só acontece uma vez.",
+        "preparing": "Quase lá.",
+        "error": "Verifique sua conexão e tente de novo."
       },
       "errors": {
-        "loadModels": "O SilkScribe não conseguiu carregar os motores de fala disponíveis.",
-        "downloadModel": "O SilkScribe não conseguiu concluir a transferência.",
-        "selectModel": "O SilkScribe não conseguiu preparar o teu motor de fala."
-      },
-      "tipsBadge": "Útil enquanto esperas",
-      "previousCard": "Dica anterior",
-      "nextCard": "Dica seguinte",
-      "goToCard": "Ir para a dica {{index}}",
-      "tips": {
-        "cards": {
-          "shortcutHabit": {
-            "title": "Uma tecla de atalho, um hábito rápido",
-            "description": "O SilkScribe gira em torno de um ritmo muito simples: manter premido, falar, largar.",
-            "point1": "Mantém {{shortcut}} premido enquanto falas.",
-            "point2": "Larga quando terminares.",
-            "point3": "O SilkScribe transforma logo esse pequeno trecho em texto."
-          },
-          "focusField": {
-            "title": "Mantém sempre o foco no local onde queres o texto",
-            "description": "O SilkScribe envia o resultado para o campo que estiver ativo quando a transcrição terminar.",
-            "point1": "Clica na caixa de texto que queres usar antes de começares a falar.",
-            "point2": "Mantém esse campo focado até a transcrição terminar.",
-            "point3": "Durante o onboarding, fornecemos uma caixa de prática exatamente por isso."
-          },
-          "shortBursts": {
-            "title": "Trechos curtos parecem mais rápidos",
-            "description": "Os novos utilizadores costumam obter os primeiros resultados mais limpos quando mantêm cada gravação curta.",
-            "point1": "Experimenta uma ou duas frases de cada vez.",
-            "point2": "Faz pausas naturais entre ideias.",
-            "point3": "Podes sempre gravar outro trecho logo a seguir."
-          },
-          "quietSpace": {
-            "title": "Um espaço mais silencioso facilita a primeira vitória",
-            "description": "O SilkScribe funciona melhor quando a tua voz se destaca claramente do ambiente.",
-            "point1": "Se tiveres um, usa o microfone que normalmente preferes.",
-            "point2": "Mantém ventoinhas, colunas ou conversa de fundo o mais baixo possível.",
-            "point3": "Fala a um ritmo estável e natural."
-          },
-          "privacy": {
-            "title": "A tua configuração fica no essencial",
-            "description": "Este onboarding evita configurações extra para que chegues mais depressa a uma primeira transcrição funcional.",
-            "point1": "As permissões vêm primeiro porque são críticas para a app funcionar corretamente.",
-            "point2": "O motor de fala é escolhido automaticamente em segundo plano.",
-            "point3": "Podes afinar as definições mais tarde, depois de o fluxo principal estar a funcionar."
-          },
-          "firstWin": {
-            "title": "O ecrã seguinte não é uma demonstração falsa",
-            "description": "Estás prestes a experimentar uma transcrição real de push-to-talk dentro da app.",
-            "point1": "Mantém a caixa de prática focada.",
-            "point2": "Usa a tua tecla de atalho normal exatamente como a vais usar depois.",
-            "point3": "Se o texto aparecer na caixa, o SilkScribe está pronto para trabalho real."
-          }
-        }
+        "loadModels": "Não foi possível carregar a lista de mecanismos",
+        "downloadModel": "Não foi possível concluir o download",
+        "selectModel": "Não foi possível preparar seu mecanismo"
       }
     },
     "progress": {
       "welcome": "Boas-vindas",
       "microphone": "Microfone",
-      "accessibility": "Acesso ao texto",
+      "accessibility": "Acessibilidade",
       "setup": "Configuração",
+      "shortcut": "Atalho",
       "practice": "Experimentar"
     },
     "welcome": {
-      "eyebrow": "Vamos preparar tudo",
-      "title": "Configura o SilkScribe num minuto.",
-      "description": "Vamos ativar as permissões necessárias, concluir a configuração em segundo plano e deixar-te experimentar um ditado real.",
-      "badge": "Configuração rápida",
-      "features": {
-        "permissions": {
-          "title": "Ajuda clara para permissões",
-          "description": "Vê exatamente o que permitir e porquê."
-        },
-        "engine": {
-          "title": "Configuração automática",
-          "description": "O SilkScribe escolhe o motor offline certo para este dispositivo."
-        },
-        "practice": {
-          "title": "Um teste real",
-          "description": "Confirma que tudo funciona antes de começares."
-        }
-      },
-      "outcomeLabel": "Depois da configuração",
-      "outcome": "Mantém a tua tecla de atalho premida, fala e o SilkScribe colocará o texto onde precisares.",
-      "planLabel": "O que vai acontecer",
+      "title": "Boas-vindas ao SilkScribe",
+      "description": "Fale em vez de digitar, em qualquer app. A configuração leva cerca de um minuto.",
       "plan": {
         "step1": {
           "title": "Permitir o microfone",
-          "description": "Para o SilkScribe te ouvir."
+          "description": "Para podermos ouvir você."
         },
         "step2": {
-          "title": "Permitir acesso ao texto",
-          "description": "Para o SilkScribe poder escrever nas tuas apps."
+          "title": "Permitir Acessibilidade",
+          "description": "Para podermos digitar nos seus apps."
         },
         "step3": {
           "title": "Experimentar uma vez",
-          "description": "A configuração termina e depois fazes um teste rápido."
+          "description": "Um teste rápido e pronto."
+        },
+        "shortcut": {
+          "title": "Escolher um atalho",
+          "description": "Mantenha pressionado para falar, ou pressione para iniciar e parar."
         }
       },
-      "permissionPromise": "Estes passos são necessários para o SilkScribe funcionar corretamente.",
-      "continue": "Continuar"
+      "continue": "Começar"
     },
     "practice": {
-      "eyebrow": "Experimentar",
-      "title": "Experimenta o SilkScribe uma vez",
-      "description": "Clica na caixa de prática, mantém a tua tecla de atalho premida, diz uma frase curta e depois larga.",
-      "badge": "Teste rápido",
-      "shortcutFallback": "Atalho",
+      "title": "Experimente",
+      "description": "Clique na caixa, mantenha {{shortcut}} pressionado e diga algo.",
+      "shortcutFallback": "seu atalho",
       "steps": {
         "step1": {
-          "title": "Foca a caixa de prática",
-          "description": "Mantém esta caixa selecionada para o SilkScribe saber onde colocar o texto."
+          "title": "Clique na caixa"
         },
         "step2": {
-          "title": "Mantém {{shortcut}} premido e fala",
-          "description": "Diz uma frase curta com voz natural."
+          "title": "Mantenha {{shortcut}} pressionado e fale",
+          "toggleTitle": "Pressione {{shortcut}} e fale"
         },
         "step3": {
-          "title": "Larga para transcrever",
-          "description": "Se o texto aparecer aqui, o SilkScribe está pronto."
+          "title": "Solte",
+          "toggleTitle": "Pressione de novo"
         }
       },
-      "tipTitle": "Experimenta isto",
-      "tipBody": "Diz: “O SilkScribe está pronto para as minhas notas de hoje.”",
-      "helperTitle": "Experimenta aqui",
-      "helper": "Mantém esta caixa focada e depois usa a tua tecla de atalho. As tuas palavras devem aparecer aqui.",
-      "placeholder": "Mantém a tua tecla de atalho premida, fala e depois larga. O teu texto aparecerá aqui…",
-      "success": "Funcionou",
-      "readyToFinish": "O teu teste funcionou. Já podes começar a usar o SilkScribe.",
-      "prompt": "Podes saltar isto por agora e testar mais tarde.",
+      "tipTitle": "Experimente dizer",
+      "tipBody": "“Vamos ver se isso funciona bem.”",
+      "placeholder": "Suas palavras vão aparecer aqui",
+      "success": "Funciona!",
+      "readyToFinish": "Tudo pronto.",
+      "readyToFinishTap": "Tudo pronto. Toque em {{shortcut}} para continuar ditando sem segurar a tecla.",
       "finish": "Começar a usar o SilkScribe",
       "skip": "Saltar por agora",
-      "finishing": "A concluir a configuração…",
-      "finishFailed": "O SilkScribe não conseguiu concluir o onboarding. Tenta novamente."
+      "finishing": "Finalizando…",
+      "finishFailed": "Não foi possível concluir a configuração. Tente de novo.",
+      "descriptionToggle": "Clique na caixa, pressione {{shortcut}}, diga algo e pressione de novo."
     },
     "shared": {
-      "stepCounter": "Passo {{current}} / {{total}}"
+      "stepCounter": "Etapa {{current}} de {{total}}"
+    },
+    "shortcut": {
+      "title": "Escolha seu atalho",
+      "description": "Você vai usá-lo em qualquer app para começar a ditar.",
+      "modeTitle": "Como funciona",
+      "hold": {
+        "title": "Segurar para falar",
+        "body": "Segure o atalho enquanto fala e depois solte."
+      },
+      "toggle": {
+        "title": "Pressionar para iniciar e parar",
+        "body": "Pressione uma vez para iniciar e de novo quando terminar."
+      },
+      "cleanup": {
+        "label": "Limpar meu texto",
+        "description": "Corrige pontuação e palavras de preenchimento com a Apple Intelligence, neste Mac."
+      },
+      "continue": "Continuar",
+      "cleanupFailed": "Não foi possível ativar a limpeza com IA"
     }
   },
   "modelSelector": {
     "custom": "Personalizado",
     "active": "Ativo",
     "statusLabel": "Status do modelo: {{status}}",
-    "switching": "Alternando...",
+    "switching": "Trocando…",
     "noModelsAvailable": "Nenhum modelo disponível",
     "extracting": "Extraindo {{modelName}}...",
     "extractingMultiple": "Extraindo {{count}} modelos...",
-    "extractingGeneric": "Extraindo...",
-    "downloading": "Baixando {{percentage}}%",
+    "extractingGeneric": "Descompactando…",
+    "downloading": "Baixando · {{percentage}}%",
     "downloadingMultiple": "Baixando {{count}} modelos...",
     "modelReady": "Modelo Pronto",
     "loading": "Carregando {{modelName}}...",
@@ -387,8 +285,8 @@
     "downloadSpeed": "{{speed}} MB/s",
     "cancel": "Cancelar",
     "cancelDownload": "Cancelar download",
-    "retryDownload": "Tentar download novamente",
-    "downloadErrorTitle": "Não foi possível concluir o download",
+    "retryDownload": "Tentar de novo",
+    "downloadErrorTitle": "O download não terminou",
     "downloadProgress": {
       "downloadedOf": "{{downloaded}} de {{total}}",
       "speed": "{{speed}}/s",
@@ -399,29 +297,22 @@
       "unknownEta": "Calculando tempo"
     },
     "capabilities": {
-      "languageSelection": "Suporta vários idiomas de entrada",
-      "singleLanguage": "Suporta apenas este idioma",
-      "multiLanguage": "Multi-idioma",
-      "languageOnly": "Apenas {{language}}",
-      "translation": "Pode traduzir para inglês",
+      "languageSelection": "Vários idiomas",
+      "singleLanguage": "Um idioma",
+      "multiLanguage": "Multilíngue",
+      "languageOnly": "Só {{language}}",
+      "translation": "Traduz para o inglês",
       "translate": "Traduzir para inglês"
     },
-    "diskSpaceCheckError": "O SilkScribe não conseguiu verificar o espaço em disco antes de baixar: {{error}}",
-    "insufficientSpace": "O SilkScribe precisa de {{required}} livres para baixar este modelo. Há {{available}} disponíveis.",
-    "downloadFailed": "O SilkScribe não conseguiu baixar o modelo: {{error}}",
-    "extractionFailed": "O SilkScribe não conseguiu extrair o modelo: {{error}}",
     "downloadErrors": {
-      "preflightFailed": "O SilkScribe não conseguiu verificar o espaço em disco antes do download: {{detail}}",
-      "insufficientSpace": "O SilkScribe precisa de {{required}} livres para baixar este modelo. Há {{available}} disponíveis.",
-      "downloadFailed": "O SilkScribe não conseguiu baixar o modelo: {{detail}}",
-      "extractionFailed": "O SilkScribe não conseguiu extrair o modelo: {{detail}}",
-      "unknown": "O SilkScribe não conseguiu concluir o download."
+      "unknown": "O download não terminou. Verifique sua conexão e tente de novo.",
+      "space": "Espaço insuficiente: são necessários {{required}} e há {{free}} livres. Libere espaço e tente de novo.",
+      "extraction": "O download terminou, mas não foi possível descompactar. Tente de novo."
     }
   },
   "settings": {
     "modelSettings": {
-      "title": "Configurações de {{model}}",
-      "noSettingsNeeded": "Este modelo funciona automaticamente sem necessidade de configuração."
+      "title": "Configurações de {{model}}"
     },
     "general": {
       "eyebrow": "Configuração do dia a dia",
@@ -435,33 +326,35 @@
         "app": "App",
         "appDescription": "Escolha como o próprio app SilkScribe deve se comportar."
       },
-      "title": "Geral",
       "shortcut": {
-        "title": "Atalhos do SilkScribe",
-        "description": "Configure atalhos de teclado para iniciar a gravação de voz para texto",
-        "loading": "Carregando atalhos...",
-        "none": "Nenhum atalho configurado",
+        "title": "Atalho de ditado",
+        "loading": "Carregando…",
+        "none": "Nenhum atalho definido",
         "notFound": "Atalho não encontrado",
-        "pressKeys": "Pressione as teclas...",
-        "reset": "Redefinir atalho",
+        "pressKeys": "Pressione um atalho…",
+        "reset": "Restaurar padrão",
         "bindings": {
           "transcribe": {
-            "name": "Atalho de Transcrição",
-            "description": "O atalho de teclado para gravar e transcrever sua voz."
+            "name": "Atalho de ditado",
+            "description": "Funciona em qualquer app."
           },
           "cancel": {
-            "name": "Atalho de Cancelar",
-            "description": "O atalho de teclado para cancelar a gravação atual."
+            "name": "Atalho para cancelar",
+            "description": "Para sem transcrever."
           },
           "transcribe_with_post_process": {
-            "name": "Tecla de Pós-Processamento",
-            "description": "Opcional: Uma tecla de atalho dedicada que sempre aplica pós-processamento com IA à sua transcrição."
+            "name": "Atalho de limpeza com IA",
+            "description": "Dita e arruma o texto com IA."
+          },
+          "command": {
+            "name": "Atalho de comando",
+            "description": "Selecione um texto e diga como mudá-lo, ou diga o que escrever."
           }
         },
         "errors": {
-          "restore": "Falha ao restaurar atalho original",
-          "set": "Falha ao definir atalho: {{error}}",
-          "reset": "Falha ao redefinir atalho para o valor original"
+          "restore": "Não foi possível restaurar seu atalho anterior",
+          "set": "Não foi possível salvar o atalho: {{error}}",
+          "reset": "Não foi possível redefinir o atalho"
         },
         "success": {
           "saved": "Atalho salvo",
@@ -469,20 +362,22 @@
         }
       },
       "language": {
-        "title": "Idioma",
-        "description": "Selecione o idioma para reconhecimento de fala. Auto detectará automaticamente o idioma, enquanto selecionar um idioma específico pode melhorar a precisão para esse idioma.",
-        "descriptionUnsupported": "O modelo Parakeet detecta automaticamente o idioma. Não é necessária seleção manual.",
-        "searchPlaceholder": "Buscar idiomas...",
-        "noResults": "Nenhum idioma encontrado",
-        "auto": "Auto"
+        "title": "Idioma falado",
+        "description": "Escolha o seu para mais precisão, ou deixe que detectemos.",
+        "searchPlaceholder": "Buscar idiomas",
+        "noResults": "Nenhum resultado",
+        "auto": "Detectar automaticamente"
       },
       "pushToTalk": {
-        "label": "Pressionar para Falar",
-        "description": "Segure para gravar, solte para parar"
+        "label": "Segurar para falar",
+        "description": "Desativado: pressione uma vez para iniciar e de novo para parar."
+      },
+      "tapToLock": {
+        "label": "Toque para mãos livres",
+        "description": "Um toque rápido continua ouvindo até você pressionar de novo."
       },
       "theme": {
-        "title": "Aparência",
-        "description": "Siga o macOS ou escolha uma interface clara ou escura fixa.",
+        "title": "Tema",
         "options": {
           "system": "Sistema",
           "light": "Claro",
@@ -491,105 +386,94 @@
       }
     },
     "models": {
-      "eyebrow": "Motores de voz",
-      "pageTitle": "Escolha como o SilkScribe ouve",
-      "pageDescription": "Escolha o modelo que quer que o SilkScribe use, mantenha seus modelos instalados organizados e baixe mais quando precisar.",
-      "title": "Modelos de Transcrição",
-      "description": "Selecione um modelo de transcrição ou baixe modelos adicionais. Diferentes modelos oferecem diferentes níveis de precisão e velocidade.",
-      "currentModel": "Modelo atual",
-      "currentModelSettings": "Configurações do modelo atual",
-      "currentModelSettingsDescription": "Aqui só as opções de idioma do modelo ativo permanecem visíveis.",
-      "yourModels": "Modelos baixados",
-      "availableModels": "Disponíveis para download",
-      "downloaded": "Baixados",
-      "available": "Disponíveis para Download",
-      "noActiveModelTitle": "Nenhum modelo está ativo ainda.",
-      "noActiveModelDescription": "Baixe um modelo abaixo e o SilkScribe o usará na sua próxima transcrição.",
-      "noExtraInstalled": "No momento você só tem o seu modelo atual instalado.",
-      "deleteConfirm": "Tem certeza de que deseja excluir {{modelName}}? Você precisará baixá-lo novamente para usá-lo.",
-      "deleteActiveConfirm": "{{modelName}} é o seu modelo ativo. Excluí-lo interromperá as transcrições até que você selecione um novo modelo. Tem certeza?",
-      "deleteTitle": "Excluir Modelo",
+      "currentModel": "Mecanismo atual",
+      "currentModelSettings": "Configurações do mecanismo",
+      "yourModels": "Instalados",
+      "availableModels": "Mais mecanismos",
+      "noActiveModelTitle": "Nenhum mecanismo ainda",
+      "noActiveModelDescription": "Baixe um abaixo para começar a ditar.",
+      "noExtraInstalled": "Este é seu único mecanismo.",
+      "deleteConfirm": "Você precisará baixá-lo de novo para usá-lo.",
+      "deleteActiveConfirm": "É seu mecanismo atual, então o ditado para até você escolher outro.",
+      "deleteTitle": "Apagar {{modelName}}?",
       "filters": {
-        "all": "Todos",
-        "multiLanguage": "Multi-idioma",
-        "translation": "Tradução",
-        "allLanguages": "Todos os Idiomas"
+        "allLanguages": "Todos os idiomas"
       },
-      "noModelsMatch": "Nenhum modelo corresponde a este filtro.",
-      "deleteConfirmAction": "Excluir modelo"
+      "noModelsMatch": "Nenhum mecanismo encontrado",
+      "deleteConfirmAction": "Apagar"
     },
     "sound": {
-      "title": "Som",
       "microphone": {
         "title": "Microfone",
-        "description": "Selecione seu dispositivo de microfone preferido",
-        "placeholder": "Selecionar microfone...",
-        "loading": "Carregando..."
+        "placeholder": "Escolha um microfone",
+        "loading": "Carregando…"
       },
       "audioFeedback": {
-        "label": "Feedback de Áudio",
-        "description": "Reproduzir som quando a gravação iniciar e parar"
+        "label": "Efeitos sonoros",
+        "description": "Tocar um som quando o ditado começa e termina."
       },
       "outputDevice": {
-        "title": "Dispositivo de Saída",
-        "description": "Selecione seu dispositivo de saída de áudio preferido para sons de feedback",
-        "placeholder": "Selecionar dispositivo de saída...",
-        "loading": "Carregando..."
+        "title": "Tocar sons em",
+        "placeholder": "Escolha uma saída",
+        "loading": "Carregando…"
       },
       "volume": {
-        "title": "Volume",
-        "description": "Ajustar o volume dos sons de feedback de áudio"
+        "title": "Volume"
       },
       "soundTheme": {
         "options": {
+          "silk": "Silk",
           "marimba": "Marimba",
           "pop": "Pop",
           "custom": "Personalizado"
         },
-        "preview": "Ouvir o tema de som (reproduz início e fim)"
+        "preview": "Ouvir o tema de som (reproduz início e fim)",
+        "title": "Tema de som",
+        "description": "O conjunto de sinais sonoros tocados durante a gravação e transcrição.",
+        "cues": {
+          "start": "Iniciar",
+          "transcribing": "Transcrevendo",
+          "done": "Concluído",
+          "error": "Erro",
+          "cancel": "Cancelar"
+        }
       }
     },
     "advanced": {
       "eyebrow": "Controles opcionais",
       "pageTitle": "Comportamento avançado e suporte",
       "pageDescription": "A maioria das pessoas pode deixar isso como está. Use quando precisar que o SilkScribe se comporte de outra forma na sua máquina.",
-      "title": "Avançado",
       "groups": {
         "app": "Aplicativo",
-        "output": "Saída",
+        "output": "Colagem",
         "transcription": "Transcrição",
         "history": "Histórico",
-        "support": "Suporte",
-        "experimental": "Experimental"
+        "support": "Solução de problemas",
+        "experimental": "Experimental",
+        "runtime": "Desempenho"
       },
       "groupDescriptions": {
-        "app": "Comportamento de inicialização e do overlay do próprio app.",
-        "output": "Como o texto finalizado é inserido no app que você está usando.",
-        "transcription": "Pequenos ajustes que mudam como o SilkScribe molda seu texto.",
         "history": "Configurações de retenção e limpeza de transcrições e gravações.",
-        "support": "Ferramentas de manutenção e pastas que ajudam na solução de problemas.",
-        "experimental": "Recursos ainda em evolução que podem mudar."
+        "experimental": "Ainda em desenvolvimento — podem mudar ou falhar."
       },
       "experimentalToggle": {
-        "label": "Recursos Experimentais",
-        "description": "Ativar recursos experimentais que ainda estão em desenvolvimento."
+        "label": "Recursos experimentais",
+        "description": "Experimente recursos em que ainda estamos trabalhando."
       },
       "lazyStreamClose": {
-        "label": "Manter microfone aberto entre transcrições",
-        "description": "Manter o fluxo do microfone aberto brevemente após parar a gravação."
+        "label": "Manter o microfone ligado por um instante",
+        "description": "Ditados seguidos mais rápidos. Pode reduzir a qualidade do áudio Bluetooth."
       },
       "acceleration": {
         "whisper": {
           "title": "Aceleração Whisper",
-          "description": "Escolha aceleração de hardware para modelos Whisper."
+          "description": "Automático usa a GPU quando disponível."
         },
         "ort": {
           "title": "Aceleração ONNX",
-          "description": "Escolha aceleração de hardware para modelos ONNX."
+          "description": "Algumas opções são experimentais."
         },
         "gpuDevice": {
-          "title": "Dispositivo GPU",
-          "description": "Selecione a GPU para inferência Whisper.",
           "auto": "Automático"
         },
         "labels": {
@@ -601,58 +485,54 @@
         }
       },
       "startHidden": {
-        "label": "Iniciar Oculto",
-        "description": "Iniciar na bandeja do sistema sem abrir a janela."
+        "label": "Iniciar em segundo plano",
+        "description": "Abrir na barra de menus sem mostrar esta janela."
       },
       "autostart": {
-        "label": "Iniciar na Inicialização",
-        "description": "Iniciar automaticamente o SilkScribe quando você fizer login no seu computador."
+        "label": "Abrir ao iniciar sessão"
       },
       "showTrayIcon": {
-        "label": "Mostrar ícone na bandeja",
-        "description": "Exibir o ícone do SilkScribe na bandeja do sistema."
+        "label": "Mostrar ícone na barra de menus"
       },
       "overlay": {
-        "title": "Posição da Sobreposição",
-        "description": "Exibir sobreposição de feedback visual durante gravação e transcrição. No Linux, 'Nenhum' é recomendado.",
+        "title": "Indicador de gravação",
+        "description": "Aparece enquanto você dita.",
         "options": {
-          "none": "Nenhum",
+          "none": "Oculto",
           "bottom": "Inferior",
           "top": "Superior"
         }
       },
       "pasteMethod": {
-        "title": "Método de Colar",
-        "description": "Escolha como o texto é inserido. Direto: simula digitação via entrada do sistema. Nenhum: ignora colar, apenas atualiza histórico/área de transferência.",
+        "title": "Método de colagem",
+        "description": "Colar insere todo o texto de uma vez. Digitar insere tecla por tecla.",
         "options": {
-          "clipboard": "Área de Transferência ({{modifier}}+V)",
-          "clipboardCtrlShiftV": "Área de Transferência (Ctrl+Shift+V)",
-          "clipboardShiftInsert": "Área de Transferência (Shift+Insert)",
-          "direct": "Direto",
-          "none": "Nenhum",
-          "externalScript": "Script externo"
+          "clipboard": "Colar ({{modifier}}+V)",
+          "clipboardCtrlShiftV": "Colar (Ctrl+Shift+V)",
+          "clipboardShiftInsert": "Colar (Shift+Insert)",
+          "direct": "Digitar",
+          "none": "Não colar (só copiar)",
+          "externalScript": "Script personalizado"
         },
         "externalScriptPlaceholder": "/caminho/para/seu/script.sh"
       },
       "typingTool": {
         "title": "Ferramenta de digitação",
-        "description": "Escolha qual ferramenta de digitação do Linux usar para o método de colagem direta. Auto detectará e usará automaticamente a melhor ferramenta disponível para o seu sistema.",
+        "description": "Usada por “Digitar”.",
         "options": {
-          "auto": "Auto (Recomendado)"
+          "auto": "Automático (recomendado)"
         }
       },
       "clipboardHandling": {
-        "title": "Manipulação da Área de Transferência",
-        "description": "Não Modificar Área de Transferência preserva o conteúdo atual da área de transferência após a transcrição. Copiar para Área de Transferência deixa o resultado da transcrição na área de transferência após colar.",
+        "title": "Depois de colar",
         "options": {
-          "dontModify": "Não Modificar Área de Transferência",
-          "copyToClipboard": "Copiar para Área de Transferência"
-        },
-        "directInsertHint": "O SilkScribe vai inserir texto aqui diretamente para que a tua área de transferência permaneça inalterada."
+          "dontModify": "Devolver o que estava na área de transferência",
+          "copyToClipboard": "Manter o texto na área de transferência"
+        }
       },
       "autoSubmit": {
-        "title": "Envio automático",
-        "description": "Envia automaticamente a combinação de teclas selecionada após a inserção do texto. Cmd+Enter aplica-se no macOS, enquanto Windows/Linux usam Super+Enter.",
+        "title": "Enviar depois de colar",
+        "description": "Prático para enviar mensagens de chat.",
         "options": {
           "off": "Desativado",
           "enter": "Enter",
@@ -663,12 +543,11 @@
       },
       "translateToEnglish": {
         "label": "Traduzir para Inglês",
-        "description": "Traduzir automaticamente fala de outros idiomas para inglês durante a transcrição.",
-        "descriptionUnsupported": "Tradução não é suportada pelo modelo {{model}}."
+        "description": "Fale em qualquer idioma e receba texto em inglês."
       },
       "modelUnload": {
-        "title": "Descarregar Modelo",
-        "description": "Liberar automaticamente memória GPU/CPU quando o modelo não for usado pelo tempo especificado",
+        "title": "Descarregar mecanismo quando ocioso",
+        "description": "Libera memória. Seu próximo ditado demora um pouco mais para começar.",
         "options": {
           "never": "Nunca",
           "immediately": "Imediatamente",
@@ -677,224 +556,283 @@
           "min10": "Após 10 minutos",
           "min15": "Após 15 minutos",
           "hour1": "Após 1 hora",
-          "sec5": "Após 5 segundos (Depuração)"
+          "sec5": "Após 5 segundos (depuração)"
         }
       },
       "customWords": {
-        "title": "Palavras Personalizadas",
-        "description": "Adicione palavras que são frequentemente mal ouvidas ou mal escritas durante a transcrição. O sistema irá automaticamente corrigir palavras semelhantes para corresponder à sua lista.",
-        "placeholder": "Adicionar uma palavra",
+        "title": "Vocabulário",
+        "description": "Nomes e termos que devemos escrever do seu jeito.",
+        "placeholder": "Adicionar palavra ou nome",
         "add": "Adicionar",
         "remove": "Remover {{word}}",
-        "duplicate": "\"{{word}}\" já existe"
+        "duplicate": "“{{word}}” já está na sua lista"
+      },
+      "overlayAppearance": {
+        "title": "Tema do indicador",
+        "options": {
+          "auto": "Igual ao app",
+          "light": "Claro",
+          "dark": "Escuro"
+        }
+      },
+      "liveText": {
+        "label": "Texto ao vivo durante o ditado",
+        "description": "Mostra as palavras enquanto você fala, com mecanismos rápidos. O texto final pode demorar um pouco mais."
       }
     },
     "postProcessing": {
-      "title": "Pós-Processamento",
       "hotkey": {
-        "title": "Tecla de atalho"
+        "title": "Atalho"
       },
       "api": {
-        "title": "API (Compatível com OpenAI)",
+        "title": "Conexão",
         "provider": {
           "title": "Provedor",
-          "description": "Selecione um provedor compatível com OpenAI."
+          "description": "Qualquer API compatível com OpenAI funciona.",
+          "custom": "Personalizado"
         },
         "appleIntelligence": {
-          "title": "Apple Intelligence",
-          "description": "Executa totalmente no dispositivo. Nenhuma chave de API ou acesso à rede é necessário.",
-          "requirements": "Requer um Mac Apple Silicon executando macOS Tahoe (26.0) ou posterior. Apple Intelligence deve estar habilitado nas Configurações do Sistema.",
-          "unavailable": "Apple Intelligence não está disponível neste dispositivo. Requer um Mac Apple Silicon executando macOS Tahoe (26.0) ou posterior com Apple Intelligence habilitado nas Configurações do Sistema."
+          "unavailable": "A Apple Intelligence não está disponível neste Mac. Ela exige Apple silicon, macOS Tahoe 26 ou posterior e a Apple Intelligence ativada."
         },
         "baseUrl": {
           "title": "URL Base",
-          "description": "URL base da API para o provedor selecionado. Apenas o provedor personalizado pode ser editado.",
-          "placeholder": "https://api.openai.com/v1"
+          "description": "Editável só em Personalizado.",
+          "placeholder": "https://api.openai.com/v1",
+          "managed": "Definido pelo provedor"
         },
         "apiKey": {
-          "title": "Chave da API",
-          "description": "Chave da API para o provedor selecionado.",
+          "title": "Chave de API",
           "placeholder": "sk-..."
         },
         "model": {
           "title": "Modelo",
-          "descriptionApple": "Forneça um limite numérico opcional de tokens ou mantenha a predefinição padrão no dispositivo.",
-          "descriptionCustom": "Forneça o identificador do modelo esperado pelo seu endpoint personalizado.",
-          "descriptionDefault": "Escolha um modelo exposto pelo provedor selecionado.",
-          "placeholderApple": "Apple Intelligence",
-          "placeholderWithOptions": "Buscar ou selecionar um modelo",
+          "descriptionCustom": "O nome do modelo que seu endpoint espera.",
+          "placeholderWithOptions": "Buscar modelos",
           "placeholderNoOptions": "Digite o nome de um modelo",
-          "refreshModels": "Atualizar modelos"
+          "refreshModels": "Atualizar"
         }
       },
       "prompts": {
-        "title": "Prompt",
+        "title": "Prompts",
         "selectedPrompt": {
-          "title": "Prompt Selecionado",
-          "description": "Selecione um modelo para refinar transcrições ou crie um novo. Use ${output} dentro do texto do prompt para referenciar a transcrição capturada."
+          "title": "Prompt"
         },
-        "noPrompts": "Nenhum prompt disponível",
-        "selectPrompt": "Selecionar um prompt",
-        "createNew": "Criar Novo Prompt",
-        "promptLabel": "Rótulo do Prompt",
-        "promptLabelPlaceholder": "Digite o nome do prompt",
-        "promptInstructions": "Instruções do Prompt",
-        "promptInstructionsPlaceholder": "Escreva as instruções para executar após a transcrição. Exemplo: Melhore a gramática e clareza do seguinte texto: ${output}",
-        "promptTip": "Dica: Use <code>${output}</code> para inserir o texto transcrito no seu prompt.",
-        "updatePrompt": "Atualizar Prompt",
-        "deletePrompt": "Excluir Prompt",
-        "createPrompt": "Criar Prompt",
+        "noPrompts": "Nenhum prompt ainda",
+        "selectPrompt": "Escolha um prompt",
+        "createNew": "Novo prompt",
+        "promptLabel": "Nome",
+        "promptLabelPlaceholder": "ex.: Corrigir gramática",
+        "promptInstructions": "Instruções",
+        "promptInstructionsPlaceholder": "Corrija a gramática e a pontuação de: ${output}",
+        "promptTip": "Use <code>${output}</code> onde a transcrição deve entrar.",
+        "updatePrompt": "Salvar alterações",
+        "deletePrompt": "Apagar prompt",
+        "createPrompt": "Criar prompt",
         "cancel": "Cancelar",
-        "selectToEdit": "Selecione um prompt acima para visualizar e editar seus detalhes.",
-        "createFirst": "Clique em 'Criar Novo Prompt' acima para criar seu primeiro prompt de pós-processamento."
+        "selectToEdit": "Escolha um prompt para editá-lo.",
+        "createFirst": "Crie um prompt para arrumar seu ditado automaticamente."
       }
     },
     "history": {
-      "eyebrow": "Arquivo de transcrições",
-      "pageTitle": "Revise suas transcrições recentes",
-      "pageDescription": "Navegue pelo que o SilkScribe capturou, reproduza o áudio e salve tudo o que quiser manter por perto.",
-      "title": "Histórico",
-      "openFolder": "Abrir Pasta de Gravações",
-      "exportMarkdown": "Exportar Markdown",
-      "exportJson": "Exportar JSON",
-      "exportTitle": "Exportar histórico",
-      "exportEmpty": "Não há histórico para exportar.",
-      "exportSuccess": "Histórico exportado",
-      "exportError": "O SilkScribe não conseguiu exportar o histórico.",
-      "loading": "Carregando histórico...",
-      "empty": "Nenhuma transcrição ainda. Comece a gravar para construir seu histórico!",
-      "emptyDescription": "Suas transcrições e gravações salvas aparecerão aqui após o seu primeiro ditado.",
-      "emptyFiltered": "Nenhuma transcrição correspondente.",
-      "emptyFilteredDescription": "Tente outra pesquisa ou volte para Todas.",
-      "searchPlaceholder": "Pesquisar no histórico",
-      "filters": {
-        "all": "Todas",
-        "saved": "Salvas",
-        "failed": "Falhas"
-      },
       "copyToClipboard": "Copiar transcrição para área de transferência",
       "copyAsMarkdown": "Copiar transcrição como Markdown",
       "copySuccess": "Copiado para a área de transferência",
-      "copyError": "O SilkScribe não conseguiu copiar esta transcrição.",
       "save": "Salvar transcrição",
       "unsave": "Remover dos salvos",
       "delete": "Excluir entrada",
-      "deleteError": "Falha ao excluir entrada. Por favor, tente novamente.",
-      "deleteQueued": "Entrada excluída",
-      "deleteUndoDescription": "Você pode desfazer por alguns segundos.",
-      "undoDelete": "Desfazer",
-      "loadError": "Não foi possível carregar o histórico agora. Tente novamente.",
-      "loadMore": "Carregar mais",
-      "loadingMore": "A carregar...",
       "retryableEmpty": "A transcrição falhou. A gravação está disponível para tentar novamente.",
-      "retryTranscription": "Repetir transcrição",
-      "retryTranscriptionError": "Falha ao repetir a transcrição. Tente novamente.",
-      "retry": "Repetir"
+      "retryTranscription": "Repetir transcrição"
     },
     "debug": {
-      "title": "Depuração",
       "logDirectory": {
-        "title": "Diretório de Logs",
-        "description": "Local onde os arquivos de log são armazenados"
+        "title": "Pasta de registros"
       },
       "logLevel": {
-        "title": "Nível de Log",
-        "description": "Definir a verbosidade do registro"
+        "title": "Nível de registro"
       },
       "updateChecks": {
-        "label": "Verificar Atualizações",
-        "description": "Verificar automaticamente novas versões do SilkScribe"
-      },
-      "soundTheme": {
-        "label": "Tema de Som",
-        "description": "Escolha um tema de som para feedback de início e parada de gravação"
+        "label": "Procurar atualizações automaticamente"
       },
       "wordCorrectionThreshold": {
-        "title": "Limite de Correção de Palavras",
-        "description": "Sensibilidade para correções de palavras personalizadas"
+        "title": "Correspondência com o vocabulário",
+        "description": "Mais alto encontra mais palavras, mas pode corrigir demais."
       },
       "historyLimit": {
-        "title": "Limite de Histórico",
-        "description": "Número máximo de entradas de histórico a manter",
-        "entries": "entradas"
+        "title": "Guardar até",
+        "entries": "ditados"
       },
       "recordingRetention": {
-        "title": "Excluir Gravações Automaticamente",
-        "description": "Excluir automaticamente gravações antigas para economizar espaço",
+        "title": "Apagar áudio dos ditados",
+        "description": "Só o áudio é removido. As transcrições ficam.",
         "never": "Nunca",
         "preserveLimit": "Manter as últimas {{count}}",
         "days3": "Após 3 dias",
         "weeks2": "Após 2 semanas",
         "months3": "Após 3 meses",
-        "placeholder": "Selecionar período de retenção..."
+        "placeholder": "Escolher…"
       },
       "alwaysOnMicrophone": {
-        "label": "Microfone Sempre Ativo",
-        "description": "Manter microfone ativo para resposta mais rápida"
+        "label": "Microfone sempre ligado",
+        "description": "Inicia mais rápido, mas seu microfone fica ativo."
       },
       "clamshellMicrophone": {
-        "title": "Microfone em Modo Fechado",
-        "description": "Microfone a usar quando a tampa do laptop está fechada"
+        "title": "Microfone com a tampa fechada"
       },
       "postProcessingToggle": {
-        "label": "Pós-Processamento",
-        "description": "Habilitar refinamento de texto com IA após a transcrição"
+        "label": "Usar limpeza com IA",
+        "description": "Corrige pontuação e palavras de preenchimento com um modelo de linguagem antes de colar."
       },
       "muteWhileRecording": {
-        "label": "Silenciar Durante Gravação",
-        "description": "Silenciar áudio do sistema durante a gravação"
+        "label": "Silenciar outros áudios",
+        "description": "Silencia outros apps enquanto você dita, exceto durante uma reunião."
       },
       "appendTrailingSpace": {
-        "label": "Adicionar Espaço Final",
-        "description": "Adicionar um espaço após a transcrição colada"
+        "label": "Adicionar um espaço depois de colar"
       },
       "keyboardImplementation": {
-        "title": "Keyboard Implementation",
-        "description": "Choose the keyboard shortcut backend.",
-        "bindingsReset": "Keyboard shortcuts were incompatible and reset to defaults",
+        "title": "Backend de atalhos",
+        "bindingsReset": "Seus atalhos não eram compatíveis, então foram redefinidos.",
         "backends": {
-          "tauri": "Atalho global Tauri",
+          "tauri": "Padrão",
           "nativeKeys": "Teclas nativas"
-        }
-      },
-      "paths": {
-        "appData": "Dados do App:",
-        "models": "Modelos:",
-        "settings": "Configurações:"
+        },
+        "error": "Não foi possível trocar o backend de atalhos"
       },
       "pasteDelay": {
-        "title": "Atraso de colagem",
-        "description": "Atraso antes de enviar a tecla de colar (em milissegundos). Aumente se o texto errado estiver sendo colado."
+        "title": "Atraso ao colar",
+        "description": "Espera antes de colar, em ms. Aumente se o texto colado sair cortado."
       },
       "recordingBuffer": {
-        "title": "Buffer de gravação extra",
-        "description": "Continuar a gravar brevemente após soltar a tecla."
+        "title": "Continuar gravando depois de soltar",
+        "description": "Pega o final da sua última palavra."
       }
     },
     "about": {
-      "title": "Sobre",
-      "version": {
-        "title": "Versão",
-        "description": "Versão atual do SilkScribe"
-      },
       "appDataDirectory": {
-        "title": "Diretório de Dados do App",
-        "description": "Local onde o SilkScribe armazena seus dados"
+        "title": "Pasta de dados"
       }
+    },
+    "aiCleanup": {
+      "title": "Limpeza com IA",
+      "everyDictation": {
+        "label": "Limpar todos os ditados",
+        "description": "Seu atalho principal também passa pela limpeza com IA, não só o de baixo."
+      },
+      "level": {
+        "title": "Estilo de limpeza"
+      },
+      "levels": {
+        "light": "Leve",
+        "standard": "Limpar",
+        "rewrite": "Reescrever"
+      },
+      "levelHelp": {
+        "light": "Só pontuação, maiúsculas e números.",
+        "standard": "Também remove palavras de preenchimento e gaguejos.",
+        "rewrite": "Reescreve com mais clareza e estrutura.",
+        "custom": "Usa seu próprio prompt."
+      },
+      "onDevice": "Roda neste Mac. Suas palavras não são enviadas.",
+      "cloud": "Seu texto ditado é enviado para {{provider}} para limpeza.",
+      "prompts": "Prompts",
+      "nearbyText": {
+        "label": "Usar texto próximo",
+        "description": "Lê o texto ao redor do cursor para escrever nomes e termos corretamente. Ele fica neste Mac, e campos de senha nunca são lidos.",
+        "descriptionCloud": "Lê o texto ao redor do cursor para escrever nomes corretamente, quando a limpeza roda neste Mac. Campos de senha nunca são lidos."
+      },
+      "shareNearbyText": {
+        "label": "Enviar o texto próximo para {{provider}}",
+        "description": "Desativado por padrão: o texto ao redor do cursor fica neste Mac."
+      }
+    },
+    "styles": {
+      "title": "Estilos",
+      "enable": {
+        "label": "Combinar com o app em uso",
+        "description": "A limpeza com IA escreve de forma descontraída em chats, formal em e-mails e mantém o código como foi dito."
+      },
+      "categories": {
+        "messaging": "Mensagens e chat",
+        "email": "E-mail",
+        "documents": "Documentos e notas",
+        "code": "Código e terminais",
+        "ai_chat": "Assistentes de IA",
+        "other": "Todo o resto"
+      },
+      "tones": {
+        "casual": "Descontraído",
+        "neutral": "Neutro",
+        "formal": "Formal"
+      },
+      "fixed": {
+        "code": "Mantém código e comandos como foram ditos",
+        "ai_chat": "Mantém seu pedido como um prompt claro"
+      },
+      "apps": {
+        "title": "Apps em que você ditou",
+        "description": "Mude um app de categoria se ele for tratado do jeito errado.",
+        "builtIn": "Padrão"
+      },
+      "needsCleanup": "Ative a limpeza com IA para seguir o estilo de cada app."
+    },
+    "dictionary": {
+      "title": "Dicionário",
+      "remove": "Remover {{phrase}}",
+      "replacements": {
+        "title": "Substituições",
+        "description": "Sempre escrever uma palavra ou expressão do seu jeito.",
+        "said": "Quando eu disser",
+        "saidExample": "ex.: pra",
+        "written": "Escrever",
+        "writtenExample": "ex.: para",
+        "add": "Adicionar substituição"
+      },
+      "snippets": {
+        "title": "Trechos",
+        "description": "Diga uma frase curta para inserir um texto mais longo, como seu endereço.",
+        "trigger": "Frase do trecho",
+        "triggerExample": "ex.: meu endereço",
+        "text": "Texto do trecho",
+        "textExample": "Texto a inserir",
+        "add": "Adicionar trecho"
+      },
+      "file": {
+        "title": "Fazer backup ou transferir",
+        "description": "Importe uma lista de palavras ou um arquivo de dicionário, ou exporte o seu.",
+        "import": "Importar…",
+        "export": "Exportar…",
+        "kind": "Dicionário",
+        "defaultName": "Dicionário SilkScribe.json",
+        "imported_one": "{{count}} item adicionado",
+        "imported_many": "{{count}} de itens adicionados",
+        "imported_other": "{{count}} itens adicionados",
+        "exported": "Dicionário exportado",
+        "importFailed": "Não foi possível importar o dicionário",
+        "exportFailed": "Não foi possível exportar o dicionário"
+      }
+    },
+    "mcp": {
+      "title": "Apps de IA",
+      "label": "Permitir que apps de IA leiam sua biblioteca",
+      "description": "Claude, Cursor e outros apps compatíveis com MCP podem buscar e ler suas transcrições, anotações e ditados. O que eles leem vai para a IA que usam.",
+      "setup": "Adicione isto às configurações de MCP do app (no Claude Desktop: Configurações → Desenvolvedor → Editar configuração) e reinicie-o.",
+      "copy": "Copiar configuração",
+      "copied": "Configuração copiada",
+      "copyFailed": "Não foi possível copiar a configuração"
     }
   },
   "footer": {
-    "downloadingModel": "Baixando {{model}}...",
-    "checkingUpdates": "Verificando atualizações...",
+    "downloadingModel": "Baixando {{model}}…",
+    "checkingUpdates": "Verificando atualizações…",
     "updateAvailable": "Atualização disponível: {{version}}",
     "updateAvailableShort": "Atualização disponível",
     "upToDate": "Atualizado",
     "downloadUpdate": "Baixar Atualização",
     "restart": "Reiniciar",
     "updateCheckingDisabled": "Verificação de Atualização Desabilitada",
-    "downloading": "Baixando... {{progress}}%",
-    "installing": "Instalando...",
-    "preparing": "Preparando...",
+    "downloading": "Baixando… {{progress}}%",
+    "installing": "Instalando…",
+    "preparing": "Preparando…",
     "checkForUpdates": "Verificar atualizações",
     "support": {
       "label": "Suporte",
@@ -903,127 +841,625 @@
     }
   },
   "common": {
-    "loading": "Carregando...",
-    "versionLabel": "v{{version}}",
-    "save": "Salvar",
+    "loading": "Carregando…",
     "cancel": "Cancelar",
-    "reset": "Redefinir",
-    "add": "Adicionar",
-    "remove": "Remover",
     "delete": "Excluir",
-    "edit": "Editar",
-    "create": "Criar",
-    "update": "Atualizar",
-    "close": "Fechar",
     "open": "Abrir",
     "default": "Padrão",
-    "enabled": "Habilitado",
-    "disabled": "Desabilitado",
-    "on": "Ligado",
-    "off": "Desligado",
-    "yes": "Sim",
-    "no": "Não",
-    "noOptionsFound": "Nenhuma opção encontrada",
+    "noOptionsFound": "Nenhum resultado",
     "moreInformation": "Mais informações",
     "errorBoundary": {
-      "description": "O SilkScribe não conseguiu renderizar esta tela. Suas configurações e gravações continuam armazenadas localmente.",
+      "description": "Esta tela não carregou. Seus ajustes e gravações estão seguros.",
       "reload": "Recarregar",
-      "openLogs": "Abrir registros"
-    }
+      "openLogs": "Abrir registros",
+      "title": "Algo deu errado"
+    },
+    "choose": "Escolher…"
   },
   "errors": {
-    "loadDirectory": "Erro ao carregar diretório: {{error}}"
+    "loadDirectory": "Não foi possível abrir esta pasta: {{error}}"
   },
   "appLanguage": {
-    "title": "Idioma da Aplicação",
-    "description": "Alterar o idioma da interface do SilkScribe"
+    "title": "Idioma do app",
+    "previewOption": "{{nativeName}} ({{name}}) · Prévia",
+    "preview": {
+      "label": "Idiomas em prévia",
+      "description": "Mostra traduções que um falante nativo ainda não revisou. Algumas frases podem soar estranhas."
+    }
   },
   "overlay": {
-    "listening": "A gravar",
+    "listening": "Ouvindo",
     "transcribing": "A transcrever",
-    "processing": "A processar",
+    "processing": "Limpando",
     "success": "Concluído",
-    "failed": "Falhou",
+    "failed": "Não funcionou",
     "cancelled": "Cancelado",
-    "cancelledDetail": "Interrompido por você"
+    "empty": "Não entendi",
+    "detail": {
+      "cancelled": "Nada foi colado",
+      "empty": "Nenhuma fala detectada",
+      "pasteCopied": "Copiado — cole você mesmo",
+      "pasteFailed": "Não foi possível colar nem copiar",
+      "cleanupSkipped": "Colado sem limpeza com IA",
+      "transcriptionFailed": "A transcrição não terminou",
+      "recordingFailed": "Não foi possível começar a gravar",
+      "commandNeedsSetup": "Configure a limpeza com IA antes",
+      "commandFailed": "Nada mudou",
+      "commandTimedOut": "Tempo esgotado, nada mudou",
+      "commandTooLong": "Selecione menos texto",
+      "commandPassword": "Não em campos de senha",
+      "commandNotText": "Selecione algum texto",
+      "commandKeysHeld": "Solte as teclas primeiro"
+    },
+    "style": {
+      "casual": "Descontraído",
+      "neutral": "Neutro",
+      "formal": "Formal",
+      "code": "Código",
+      "ai_chat": "Prompt de IA"
+    },
+    "nearbyText": "Texto próximo",
+    "command": {
+      "listening": "Esperando um comando",
+      "tag": "Comando",
+      "editing": "Editando",
+      "writing": "Escrevendo"
+    },
+    "handsFree": {
+      "listening": "Ouvindo sem segurar a tecla. Pressione o atalho de novo para terminar, ou Esc para cancelar.",
+      "tag": "Mãos livres"
+    },
+    "silent": "Não dá para ouvir nada. Verifique o microfone."
+  },
+  "meetingOrb": {
+    "orbLabel": "Gravação de reunião, {{state}}",
+    "pinHint": "Clique para manter aberto. Arraste para mover.",
+    "cardLabel": "Transcrição ao vivo da reunião",
+    "transcriptLabel": "Transcrição até agora",
+    "untitled": "Reunião sem título",
+    "recording": "Gravando",
+    "paused": "Pausada",
+    "finishing": "Finalizando…",
+    "needsAttention": "Precisa de atenção",
+    "microphone": "Seu microfone",
+    "computerAudio": "Áudio do computador",
+    "micGated": "Seu microfone fica fora da reunião enquanto você dita",
+    "you": "Você",
+    "others": "Outros",
+    "listening": "Ouvindo…",
+    "listeningBody": "As palavras aparecem aqui conforme as pessoas falam.",
+    "unavailableTitle": "Sem transcrição ao vivo",
+    "unavailableBody": "Baixe um mecanismo de ditado para ver as palavras enquanto as pessoas falam. A gravação funciona mesmo assim.",
+    "catchingUp": "Atualizando…",
+    "jumpToLatest": "Ir para o mais recente",
+    "pause": "Pausar",
+    "resume": "Retomar",
+    "stop": "Parar e transcrever",
+    "open": "Abrir anotações",
+    "letPeopleKnow": "Avisar os participantes",
+    "prompt": {
+      "title": "Fazer anotações desta chamada do {{app}}?",
+      "titleEvent": "Fazer anotações de “{{title}}”?",
+      "body": "O SilkScribe grava seu microfone e o {{app}} neste Mac. Nada é enviado.",
+      "bodyEvent": "O SilkScribe grava seu microfone e o áudio do computador neste Mac. Nada é enviado.",
+      "start": "Começar anotações",
+      "notNow": "Agora não"
+    }
   },
   "feedback": {
     "pasteFailed": {
       "copiedTitle": "Copiado para a área de transferência",
-      "copiedDescription": "O SilkScribe não conseguiu colar no app ativo.",
-      "failedTitle": "O SilkScribe não conseguiu colar",
-      "failedDescription": "Não foi possível colar nem copiar o texto.",
-      "copyFailedTitle": "O SilkScribe não conseguiu copiar o texto",
-      "copyFailedDescription": "A colagem falhou e a cópia de reserva não foi concluída."
+      "copiedDescription": "Não deu para colar aqui, então está pronto para você colar.",
+      "copyFailedTitle": "Não foi possível colar nem copiar",
+      "copyFailedDescription": "Tente de novo ou encontre na sua Biblioteca."
+    },
+    "dictationOff": {
+      "title": "O ditado está desativado",
+      "description": "Permita o acesso ao Microfone e à Acessibilidade para usar seu atalho.",
+      "action": "Corrigir"
     }
   },
-  "home": {
-    "title": "Bem-vindo de volta",
-    "subtitle": "Sua atividade de ditado recente e histórico de reprodução.",
-    "welcome": {
-      "eyebrow": "Início",
-      "title": "Bem-vindo de volta.",
-      "firstRunTitle": "Boas-vindas ao SilkScribe.",
-      "readyDescription": "Tudo parece pronto. Segure seu atalho, fale naturalmente e o SilkScribe colocará o texto onde você precisar.",
-      "setupDescription": "Conclua o essencial uma vez e o SilkScribe ficará fora do seu caminho, pronto sempre que você precisar de um ditado rápido.",
-      "primaryReady": "Revisar a configuração de gravação",
-      "primarySetup": "Concluir configuração",
-      "secondaryAction": "Explorar modelos"
+  "workspace": {
+    "home": "Início",
+    "library": "Biblioteca",
+    "settings": "Configurações",
+    "navigation": "Principal",
+    "recordMeeting": "Gravar reunião",
+    "importAudio": "Importar áudio",
+    "localOnly": "Tudo fica neste dispositivo",
+    "onDevice": "Roda no seu dispositivo",
+    "homeTitle": "Pronto quando você estiver",
+    "homeDescription": "Grave uma reunião, importe áudio ou continue de onde parou.",
+    "libraryDescription": "Cada ditado, reunião e arquivo — tudo pesquisável.",
+    "meetingShort": "Seu microfone e o áudio do computador",
+    "importShort": "Transforme arquivos de áudio em transcrições",
+    "dictation": "Ditado",
+    "dictationHelp": "Ainda não configurado · Concluir configuração",
+    "inProgress": "Em andamento",
+    "recent": "Recentes",
+    "viewLibrary": "Ver tudo",
+    "transcripts": "Transcrições",
+    "searchLibrary": "Buscar transcrições",
+    "clearSearch": "Limpar pesquisa",
+    "loading": "Carregando suas transcrições…",
+    "emptyTitle": "Nada aqui ainda",
+    "emptyDescription": "Grave uma reunião ou solte um arquivo de áudio para começar.",
+    "noResults": "Nenhum resultado",
+    "trySearch": "Tente uma pesquisa ou filtro diferente.",
+    "loadMore": "Carregar mais",
+    "back": "Voltar",
+    "title": "Título",
+    "saved": "Salvo",
+    "saving": "Salvando…",
+    "saveFailed": "Não foi possível salvar as alterações",
+    "export": "Exportar",
+    "exported": "Exportado",
+    "delete": "Excluir transcrição",
+    "deleteHelp": "As anotações e o áudio também vão embora. Seu arquivo original fica onde está.",
+    "deleteAudio": "Excluir áudio",
+    "deleteAudioHelp": "Você mantém a transcrição e as anotações, mas não poderá ouvir de novo.",
+    "cancel": "Cancelar",
+    "retry": "Tentar de novo",
+    "speed": "Velocidade",
+    "documentViews": "Visualizações",
+    "transcript": "Transcrição",
+    "notes": "Anotações",
+    "speakers": "Locutores",
+    "searchTranscript": "Buscar",
+    "transcriptPending": "Sua transcrição aparece aqui quando estiver pronta.",
+    "speaker": "Locutor",
+    "unknownSpeaker": "Desconhecido",
+    "segment": "Transcrição em",
+    "restoreOriginal": "Restaurar original",
+    "speakerHelp": "Os nomes valem só para esta gravação.",
+    "noSpeakers": "Nenhum falante encontrado nesta gravação.",
+    "speakerName": "Nome do locutor",
+    "mergeSpeaker": "Mesclar em…",
+    "notesStale": "Você editou a transcrição. Gere de novo para incluir suas mudanças.",
+    "noNotes": "Nenhuma anotação ainda.",
+    "regenerate": "Gerar de novo",
+    "summary": "Resumo",
+    "decisions": "Decisões",
+    "actions": "Itens de ação",
+    "action": "Item de ação",
+    "done": "Feito",
+    "owner": "Proprietário",
+    "due": "Prazo",
+    "audioFiles": "Áudio",
+    "cancelJob": "Cancelar {{title}}",
+    "transcriptionModel": "Mecanismo",
+    "currentDictationModel": "Igual ao ditado",
+    "language": "Idioma",
+    "autoLanguage": "Detectar automaticamente",
+    "detectSpeakers": "Identificar falantes",
+    "localNotes": "Anotações com IA",
+    "noAutomaticNotes": "Sem anotações",
+    "microphoneLevel": "Nível do microfone",
+    "systemLevel": "Nível de áudio do computador",
+    "resume": "Continuar",
+    "pause": "Pausar",
+    "stopTranscribe": "Parar e transcrever",
+    "meetingHelp": "Gravamos os dois lados e transcrevemos quando você parar.",
+    "importHelp": "Escolha os arquivos e como processá-los. Continue trabalhando enquanto são transcritos.",
+    "meetingTitle": "Reunião sem título",
+    "microphone": "Microfone",
+    "defaultMicrophone": "Padrão do sistema",
+    "computerAudio": "Incluir áudio do computador",
+    "systemPermission": "O macOS vai pedir acesso a Gravação de Tela e Áudio do Sistema.",
+    "removeFile": "Remover",
+    "chooseFiles": "Escolher arquivos…",
+    "processing": "Processamento",
+    "setupNeeded": "Alguns mecanismos ainda não estão configurados. Grave agora e processe depois.",
+    "modelSetup": "Configurar mecanismos",
+    "working": "Trabalhando…",
+    "startRecording": "Iniciar gravação",
+    "startTranscription": "Transcrever",
+    "localIntelligence": "Mecanismos",
+    "localModelsHelp": "Baixe só o que precisar. Tudo roda neste Mac — mecanismos maiores precisam de mais memória.",
+    "runtimeReady": "Pronto para rodar neste Mac.",
+    "runtimeMissing": "Esta versão ainda não roda esses mecanismos. O ditado continua funcionando.",
+    "unpublished": "Ainda não disponível",
+    "downloading": "Baixando…",
+    "installed": "Instalado",
+    "download": "Baixar",
+    "dropAudio": "Solte para transcrever",
+    "workspaceFirst": "Só transcrever arquivos",
+    "workspaceFirstHelp": "Não precisa de acesso ao microfone nem à Acessibilidade.",
+    "source": {
+      "dictation": "Ditado",
+      "meeting": "Reunião",
+      "file": "Arquivo de áudio"
     },
-    "setup": {
-      "title": "Alguns itens essenciais ainda precisam de atenção.",
-      "description": "Quando seu atalho, modelo e permissões estiverem prontos, o SilkScribe estará pronto para o ditado do dia a dia.",
-      "modelAction": "Escolher um modelo",
-      "generalAction": "Abrir configuração geral"
+    "filter": {
+      "all": "Todos",
+      "dictation": "Ditados",
+      "meeting": "Reuniões",
+      "file": "Arquivos",
+      "saved": "Salvos"
     },
+    "purpose": {
+      "asr": "Transcrição",
+      "alignment": "Tempo das palavras",
+      "speakers": "Falantes",
+      "notes": "Resumos e itens de ação"
+    },
+    "stage": {
+      "recording": "Gravando",
+      "paused": "Pausado",
+      "queued": "Na fila",
+      "preparing": "Preparando",
+      "transcribing": "Transcrevendo",
+      "diarizing": "Identificando falantes",
+      "notes": "Escrevendo anotações",
+      "complete": "Pronto",
+      "failed": "Precisa de atenção",
+      "cancelled": "Cancelado",
+      "interrupted": "Interrompido"
+    },
+    "audio": "Áudio",
+    "appearance": "Aparência",
+    "debug": "Desenvolvedor",
+    "retentionHelp": "Reuniões e importações ficam até você apagá-las. Estes ajustes afetam só o áudio dos ditados.",
+    "dictationRetention": "Áudio dos ditados",
+    "skipToContent": "Pular para o conteúdo",
+    "memoryGuidance": "Precisa de cerca de {{gb}} GB de memória",
+    "notesModel9": "Padrão · 9B",
+    "notesModel27": "Detalhado · 27B, precisa de mais memória",
+    "draftConflict": "Encontramos um rascunho não salvo de uma versão anterior.",
+    "recoverDraft": "Recuperar rascunho",
+    "keepSaved": "Manter o salvo",
+    "transcriptReadyWarning": "Transcrição pronta · algumas etapas não terminaram",
+    "retryEnhancement": "Tentar de novo",
+    "withoutEnhancements": "Pular falantes e anotações",
+    "recordForLater": "Gravar agora, transcrever depois",
+    "returnToSetup": "Voltar à configuração",
+    "activity": "Atividade",
+    "close": "Fechar",
+    "noActiveJobs": "Nada em processamento",
+    "presetFast": "Transcrição rápida",
+    "presetDetailed": "Transcrição detalhada",
+    "presetNotes": "Transcrição + notas",
+    "processingDetails": "Mecanismos e opções",
+    "stopSave": "Parar e salvar áudio",
+    "finishEditing": "Concluído",
+    "editTranscript": "Editar transcrição",
+    "followPlayback": "Seguir reprodução",
+    "previous": "Anterior",
+    "next": "Próximo",
+    "undoMerge": "Desfazer junção",
+    "evidence": "Da transcrição",
+    "playEvidence": "Reproduzir",
+    "pauseDownload": "Pausar",
+    "removeModel": "Remover mecanismo",
+    "removeModelHelp": "Suas transcrições ficam. Você pode baixá-lo de novo quando quiser.",
+    "storageUsage": "Armazenamento",
+    "audioStorage": "Gravações",
+    "modelStorage": "Mecanismos",
+    "freeStorage": "Espaço livre",
+    "setupModels": "Configurar mecanismos",
+    "skipEnhancement": "Pular",
+    "generateNotes": "Gerar notas",
+    "addItem": "Adicionar item",
+    "removeItem": "Remover item",
+    "newSpeaker": "Adicionar falante",
+    "speakerSample": "Ouvir amostra",
+    "exportPreview": "Exportar",
+    "confirmExport": "Escolher onde salvar…",
     "readiness": {
-      "shortcut": {
-        "label": "Atalho",
-        "missingValue": "Defina seu atalho de gravação",
-        "action": "Editar"
-      },
-      "microphone": {
-        "label": "Microfone",
-        "action": "Alterar"
-      },
-      "model": {
-        "label": "Modelo",
-        "missingValue": "Escolha um modelo de voz",
-        "action": "Gerenciar"
-      },
-      "permissions": {
-        "label": "Permissões",
-        "ready": "Pronto para digitar nos seus apps",
-        "needsAttention": "Precisa de atenção antes de o ditado ficar completo",
-        "action": "Revisar"
+      "download": "Baixe {{model}} para usar isso.",
+      "unpublished": "{{model}} ainda não está disponível.",
+      "unavailable": "{{model}} não está incluído nesta versão.",
+      "native_download": "Baixe {{model}} ou escolha outro mecanismo de ditado.",
+      "runtime": "Falta nesta versão um componente necessário para isso.",
+      "fallback_download": "A detecção automática precisa do Whisper large-v3 para alguns idiomas. Baixe-o ou escolha um idioma.",
+      "language": "Este mecanismo não suporta esse idioma. Escolha outro idioma ou mecanismo.",
+      "memory": "Não há memória livre suficiente para {{model}}. Feche alguns apps ou escolha um mecanismo de anotações menor."
+    },
+    "newNotesReview": "Novas anotações",
+    "newNotesHelp": "Suas anotações atuais estão abaixo. Compare antes de substituir.",
+    "replaceNotes": "Substituir anotações",
+    "keepCurrentNotes": "Manter as atuais",
+    "speakerCount_one": "{{count}} falante",
+    "speakerCount_many": "{{count}} de falantes",
+    "speakerCount_other": "{{count}} falantes",
+    "timing": {
+      "aligned": "Marcas de tempo por palavra",
+      "aligned_or_segments": "Marcas de tempo por palavra quando possível, senão por frase",
+      "segments": "Marcas de tempo por frase"
+    },
+    "memoryAvailable": "Cerca de {{gb}} GB livres",
+    "memoryObserved": "Já usou até {{gb}} GB aqui. Áudios mais longos podem precisar de mais.",
+    "memoryUnmeasured": "Ainda não medido neste Mac",
+    "checkingFiles": "Verificando arquivos…",
+    "durationUnknown": "Duração desconhecida",
+    "importProblems": "Alguns arquivos não puderam ser importados",
+    "dismiss": "Descartar",
+    "verifyModel": "Verificar arquivos",
+    "modelVerified": "Os arquivos estão bons",
+    "modelDamaged": "Arquivos danificados · Baixar de novo",
+    "finishingAudio": "Finalizando…",
+    "selectPage": "Selecionar tudo nesta página",
+    "clearSelection": "Limpar seleção",
+    "selectedTurns": "Falas selecionadas",
+    "assignSelectedSpeaker": "Atribuir falante",
+    "selectTurn": "Selecionar turno em {{time}}",
+    "exportOriginalText": "Exportar texto original",
+    "notesReviewed": "Conferi estas anotações com a transcrição",
+    "unfinishedImports": "Importações inacabadas",
+    "resumeImport": "Retomar importação",
+    "discardImport": "Descartar",
+    "captureUnsupported": "Por enquanto, gravar reuniões só funciona no Mac. Você ainda pode importar áudio.",
+    "microphoneReady": "Microfone permitido",
+    "microphonePermissionNeeded": "Permita o microfone para gravar sua voz.",
+    "allowMicrophone": "Permitir microfone",
+    "computerAudioReady": "Áudio do computador permitido",
+    "computerPermissionNeeded": "Permita a Gravação de Tela e Áudio do Sistema para captar o áudio do computador.",
+    "allowComputerAudio": "Permitir áudio do computador",
+    "microphoneUnavailable": "Esse microfone não está disponível. Escolha outro.",
+    "replaceOnlySection": "Substituir só esta seção",
+    "sectionReplacementHelp": "Suas outras anotações continuam como estão.",
+    "deleteTitle": "Apagar esta transcrição?",
+    "deleteAudioTitle": "Apagar o áudio?",
+    "matchCount_one": "{{count}} resultado",
+    "matchCount_many": "{{count}} de resultados",
+    "matchCount_other": "{{count}} resultados",
+    "mergeTitle": "Juntar falantes?",
+    "merge": "Juntar",
+    "mergePreview_one": "Mover {{count}} fala de {{from}} para {{to}}. Dá para desfazer.",
+    "mergePreview_many": "Mover {{count}} de falas de {{from}} para {{to}}. Dá para desfazer.",
+    "mergePreview_other": "Mover {{count}} falas de {{from}} para {{to}}. Dá para desfazer.",
+    "remove": "Remover",
+    "removeModelTitle": "Remover {{name}}?",
+    "activeCount_one": "{{count}} em andamento",
+    "activeCount_many": "{{count}} em andamento",
+    "activeCount_other": "{{count}} em andamento",
+    "errors": {
+      "addFiles": "Não foi possível adicionar esses arquivos",
+      "loadDevices": "Não foi possível carregar os microfones",
+      "startImport": "Não foi possível iniciar a importação",
+      "controlRecording": "Não foi possível atualizar a gravação",
+      "openTranscript": "Não foi possível abrir esta transcrição",
+      "cancelJob": "Não foi possível cancelar",
+      "removeEngine": "Não foi possível remover o mecanismo",
+      "discardImport": "Não foi possível descartar a importação",
+      "requestAccess": "Não foi possível pedir acesso",
+      "removeFile": "Não foi possível remover o arquivo",
+      "installEngine": "Não foi possível baixar o mecanismo",
+      "verifyEngine": "Não foi possível verificar os arquivos",
+      "loadMore": "Não foi possível carregar mais transcrições",
+      "loadLibrary": "Não foi possível carregar suas transcrições",
+      "saveTranscript": "Não foi possível salvar as alterações",
+      "exportTranscript": "Não foi possível exportar",
+      "updateNotes": "Não foi possível atualizar as anotações",
+      "generateNotes": "Não foi possível gerar as anotações",
+      "discardDraft": "Não foi possível descartar o rascunho",
+      "startProcessing": "Não foi possível iniciar o processamento",
+      "deleteTranscript": "Não foi possível apagar",
+      "enableCleanup": "Não foi possível ativar a limpeza com IA",
+      "copyOriginal": "Não foi possível copiar o original",
+      "loadNotes": "Não foi possível carregar suas anotações",
+      "saveNotes": "Não foi possível salvar suas anotações",
+      "copyMessage": "Não foi possível copiar a mensagem",
+      "copyText": "Não foi possível copiar o texto",
+      "saveStyle": "Não foi possível salvar o estilo",
+      "startMeeting": "Não foi possível iniciar a reunião",
+      "addToDictionary": "Não foi possível adicionar ao seu dicionário",
+      "connectCalendar": "Não foi possível conectar seu calendário",
+      "details": "Detalhes",
+      "runtimeCheck": "Não foi possível iniciar os motores locais. Verifique se o SilkScribe está atualizado e tente de novo.",
+      "inspectFiles": "Não foi possível ler alguns arquivos. Verifique se são arquivos de áudio e tente de novo.",
+      "disconnectCalendar": "Não foi possível desconectar sua agenda",
+      "captureCheck": "Não foi possível verificar o acesso à gravação. Tente de novo ou reinicie o SilkScribe."
+    },
+    "liveTranscript": "Transcrição ao vivo",
+    "liveTranscriptNote": "Uma transcrição mais precisa substitui esta quando o processamento terminar.",
+    "cleanupCard": {
+      "title": "Limpar todos os ditados",
+      "body": "Corrija pontuação e palavras de preenchimento com a Apple Intelligence. Roda neste Mac.",
+      "turnOn": "Ativar",
+      "notNow": "Agora não"
+    },
+    "showOriginal": "Mostrar original",
+    "hideOriginal": "Ocultar original",
+    "copyOriginal": "Copiar original",
+    "copiedOriginal": "Original copiado",
+    "originalLabel": "Texto antes da limpeza com IA",
+    "yourNotes": "Suas anotações",
+    "yourNotesPlaceholder": "Anote o que importa enquanto acontece. Comece uma linha com - para fazer uma lista.",
+    "consent": {
+      "reminder": "Avise as pessoas que você está fazendo anotações.",
+      "copy": "Copiar uma mensagem de aviso",
+      "copied": "Mensagem copiada",
+      "message": "Aviso: estou fazendo anotações com o SilkScribe. Ele roda no meu Mac, e nada é enviado.",
+      "setting": "Lembrar de avisar as pessoas",
+      "settingHint": "Mostra um lembrete quando a gravação começa."
+    },
+    "holdToTalk": "Segurar para falar",
+    "holdOrTap": "Segurar para falar, ou tocar para mãos livres",
+    "pressToTalk": "Pressionar para iniciar e parar",
+    "recentDictation": "Ditados recentes",
+    "wordsToday": "Palavras hoje",
+    "streak": "Sequência",
+    "streakDays_one": "{{count}} dia",
+    "streakDays_many": "{{count}} de dias",
+    "streakDays_other": "{{count}} dias",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "enhanceNotes": "Aprimorar anotações",
+    "youWrote": "Você escreveu isto",
+    "callTitle": "Chamada do {{app}}",
+    "captureFrom": {
+      "label": "Captar áudio de",
+      "allApps": "Todos os apps"
+    },
+    "suggestNotes": {
+      "label": "Oferecer anotações em chamadas",
+      "hint": "Mostra uma sugestão quando o Zoom, o Teams, o FaceTime ou outro app de chamadas começa a usar o microfone."
+    },
+    "dictionary": {
+      "add": "Adicionar ao dicionário",
+      "heard": "Ouvido como",
+      "heardHelp": "Deixe vazio para só ensinar a grafia",
+      "write": "Escrever como",
+      "writeHelp": "Como deve aparecer sempre",
+      "save": "Adicionar",
+      "added": {
+        "word": "Adicionado ao seu vocabulário",
+        "replacement": "Adicionado como substituição"
       }
     },
-    "firstUse": {
-      "title": "Sua primeira transcrição aparecerá aqui.",
-      "description": "Clique em um campo de texto, segure seu atalho, fale uma frase e solte. O SilkScribe salvará o resultado aqui para você revisitar depois.",
-      "generalAction": "Verificar o básico",
-      "modelsAction": "Escolher um modelo"
+    "templates": {
+      "label": "Modelo de anotações",
+      "names": {
+        "general": "Geral",
+        "one_on_one": "1:1",
+        "standup": "Reunião diária",
+        "customer_call": "Chamada com cliente",
+        "interview": "Entrevista",
+        "lecture": "Aula"
+      },
+      "sections": {
+        "updates": "Novidades",
+        "feedback": "Feedback",
+        "blockers": "Impedimentos",
+        "done": "Feito",
+        "next": "Próximos passos",
+        "context": "Contexto do cliente",
+        "pain_points": "Dores",
+        "requests": "Pedidos",
+        "background": "Trajetória",
+        "strengths": "Pontos fortes",
+        "concerns": "Pontos de atenção",
+        "concepts": "Conceitos-chave",
+        "definitions": "Definições",
+        "questions": "Perguntas"
+      }
     },
-    "activityTitle": "Atividade recente",
-    "loadMore": "Carregar mais",
-    "loadingMore": "A carregar...",
-    "stats": {
-      "streak": "Sequência atual",
-      "words": "Palavras transcritas",
-      "wpm": "PPM média"
+    "upcoming": {
+      "title": "Próximas",
+      "now": "Agora",
+      "tomorrow": "Amanhã {{time}}",
+      "takeNotes": "Fazer anotações"
     },
-    "empty": {
-      "title": "Ainda não há transcrições recentes.",
-      "description": "Assim que você gravar algo, o SilkScribe guardará aqui a transcrição e o áudio automaticamente."
+    "calendarCard": {
+      "title": "Veja suas próximas reuniões aqui",
+      "body": "Conecte seu calendário para nomear as anotações pelas reuniões e receber um lembrete quando começarem. Ele fica neste Mac."
     },
-    "error": {
-      "title": "Não foi possível carregar seu painel.",
-      "description": "Tente novamente para atualizar sua atividade recente.",
-      "retry": "Tentar novamente"
+    "calendar": {
+      "title": "Calendário",
+      "description": "Mostra as próximas reuniões no Início e nomeia as anotações por elas. Seu calendário fica neste Mac.",
+      "connect": "Conectar calendário",
+      "disconnect": "Desconectar calendário",
+      "reminders": "Lembrar antes das reuniões",
+      "remindersHint": "Oferece anotações um minuto antes",
+      "denied": "O acesso ao calendário está desativado. Ative em Ajustes do Sistema → Privacidade e Segurança → Calendários.",
+      "openSettings": "Abrir Ajustes do Sistema"
     },
-    "days": {
-      "today": "Hoje",
-      "yesterday": "Ontem"
+    "ask": {
+      "title": "Pergunte às suas reuniões",
+      "label": "Perguntar sobre suas reuniões",
+      "placeholder": "Pergunte sobre suas reuniões e anotações…",
+      "submit": "Perguntar",
+      "thinking": "Lendo suas reuniões… A primeira pergunta pode levar um minuto enquanto o mecanismo de anotações carrega.",
+      "nothingFound": "Nada na sua Biblioteca menciona isso.",
+      "checkSources": "As respostas vêm das suas transcrições. Confira as fontes antes de confiar nelas.",
+      "yourNotes": "Suas anotações",
+      "openSource": "Abrir {{source}}",
+      "shortcut": "⌘K",
+      "titleAll": "Pergunte à sua biblioteca",
+      "labelAll": "Pergunte sobre seus ditados",
+      "placeholderAll": "Pergunte sobre seus ditados…",
+      "shortcutOther": "Ctrl+K",
+      "errors": {
+        "busy": "Uma reunião está sendo processada. Pergunte de novo quando terminar.",
+        "noEngine": "As respostas vêm do motor de anotações, que ainda não foi baixado.",
+        "getEngine": "Baixar o motor de anotações",
+        "timeout": "A resposta demorou demais. Tente uma pergunta mais específica.",
+        "other": "Não foi possível responder: {{error}}"
+      }
+    },
+    "cleanupUses": "A limpeza com IA usa {{provider}}",
+    "openNotes": "Abrir anotações",
+    "settingsTabs": {
+      "general": "Geral",
+      "dictation": "Ditado",
+      "ai": "Escrita com IA",
+      "dictionary": "Dicionário",
+      "meetings": "Reuniões e anotações",
+      "audio": "Áudio",
+      "models": "Motores",
+      "history": "Privacidade e armazenamento"
+    },
+    "about": "Sobre",
+    "version": "Versão {{version}}",
+    "notesEnginesHelp": "O motor que escreve suas anotações e responde perguntas sobre suas reuniões.",
+    "privacy": {
+      "title": "O que sai deste dispositivo",
+      "local": "Gravações, transcrições, anotações de reuniões e seu dicionário ficam neste dispositivo.",
+      "noCloud": "Os ditados também ficam neste dispositivo.",
+      "cloud": "Os ditados vão para {{provider}} para a limpeza com IA. Altere isso em Escrita com IA.",
+      "mcp": "Os apps de IA que você conectar podem ler sua biblioteca e enviar o que leem para a IA que usam."
+    },
+    "notesEngine": "Motor",
+    "meetingEngines": {
+      "accurate": "O mais preciso · Qwen3 ASR",
+      "large": "Preciso, mais lento · Whisper large",
+      "balanced": "Equilibrado · Whisper turbo",
+      "fastest": "O mais rápido · Parakeet"
+    },
+    "speakersHint": "Distingue vozes neste dispositivo",
+    "consentRecord": {
+      "microphone": "Somente seu microfone foi gravado",
+      "allAudio": "Gravados seu microfone e o áudio do computador",
+      "app": "Gravados seu microfone e {{app}}",
+      "reminder": "Lembrete de avisar mostrado",
+      "headsUp": "Aviso copiado às {{time}}"
+    },
+    "recipes": {
+      "title": "Escrever a partir desta reunião",
+      "label": "Receita",
+      "write": "Escrever",
+      "writing": "Escrevendo… A primeira vez pode levar um minuto enquanto o motor de anotações carrega.",
+      "nothing": "Nada nesta reunião se encaixa nessa receita.",
+      "copy": "Copiar",
+      "copied": "Copiado",
+      "copyFailed": "Não foi possível copiar",
+      "customLabel": "O que escrever",
+      "customPlaceholder": "Por exemplo: um resumo para o canal da equipe",
+      "weekly": "Resumir minha semana",
+      "names": {
+        "follow_up_email": "E-mail de acompanhamento",
+        "action_items": "Tarefas",
+        "customer_notes": "Anotações do cliente",
+        "interview_summary": "Resumo de entrevista",
+        "custom": "Outra coisa…"
+      },
+      "errors": {
+        "empty": "Nenhuma reunião com transcrição na última semana.",
+        "emptyMeeting": "Esta reunião ainda não tem transcrição."
+      },
+      "partial": "Isto cobre só parte do que foi escolhido: o resto era longo demais para ler de uma vez."
+    },
+    "share": {
+      "label": "Compartilhar…",
+      "notes": "Compartilhar anotações…",
+      "failed": "Não foi possível abrir o menu de compartilhamento"
+    },
+    "folders": {
+      "label": "Pasta",
+      "none": "Sem pasta",
+      "new": "Nova pasta…",
+      "name": "Nome da pasta",
+      "file": "Arquivar",
+      "all": "Todas as pastas",
+      "failed": "Não foi possível arquivar"
     }
+  },
+  "audioPlayer": {
+    "play": "Tocar",
+    "pause": "Pausar",
+    "seek": "Posição de reprodução",
+    "error": "Não foi possível tocar este áudio.",
+    "retry": "Tentar de novo"
   }
 }

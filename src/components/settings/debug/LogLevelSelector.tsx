@@ -19,7 +19,7 @@ interface LogLevelSelectorProps {
 }
 
 export const LogLevelSelector: React.FC<LogLevelSelectorProps> = ({
-  descriptionMode = "tooltip",
+  descriptionMode = "inline",
   grouped = false,
 }) => {
   const { t } = useTranslation();
@@ -39,7 +39,6 @@ export const LogLevelSelector: React.FC<LogLevelSelectorProps> = ({
   return (
     <SettingContainer
       title={t("settings.debug.logLevel.title")}
-      description={t("settings.debug.logLevel.description")}
       descriptionMode={descriptionMode}
       grouped={grouped}
       layout="horizontal"

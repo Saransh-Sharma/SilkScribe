@@ -16,6 +16,7 @@ use tauri::{AppHandle, Emitter};
 use tauri_specta::Event;
 use unicode_segmentation::UnicodeSegmentation;
 
+use crate::app_context::FocusedApp;
 use crate::audio_toolkit::save_wav_file;
 
 /// Database migrations for transcription history.
@@ -51,6 +52,16 @@ static MIGRATIONS: &[M] = &[
     ),
     M::up("ALTER TABLE usage_stats ADD COLUMN backfill_completed INTEGER NOT NULL DEFAULT 0;"),
     M::up("ALTER TABLE transcription_history ADD COLUMN post_process_requested BOOLEAN NOT NULL DEFAULT 0;"),
+    // The app each dictation went into, kept apart so history queries don't change.
+    M::up(
+        "CREATE TABLE IF NOT EXISTS dictation_apps (
+            history_id INTEGER PRIMARY KEY,
+            bundle_id TEXT NOT NULL,
+            name TEXT NOT NULL
+        );
+        CREATE TRIGGER IF NOT EXISTS dictation_apps_cleanup AFTER DELETE ON transcription_history
+        BEGIN DELETE FROM dictation_apps WHERE history_id = old.id; END;",
+    ),
 ];
 
 #[derive(Clone, Debug, Serialize, Deserialize, Type)]
@@ -94,26 +105,28 @@ pub struct HistoryEntry {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, Type)]
-pub struct UsageSummary {
-    pub current_streak_days: i64,
-    pub total_words: i64,
-    pub average_wpm: i64,
-    pub total_transcriptions: i64,
-    pub longest_streak_days: i64,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize, Type)]
 pub struct HomeHistoryCursor {
     pub timestamp: i64,
     pub id: i64,
 }
 
+/// An app dictated into, for choosing per-app styles.
 #[derive(Clone, Debug, Serialize, Deserialize, Type)]
-pub struct HomeDashboardPageData {
-    pub summary: UsageSummary,
-    pub entries: Vec<HistoryEntry>,
-    pub next_cursor: Option<HomeHistoryCursor>,
-    pub is_backfilling: bool,
+pub struct RecentApp {
+    pub bundle_id: String,
+    pub name: String,
+    pub last_used: i64,
+    pub dictations: i64,
+}
+
+/// Dictation at a glance, for Home.
+#[derive(Clone, Debug, Serialize, Deserialize, Type)]
+pub struct DictationSummary {
+    pub words_today: i64,
+    pub dictations_today: i64,
+    pub current_streak_days: i64,
+    /// The most recent dictations, newest first.
+    pub recent: Vec<HistoryEntry>,
 }
 
 #[derive(Clone, Debug, Default)]
@@ -295,6 +308,7 @@ impl HistoryManager {
         post_process_requested: bool,
         post_processed_text: Option<String>,
         post_process_prompt: Option<String>,
+        app: Option<FocusedApp>,
     ) -> Result<()> {
         let timestamp = Utc::now().timestamp();
         let file_name = format!("silkscribe-{}.wav", timestamp);
@@ -314,6 +328,7 @@ impl HistoryManager {
             post_processed_text,
             post_process_prompt,
             audio_samples.len(),
+            app,
         )?;
 
         // Clean up old entries
@@ -347,6 +362,7 @@ impl HistoryManager {
             post_processed_text,
             post_process_prompt,
             0,
+            None,
         )?;
 
         if let Err(cleanup_error) = self.cleanup_old_entries() {
@@ -359,6 +375,7 @@ impl HistoryManager {
         Ok(entry)
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn save_to_database(
         &self,
         file_name: String,
@@ -369,6 +386,7 @@ impl HistoryManager {
         post_processed_text: Option<String>,
         post_process_prompt: Option<String>,
         audio_sample_count: usize,
+        app: Option<FocusedApp>,
     ) -> Result<HistoryEntry> {
         let mut conn = self.get_connection()?;
         let tx = conn.transaction_with_behavior(TransactionBehavior::Immediate)?;
@@ -396,6 +414,12 @@ impl HistoryManager {
 
         if !entry.transcription_text.is_empty() {
             self.update_usage_stats_after_save(&tx, timestamp, &visible_text, audio_sample_count)?;
+        }
+        if let Some(app) = app {
+            tx.execute(
+                "INSERT OR REPLACE INTO dictation_apps (history_id, bundle_id, name) VALUES (?1, ?2, ?3)",
+                params![entry.id, app.bundle_id, app.name],
+            )?;
         }
         tx.commit()?;
 
@@ -489,11 +513,6 @@ impl HistoryManager {
         }
 
         Ok(entry)
-    }
-
-    fn get_usage_stats(&self) -> Result<UsageStatsRecord> {
-        let conn = self.get_connection()?;
-        Self::get_usage_stats_with_conn(&conn)
     }
 
     fn should_backfill_usage_stats(&self, stats: &UsageStatsRecord) -> Result<bool> {
@@ -765,10 +784,6 @@ impl HistoryManager {
         });
     }
 
-    fn home_page_limit(limit: Option<u32>) -> usize {
-        limit.unwrap_or(50).clamp(1, 200) as usize
-    }
-
     fn get_home_entries_page(
         &self,
         limit: usize,
@@ -974,38 +989,22 @@ impl HistoryManager {
         }
     }
 
-    fn build_usage_summary(stats: &UsageStatsRecord) -> UsageSummary {
-        let average_wpm = if stats.total_audio_seconds > 0.0 {
-            ((stats.total_words as f64) / (stats.total_audio_seconds / 60.0)).round() as i64
-        } else {
-            0
-        };
-
-        UsageSummary {
-            current_streak_days: Self::visible_current_streak(stats, Local::now().date_naive()),
-            total_words: stats.total_words,
-            average_wpm,
-            total_transcriptions: stats.total_transcriptions,
-            longest_streak_days: stats.longest_streak_days,
-        }
-    }
-
     pub fn cleanup_old_entries(&self) -> Result<()> {
         let retention_period = crate::settings::get_recording_retention_period(&self.app_handle);
 
         match retention_period {
             crate::settings::RecordingRetentionPeriod::Never => {
                 // Don't delete anything
-                return Ok(());
+                Ok(())
             }
             crate::settings::RecordingRetentionPeriod::PreserveLimit => {
                 // Use the old count-based logic with history_limit
                 let limit = crate::settings::get_history_limit(&self.app_handle);
-                return self.cleanup_by_count(limit);
+                self.cleanup_by_count(limit)
             }
             _ => {
                 // Use time-based logic
-                return self.cleanup_by_time(retention_period);
+                self.cleanup_by_time(retention_period)
             }
         }
     }
@@ -1251,25 +1250,60 @@ impl HistoryManager {
         Ok(PaginatedHistory { entries, has_more })
     }
 
-    pub async fn get_home_dashboard_data(
-        &self,
-        limit: Option<u32>,
-        cursor: Option<HomeHistoryCursor>,
-    ) -> Result<HomeDashboardPageData> {
-        let page_limit = Self::home_page_limit(limit);
-        let (entries, next_cursor) = self.get_home_entries_page(page_limit, cursor.as_ref())?;
-        let stats = self.get_usage_stats()?;
-        let is_backfilling = self.should_backfill_usage_stats(&stats)?;
+    /// Apps dictated into, most recent first, for choosing per-app styles.
+    pub fn recent_dictation_apps(&self, limit: usize) -> Result<Vec<RecentApp>> {
+        let conn = self.get_connection()?;
+        let mut stmt = conn.prepare(
+            "SELECT a.bundle_id, a.name, MAX(h.timestamp) AS last_used, COUNT(*) AS uses
+             FROM dictation_apps a JOIN transcription_history h ON h.id = a.history_id
+             GROUP BY a.bundle_id ORDER BY last_used DESC LIMIT ?1",
+        )?;
+        let apps = stmt
+            .query_map(params![limit as i64], |row| {
+                Ok(RecentApp {
+                    bundle_id: row.get(0)?,
+                    name: row.get(1)?,
+                    last_used: row.get(2)?,
+                    dictations: row.get(3)?,
+                })
+            })?
+            .collect::<std::result::Result<Vec<_>, _>>()?;
+        Ok(apps)
+    }
 
-        if is_backfilling {
+    /// Today's dictation (since local midnight), the streak and the latest
+    /// `recent` dictations.
+    pub fn get_dictation_summary(&self, recent: usize) -> Result<DictationSummary> {
+        let start_of_day = Local::now()
+            .date_naive()
+            .and_hms_opt(0, 0, 0)
+            .and_then(|midnight| midnight.and_local_timezone(Local).earliest())
+            .map(|midnight| midnight.timestamp())
+            .unwrap_or(0);
+        let conn = self.get_connection()?;
+        let mut stmt = conn.prepare(
+            "SELECT transcription_text, post_processed_text FROM transcription_history WHERE timestamp >= ?1",
+        )?;
+        let texts = stmt
+            .query_map(params![start_of_day], |row| {
+                Ok(row
+                    .get::<_, Option<String>>(1)?
+                    .unwrap_or(row.get::<_, String>(0)?))
+            })?
+            .collect::<std::result::Result<Vec<_>, _>>()?;
+        let words: Vec<i64> = texts.iter().map(|text| Self::count_words(text)).collect();
+        let stats = Self::get_usage_stats_with_conn(&conn)?;
+        // Installs from before usage stats existed fill them in once, in the
+        // background; the streak shows up on a later refresh.
+        if self.should_backfill_usage_stats(&stats)? {
             self.trigger_lazy_backfill_if_needed();
         }
-
-        Ok(HomeDashboardPageData {
-            summary: Self::build_usage_summary(&stats),
-            entries,
-            next_cursor,
-            is_backfilling,
+        let (recent, _) = self.get_home_entries_page(recent, None)?;
+        Ok(DictationSummary {
+            words_today: words.iter().sum(),
+            dictations_today: words.iter().filter(|&&count| count > 0).count() as i64,
+            current_streak_days: Self::visible_current_streak(&stats, Local::now().date_naive()),
+            recent,
         })
     }
 

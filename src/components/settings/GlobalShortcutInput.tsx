@@ -20,7 +20,7 @@ interface GlobalShortcutInputProps {
 }
 
 export const GlobalShortcutInput: React.FC<GlobalShortcutInputProps> = ({
-  descriptionMode = "tooltip",
+  descriptionMode = "inline",
   grouped = false,
   shortcutId,
   disabled = false,
@@ -231,7 +231,6 @@ export const GlobalShortcutInput: React.FC<GlobalShortcutInputProps> = ({
     return (
       <SettingContainer
         title={t("settings.general.shortcut.title")}
-        description={t("settings.general.shortcut.description")}
         descriptionMode={descriptionMode}
         grouped={grouped}
       >
@@ -247,7 +246,6 @@ export const GlobalShortcutInput: React.FC<GlobalShortcutInputProps> = ({
     return (
       <SettingContainer
         title={t("settings.general.shortcut.title")}
-        description={t("settings.general.shortcut.description")}
         descriptionMode={descriptionMode}
         grouped={grouped}
       >

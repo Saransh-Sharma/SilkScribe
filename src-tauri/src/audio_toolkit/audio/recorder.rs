@@ -22,6 +22,9 @@ use crate::audio_toolkit::{
 enum Cmd {
     Start,
     Stop(mpsc::Sender<Vec<f32>>),
+    /// The last `n` samples recorded so far, and how many there are in all,
+    /// without stopping.
+    Snapshot(usize, mpsc::Sender<(usize, Vec<f32>)>),
     Shutdown,
 }
 
@@ -228,7 +231,7 @@ impl AudioRecorder {
         let worker = match Self::wait_for_worker_init(init_rx, worker) {
             Ok(worker) => worker,
             Err(error) => {
-                return Err(Box::new(Error::new(std::io::ErrorKind::Other, error)));
+                return Err(Box::new(Error::other(error)));
             }
         };
 
@@ -252,6 +255,17 @@ impl AudioRecorder {
             tx.send(Cmd::Stop(resp_tx))?;
         }
         Ok(resp_rx.recv()?) // wait for the samples
+    }
+
+    /// The last `max_samples` of the current recording (16 kHz, speech only)
+    /// and the recording's length so far. For live previews; recording goes on.
+    pub fn snapshot(&self, max_samples: usize) -> Option<(usize, Vec<f32>)> {
+        let (reply_tx, reply_rx) = mpsc::channel();
+        self.cmd_tx
+            .as_ref()?
+            .send(Cmd::Snapshot(max_samples, reply_tx))
+            .ok()?;
+        reply_rx.recv_timeout(Duration::from_millis(500)).ok()
     }
 
     pub fn close(&mut self) -> Result<(), Box<dyn std::error::Error>> {
@@ -374,6 +388,25 @@ impl AudioRecorder {
     fn get_preferred_config(
         device: &cpal::Device,
     ) -> Result<cpal::SupportedStreamConfig, Box<dyn std::error::Error>> {
+        // On macOS, asking for a rate the device isn't running at changes its
+        // nominal rate for every app using it: a Zoom or Meet call, or a meeting
+        // recording. Open at the current rate instead, with the fewest channels;
+        // frames are mixed to mono and resampled to 16 kHz downstream.
+        if cfg!(target_os = "macos") {
+            let current = device.default_input_config()?;
+            let rate = current.sample_rate();
+            let best = device
+                .supported_input_configs()?
+                .filter(|range| range.min_sample_rate() <= rate && range.max_sample_rate() >= rate)
+                .min_by_key(|range| {
+                    (
+                        range.channels(),
+                        std::cmp::Reverse(Self::format_score(range.sample_format())),
+                    )
+                });
+            return Ok(best.map_or(current, |range| range.with_sample_rate(rate)));
+        }
+
         let supported_configs = device.supported_input_configs()?;
         let mut best_config: Option<cpal::SupportedStreamConfigRange> = None;
 
@@ -385,15 +418,9 @@ impl AudioRecorder {
                 match best_config {
                     None => best_config = Some(config_range),
                     Some(ref current) => {
-                        // Prioritize F32 > I16 > I32 > others
-                        let score = |fmt: cpal::SampleFormat| match fmt {
-                            cpal::SampleFormat::F32 => 4,
-                            cpal::SampleFormat::I16 => 3,
-                            cpal::SampleFormat::I32 => 2,
-                            _ => 1,
-                        };
-
-                        if score(config_range.sample_format()) > score(current.sample_format()) {
+                        if Self::format_score(config_range.sample_format())
+                            > Self::format_score(current.sample_format())
+                        {
                             best_config = Some(config_range);
                         }
                     }
@@ -407,6 +434,16 @@ impl AudioRecorder {
 
         // If no config supports 16kHz, fall back to default
         Ok(device.default_input_config()?)
+    }
+
+    /// Prefer F32 > I16 > I32 > others.
+    fn format_score(format: cpal::SampleFormat) -> u8 {
+        match format {
+            cpal::SampleFormat::F32 => 4,
+            cpal::SampleFormat::I16 => 3,
+            cpal::SampleFormat::I32 => 2,
+            _ => 1,
+        }
     }
 
     fn wait_for_worker_init(
@@ -532,6 +569,15 @@ fn run_consumer(
 
                     let _ = reply_tx.send(std::mem::take(&mut processed_samples));
                     stop_flag.store(false, Ordering::Relaxed);
+                }
+                Cmd::Snapshot(max_samples, reply_tx) => {
+                    let total = if recording {
+                        processed_samples.len()
+                    } else {
+                        0
+                    };
+                    let tail = &processed_samples[total.saturating_sub(max_samples)..total];
+                    let _ = reply_tx.send((total, tail.to_vec()));
                 }
                 Cmd::Shutdown => {
                     stop_flag.store(true, Ordering::Relaxed);

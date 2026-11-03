@@ -11,13 +11,13 @@ interface RecordingRetentionPeriodProps {
 }
 
 export const RecordingRetentionPeriodSelector: React.FC<RecordingRetentionPeriodProps> =
-  React.memo(({ descriptionMode = "tooltip", grouped = false }) => {
+  React.memo(({ descriptionMode = "inline", grouped = false }) => {
     const { t } = useTranslation();
     const { getSetting, updateSetting, isUpdating } = useSettings();
 
     const selectedRetentionPeriod =
       getSetting("recording_retention_period") || "never";
-    const historyLimit = getSetting("history_limit") || 5;
+    const historyLimit = getSetting("history_limit") ?? 500;
 
     const handleRetentionPeriodSelect = async (period: string) => {
       await updateSetting(

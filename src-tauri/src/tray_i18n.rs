@@ -9,7 +9,8 @@
 //!
 //! To add a new tray menu item:
 //! 1. Add the key to en/translation.json under "tray"
-//! 2. Add translations to other locale files
+//! 2. Optionally add translations to other locale files (missing keys fall
+//!    back to English)
 //! 3. Update tray.rs to use the new field (e.g., strings.new_field)
 
 use once_cell::sync::Lazy;

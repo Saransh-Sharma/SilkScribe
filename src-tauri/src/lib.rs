@@ -1,24 +1,35 @@
 mod actions;
+mod app_context;
 #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
 mod apple_intelligence;
 mod audio_feedback;
 pub mod audio_toolkit;
+mod calendar;
+mod call_watch;
 pub mod cli;
 mod clipboard;
 mod commands;
+mod dictation;
+mod dictionary;
 mod helpers;
 mod input;
+mod live_preview;
 mod llm_client;
 mod managers;
+mod mcp;
+mod meeting_orb;
 mod overlay;
 pub mod portable;
 mod settings;
+mod share;
 mod shortcut;
 mod signal_handle;
+mod text_context;
 mod transcription_coordinator;
 mod tray;
 mod tray_i18n;
 mod utils;
+mod workspace;
 
 pub use cli::CliArgs;
 #[cfg(debug_assertions)]
@@ -84,7 +95,7 @@ fn build_console_filter() -> env_filter::Filter {
     builder.build()
 }
 
-fn show_main_window(app: &AppHandle) {
+pub(crate) fn show_main_window(app: &AppHandle) {
     if let Some(main_window) = app.get_webview_window("main") {
         if let Err(e) = main_window.unminimize() {
             log::error!("Failed to unminimize window: {}", e);
@@ -132,6 +143,49 @@ fn should_force_show_permissions_window(_app: &AppHandle) -> bool {
     false
 }
 
+/// Engines this small are cheap enough to keep warm for everyone.
+const PRELOAD_ALWAYS_MAX_MB: u64 = 600;
+/// Larger engines are only kept warm for people who dictate regularly: the
+/// default unload timeout is Never, so preloading them would hold gigabytes for
+/// someone who only records meetings.
+const PRELOAD_RECENT_DICTATION_SECS: i64 = 7 * 24 * 60 * 60;
+
+/// Loads the dictation engine in the background at launch, so the first
+/// shortcut press after starting the app doesn't wait for it to load.
+fn preload_dictation_engine(
+    app_handle: &AppHandle,
+    model_manager: &ModelManager,
+    transcription_manager: &TranscriptionManager,
+    history_manager: &HistoryManager,
+) {
+    let settings = get_settings(app_handle);
+    if !settings.has_completed_onboarding
+        || settings.model_unload_timeout == settings::ModelUnloadTimeout::Immediately
+    {
+        return;
+    }
+    let Some(model) = model_manager.get_model_info(&settings.selected_model) else {
+        return;
+    };
+    if !model.is_downloaded {
+        return;
+    }
+
+    let dictated_recently = || {
+        history_manager
+            .get_latest_entry()
+            .ok()
+            .flatten()
+            .is_some_and(|entry| {
+                chrono::Utc::now().timestamp() - entry.timestamp <= PRELOAD_RECENT_DICTATION_SECS
+            })
+    };
+    if model.size_mb <= PRELOAD_ALWAYS_MAX_MB || dictated_recently() {
+        log::info!("Preloading dictation engine '{}'", model.id);
+        transcription_manager.initiate_model_load();
+    }
+}
+
 fn initialize_core_logic(app_handle: &AppHandle) {
     // Note: Enigo (keyboard/mouse simulation) is NOT initialized here.
     // The frontend is responsible for calling the `initialize_enigo` command
@@ -157,6 +211,16 @@ fn initialize_core_logic(app_handle: &AppHandle) {
     app_handle.manage(model_manager.clone());
     app_handle.manage(transcription_manager.clone());
     app_handle.manage(history_manager.clone());
+    let workspace = workspace::Workspace::new(app_handle).expect("Failed to initialize workspace");
+    app_handle.manage(workspace.clone());
+    workspace.start_queue(app_handle.clone());
+
+    preload_dictation_engine(
+        app_handle,
+        &model_manager,
+        &transcription_manager,
+        &history_manager,
+    );
 
     // Note: Shortcuts are NOT initialized here.
     // The frontend is responsible for calling the `initialize_shortcuts` command
@@ -164,7 +228,7 @@ fn initialize_core_logic(app_handle: &AppHandle) {
     // This matches the pattern used for Enigo initialization.
 
     #[cfg(unix)]
-    let signals = Signals::new(&[SIGUSR1, SIGUSR2]).unwrap();
+    let signals = Signals::new([SIGUSR1, SIGUSR2]).unwrap();
     // Set up signal handlers for toggling transcription
     #[cfg(unix)]
     signal_handle::setup_signal_handler(app_handle.clone(), signals);
@@ -208,36 +272,85 @@ fn initialize_core_logic(app_handle: &AppHandle) {
                 }
             }
             "copy_last_transcript" => {
-                tray::copy_last_transcript(app);
+                tray::copy_last_transcript(app, false);
             }
+            "copy_last_original" => {
+                tray::copy_last_transcript(app, true);
+            }
+            // Menu handlers run on the main thread. Unloading waits for any in-flight
+            // inference, so do it on a worker thread to keep the UI responsive.
             "unload_model" => {
-                let transcription_manager = app.state::<Arc<TranscriptionManager>>();
-                if !transcription_manager.is_model_loaded() {
-                    log::warn!("No model is currently loaded.");
-                    return;
-                }
-                match transcription_manager.unload_model() {
-                    Ok(()) => log::info!("Model unloaded via tray."),
-                    Err(e) => log::error!("Failed to unload model via tray: {}", e),
-                }
+                let app = app.clone();
+                std::thread::spawn(move || {
+                    let transcription_manager = app.state::<Arc<TranscriptionManager>>();
+                    if !transcription_manager.is_model_loaded() {
+                        log::warn!("No model is currently loaded.");
+                        return;
+                    }
+                    match transcription_manager.unload_model() {
+                        Ok(()) => log::info!("Model unloaded via tray."),
+                        Err(e) => log::error!("Failed to unload model via tray: {}", e),
+                    }
+                });
             }
             "cancel" => {
-                use crate::utils::cancel_current_operation;
-
-                // Use centralized cancellation that handles all operations
-                cancel_current_operation(app);
+                let app = app.clone();
+                std::thread::spawn(move || crate::utils::cancel_current_operation(&app));
+            }
+            "meeting_stop" | "meeting_pause" => {
+                let app = app.clone();
+                let stop = event.id.as_ref() == "meeting_stop";
+                std::thread::spawn(move || {
+                    let ws = app.state::<Arc<workspace::Workspace>>().inner().clone();
+                    let operation = if stop {
+                        "stop"
+                    } else if workspace::capture::status(&ws)
+                        .map(|s| s.paused)
+                        .unwrap_or(false)
+                    {
+                        "resume"
+                    } else {
+                        "pause"
+                    };
+                    if let Err(e) = workspace::capture::control(&app, &ws, operation) {
+                        log::error!("Meeting control failed: {e}");
+                    }
+                });
             }
             "quit" => {
-                app.exit(0);
+                let app = app.clone();
+                std::thread::spawn(move || {
+                    // Saving the meeting is best effort: a panic here (say, a
+                    // poisoned lock) must not stop the app from quitting.
+                    let saved = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                        if let Some(ws) = app.try_state::<Arc<workspace::Workspace>>() {
+                            // Don't hold up quitting for the last live lines.
+                            workspace::capture::abandon_live_transcript(ws.inner());
+                            let recording = ws
+                                .recording
+                                .lock()
+                                .unwrap_or_else(|e| e.into_inner())
+                                .is_some();
+                            if recording {
+                                let _ = workspace::capture::control(&app, ws.inner(), "stop");
+                            }
+                        }
+                    }));
+                    if saved.is_err() {
+                        log::error!("Stopping the meeting on quit panicked; quitting anyway");
+                    }
+                    app.exit(0);
+                });
             }
             _ => {}
         })
         .build(app_handle)
         .unwrap();
     app_handle.manage(tray);
+    app_handle.manage(tray::TrayModel::default());
 
     // Initialize tray menu with idle state
-    utils::update_tray_menu(app_handle, &utils::TrayIconState::Idle, None);
+    tray::refresh_tray(app_handle);
 
     // Apply show_tray_icon setting
     let settings = settings::get_settings(app_handle);
@@ -248,12 +361,12 @@ fn initialize_core_logic(app_handle: &AppHandle) {
     // Refresh tray menu when model state changes
     let app_handle_for_listener = app_handle.clone();
     app_handle.listen("model-state-changed", move |_| {
-        tray::update_tray_menu(&app_handle_for_listener, &tray::TrayIconState::Idle, None);
+        tray::refresh_tray(&app_handle_for_listener);
     });
 
     // Get the autostart manager and configure based on user setting
     let autostart_manager = app_handle.autolaunch();
-    let settings = settings::get_settings(&app_handle);
+    let settings = settings::get_settings(app_handle);
 
     if settings.autostart_enabled {
         // Enable autostart if user has opted in
@@ -265,6 +378,11 @@ fn initialize_core_logic(app_handle: &AppHandle) {
 
     // Create the recording overlay window (hidden by default)
     utils::create_recording_overlay(app_handle);
+    // And the meeting orb, shown while a meeting records
+    meeting_orb::create(app_handle);
+    // Offers to take notes when a call starts (macOS)
+    call_watch::start(app_handle.clone());
+    calendar::start(app_handle.clone());
 }
 
 #[tauri::command]
@@ -288,6 +406,11 @@ fn trigger_update_check(app: AppHandle) -> Result<(), String> {
     }
 }
 
+/// Serves the library over MCP on stdin/stdout (`--mcp`); returns the exit code.
+pub fn serve_mcp() -> i32 {
+    mcp::serve()
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run(cli_args: CliArgs) {
     portable::init();
@@ -296,115 +419,7 @@ pub fn run(cli_args: CliArgs) {
     // when the variable is unset
     let console_filter = build_console_filter();
 
-    let specta_builder = Builder::<tauri::Wry>::new()
-        .commands(collect_commands![
-            shortcut::change_binding,
-            shortcut::reset_binding,
-            shortcut::change_ptt_setting,
-            shortcut::change_audio_feedback_setting,
-            shortcut::change_audio_feedback_volume_setting,
-            shortcut::change_sound_theme_setting,
-            shortcut::change_start_hidden_setting,
-            shortcut::change_autostart_setting,
-            shortcut::change_translate_to_english_setting,
-            shortcut::change_selected_language_setting,
-            shortcut::change_overlay_position_setting,
-            shortcut::change_debug_mode_setting,
-            shortcut::change_word_correction_threshold_setting,
-            shortcut::change_paste_method_setting,
-            shortcut::get_available_typing_tools,
-            shortcut::change_typing_tool_setting,
-            shortcut::change_external_script_path_setting,
-            shortcut::change_clipboard_handling_setting,
-            shortcut::change_auto_submit_setting,
-            shortcut::change_auto_submit_key_setting,
-            shortcut::change_post_process_enabled_setting,
-            shortcut::change_experimental_enabled_setting,
-            shortcut::change_post_process_base_url_setting,
-            shortcut::change_post_process_api_key_setting,
-            shortcut::change_post_process_model_setting,
-            shortcut::set_post_process_provider,
-            shortcut::fetch_post_process_models,
-            shortcut::add_post_process_prompt,
-            shortcut::update_post_process_prompt,
-            shortcut::delete_post_process_prompt,
-            shortcut::set_post_process_selected_prompt,
-            shortcut::update_custom_words,
-            shortcut::suspend_binding,
-            shortcut::resume_binding,
-            shortcut::change_mute_while_recording_setting,
-            shortcut::change_append_trailing_space_setting,
-            shortcut::change_app_language_setting,
-            shortcut::change_theme_setting,
-            shortcut::change_update_checks_setting,
-            shortcut::change_keyboard_implementation_setting,
-            shortcut::get_keyboard_implementation,
-            shortcut::change_show_tray_icon_setting,
-            shortcut::change_lazy_stream_close_setting,
-            shortcut::change_extra_recording_buffer_setting,
-            shortcut::change_whisper_accelerator_setting,
-            shortcut::change_ort_accelerator_setting,
-            shortcut::change_whisper_gpu_device,
-            shortcut::get_available_accelerators,
-            shortcut::native_keys::start_native_keys_recording,
-            shortcut::native_keys::stop_native_keys_recording,
-            trigger_update_check,
-            commands::cancel_operation,
-            commands::is_portable,
-            commands::get_app_dir_path,
-            commands::get_app_settings,
-            commands::get_default_settings,
-            commands::complete_onboarding,
-            commands::get_log_dir_path,
-            commands::set_log_level,
-            commands::open_recordings_folder,
-            commands::open_log_dir,
-            commands::open_app_data_dir,
-            commands::check_apple_intelligence_available,
-            commands::initialize_enigo,
-            commands::initialize_shortcuts,
-            commands::models::get_available_models,
-            commands::models::get_model_info,
-            commands::models::get_model_download_preflight,
-            commands::models::download_model,
-            commands::models::delete_model,
-            commands::models::cancel_download,
-            commands::models::set_active_model,
-            commands::models::get_current_model,
-            commands::models::get_transcription_model_status,
-            commands::models::is_model_loading,
-            commands::models::has_any_models_available,
-            commands::models::has_any_models_or_downloads,
-            commands::audio::update_microphone_mode,
-            commands::audio::get_microphone_mode,
-            commands::audio::get_available_microphones,
-            commands::audio::set_selected_microphone,
-            commands::audio::get_selected_microphone,
-            commands::audio::get_available_output_devices,
-            commands::audio::set_selected_output_device,
-            commands::audio::get_selected_output_device,
-            commands::audio::play_test_sound,
-            commands::audio::check_custom_sounds,
-            commands::audio::get_windows_microphone_permission_status,
-            commands::audio::open_microphone_privacy_settings,
-            commands::audio::set_clamshell_microphone,
-            commands::audio::get_clamshell_microphone,
-            commands::audio::is_recording,
-            commands::transcription::set_model_unload_timeout,
-            commands::transcription::get_model_load_status,
-            commands::transcription::unload_model_manually,
-            commands::history::get_home_dashboard_data,
-            commands::history::get_history_entries,
-            commands::history::search_history_entries,
-            commands::history::toggle_history_entry_saved,
-            commands::history::get_audio_file_path,
-            commands::history::delete_history_entry,
-            commands::history::retry_history_entry_transcription,
-            commands::history::update_history_limit,
-            commands::history::update_recording_retention_period,
-            helpers::clamshell::is_laptop,
-        ])
-        .events(collect_events![managers::history::HistoryUpdatePayload,]);
+    let specta_builder = command_builder();
 
     #[cfg(debug_assertions)] // <- Only export on non-release builds
     specta_builder
@@ -505,7 +520,7 @@ pub fn run(cli_args: CliArgs) {
 
             win_builder.build()?;
 
-            let mut settings = get_settings(&app.handle());
+            let mut settings = get_settings(app.handle());
 
             // CLI --debug flag overrides debug_mode and log level (runtime-only, not persisted)
             if cli_args.debug {
@@ -551,7 +566,7 @@ pub fn run(cli_args: CliArgs) {
                 api.prevent_close();
                 let _res = window.hide();
 
-                let settings = get_settings(&window.app_handle());
+                let settings = get_settings(window.app_handle());
                 let tray_visible =
                     settings.show_tray_icon && !window.app_handle().state::<CliArgs>().no_tray;
 
@@ -571,8 +586,8 @@ pub fn run(cli_args: CliArgs) {
             }
             tauri::WindowEvent::ThemeChanged(theme) => {
                 log::info!("Theme changed to: {:?}", theme);
-                // Update tray icon to match new theme, maintaining idle state
-                utils::change_tray_icon(&window.app_handle(), utils::TrayIconState::Idle);
+                // Redraw the tray icon for the new theme, keeping the current state
+                tray::refresh_tray(window.app_handle());
             }
             _ => {}
         })
@@ -586,4 +601,205 @@ pub fn run(cli_args: CliArgs) {
             }
             let _ = (app, event); // suppress unused warnings on non-macOS
         });
+}
+
+fn command_builder() -> Builder<tauri::Wry> {
+    Builder::<tauri::Wry>::new()
+        .commands(collect_commands![
+            shortcut::change_binding,
+            shortcut::reset_binding,
+            shortcut::change_ptt_setting,
+            shortcut::change_tap_to_lock_setting,
+            shortcut::change_live_text_preview_setting,
+            shortcut::change_audio_feedback_setting,
+            shortcut::change_audio_feedback_volume_setting,
+            shortcut::change_sound_theme_setting,
+            shortcut::change_start_hidden_setting,
+            shortcut::change_autostart_setting,
+            shortcut::change_translate_to_english_setting,
+            shortcut::change_selected_language_setting,
+            shortcut::change_overlay_position_setting,
+            shortcut::change_overlay_appearance_setting,
+            shortcut::change_debug_mode_setting,
+            shortcut::change_word_correction_threshold_setting,
+            shortcut::change_paste_method_setting,
+            shortcut::get_available_typing_tools,
+            shortcut::change_typing_tool_setting,
+            shortcut::change_external_script_path_setting,
+            shortcut::change_clipboard_handling_setting,
+            shortcut::change_auto_submit_setting,
+            shortcut::change_auto_submit_key_setting,
+            shortcut::change_post_process_enabled_setting,
+            shortcut::change_experimental_enabled_setting,
+            shortcut::change_post_process_base_url_setting,
+            shortcut::change_post_process_api_key_setting,
+            shortcut::change_post_process_model_setting,
+            shortcut::set_post_process_provider,
+            shortcut::fetch_post_process_models,
+            shortcut::add_post_process_prompt,
+            shortcut::update_post_process_prompt,
+            shortcut::delete_post_process_prompt,
+            shortcut::set_post_process_selected_prompt,
+            shortcut::update_custom_words,
+            dictionary::update_replacements,
+            dictionary::update_snippets,
+            dictionary::add_to_dictionary,
+            dictionary::import_dictionary,
+            dictionary::export_dictionary,
+            calendar::calendar_status,
+            calendar::connect_calendar,
+            calendar::disconnect_calendar,
+            calendar::change_calendar_reminders_setting,
+            calendar::upcoming_meetings,
+            calendar::current_calendar_meeting,
+            calendar::open_calendar_privacy,
+            shortcut::suspend_binding,
+            shortcut::resume_binding,
+            shortcut::change_mute_while_recording_setting,
+            shortcut::change_append_trailing_space_setting,
+            shortcut::change_app_language_setting,
+            shortcut::change_preview_languages_setting,
+            shortcut::change_mcp_enabled_setting,
+            shortcut::mcp_launch_command,
+            shortcut::change_theme_setting,
+            shortcut::change_update_checks_setting,
+            shortcut::change_keyboard_implementation_setting,
+            shortcut::get_keyboard_implementation,
+            shortcut::change_show_tray_icon_setting,
+            shortcut::change_lazy_stream_close_setting,
+            shortcut::change_extra_recording_buffer_setting,
+            shortcut::change_paste_delay_setting,
+            shortcut::change_ai_cleanup_on_main_setting,
+            shortcut::dismiss_ai_cleanup_card,
+            shortcut::change_meeting_consent_reminder_setting,
+            shortcut::change_per_app_styles_setting,
+            shortcut::change_nearby_text_context_setting,
+            shortcut::change_share_context_with_cloud_setting,
+            shortcut::change_app_style_setting,
+            shortcut::change_app_category_override,
+            commands::history::recent_dictation_apps,
+            shortcut::enable_on_device_cleanup,
+            shortcut::change_whisper_accelerator_setting,
+            shortcut::change_ort_accelerator_setting,
+            shortcut::change_whisper_gpu_device,
+            shortcut::get_available_accelerators,
+            shortcut::native_keys::start_native_keys_recording,
+            shortcut::native_keys::stop_native_keys_recording,
+            trigger_update_check,
+            commands::cancel_operation,
+            commands::is_portable,
+            commands::get_app_dir_path,
+            commands::get_app_settings,
+            commands::get_default_settings,
+            commands::complete_onboarding,
+            commands::get_log_dir_path,
+            commands::set_log_level,
+            commands::open_recordings_folder,
+            commands::open_log_dir,
+            commands::open_app_data_dir,
+            commands::check_apple_intelligence_available,
+            commands::initialize_enigo,
+            commands::initialize_shortcuts,
+            commands::models::get_available_models,
+            commands::models::get_model_info,
+            commands::models::get_model_download_preflight,
+            commands::models::download_model,
+            commands::models::delete_model,
+            commands::models::cancel_download,
+            commands::models::set_active_model,
+            commands::models::get_current_model,
+            commands::models::get_transcription_model_status,
+            commands::models::is_model_loading,
+            commands::models::has_any_models_available,
+            commands::models::has_any_models_or_downloads,
+            commands::audio::update_microphone_mode,
+            commands::audio::get_microphone_mode,
+            commands::audio::get_available_microphones,
+            commands::audio::set_selected_microphone,
+            commands::audio::get_selected_microphone,
+            commands::audio::get_available_output_devices,
+            commands::audio::set_selected_output_device,
+            commands::audio::get_selected_output_device,
+            commands::audio::play_test_sound,
+            commands::audio::check_custom_sounds,
+            commands::audio::get_windows_microphone_permission_status,
+            commands::audio::open_microphone_privacy_settings,
+            commands::audio::set_clamshell_microphone,
+            commands::audio::get_clamshell_microphone,
+            commands::audio::is_recording,
+            commands::transcription::set_model_unload_timeout,
+            commands::transcription::get_model_load_status,
+            commands::transcription::unload_model_manually,
+            workspace::commands::workspace_list,
+            workspace::commands::workspace_assess,
+            workspace::commands::workspace_cancel_download,
+            workspace::commands::workspace_remove_pack,
+            workspace::commands::workspace_storage,
+            workspace::commands::workspace_configure_job,
+            workspace::commands::workspace_resolve_notes,
+            workspace::commands::workspace_playback,
+            workspace::commands::workspace_get,
+            workspace::commands::workspace_get_draft,
+            workspace::commands::workspace_save_draft,
+            workspace::commands::workspace_discard_draft,
+            workspace::commands::workspace_import,
+            workspace::commands::workspace_import_batches,
+            workspace::commands::workspace_discard_import_batch,
+            workspace::commands::workspace_cancel_import,
+            workspace::commands::workspace_discard_partial_import,
+            workspace::commands::workspace_inspect_files,
+            workspace::commands::workspace_edit,
+            workspace::commands::workspace_cancel,
+            workspace::commands::workspace_retry,
+            workspace::commands::workspace_ask,
+            workspace::commands::workspace_cancel_ask,
+            workspace::commands::workspace_delete,
+            workspace::commands::workspace_export,
+            workspace::commands::workspace_export_preview,
+            workspace::commands::workspace_packs,
+            workspace::commands::workspace_install_pack,
+            workspace::commands::workspace_verify_pack,
+            workspace::commands::workspace_runtime_ready,
+            workspace::commands::workspace_recording_status,
+            workspace::commands::workspace_recording_start,
+            workspace::commands::workspace_recording_control,
+            workspace::commands::workspace_capture_devices,
+            workspace::commands::workspace_live_transcript,
+            workspace::commands::workspace_user_notes,
+            workspace::commands::workspace_save_user_notes,
+            workspace::commands::workspace_record_heads_up,
+            workspace::commands::workspace_run_recipe,
+            workspace::commands::workspace_set_folder,
+            workspace::commands::workspace_folders,
+            share::share_text,
+            meeting_orb::meeting_orb_snapshot,
+            meeting_orb::meeting_orb_set_expanded,
+            meeting_orb::meeting_orb_drag,
+            meeting_orb::meeting_orb_open_document,
+            meeting_orb::meeting_orb_copy,
+            meeting_orb::meeting_orb_answer_prompt,
+            call_watch::workspace_call_apps,
+            shortcut::change_suggest_meeting_notes_setting,
+            commands::history::get_dictation_summary,
+            commands::history::get_history_entries,
+            commands::history::search_history_entries,
+            commands::history::toggle_history_entry_saved,
+            commands::history::get_audio_file_path,
+            commands::history::delete_history_entry,
+            commands::history::retry_history_entry_transcription,
+            commands::history::update_history_limit,
+            commands::history::update_recording_retention_period,
+            helpers::clamshell::is_laptop,
+        ])
+        .events(collect_events![managers::history::HistoryUpdatePayload,])
+}
+
+#[test]
+fn export_workspace_bindings() {
+    command_builder()
+        .export(
+            Typescript::default().bigint(BigIntExportBehavior::Number),
+            "../src/bindings.ts",
+        )
+        .unwrap();
 }

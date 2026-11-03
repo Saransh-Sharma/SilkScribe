@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useSettings } from "../../../hooks/useSettings";
 import { commands, type PostProcessProvider } from "@/bindings";
 import type { ModelOption } from "./types";
@@ -57,6 +58,7 @@ export const usePostProcessProviderState = (): PostProcessProviderState => {
   }, [providers, selectedProviderId]);
 
   const isAppleProvider = selectedProvider?.id === APPLE_PROVIDER_ID;
+  const { t } = useTranslation();
   const [appleIntelligenceUnavailable, setAppleIntelligenceUnavailable] =
     useState(false);
 
@@ -68,9 +70,12 @@ export const usePostProcessProviderState = (): PostProcessProviderState => {
   const providerOptions = useMemo<DropdownOption[]>(() => {
     return providers.map((provider) => ({
       value: provider.id,
-      label: provider.label,
+      label:
+        provider.id === "custom"
+          ? t("settings.postProcessing.api.provider.custom")
+          : provider.label,
     }));
-  }, [providers]);
+  }, [providers, t]);
 
   const handleProviderSelect = useCallback(
     async (providerId: string) => {

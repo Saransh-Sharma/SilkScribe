@@ -8,14 +8,14 @@ import {
   checkMicrophonePermission,
 } from "tauri-plugin-macos-permissions-api";
 import "./App.css";
-import AccessibilityPermissions from "./components/AccessibilityPermissions";
-import Footer from "./components/footer";
+import Workspace from "./components/workspace/Workspace";
 import Onboarding, {
   OnboardingPractice,
   OnboardingSetup,
+  OnboardingShortcut,
   PermissionStep,
 } from "./components/onboarding";
-import { Sidebar, SidebarSection, SECTIONS_CONFIG } from "./components/Sidebar";
+import { SETTINGS_SECTIONS } from "./components/settings/sections";
 import { ErrorBoundary } from "./components/ui";
 import { useSettings } from "./hooks/useSettings";
 import { useSettingsStore } from "./stores/settingsStore";
@@ -31,6 +31,7 @@ type OnboardingStep =
   | "microphone_permission"
   | "accessibility_permission"
   | "setup"
+  | "shortcut"
   | "practice"
   | "done";
 
@@ -46,6 +47,8 @@ interface PasteFailedPayload {
 
 type ResolvedTheme = "light" | "dark";
 
+const DICTATION_OFF_TOAST_ID = "dictation-off";
+
 const getSystemTheme = (): ResolvedTheme => {
   if (
     typeof window !== "undefined" &&
@@ -55,21 +58,6 @@ const getSystemTheme = (): ResolvedTheme => {
   }
 
   return "light";
-};
-
-const renderSettingsContent = (
-  section: SidebarSection,
-  onNavigate: (section: SidebarSection) => void,
-  onStartPermissionRepair: () => void,
-) => {
-  const ActiveComponent =
-    SECTIONS_CONFIG[section]?.component || SECTIONS_CONFIG.general.component;
-  return (
-    <ActiveComponent
-      onNavigate={onNavigate}
-      onStartPermissionRepair={onStartPermissionRepair}
-    />
-  );
 };
 
 function App() {
@@ -82,7 +70,6 @@ function App() {
     accessibility: false,
     microphone: false,
   });
-  const [currentSection, setCurrentSection] = useState<SidebarSection>("home");
   const { settings, updateSetting } = useSettings();
   const [systemTheme, setSystemTheme] = useState<ResolvedTheme>(getSystemTheme);
   const direction = getLanguageDirection(i18n.language);
@@ -93,6 +80,9 @@ function App() {
     (state) => state.refreshOutputDevices,
   );
   const hasCompletedPostOnboardingInit = useRef(false);
+  // Set while finishing dictation setup from Home after skipping it at first,
+  // so the permission steps lead on to the engine, shortcut and practice.
+  const finishingDictationSetup = useRef(false);
   const themePreference = settings?.theme ?? "system";
   const resolvedTheme: ResolvedTheme =
     themePreference === "system" ? systemTheme : themePreference;
@@ -137,6 +127,7 @@ function App() {
     i18n.t("onboarding.progress.microphone"),
     i18n.t("onboarding.progress.accessibility"),
     i18n.t("onboarding.progress.setup"),
+    i18n.t("onboarding.progress.shortcut"),
     i18n.t("onboarding.progress.practice"),
   ];
 
@@ -161,6 +152,8 @@ function App() {
             "flex items-center gap-3 rounded-[var(--ss-radius-lg)] border border-ss-border-default bg-ss-bg-surface px-4 py-3 text-sm text-ss-text-primary shadow-[var(--ss-shadow-lift)]",
           title: "font-semibold text-ss-text-primary",
           description: "text-ss-text-tertiary",
+          actionButton:
+            "shrink-0 rounded-[var(--ss-radius-md)] bg-ss-brand-primary px-3 py-1.5 text-xs font-semibold text-ss-brand-primary-ink",
         },
       }}
     />
@@ -251,9 +244,12 @@ function App() {
       onboardingStep !== "welcome" &&
       onboardingStep !== "microphone_permission" &&
       onboardingStep !== "accessibility_permission" &&
+      permissions.microphone &&
+      permissions.accessibility &&
       !hasCompletedPostOnboardingInit.current
     ) {
       hasCompletedPostOnboardingInit.current = true;
+      toast.dismiss(DICTATION_OFF_TOAST_ID);
       Promise.all([
         commands.initializeEnigo(),
         commands.initializeShortcuts(),
@@ -263,7 +259,39 @@ function App() {
       refreshAudioDevices();
       refreshOutputDevices();
     }
-  }, [onboardingStep, refreshAudioDevices, refreshOutputDevices]);
+  }, [onboardingStep, permissions, refreshAudioDevices, refreshOutputDevices]);
+
+  // Permissions can be granted in System Settings while the app is open, or
+  // lost when a rebuilt app gets a new signature. Until shortcuts are running,
+  // re-check whenever the window comes back so dictation starts without a
+  // relaunch.
+  useEffect(() => {
+    if (onboardingStep !== "done" || hasCompletedPostOnboardingInit.current) {
+      return;
+    }
+
+    const recheck = () => {
+      if (hasCompletedPostOnboardingInit.current) return;
+      void loadPermissionSnapshot().then((snapshot) => {
+        setPermissions((current) =>
+          current.microphone === snapshot.microphone &&
+          current.accessibility === snapshot.accessibility
+            ? current
+            : snapshot,
+        );
+      });
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") recheck();
+    };
+
+    window.addEventListener("focus", recheck);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      window.removeEventListener("focus", recheck);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [onboardingStep, permissions]);
 
   // Handle keyboard shortcuts for debug mode toggle
   useEffect(() => {
@@ -307,9 +335,14 @@ function App() {
         return;
       }
 
-      setOnboardingStep(
-        getFirstMissingPermissionStep(currentPermissions) ?? "done",
-      );
+      setOnboardingStep("done");
+
+      if (
+        settingsResult.status === "ok" &&
+        (!currentPermissions.microphone || !currentPermissions.accessibility)
+      ) {
+        void warnIfDictationOff(settingsResult.data.selected_model);
+      }
     } catch (error) {
       console.error("Failed to check onboarding status:", error);
       const fallbackPermissions =
@@ -319,6 +352,26 @@ function App() {
       setPermissions(fallbackPermissions);
       setOnboardingStep("welcome");
     }
+  };
+
+  // Dictation was set up (its engine is installed) but macOS no longer allows
+  // the microphone or pasting, e.g. after installing a differently signed
+  // build. Say so instead of leaving the shortcut silently dead. People who
+  // only transcribe files never installed an engine, so they aren't nagged.
+  const warnIfDictationOff = async (selectedModel: string | undefined) => {
+    if (!selectedModel) return;
+    const modelInfo = await commands.getModelInfo(selectedModel);
+    if (modelInfo.status !== "ok" || !modelInfo.data?.is_downloaded) return;
+
+    toast.warning(t("feedback.dictationOff.title"), {
+      id: DICTATION_OFF_TOAST_ID,
+      description: t("feedback.dictationOff.description"),
+      duration: Infinity,
+      action: {
+        label: t("feedback.dictationOff.action"),
+        onClick: () => void handleStartPermissionRepair(),
+      },
+    });
   };
 
   const handleWelcomeContinue = async () => {
@@ -339,12 +392,26 @@ function App() {
       return;
     }
 
-    setOnboardingStep(hasCompletedOnboarding ? "done" : "setup");
+    setOnboardingStep(
+      hasCompletedOnboarding && !finishingDictationSetup.current
+        ? "done"
+        : "setup",
+    );
   };
 
   const handlePracticeComplete = () => {
+    finishingDictationSetup.current = false;
     setHasCompletedOnboarding(true);
     setOnboardingStep("done");
+  };
+
+  const handleFinishDictationSetup = async () => {
+    const currentPermissions = await loadPermissionSnapshot();
+    setPermissions(currentPermissions);
+    finishingDictationSetup.current = true;
+    setOnboardingStep(
+      getFirstMissingPermissionStep(currentPermissions) ?? "setup",
+    );
   };
 
   const handleStartPermissionRepair = async () => {
@@ -365,6 +432,13 @@ function App() {
       <>
         {toaster}
         <Onboarding
+          onOpenWorkspace={async () => {
+            const result = await commands.completeOnboarding();
+            if (result.status === "ok") {
+              setHasCompletedOnboarding(true);
+              setOnboardingStep("done");
+            }
+          }}
           onContinue={handleWelcomeContinue}
           stepLabels={onboardingStepLabels}
           activeStep={0}
@@ -373,18 +447,21 @@ function App() {
     );
   }
 
+  // Finishing dictation setup from Home runs the onboarding steps, not repair.
+  const repairing = hasCompletedOnboarding && !finishingDictationSetup.current;
+
   if (onboardingStep === "microphone_permission") {
-    const stepLabels = hasCompletedOnboarding
+    const stepLabels = repairing
       ? getRepairStepLabels(permissions)
       : onboardingStepLabels;
-    const activeStep = hasCompletedOnboarding ? 0 : 1;
+    const activeStep = repairing ? 0 : 1;
 
     return (
       <>
         {toaster}
         <PermissionStep
           permission="microphone"
-          mode={hasCompletedOnboarding ? "repair" : "onboarding"}
+          mode={repairing ? "repair" : "onboarding"}
           stepLabels={stepLabels}
           activeStep={activeStep}
           onContinue={handlePermissionContinue}
@@ -394,21 +471,17 @@ function App() {
   }
 
   if (onboardingStep === "accessibility_permission") {
-    const stepLabels = hasCompletedOnboarding
+    const stepLabels = repairing
       ? getRepairStepLabels(permissions)
       : onboardingStepLabels;
-    const activeStep = hasCompletedOnboarding
-      ? stepLabels.length > 1
-        ? 1
-        : 0
-      : 2;
+    const activeStep = repairing ? (stepLabels.length > 1 ? 1 : 0) : 2;
 
     return (
       <>
         {toaster}
         <PermissionStep
           permission="accessibility"
-          mode={hasCompletedOnboarding ? "repair" : "onboarding"}
+          mode={repairing ? "repair" : "onboarding"}
           stepLabels={stepLabels}
           activeStep={activeStep}
           onContinue={handlePermissionContinue}
@@ -422,9 +495,22 @@ function App() {
       <>
         {toaster}
         <OnboardingSetup
-          onReady={() => setOnboardingStep("practice")}
+          onReady={() => setOnboardingStep("shortcut")}
           stepLabels={onboardingStepLabels}
           activeStep={3}
+        />
+      </>
+    );
+  }
+
+  if (onboardingStep === "shortcut") {
+    return (
+      <>
+        {toaster}
+        <OnboardingShortcut
+          onContinue={() => setOnboardingStep("practice")}
+          stepLabels={onboardingStepLabels}
+          activeStep={4}
         />
       </>
     );
@@ -437,7 +523,7 @@ function App() {
         <OnboardingPractice
           onComplete={handlePracticeComplete}
           stepLabels={onboardingStepLabels}
-          activeStep={4}
+          activeStep={5}
         />
       </>
     );
@@ -446,44 +532,18 @@ function App() {
   return (
     <>
       {toaster}
-      <div
-        dir={direction}
-        data-theme={resolvedTheme}
-        className="relative h-[100dvh] overflow-hidden select-none cursor-default bg-transparent text-ss-text-primary"
-      >
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-ss-brand-highlight/8 via-ss-brand-secondary/4 to-transparent" />
-        <div className="pointer-events-none absolute -left-20 top-12 h-48 w-48 rounded-full bg-ss-brand-secondary/10 blur-3xl" />
-        <div className="pointer-events-none absolute right-0 top-0 h-56 w-56 rounded-full bg-ss-brand-highlight/12 blur-3xl" />
-
-        <div className="relative flex h-full flex-col px-4 py-4">
-          <div className="flex min-h-0 flex-1 overflow-hidden rounded-[28px] border border-ss-border-subtle bg-[color-mix(in_srgb,var(--ss-bg-surface)_92%,transparent)] shadow-[var(--ss-shadow-lift)] backdrop-blur-sm">
-            <Sidebar
-              activeSection={currentSection}
-              onSectionChange={setCurrentSection}
-            />
-            <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-              <div className="app-content-scroll flex-1 overflow-y-auto">
-                <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-6 px-5 py-6">
-                  <ErrorBoundary>
-                    <AccessibilityPermissions
-                      onStartRepair={() => {
-                        void handleStartPermissionRepair();
-                      }}
-                    />
-                    {renderSettingsContent(
-                      currentSection,
-                      setCurrentSection,
-                      () => {
-                        void handleStartPermissionRepair();
-                      },
-                    )}
-                  </ErrorBoundary>
-                </div>
-              </div>
-            </div>
-          </div>
-          <Footer />
-        </div>
+      <div dir={direction} data-theme={resolvedTheme}>
+        <ErrorBoundary>
+          <Workspace
+            renderSettings={(section) => {
+              const Section = SETTINGS_SECTIONS[section];
+              return <Section />;
+            }}
+            onSetupDictation={() => {
+              void handleFinishDictationSetup();
+            }}
+          />
+        </ErrorBoundary>
       </div>
     </>
   );

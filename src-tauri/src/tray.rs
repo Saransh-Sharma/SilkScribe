@@ -3,7 +3,7 @@ use crate::managers::transcription::TranscriptionManager;
 use crate::settings;
 use crate::tray_i18n::get_tray_translations;
 use log::{error, info, warn};
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use tauri::image::Image;
 use tauri::menu::{Menu, MenuItem, PredefinedMenuItem};
 use tauri::tray::TrayIcon;
@@ -61,30 +61,108 @@ pub fn get_icon_path(theme: AppTheme, state: TrayIconState) -> &'static str {
     }
 }
 
-pub fn change_tray_icon(app: &AppHandle, icon: TrayIconState) {
-    let tray = app.state::<TrayIcon>();
-    let theme = get_current_theme(app);
-
-    let icon_path = get_icon_path(theme, icon.clone());
-
-    let _ = tray.set_icon(Some(
-        Image::from_path(
-            app.path()
-                .resolve(icon_path, tauri::path::BaseDirectory::Resource)
-                .expect("failed to resolve"),
-        )
-        .expect("failed to set icon"),
-    ));
-
-    // Update menu based on state
-    update_tray_menu(app, &icon, None);
+/// What the tray shows. Any thread may update it; only the main thread renders it.
+#[derive(Clone, Debug)]
+struct TrayView {
+    dictation: TrayIconState,
+    /// `Some(paused)` while a meeting is recording or paused.
+    meeting: Option<bool>,
 }
 
-pub fn update_tray_menu(app: &AppHandle, state: &TrayIconState, locale: Option<&str>) {
-    let settings = settings::get_settings(app);
+impl Default for TrayView {
+    fn default() -> Self {
+        Self {
+            dictation: TrayIconState::Idle,
+            meeting: None,
+        }
+    }
+}
 
-    let locale = locale.unwrap_or(&settings.app_language);
-    let strings = get_tray_translations(Some(locale.to_string()));
+/// Tray state shared by dictation and meeting recording. The lock is a leaf: it is
+/// only held to copy fields, never across menu, icon, or other native calls.
+#[derive(Default)]
+pub struct TrayModel(Mutex<TrayView>);
+
+/// Show the dictation state in the tray icon and menu.
+pub fn change_tray_icon(app: &AppHandle, icon: TrayIconState) {
+    update_view(app, |view| view.dictation = icon);
+}
+
+/// Rebuild the tray from the current state, e.g. after a language, theme, or model change.
+pub fn refresh_tray(app: &AppHandle) {
+    update_view(app, |_| {});
+}
+
+/// Show or clear the meeting controls. `Some(paused)` while a meeting is active.
+pub fn set_tray_meeting(app: &AppHandle, meeting: Option<bool>) {
+    update_view(app, |view| view.meeting = meeting);
+}
+
+fn update_view(app: &AppHandle, update: impl FnOnce(&mut TrayView)) {
+    if let Some(model) = app.try_state::<TrayModel>() {
+        update(&mut model.0.lock().unwrap_or_else(|e| e.into_inner()));
+    }
+    // Menu and icon calls made off the main thread block until the main thread runs
+    // them, which can deadlock against locks held there. Post the render instead;
+    // renders run in order and always read the latest state.
+    let handle = app.clone();
+    if let Err(e) = app.run_on_main_thread(move || render(&handle)) {
+        error!("Failed to schedule tray update: {}", e);
+    }
+}
+
+fn render(app: &AppHandle) {
+    let Some(tray) = app.try_state::<TrayIcon>() else {
+        return;
+    };
+    let view = app
+        .try_state::<TrayModel>()
+        .map(|model| model.0.lock().unwrap_or_else(|e| e.into_inner()).clone())
+        .unwrap_or_default();
+
+    let icon_path = get_icon_path(get_current_theme(app), view.dictation.clone());
+    match app
+        .path()
+        .resolve(icon_path, tauri::path::BaseDirectory::Resource)
+        .map_err(|e| e.to_string())
+        .and_then(|path| Image::from_path(path).map_err(|e| e.to_string()))
+    {
+        Ok(image) => {
+            let _ = tray.set_icon(Some(image));
+        }
+        Err(e) => error!("Failed to load tray icon {}: {}", icon_path, e),
+    }
+
+    match build_menu(app, &view) {
+        Ok(menu) => {
+            let _ = tray.set_menu(Some(menu));
+        }
+        Err(e) => error!("Failed to build tray menu: {}", e),
+    }
+    let _ = tray.set_icon_as_template(true);
+}
+
+/// Menu entries from top to bottom; `"-"` is a separator.
+fn menu_items(dictation: &TrayIconState, meeting: Option<bool>) -> Vec<&'static str> {
+    let mut items = vec!["version"];
+    if meeting.is_some() {
+        items.extend(["meeting_pause", "meeting_stop"]);
+    }
+    items.push("-");
+    if *dictation != TrayIconState::Idle {
+        items.extend(["cancel", "-"]);
+    }
+    items.extend(["copy_last_transcript", "copy_last_original"]);
+    if *dictation == TrayIconState::Idle {
+        items.push("unload_model");
+    }
+    items.extend(["-", "settings", "check_updates", "-", "quit"]);
+    items
+}
+
+fn build_menu(app: &AppHandle, view: &TrayView) -> tauri::Result<Menu<tauri::Wry>> {
+    let settings = settings::get_settings(app);
+    let strings = get_tray_translations(Some(settings::effective_app_language(&settings)));
 
     // Platform-specific accelerators
     #[cfg(target_os = "macos")]
@@ -92,95 +170,55 @@ pub fn update_tray_menu(app: &AppHandle, state: &TrayIconState, locale: Option<&
     #[cfg(not(target_os = "macos"))]
     let (settings_accelerator, quit_accelerator) = (Some("Ctrl+,"), Some("Ctrl+Q"));
 
-    // Create common menu items
     let version_label = if cfg!(debug_assertions) {
         format!("SilkScribe v{} (Dev)", env!("CARGO_PKG_VERSION"))
     } else {
         format!("SilkScribe v{}", env!("CARGO_PKG_VERSION"))
     };
-    let version_i = MenuItem::with_id(app, "version", &version_label, false, None::<&str>)
-        .expect("failed to create version item");
-    let settings_i = MenuItem::with_id(
-        app,
-        "settings",
-        &strings.settings,
-        true,
-        settings_accelerator,
-    )
-    .expect("failed to create settings item");
-    let check_updates_i = MenuItem::with_id(
-        app,
-        "check_updates",
-        &strings.check_updates,
-        settings.update_checks_enabled,
-        None::<&str>,
-    )
-    .expect("failed to create check updates item");
-    let copy_last_transcript_i = MenuItem::with_id(
-        app,
-        "copy_last_transcript",
-        &strings.copy_last_transcript,
-        true,
-        None::<&str>,
-    )
-    .expect("failed to create copy last transcript item");
-    let model_loaded = app.state::<Arc<TranscriptionManager>>().is_model_loaded();
-    let unload_model_i = MenuItem::with_id(
-        app,
-        "unload_model",
-        &strings.unload_model,
-        model_loaded,
-        None::<&str>,
-    )
-    .expect("failed to create unload model item");
-    let quit_i = MenuItem::with_id(app, "quit", &strings.quit, true, quit_accelerator)
-        .expect("failed to create quit item");
-    let separator = || PredefinedMenuItem::separator(app).expect("failed to create separator");
-
-    let menu = match state {
-        TrayIconState::Recording | TrayIconState::Transcribing => {
-            let cancel_i = MenuItem::with_id(app, "cancel", &strings.cancel, true, None::<&str>)
-                .expect("failed to create cancel item");
-            Menu::with_items(
-                app,
-                &[
-                    &version_i,
-                    &separator(),
-                    &cancel_i,
-                    &separator(),
-                    &copy_last_transcript_i,
-                    &separator(),
-                    &settings_i,
-                    &check_updates_i,
-                    &separator(),
-                    &quit_i,
-                ],
-            )
-            .expect("failed to create menu")
-        }
-        TrayIconState::Idle => Menu::with_items(
-            app,
-            &[
-                &version_i,
-                &separator(),
-                &copy_last_transcript_i,
-                &unload_model_i,
-                &separator(),
-                &settings_i,
-                &check_updates_i,
-                &separator(),
-                &quit_i,
-            ],
-        )
-        .expect("failed to create menu"),
+    // The "meeting_pause" id toggles pause/resume; only the label changes.
+    let pause_label = if view.meeting == Some(true) {
+        &strings.meeting_resume
+    } else {
+        &strings.meeting_pause
     };
 
-    let tray = app.state::<TrayIcon>();
-    let _ = tray.set_menu(Some(menu));
-    let _ = tray.set_icon_as_template(true);
+    let menu = Menu::new(app)?;
+    for id in menu_items(&view.dictation, view.meeting) {
+        let item = |text: &str, enabled: bool, accelerator: Option<&str>| {
+            MenuItem::with_id(app, id, text, enabled, accelerator)
+        };
+        match id {
+            "-" => menu.append(&PredefinedMenuItem::separator(app)?)?,
+            "version" => menu.append(&item(&version_label, false, None)?)?,
+            "meeting_pause" => menu.append(&item(pause_label, true, None)?)?,
+            "meeting_stop" => menu.append(&item(&strings.meeting_stop, true, None)?)?,
+            "cancel" => menu.append(&item(&strings.cancel, true, None)?)?,
+            "copy_last_transcript" => {
+                menu.append(&item(&strings.copy_last_transcript, true, None)?)?
+            }
+            "copy_last_original" => menu.append(&item(&strings.copy_last_original, true, None)?)?,
+            "unload_model" => {
+                let model_loaded = app.state::<Arc<TranscriptionManager>>().is_model_loaded();
+                menu.append(&item(&strings.unload_model, model_loaded, None)?)?
+            }
+            "settings" => menu.append(&item(&strings.settings, true, settings_accelerator)?)?,
+            "check_updates" => menu.append(&item(
+                &strings.check_updates,
+                settings.update_checks_enabled,
+                None,
+            )?)?,
+            "quit" => menu.append(&item(&strings.quit, true, quit_accelerator)?)?,
+            other => warn!("Unknown tray menu item '{}'", other),
+        }
+    }
+    Ok(menu)
 }
 
-fn last_transcript_text(entry: &HistoryEntry) -> &str {
+/// The delivered text, or with `original` the transcript before AI cleanup.
+fn last_transcript_text(entry: &HistoryEntry, original: bool) -> &str {
+    if original {
+        return &entry.transcription_text;
+    }
     entry
         .post_processed_text
         .as_deref()
@@ -196,7 +234,8 @@ pub fn set_tray_visibility(app: &AppHandle, visible: bool) {
     }
 }
 
-pub fn copy_last_transcript(app: &AppHandle) {
+/// Copies the last dictation, or with `original` its text before AI cleanup.
+pub fn copy_last_transcript(app: &AppHandle, original: bool) {
     let history_manager = app.state::<Arc<HistoryManager>>();
     let entry = match history_manager.get_latest_entry() {
         Ok(Some(entry)) => entry,
@@ -210,7 +249,10 @@ pub fn copy_last_transcript(app: &AppHandle) {
         }
     };
 
-    if let Err(err) = app.clipboard().write_text(last_transcript_text(&entry)) {
+    if let Err(err) = app
+        .clipboard()
+        .write_text(last_transcript_text(&entry, original))
+    {
         error!("Failed to copy last transcript to clipboard: {}", err);
         return;
     }
@@ -220,7 +262,7 @@ pub fn copy_last_transcript(app: &AppHandle) {
 
 #[cfg(test)]
 mod tests {
-    use super::last_transcript_text;
+    use super::{last_transcript_text, menu_items, TrayIconState};
     use crate::managers::history::HistoryEntry;
 
     fn build_entry(transcription: &str, post_processed: Option<&str>) -> HistoryEntry {
@@ -240,12 +282,45 @@ mod tests {
     #[test]
     fn uses_post_processed_text_when_available() {
         let entry = build_entry("raw", Some("processed"));
-        assert_eq!(last_transcript_text(&entry), "processed");
+        assert_eq!(last_transcript_text(&entry, false), "processed");
+        assert_eq!(last_transcript_text(&entry, true), "raw");
     }
 
     #[test]
     fn falls_back_to_raw_transcription() {
         let entry = build_entry("raw", None);
-        assert_eq!(last_transcript_text(&entry), "raw");
+        assert_eq!(last_transcript_text(&entry, false), "raw");
+        assert_eq!(last_transcript_text(&entry, true), "raw");
+    }
+
+    #[test]
+    fn idle_menu_offers_unload_but_not_cancel() {
+        let items = menu_items(&TrayIconState::Idle, None);
+        assert!(items.contains(&"unload_model"));
+        assert!(!items.contains(&"cancel"));
+        assert!(!items.contains(&"meeting_stop"));
+    }
+
+    #[test]
+    fn dictation_menu_offers_cancel() {
+        for state in [TrayIconState::Recording, TrayIconState::Transcribing] {
+            let items = menu_items(&state, None);
+            assert!(items.contains(&"cancel"));
+            assert!(!items.contains(&"unload_model"));
+        }
+    }
+
+    #[test]
+    fn meeting_controls_survive_dictation() {
+        for state in [
+            TrayIconState::Idle,
+            TrayIconState::Recording,
+            TrayIconState::Transcribing,
+        ] {
+            let items = menu_items(&state, Some(false));
+            assert_eq!(&items[..3], &["version", "meeting_pause", "meeting_stop"]);
+        }
+        let items = menu_items(&TrayIconState::Recording, Some(true));
+        assert!(items.contains(&"cancel") && items.contains(&"meeting_stop"));
     }
 }

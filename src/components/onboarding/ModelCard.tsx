@@ -11,6 +11,8 @@ import { useTranslation } from "react-i18next";
 import type { ModelInfo } from "@/bindings";
 import { LANGUAGES } from "../../lib/constants/languages";
 import { formatModelSize } from "../../lib/utils/format";
+import { formatBytes } from "../../lib/utils/download";
+import { useModelStore } from "../../stores/modelStore";
 import {
   getTranslatedModelDescription,
   getTranslatedModelName,
@@ -39,7 +41,8 @@ export type ModelCardStatus =
   | "extracting"
   | "switching"
   | "active"
-  | "available";
+  | "available"
+  | "error";
 
 type ModelCardLayout = "onboarding" | "settings";
 
@@ -56,6 +59,7 @@ interface ModelCardProps {
   onCancel?: (modelId: string) => void;
   downloadProgress?: number;
   downloadSpeed?: number;
+  downloadBytes?: { downloaded: number; total: number };
   showRecommended?: boolean;
 }
 
@@ -76,7 +80,9 @@ const MetricItem: React.FC<MetricItemProps> = ({
 
   return (
     <div
-      className={`rounded-[14px] border border-ss-border-subtle bg-ss-bg-surface-alt ${dense ? "px-2.5 py-2" : "px-3 py-2.5"}`}
+      className={
+        dense ? "py-1" : "rounded-[14px] bg-ss-bg-surface-alt px-3 py-2.5"
+      }
     >
       <div
         className={`mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ss-text-tertiary ${dense ? "" : "leading-none"}`}
@@ -111,6 +117,44 @@ const MetadataChip: React.FC<MetadataChipProps> = ({ icon, label, title }) => (
   </div>
 );
 
+const CircularProgress = ({ value }: { value: number }) => {
+  const safeValue = Math.max(0, Math.min(100, value));
+  const radius = 18;
+  const circumference = 2 * Math.PI * radius;
+
+  return (
+    <div
+      className="ss-circular-progress relative grid h-12 w-12 shrink-0 place-items-center"
+      aria-hidden="true"
+    >
+      <svg viewBox="0 0 48 48" className="absolute inset-0 -rotate-90">
+        <circle
+          cx="24"
+          cy="24"
+          r={radius}
+          fill="none"
+          stroke="var(--ss-border-subtle)"
+          strokeWidth="3"
+        />
+        <circle
+          cx="24"
+          cy="24"
+          r={radius}
+          fill="none"
+          stroke="var(--ss-brand-secondary)"
+          strokeLinecap="round"
+          strokeWidth="3"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference * (1 - safeValue / 100)}
+        />
+      </svg>
+      <span className="text-[9px] font-bold tabular-nums text-ss-text-secondary">
+        {Math.round(safeValue)}%
+      </span>
+    </div>
+  );
+};
+
 const ModelCard: React.FC<ModelCardProps> = ({
   model,
   variant = "default",
@@ -124,9 +168,13 @@ const ModelCard: React.FC<ModelCardProps> = ({
   onCancel,
   downloadProgress,
   downloadSpeed,
+  downloadBytes,
   showRecommended = true,
 }) => {
   const { t } = useTranslation();
+  const downloadError = useModelStore(
+    (state) => state.downloadErrors[model.id],
+  );
   const isOnboardingLayout = layout === "onboarding";
   const isFeatured = variant === "featured";
   const isClickable =
@@ -184,21 +232,23 @@ const ModelCard: React.FC<ModelCardProps> = ({
 
   const getRootClasses = () => {
     const baseClasses =
-      "group relative flex flex-col rounded-[18px] border text-left transition-[transform,background-color,border-color,box-shadow,opacity] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/40";
+      "ss-model-card group relative flex flex-col rounded-[22px] border text-left transition-[transform,background-color,border-color,box-shadow,opacity] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/40";
     const sizeClasses = isOnboardingLayout
       ? `${isFeatured ? "min-h-[168px]" : "min-h-[152px]"} gap-4 px-[18px] py-[18px] shadow-[var(--ss-shadow-card)]`
-      : "min-h-[112px] gap-3 px-4 py-4";
+      : "min-h-[104px] gap-3 px-4 py-3.5 shadow-[var(--ss-shadow-hairline)]";
     const surfaceClasses =
       status === "active"
-        ? "border-ss-brand-secondary/55 bg-ss-brand-secondary/10 shadow-[var(--ss-shadow-lift)]"
-        : isFeatured
-          ? "border-ss-brand-secondary/28 bg-gradient-to-br from-ss-brand-secondary/7 via-ss-bg-surface to-ss-brand-highlight/10"
-          : "border-ss-border-default bg-ss-bg-surface";
+        ? "border-ss-brand-secondary/40 bg-ss-brand-secondary/8"
+        : status === "error"
+          ? "border-ss-state-danger/30 bg-ss-state-danger/5"
+          : isFeatured
+            ? "border-ss-brand-secondary/28 bg-gradient-to-br from-ss-brand-secondary/7 via-ss-bg-surface to-ss-brand-highlight/10"
+            : "border-ss-border-default bg-ss-bg-surface";
     const stateClasses = isVisuallyDisabled
       ? "opacity-60"
       : isCardInteractive
-        ? "cursor-pointer hover:-translate-y-0.5 hover:border-ss-brand-secondary/35 hover:bg-ss-bg-elevated hover:shadow-[var(--ss-shadow-lift)] active:translate-y-0 active:scale-[0.995]"
-        : "cursor-default hover:-translate-y-0.5 hover:shadow-[var(--ss-shadow-lift)]";
+        ? "cursor-pointer hover:border-ss-brand-secondary/35 hover:bg-ss-bg-elevated active:scale-[0.995]"
+        : "cursor-default";
 
     return [baseClasses, sizeClasses, surfaceClasses, stateClasses, className]
       .filter(Boolean)
@@ -238,6 +288,14 @@ const ModelCard: React.FC<ModelCardProps> = ({
         <Badge key="switching" variant="secondary">
           <Loader2 className="mr-1 h-3 w-3 animate-spin" />
           {t("modelSelector.switching")}
+        </Badge>,
+      );
+    }
+
+    if (status === "error") {
+      badges.push(
+        <Badge key="error" tone="danger">
+          {t("modelSelector.downloadErrorTitle")}
         </Badge>,
       );
     }
@@ -310,41 +368,70 @@ const ModelCard: React.FC<ModelCardProps> = ({
 
     if (status === "downloading") {
       const safeProgress = Math.max(0, Math.min(100, downloadProgress ?? 0));
+      const etaSeconds =
+        downloadBytes && downloadSpeed && downloadSpeed > 0
+          ? Math.max(0, downloadBytes.total - downloadBytes.downloaded) /
+            (downloadSpeed * 1024 * 1024)
+          : 0;
+      const etaLabel = etaSeconds
+        ? etaSeconds < 60
+          ? t("modelSelector.downloadProgress.etaSeconds", {
+              count: Math.max(1, Math.ceil(etaSeconds)),
+            })
+          : t("modelSelector.downloadProgress.etaMinutes", {
+              count: Math.ceil(etaSeconds / 60),
+            })
+        : null;
 
       return (
         <div
-          className={`w-full rounded-[14px] border border-ss-border-subtle bg-ss-bg-surface-alt ${isOnboardingLayout ? "px-3 py-3" : "px-3 py-2.5"}`}
+          className={`ss-model-progress grid w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-3 rounded-[16px] border border-ss-border-subtle bg-ss-bg-surface-alt ${isOnboardingLayout ? "px-3 py-3" : "px-3 py-2.5"}`}
         >
-          <div className="h-2 w-full overflow-hidden rounded-full bg-ss-bg-elevated">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-ss-brand-highlight to-ss-brand-secondary transition-all duration-300"
-              style={{ width: `${safeProgress}%` }}
-            />
-          </div>
-          <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-ss-text-tertiary">
-            <span>
-              {t("modelSelector.downloading", {
-                percentage: Math.round(safeProgress),
-              })}
-            </span>
-            <div className="flex flex-wrap items-center gap-2">
-              {downloadSpeed !== undefined && downloadSpeed > 0 && (
-                <span className="tabular-nums">
-                  {t("modelSelector.downloadSpeed", {
-                    speed: downloadSpeed.toFixed(1),
-                  })}
-                </span>
-              )}
-              {onCancel && !isOnboardingLayout && (
-                <Button
-                  variant="danger-ghost"
-                  size="sm"
-                  onClick={handleCancel}
-                  aria-label={t("modelSelector.cancelDownload")}
-                >
-                  {t("modelSelector.cancel")}
-                </Button>
-              )}
+          <CircularProgress value={safeProgress} />
+          <div className="min-w-0">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-ss-bg-elevated">
+              <div
+                className="h-full origin-left rounded-full bg-gradient-to-r from-ss-brand-highlight to-ss-brand-secondary transition-transform duration-300 rtl:origin-right"
+                style={{ transform: `scaleX(${safeProgress / 100})` }}
+              />
+            </div>
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-ss-text-tertiary">
+              <span>
+                {downloadBytes && downloadBytes.total > 0
+                  ? t("modelSelector.downloadProgress.downloadedOf", {
+                      downloaded: formatModelSize(
+                        downloadBytes.downloaded / 1024 / 1024,
+                      ),
+                      total: formatModelSize(downloadBytes.total / 1024 / 1024),
+                    })
+                  : t("modelSelector.downloading", {
+                      percentage: Math.round(safeProgress),
+                    })}
+              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                {downloadSpeed !== undefined && downloadSpeed > 0 && (
+                  <span className="tabular-nums">
+                    {t("modelSelector.downloadSpeed", {
+                      speed: downloadSpeed.toFixed(1),
+                    })}
+                  </span>
+                )}
+                {etaLabel ? (
+                  <span>
+                    {t("modelSelector.downloadProgress.eta", { eta: etaLabel })}
+                  </span>
+                ) : null}
+                {onCancel && !isOnboardingLayout && (
+                  <Button
+                    variant="danger-ghost"
+                    size="sm"
+                    onClick={handleCancel}
+                    aria-label={t("modelSelector.cancelDownload")}
+                  >
+                    {t("modelSelector.cancel")}
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -408,6 +495,7 @@ const ModelCard: React.FC<ModelCardProps> = ({
       onKeyDown={handleCardKeyDown}
       role={isCardInteractive ? "button" : undefined}
       tabIndex={isCardInteractive ? 0 : undefined}
+      data-status={status}
       className={getRootClasses()}
     >
       {status === "active" && (
@@ -470,6 +558,31 @@ const ModelCard: React.FC<ModelCardProps> = ({
       )}
 
       {renderProgress()}
+
+      {status === "error" && onDownload ? (
+        <div className="flex items-center justify-between gap-3 rounded-[var(--ss-radius-sm)] bg-ss-state-danger/8 px-3 py-2">
+          <p className="text-xs text-ss-state-danger">
+            {downloadError?.code === "insufficient_space"
+              ? t("modelSelector.downloadErrors.space", {
+                  required: formatBytes(downloadError.requiredBytes ?? 0),
+                  free: formatBytes(downloadError.freeBytes ?? 0),
+                })
+              : downloadError?.code === "extraction_failed"
+                ? t("modelSelector.downloadErrors.extraction")
+                : t("modelSelector.downloadErrors.unknown")}
+          </p>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={(event) => {
+              event.stopPropagation();
+              onDownload(model.id);
+            }}
+          >
+            {t("modelSelector.retryDownload")}
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 };

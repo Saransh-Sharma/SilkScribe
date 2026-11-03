@@ -1,0 +1,492 @@
+/* ----------------------------------------------------------------------------
+   Meeting orb.
+
+   The native panel is docked to the right screen edge and resized by Rust:
+   64×64 when collapsed, 384×520 when expanded. The orb keeps the same screen
+   position in both, pinned to the panel's top-right corner, so opening the card
+   reads as the orb unfolding rather than a new window appearing.
+
+   Like the recording indicator, the window is transparent with no vibrancy view
+   behind it, so the frosted material is painted, not `backdrop-filter`.
+---------------------------------------------------------------------------- */
+.orb-stage {
+  --orb-berry: #c83b66;
+  --orb-gold: #d2a343;
+  --orb-danger: #b52a36;
+  --orb-surface-top: rgba(255, 253, 250, 0.98);
+  --orb-surface-bottom: rgba(244, 238, 230, 0.97);
+  --orb-tint-brand: rgba(165, 31, 72, 0.06);
+  --orb-tint-gold: rgba(210, 163, 67, 0.08);
+  --orb-rim: rgba(70, 48, 41, 0.15);
+  --orb-rim-light: rgba(255, 255, 255, 0.95);
+  --orb-ink: #211b19;
+  --orb-ink-dim: rgba(33, 27, 25, 0.62);
+  --orb-ink-faint: rgba(33, 27, 25, 0.42);
+  --orb-divider: rgba(70, 48, 41, 0.09);
+  --orb-control: rgba(70, 48, 41, 0.07);
+  --orb-control-hover: rgba(70, 48, 41, 0.12);
+  --orb-shadow:
+    0 1px 2px rgba(55, 37, 32, 0.08), 0 8px 18px -10px rgba(55, 37, 32, 0.2),
+    0 18px 36px -20px rgba(55, 37, 32, 0.3);
+  --orb-ease: var(--ss-ease-out-quint, cubic-bezier(0.22, 1, 0.36, 1));
+  --orb-level: 0;
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  color: var(--orb-ink);
+  font-family: var(--font-sans);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+:root[data-theme="dark"] .orb-stage {
+  --orb-surface-top: rgba(46, 40, 38, 0.97);
+  --orb-surface-bottom: rgba(30, 26, 25, 0.97);
+  --orb-tint-brand: rgba(217, 77, 117, 0.1);
+  --orb-tint-gold: rgba(210, 163, 67, 0.07);
+  --orb-rim: rgba(255, 242, 234, 0.12);
+  --orb-rim-light: rgba(255, 243, 230, 0.08);
+  --orb-ink: #f7f1ed;
+  --orb-ink-dim: rgba(247, 241, 237, 0.68);
+  --orb-ink-faint: rgba(247, 241, 237, 0.44);
+  --orb-divider: rgba(255, 242, 234, 0.08);
+  --orb-control: rgba(255, 242, 234, 0.08);
+  --orb-control-hover: rgba(255, 242, 234, 0.14);
+  --orb-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 22px -10px rgba(0, 0, 0, 0.5),
+    0 20px 40px -20px rgba(0, 0, 0, 0.55);
+}
+
+/* ---------------------------------------------------------------- the orb */
+.orb {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--orb-rim);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 26%, var(--orb-rim-light), transparent 58%),
+    linear-gradient(180deg, var(--orb-surface-top), var(--orb-surface-bottom));
+  box-shadow: var(--orb-shadow);
+  cursor: grab;
+  touch-action: none;
+  display: grid;
+  place-items: center;
+  transition: transform 200ms var(--orb-ease);
+}
+
+.orb:active {
+  cursor: grabbing;
+  transform: scale(0.96);
+}
+
+.orb:focus-visible {
+  outline: 2px solid var(--ss-action-focus, #a51f48);
+  outline-offset: 2px;
+}
+
+.orb-core,
+.orb-ring {
+  grid-area: 1 / 1;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.orb-core {
+  width: 12px;
+  height: 12px;
+  background: var(--orb-berry);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--orb-berry) 18%, transparent);
+  transition:
+    background 240ms var(--orb-ease),
+    box-shadow 240ms var(--orb-ease);
+}
+
+/* Breathes with the louder of the two sources. Status arrives about once a
+   second, so a long transition turns the steps into a smooth swell. */
+.orb-ring {
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid var(--orb-gold);
+  opacity: calc(0.18 + var(--orb-level) * 0.5);
+  transform: scale(calc(0.9 + var(--orb-level) * 0.45));
+  transition:
+    transform 900ms var(--orb-ease),
+    opacity 900ms var(--orb-ease),
+    border-color 240ms var(--orb-ease);
+}
+
+.orb-stage[data-state="paused"] .orb-core {
+  background: var(--orb-gold);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--orb-gold) 20%, transparent);
+}
+
+.orb-stage[data-state="paused"] .orb-ring {
+  opacity: 0.16;
+  transform: scale(0.9);
+}
+
+.orb-stage[data-state="error"] .orb-core {
+  background: var(--orb-danger);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--orb-danger) 22%, transparent);
+}
+
+.orb-stage[data-state="finishing"] .orb-ring {
+  opacity: 0.7;
+  border-color: var(--orb-gold) transparent var(--orb-gold) transparent;
+  animation: orb-spin 1.1s linear infinite;
+}
+
+/* While dictating, the meeting mic is gated: dim the core so the orb says
+   "not listening to you" without adding another badge. */
+.orb-stage[data-gated] .orb-core {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--orb-berry);
+}
+
+.orb-pin {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--orb-gold);
+  box-shadow: 0 0 0 2px var(--orb-surface-top);
+}
+
+@keyframes orb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --------------------------------------------------------------- the card */
+.orb-card {
+  position: absolute;
+  inset: 8px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 14px 14px 12px 16px;
+  border: 1px solid var(--orb-rim);
+  border-radius: 22px;
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 10% 110%,
+      var(--orb-tint-brand),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 70% 50% at 90% -10%,
+      var(--orb-tint-gold),
+      transparent 70%
+    ),
+    linear-gradient(180deg, var(--orb-surface-top), var(--orb-surface-bottom));
+  box-shadow:
+    var(--orb-shadow),
+    inset 0 1px 0 var(--orb-rim-light);
+  transform-origin: top right;
+  animation: orb-card-in 220ms var(--orb-ease) both;
+  transition:
+    opacity 160ms ease-in,
+    transform 160ms ease-in;
+}
+
+.orb-stage[data-mode="collapsing"] .orb-card {
+  opacity: 0;
+  transform: scale(0.96) translateX(6px);
+}
+
+@keyframes orb-card-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateX(8px);
+  }
+}
+
+.orb-header {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  /* Leave room for the orb, which sits over the card's top-right corner. */
+  padding-inline-end: 44px;
+}
+
+.orb-heading {
+  min-width: 0;
+}
+
+.orb-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.orb-meta {
+  display: flex;
+  gap: 6px;
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--orb-ink-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.orb-sources {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.orb-source {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.orb-source-label {
+  font-size: 11px;
+  color: var(--orb-ink-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.orb-meter {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--orb-divider);
+  overflow: hidden;
+}
+
+.orb-meter > span {
+  display: block;
+  height: 100%;
+  background: var(--orb-gold);
+  transform-origin: left center;
+  transition: transform 600ms var(--orb-ease);
+}
+
+.orb-notice {
+  margin: 10px 0 0;
+  padding: 7px 10px;
+  border-radius: 12px;
+  background: var(--orb-control);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--orb-ink-dim);
+}
+
+.orb-notice-error {
+  color: var(--orb-danger);
+  background: color-mix(in srgb, var(--orb-danger) 9%, transparent);
+}
+
+/* ---------------------------------------------------------- the transcript */
+.orb-transcript-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin-top: 12px;
+  border-top: 1px solid var(--orb-divider);
+}
+
+.orb-transcript {
+  height: 100%;
+  margin: 0;
+  padding: 10px 4px 16px 0;
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-user-select: text;
+  user-select: text;
+  scrollbar-width: thin;
+}
+
+.orb-line {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  line-height: 1.45;
+  animation: orb-line-in 260ms var(--orb-ease) both;
+}
+
+.orb-line + .orb-line {
+  margin-top: 4px;
+}
+
+.orb-line[data-first] + .orb-line,
+.orb-line + .orb-line[data-first] {
+  margin-top: 10px;
+}
+
+.orb-speaker {
+  font-size: 11px;
+  font-weight: 650;
+  color: var(--orb-ink-faint);
+}
+
+.orb-line[data-source="mic"] .orb-speaker {
+  color: var(--orb-berry);
+}
+
+.orb-text {
+  color: var(--orb-ink);
+}
+
+@keyframes orb-line-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.orb-empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 0 12px;
+  text-align: center;
+}
+
+.orb-empty-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.orb-empty-body {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--orb-ink-dim);
+}
+
+.orb-chip,
+.orb-behind {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.orb-chip {
+  border: 1px solid var(--orb-rim);
+  background: var(--orb-surface-top);
+  color: var(--orb-ink);
+  box-shadow: var(--orb-shadow);
+  cursor: pointer;
+}
+
+.orb-behind {
+  bottom: auto;
+  top: 8px;
+  background: var(--orb-control);
+  color: var(--orb-ink-dim);
+}
+
+/* -------------------------------------------------------------- the footer */
+.orb-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--orb-divider);
+}
+
+.orb-button {
+  flex: 0 0 auto;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--orb-control);
+  color: var(--orb-ink);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+
+.orb-button:hover {
+  background: var(--orb-control-hover);
+}
+
+.orb-button:focus-visible,
+.orb-chip:focus-visible {
+  outline: 2px solid var(--ss-action-focus, #a51f48);
+  outline-offset: 2px;
+}
+
+.orb-button-primary {
+  background: var(--orb-berry);
+  color: #fff8f4;
+}
+
+.orb-button-primary:hover {
+  background: color-mix(in srgb, var(--orb-berry) 88%, black);
+}
+
+.orb-button-quiet {
+  margin-inline-start: auto;
+  background: transparent;
+  color: var(--orb-ink-dim);
+}
+
+.orb-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.orb-finishing {
+  margin: 0;
+  padding: 7px 0;
+  font-size: 12px;
+  color: var(--orb-ink-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb,
+  .orb-core,
+  .orb-ring,
+  .orb-card,
+  .orb-line,
+  .orb-meter > span {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .orb-ring {
+    transform: none !important;
+  }
+}
+
+/* ----------------------------------------------- "take notes for this call?" */
+/* The card sizes to its question instead of filling the expanded panel. */
+.orb-card.orb-prompt {
+  bottom: auto;
+  gap: 12px;
+}
+.orb-prompt .orb-meta {
+  white-space: normal;
+}

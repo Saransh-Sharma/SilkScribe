@@ -8,3 +8,6 @@ artifacts/
 .build/
 permiso-main/
 .DS_Store
+
+src-tauri/resources/local-runtime/
+__pycache__/

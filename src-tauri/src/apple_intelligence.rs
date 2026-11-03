@@ -26,20 +26,29 @@ extern "C" {
         system_prompt: *const c_char,
         user_content: *const c_char,
         max_tokens: i32,
+        guided: i32,
     ) -> *mut AppleLLMResponse;
 }
 
-/// Process text with Apple Intelligence using separate system prompt and user content
+/// Process text with Apple Intelligence using separate system prompt and user
+/// content. `guided` shapes the answer as a cleaned transcript; commands pass
+/// false and get free-form text.
 pub fn process_text_with_system_prompt(
     system_prompt: &str,
     user_content: &str,
     max_tokens: i32,
+    guided: bool,
 ) -> Result<String, String> {
     let system_cstr = CString::new(system_prompt).map_err(|e| e.to_string())?;
     let user_cstr = CString::new(user_content).map_err(|e| e.to_string())?;
 
     let response_ptr = unsafe {
-        process_text_with_system_prompt_apple(system_cstr.as_ptr(), user_cstr.as_ptr(), max_tokens)
+        process_text_with_system_prompt_apple(
+            system_cstr.as_ptr(),
+            user_cstr.as_ptr(),
+            max_tokens,
+            i32::from(guided),
+        )
     };
 
     if response_ptr.is_null() {
@@ -60,7 +69,7 @@ pub fn process_text_with_system_prompt(
         let error_c_str = if !response.error_message.is_null() {
             unsafe { CStr::from_ptr(response.error_message) }
         } else {
-            CStr::from_bytes_with_nul(b"Unknown error\0").unwrap()
+            c"Unknown error"
         };
         let error_msg = error_c_str.to_string_lossy().into_owned();
         Err(error_msg)

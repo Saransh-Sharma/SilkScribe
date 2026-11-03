@@ -94,7 +94,7 @@ export const howItWorksSteps: Step[] = [
   {
     title: "Hold your shortcut",
     description:
-      "Start dictation from anywhere on your Mac. No dashboard, meeting bot, or extra writing workspace.",
+      "Start dictation from anywhere on your Mac, in any app.",
   },
   {
     title: "Say it naturally",
@@ -167,8 +167,8 @@ export const privacyCards: MarketingCard[] = [
     body: "Use local speech models so dictation can happen on your Mac.",
   },
   {
-    title: "No forced cloud workspace",
-    body: "SilkScribe is not designed around uploading every thought to a web dashboard.",
+    title: "No cloud workspace",
+    body: "Your dictations and meetings live in a Library on your Mac, not on a web dashboard.",
   },
   {
     title: "Clear permissions",
@@ -183,27 +183,27 @@ export const privacyCards: MarketingCard[] = [
 export const outputCards: MarketingCard[] = [
   {
     title: "Natural cleanup",
-    body: "Turns rough speech into readable sentences.",
+    body: "Turns rough speech into readable sentences, on your Mac with Apple Intelligence where available.",
   },
   {
-    title: "Smart punctuation",
-    body: "Adds punctuation and casing so the result feels written, not dumped.",
+    title: "Writes for the app",
+    body: "Casual in Slack, formal in Mail, exact in your code editor, and names spelled the way they appear around your cursor.",
   },
   {
-    title: "Custom vocabulary",
-    body: "Teach SilkScribe names, acronyms, product terms, and phrases you use often.",
+    title: "Your dictionary",
+    body: "Names, replacements and snippets, written your way every time.",
   },
   {
-    title: "Optional polish",
-    body: "Use supported Apple Intelligence post-processing where available for cleaner formatting and clarity.",
+    title: "Edit by voice",
+    body: "Select text and say how to change it: shorter, friendlier, in Spanish.",
   },
   {
-    title: "Recent history",
-    body: "Recover recent dictations when you need to reuse or restore something.",
+    title: "Hands-free",
+    body: "Tap the shortcut to keep talking without holding a key.",
   },
   {
-    title: "Flexible paste modes",
-    body: "Choose how SilkScribe inserts text into the active app.",
+    title: "Your clipboard, kept",
+    body: "SilkScribe pastes your words and puts back what you had copied.",
   },
 ];
 
@@ -301,9 +301,9 @@ export const troubleshootingCards: TroubleshootingCard[] = [
     title: "Shortcut not firing",
     body: "A shortcut can fail if another app has claimed the same key combination or the keyboard backend needs adjustment.",
     steps: [
-      "Open SilkScribe Settings > General > SilkScribe Shortcuts.",
+      "Open SilkScribe Settings → Dictation → Shortcut.",
       "Choose a shortcut that is not already owned by Raycast, Spotlight, or another launcher.",
-      "If needed, switch the keyboard implementation in Debug settings and test again.",
+      "If needed, switch the keyboard backend under Settings → Dictation → Experimental and test again.",
     ],
   },
   {
@@ -312,7 +312,7 @@ export const troubleshootingCards: TroubleshootingCard[] = [
     body: "Most insertion issues come from focus or paste method selection rather than the speech engine.",
     steps: [
       "Keep the destination text field focused until transcription finishes.",
-      "Check Settings > Advanced > Paste Method.",
+      "Check Settings → Dictation → Pasting.",
       "If you preserve clipboard contents, SilkScribe may switch to direct insertion to avoid replacing your clipboard.",
     ],
   },
@@ -322,7 +322,7 @@ export const troubleshootingCards: TroubleshootingCard[] = [
     body: "If the preferred speech engine is still preparing, SilkScribe needs time to finish model setup locally.",
     steps: [
       "Wait for the model setup screen to finish preparing the offline engine.",
-      "Open Models settings to confirm the selected model is installed.",
+      "Open Settings → Engines to confirm the selected engine is installed.",
       "If a download fails, try again on a stable connection or switch to another supported model.",
     ],
     note: "Community models are supported, but troubleshooting is strongest for the default packaged options.",
@@ -332,9 +332,9 @@ export const troubleshootingCards: TroubleshootingCard[] = [
     title: "History and logs",
     body: "You can use history to confirm transcriptions succeeded even if insertion failed, then gather logs if support needs them.",
     steps: [
-      "Open the Home dashboard to review recent activity and saved transcripts.",
-      "Press Cmd+Shift+D to reveal Debug mode if the Debug section is hidden.",
-      "Then open Settings > Debug to reveal the log directory when support asks for logs.",
+      "Open Home or Library to review recent dictations and saved transcripts.",
+      "Press Cmd+Shift+D to show the Developer settings.",
+      "Then open Settings → Privacy & storage → Developer to reveal the log folder when support asks for logs.",
       "Share your macOS version, chip type, model choice, and the exact behavior you saw.",
     ],
   },
@@ -364,6 +364,12 @@ export const faqItems: FaqItem[] = [
     question: "Which models does SilkScribe support?",
     answer:
       "SilkScribe supports local transcription models, including Whisper variants and Parakeet V3 in supported builds. Exact availability can vary by release and Mac capabilities.",
+  },
+  {
+    id: "faq-meetings",
+    question: "Can SilkScribe take meeting notes?",
+    answer:
+      "Yes, on Apple Silicon Macs. Record a meeting with your mic and computer audio, and SilkScribe transcribes it, labels speakers, and writes notes that point back to the moment they came from. It all runs on your Mac, and no bot joins the call.",
   },
   {
     id: "faq-apple-intelligence",
@@ -429,6 +435,16 @@ export const privacySections: PrivacySection[] = [
       "Post-processing is optional and controlled in settings.",
       "Provider API keys and settings are configured by you.",
       "Provider handling is governed by the provider you choose.",
+    ],
+  },
+  {
+    title: "Context, commands and calendar",
+    body: "Some features read a little more from your Mac. Each one stays on your device unless you choose otherwise.",
+    items: [
+      "To spell names right, AI cleanup can read the text around your cursor through Accessibility. Password fields are never read. This text only goes to a cloud provider if you turn that on for it.",
+      "Command mode sends the text you selected, with your spoken instruction, to the AI cleanup provider you set up.",
+      "Connecting your calendar is optional. Events are read on your Mac to show upcoming meetings and name your notes; they're never changed or uploaded.",
+      "Call detection only checks which call apps are running and whether the microphone is in use. Nothing records until you say so.",
     ],
   },
   {

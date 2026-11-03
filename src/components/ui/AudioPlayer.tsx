@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { Play, Pause } from "lucide-react";
 
 interface AudioPlayerProps {
@@ -9,6 +10,16 @@ interface AudioPlayerProps {
   className?: string;
   autoPlay?: boolean;
   compact?: boolean;
+  /** Playback speed multiplier. */
+  playbackRate?: number;
+  /**
+   * Receives the underlying element so a host can drive playback itself —
+   * seeking to a transcript segment, for example. Prefer the props above when
+   * they cover the need; this is the escape hatch, not the front door.
+   */
+  mediaRef?: React.MutableRefObject<HTMLAudioElement | null>;
+  /** Fires as playback progresses and on every seek. */
+  onTimeChange?: (seconds: number) => void;
 }
 
 export const AudioPlayer: React.FC<AudioPlayerProps> = ({
@@ -17,7 +28,16 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   className = "",
   autoPlay = false,
   compact = false,
+  playbackRate,
+  mediaRef,
+  onTimeChange,
 }) => {
+  const { t } = useTranslation();
+  const [error, setError] = useState(false);
+  useEffect(() => {
+    setLoadedSrc(initialSrc ?? null);
+    setError(false);
+  }, [initialSrc]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -26,6 +46,8 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
+  const onTimeChangeRef = useRef(onTimeChange);
+  onTimeChangeRef.current = onTimeChange;
   const src = loadedSrc;
   const animationRef = useRef<number>();
   const dragTimeRef = useRef<number>(0);
@@ -48,6 +70,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     if (audioRef.current && !isDraggingRef.current) {
       const time = audioRef.current.currentTime;
       setCurrentTime(time);
+      onTimeChangeRef.current?.(time);
     }
 
     if (isPlayingRef.current) {
@@ -95,6 +118,14 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 
     const handlePlay = () => setIsPlaying(true);
     const handlePause = () => setIsPlaying(false);
+    const handleError = () => {
+      setError(true);
+      setIsPlaying(false);
+      setIsLoading(false);
+    };
+    const handleTime = () => onTimeChangeRef.current?.(audio.currentTime);
+    audio.addEventListener("error", handleError);
+    audio.addEventListener("seeked", handleTime);
 
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);
     audio.addEventListener("ended", handleEnded);
@@ -102,12 +133,20 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     audio.addEventListener("pause", handlePause);
 
     return () => {
+      audio.removeEventListener("error", handleError);
+      audio.removeEventListener("seeked", handleTime);
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
       audio.removeEventListener("ended", handleEnded);
       audio.removeEventListener("play", handlePlay);
       audio.removeEventListener("pause", handlePause);
     };
   }, []);
+
+  useEffect(() => {
+    if (audioRef.current && playbackRate) {
+      audioRef.current.playbackRate = playbackRate;
+    }
+  }, [playbackRate, src]);
 
   // Auto-play when src becomes available (via onLoadRequest or autoPlay prop)
   const prevLoadedSrc = useRef<string | null>(null);
@@ -198,6 +237,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     if (!isDragging && audioRef.current) {
       audioRef.current.currentTime = newTime;
     }
+    onTimeChange?.(newTime);
   };
 
   const handleSliderMouseDown = () => {
@@ -239,13 +279,35 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 
   return (
     <div className={`flex items-center ${containerGapClass} ${className}`}>
-      <audio ref={audioRef} src={src ?? undefined} preload="metadata" />
+      {error && (
+        <span role="alert">
+          {t("audioPlayer.error")}{" "}
+          <button
+            onClick={() => {
+              setError(false);
+              audioRef.current?.load();
+            }}
+          >
+            {t("audioPlayer.retry")}
+          </button>
+        </span>
+      )}
+      <audio
+        ref={(element) => {
+          (
+            audioRef as React.MutableRefObject<HTMLAudioElement | null>
+          ).current = element;
+          if (mediaRef) mediaRef.current = element;
+        }}
+        src={src ?? undefined}
+        preload="metadata"
+      />
 
       <button
         onClick={togglePlay}
         disabled={isLoading}
         className={`inline-flex ${buttonSizeClass} items-center justify-center rounded-full border border-transparent text-ss-text-secondary transition-[background-color,border-color,color,transform] duration-150 hover:-translate-y-0.5 hover:border-ss-brand-secondary/25 hover:bg-ss-brand-secondary/10 hover:text-ss-brand-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ss-action-focus/40 disabled:cursor-not-allowed disabled:opacity-50`}
-        aria-label={isPlaying ? "Pause" : "Play"}
+        aria-label={t(isPlaying ? "audioPlayer.pause" : "audioPlayer.play")}
       >
         {isPlaying ? (
           <Pause
@@ -273,6 +335,8 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 
         <input
           type="range"
+          aria-label={t("audioPlayer.seek")}
+          aria-valuetext={`${formatTime(currentTime)} / ${formatTime(duration)}`}
           min="0"
           max={duration || 0}
           step="0.01"
