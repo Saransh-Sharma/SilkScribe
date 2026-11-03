@@ -279,26 +279,32 @@ pub fn meeting_orb_answer_prompt(app: AppHandle, start: bool) {
 /// becomes the key window, so the web clipboard API isn't reliable there.
 #[tauri::command]
 #[specta::specta]
-pub fn meeting_orb_copy(app: AppHandle, text: String) -> Result<(), String> {
+pub async fn meeting_orb_copy(app: AppHandle, text: String) -> Result<(), String> {
     use tauri_plugin_clipboard_manager::ClipboardExt;
     app.clipboard()
         .write_text(text)
         .map_err(|e| e.to_string())?;
     // The orb copies one thing, the heads-up message; note it on the meeting.
-    if let Some(ws) = app.try_state::<std::sync::Arc<crate::workspace::Workspace>>() {
-        let recording = ws
-            .recording
-            .lock()
-            .ok()
-            .and_then(|recording| recording.as_ref().map(|r| r.document_id.clone()));
-        if let Some(id) = recording {
-            if let Err(error) = ws
-                .store
-                .record_heads_up(&id, chrono::Utc::now().timestamp())
-            {
+    // The recording lock is held across native capture calls, so don't wait
+    // for it, and keep the database write off the main thread.
+    let Some(ws) = app
+        .try_state::<std::sync::Arc<crate::workspace::Workspace>>()
+        .map(|ws| ws.inner().clone())
+    else {
+        return Ok(());
+    };
+    let recording = ws
+        .recording
+        .try_lock()
+        .ok()
+        .and_then(|recording| recording.as_ref().map(|r| r.document_id.clone()));
+    if let Some(id) = recording {
+        let at = chrono::Utc::now().timestamp();
+        tauri::async_runtime::spawn_blocking(move || {
+            if let Err(error) = ws.store.record_heads_up(&id, at) {
                 log::warn!("Couldn't note the heads-up on the meeting: {error}");
             }
-        }
+        });
     }
     Ok(())
 }

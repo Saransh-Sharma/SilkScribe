@@ -96,6 +96,9 @@ export function CitedAnswer({
           ))}
         </ol>
       )}
+      {result.truncated && (
+        <p className="ws-meta">{t("workspace.recipes.partial")}</p>
+      )}
       <p className="ws-meta">{t("workspace.ask.checkSources")}</p>
     </>
   );

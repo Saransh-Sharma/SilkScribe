@@ -1636,7 +1636,12 @@ export type AskAnswer = {
 /**
  * Cites passages as [p1]; empty when nothing in the Library matched.
  */
-answer: string; sources: AskSource[] }
+answer: string; sources: AskSource[]; 
+/**
+ * The engine couldn't read everything it was given (a long meeting, a
+ * busy week), so the text covers only part of it.
+ */
+truncated?: boolean }
 /**
  * A passage an answer can cite: part of a transcript, or notes someone typed.
  */

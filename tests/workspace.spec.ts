@@ -841,6 +841,9 @@ test("Ask can recap the past week of meetings", async ({ page }) => {
   await expect(
     page.getByText("This week the team agreed", { exact: false }),
   ).toBeVisible();
+  await expect(
+    page.getByText("covers only part of", { exact: false }),
+  ).toBeVisible();
   expect(
     await page.evaluate(() => localStorage.getItem("fixture-recipe")),
   ).toBe('["weekly_recap",[]]');

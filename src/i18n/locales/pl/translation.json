@@ -1443,7 +1443,8 @@
       "errors": {
         "empty": "W ostatnim tygodniu nie ma spotkań z transkrypcją.",
         "emptyMeeting": "To spotkanie nie ma jeszcze transkrypcji."
-      }
+      },
+      "partial": "Obejmuje to tylko część wybranych materiałów: reszta była zbyt długa, by przeczytać ją naraz."
     },
     "share": {
       "label": "Udostępnij…",

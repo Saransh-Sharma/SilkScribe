@@ -1443,7 +1443,8 @@
       "errors": {
         "empty": "Za poslední týden nejsou žádné schůzky s přepisem.",
         "emptyMeeting": "Tato schůzka zatím nemá přepis."
-      }
+      },
+      "partial": "Pokrývá to jen část vybraného: zbytek byl na jedno přečtení příliš dlouhý."
     },
     "share": {
       "label": "Sdílet…",

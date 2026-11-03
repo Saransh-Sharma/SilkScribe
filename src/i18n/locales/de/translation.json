@@ -1431,7 +1431,8 @@
       "errors": {
         "empty": "Keine Meetings mit Transkript in der letzten Woche.",
         "emptyMeeting": "Dieses Meeting hat noch kein Transkript."
-      }
+      },
+      "partial": "Das deckt nur einen Teil der Auswahl ab: Der Rest war zu lang, um ihn auf einmal zu lesen."
     },
     "share": {
       "label": "Teilen …",

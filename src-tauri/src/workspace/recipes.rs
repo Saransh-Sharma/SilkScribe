@@ -50,11 +50,14 @@ pub fn instruction(recipe: &str, custom: Option<&str>) -> Option<String> {
         .map(|(_, text)| text.to_string())
 }
 
-/// What the engine reads for a recipe, in meeting order: each meeting's typed
-/// notes, then its transcript in passages of a few sentences, each starting
-/// where its first segment does.
+/// What the engine reads for a recipe, in meeting order. One meeting is read
+/// in full: its typed notes, then its transcript in passages of a few
+/// sentences, each starting where its first segment does. Several meetings
+/// (the weekly recap) are read by their notes, typed and AI, so every meeting
+/// fits; only a meeting without notes falls back to its transcript.
 pub fn passages(documents: &[(Document, String)], limit: usize) -> Vec<AskSource> {
     const TARGET_CHARS: usize = 600;
+    let several = documents.len() > 1;
     let mut out: Vec<AskSource> = Vec::new();
     let push = |doc: &Document, start: Option<f64>, text: String, out: &mut Vec<AskSource>| {
         if out.len() < limit && !text.trim().is_empty() {
@@ -70,6 +73,18 @@ pub fn passages(documents: &[(Document, String)], limit: usize) -> Vec<AskSource
     };
     for (doc, typed) in documents {
         push(doc, None, typed.trim().to_string(), &mut out);
+        let notes: Vec<_> = doc.notes.iter().flat_map(|notes| notes.items()).collect();
+        if several && (!notes.is_empty() || !typed.trim().is_empty()) {
+            for item in notes {
+                let start = item
+                    .sources
+                    .first()
+                    .and_then(|id| doc.segments.iter().find(|s| &s.id == id))
+                    .map(|s| s.start);
+                push(doc, start, item.text.trim().to_string(), &mut out);
+            }
+            continue;
+        }
         let mut text = String::new();
         let mut start = None;
         for segment in &doc.segments {
@@ -121,5 +136,34 @@ mod tests {
         assert_eq!(passages[1].id, "p2");
         assert!(passages.iter().all(|p| p.document_id == doc.id));
         assert_eq!(super::passages(&[(doc, String::new())], 1).len(), 1);
+    }
+
+    #[test]
+    fn a_weekly_recap_reads_every_meeting_by_its_notes() {
+        use crate::workspace::types::{NoteItem, Notes};
+        let mut week = Vec::new();
+        for n in 0..12 {
+            let mut doc = crate::workspace::store::tests_support::document();
+            doc.id = format!("m{n}");
+            // Long meetings: their transcripts alone would fill the budget.
+            doc.segments[0].text = "talk ".repeat(2_000);
+            doc.notes = Some(Notes {
+                summary: vec![NoteItem {
+                    text: format!("Decided item {n}"),
+                    sources: vec![doc.segments[0].id.clone()],
+                    evidence: vec![],
+                    origin: Default::default(),
+                }],
+                ..Default::default()
+            });
+            week.push((doc, String::new()));
+        }
+        let read = passages(&week, 400);
+        assert_eq!(read.len(), 12);
+        for n in 0..12 {
+            assert!(read.iter().any(|p| p.document_id == format!("m{n}")));
+        }
+        assert!(read.iter().all(|p| p.text.starts_with("Decided item")));
+        assert!(read.iter().all(|p| p.start.is_some()));
     }
 }

@@ -1431,7 +1431,8 @@
       "errors": {
         "empty": "No meetings with a transcript in the past week.",
         "emptyMeeting": "This meeting has no transcript to write from yet."
-      }
+      },
+      "partial": "This covers only part of what was chosen: the rest was too long to read at once."
     },
     "share": {
       "label": "Share…",

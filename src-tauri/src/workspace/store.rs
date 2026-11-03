@@ -2013,6 +2013,9 @@ mod tests {
         let conn = store.conn().unwrap();
         conn.execute_batch("CREATE TABLE transcription_history(id INTEGER PRIMARY KEY,title TEXT,timestamp INTEGER,file_name TEXT,transcription_text TEXT,post_processed_text TEXT,saved BOOLEAN);INSERT INTO transcription_history VALUES(1,'Dictation',10,'missing.wav','',NULL,0);").unwrap();
         store.sync_history(dir.path()).unwrap();
+        store
+            .set_folder("dictation-1", Some("Drafts".into()))
+            .unwrap();
 
         // A retry fills in the text that the first attempt didn't produce.
         conn.execute("UPDATE transcription_history SET transcription_text='Raw words',post_processed_text='Clean words.' WHERE id=1", []).unwrap();
@@ -2020,6 +2023,8 @@ mod tests {
         let doc = store.get("dictation-1").unwrap();
         assert_eq!(doc.segments[0].original_text, "Raw words");
         assert_eq!(doc.segments[0].text, "Clean words.");
+        // Refreshing it keeps where it was filed.
+        assert_eq!(doc.folder.as_deref(), Some("Drafts"));
 
         // Once edited in the Library, the user's version wins.
         let mut edited = doc.clone();

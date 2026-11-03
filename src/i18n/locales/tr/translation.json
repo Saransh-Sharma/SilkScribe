@@ -1431,7 +1431,8 @@
       "errors": {
         "empty": "Geçen hafta transkripti olan toplantı yok.",
         "emptyMeeting": "Bu toplantının henüz transkripti yok."
-      }
+      },
+      "partial": "Bu, seçilenlerin yalnızca bir kısmını kapsıyor: geri kalanı bir kerede okunamayacak kadar uzundu."
     },
     "share": {
       "label": "Paylaş…",

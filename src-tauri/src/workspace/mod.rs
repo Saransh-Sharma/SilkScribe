@@ -1005,6 +1005,7 @@ impl Workspace {
             return Ok(AskAnswer {
                 answer: String::new(),
                 sources: Vec::new(),
+                truncated: false,
             });
         }
         let model_path = ["qwen3.5-9b", "qwen3.6-27b"]
@@ -1034,7 +1035,11 @@ impl Workspace {
             .filter_map(|id| id.as_str())
             .filter_map(|id| passages.iter().find(|p| p.id == id).cloned())
             .collect();
-        Ok(AskAnswer { answer, sources })
+        Ok(AskAnswer {
+            answer,
+            sources,
+            truncated: false,
+        })
     }
 
     /// Writes something from meetings by a recipe, citing its passages. With
@@ -1097,7 +1102,12 @@ impl Workspace {
             .filter_map(|id| id.as_str())
             .filter_map(|id| passages.iter().find(|p| p.id == id).cloned())
             .collect();
-        Ok(AskAnswer { answer, sources })
+        let truncated = result["truncated"].as_bool().unwrap_or(false);
+        Ok(AskAnswer {
+            answer,
+            sources,
+            truncated,
+        })
     }
 
     /// Stops a question being answered, or a recipe being written.

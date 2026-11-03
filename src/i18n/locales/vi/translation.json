@@ -1426,7 +1426,8 @@
       "errors": {
         "empty": "Không có cuộc họp nào có bản chép lời trong tuần qua.",
         "emptyMeeting": "Cuộc họp này chưa có bản chép lời."
-      }
+      },
+      "partial": "Nội dung này chỉ bao gồm một phần những gì bạn chọn: phần còn lại quá dài để đọc một lần."
     },
     "share": {
       "label": "Chia sẻ…",

@@ -581,6 +581,8 @@ api.runRecipe = async (recipe, documentIds) => {
       recipe === "weekly_recap"
         ? "This week the team agreed to simplify the first recording [p1]."
         : "Thanks for the review.\n- Sam brings the revised screens [p1]",
+    // A busy week is more than the engine reads at once.
+    truncated: recipe === "weekly_recap",
     sources: [
       {
         id: "p1",

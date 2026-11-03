@@ -1437,7 +1437,8 @@
       "errors": {
         "empty": "Aucune réunion avec transcription la semaine passée.",
         "emptyMeeting": "Cette réunion n’a pas encore de transcription."
-      }
+      },
+      "partial": "Ceci ne couvre qu’une partie de la sélection : le reste était trop long à lire d’un coup."
     },
     "share": {
       "label": "Partager…",

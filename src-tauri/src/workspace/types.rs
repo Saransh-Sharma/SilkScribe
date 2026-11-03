@@ -423,4 +423,8 @@ pub struct AskAnswer {
     /// Cites passages as [p1]; empty when nothing in the Library matched.
     pub answer: String,
     pub sources: Vec<AskSource>,
+    /// The engine couldn't read everything it was given (a long meeting, a
+    /// busy week), so the text covers only part of it.
+    #[serde(default)]
+    pub truncated: bool,
 }

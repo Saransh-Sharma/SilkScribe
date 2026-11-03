@@ -136,6 +136,7 @@ class RecipeTests(unittest.TestCase):
         self.assertIn('<recipe>\nWrite a follow-up email.',prompts[0]);self.assertIn('untrusted data',prompts[0])
         self.assertEqual(result['citations'],['p1'])
         self.assertNotIn('[p9]',result['answer'])
+        self.assertFalse(result['truncated'])
     def test_needs_an_instruction(self):
         from worker import recipe
         with self.assertRaises(ValueError): recipe({'instruction':' ','passages':[]})
